@@ -5,7 +5,7 @@
       <div class="content-wrapper">
         <Transition name="fade">
           <KeepAlive>
-            <Keyboard v-show="!isSettingsRoute" key="keyboard" />
+            <Keyboard v-if="!isSettingsRoute" key="keyboard" />
           </KeepAlive>
         </Transition>
         <!-- 路由视图的过渡 -->

@@ -64,19 +64,6 @@ watch(keyPressTestCount, async () => {
     maxMM.value = result.max;
     pressStatus.value = result.press;
     keyPressTestCount.value++;
-
-    // try {
-    //   const result = await withTimeout(performanceStore.getRm6X21Travel(), 100); // 5-second timeout
-    //   maxMM.value = result.max;
-    //   pressStatus.value = result.press;
-    //   keyPressTestCount.value++;
-    // } catch (error) {
-    //   console.error('Error or timeout in getRm6X21Travel:', error);
-    //   keyPressTestCount.value = 0;
-    //   testEnabled.value = false;
-    //   maxMM.value = 0;
-    //   pressStatus.value = 0;
-    // }
   }
 });
 

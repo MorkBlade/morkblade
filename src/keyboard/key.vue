@@ -25,7 +25,7 @@
       <p class="top-key" v-if="singleTravel || rtReleaseTravel || rtPressTravel">{{ byteToKey[keyItem.value] }}</p>
     </div>
     <img :src="VeriftIcon" class="verify_icon" v-if="route.path === '/key-calibration' && verifySuc" />
-    <div class="axis" v-if="axisVal !== null">{{ KEY_SHAFT[axisVal]?.name }}</div>
+    <div class="axis" v-if="route.path === '/performance' && axisVal !== null">{{ KEY_SHAFT[axisVal]?.name }}</div>
   </div>
 </template>
 
