@@ -41,6 +41,7 @@
             :keyItem="ite"
             :active="activeKeys.includes(`${colIndex}-${rowIndex}`)"
             @click="onclick(colIndex, rowIndex)"
+            @emits="handleCancelSelect"
           />
         </div>
       </div>
@@ -104,8 +105,18 @@ const rtEnabled = ref(false);
 const checkedFn = ref(0);
 const formData = reactive({ type: 'win', fn: 0 });
 
+watch(
+  () => route.path,
+  (newPath) => {
+    if (newPath !== '/performance') {
+      keyboardStore.cancelSelectKey();
+      handleOperationKey('cancelSelect');
+    }
+  },
+);
+
 onMounted(async () => {
-  // console.log('keyboard onMounted');
+  console.log('keyboard onMounted');
   try {
     // 您的mounted逻辑
     await keyboardStore.defKey();

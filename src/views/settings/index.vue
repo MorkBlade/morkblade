@@ -277,6 +277,10 @@ const onCancel = () => {
   font-size: 15px;
   font-family: 'CN Heavy';
   color: #cccccc;
+  position: absolute;
+  left: 0;
+  top: 150px;
+
   .settings-center {
     width: 1500px;
     display: flex;

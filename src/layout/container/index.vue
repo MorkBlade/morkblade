@@ -4,7 +4,9 @@
     <Transition name="fade" mode="out-in">
       <div class="content-wrapper">
         <Transition name="fade">
-          <Keyboard v-if="!isSettingsRoute" key="keyboard" />
+          <KeepAlive>
+            <Keyboard v-show="!isSettingsRoute" key="keyboard" />
+          </KeepAlive>
         </Transition>
         <!-- 路由视图的过渡 -->
         <router-view v-slot="{ Component }">
@@ -31,6 +33,10 @@ const isSettingsRoute = computed(() => route.path === '/settings');
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%; // Ensure consistent width
+  height: 100%; // Ensure consistent height
+  overflow: hidden; // Prevent overflow issues
+  transition: all 0.3s ease; // Smooth transition for all properties
 
   .content-wrapper {
     width: 100%;
@@ -43,7 +49,7 @@ const isSettingsRoute = computed(() => route.path === '/settings');
 
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.2s ease;
+  transition: opacity 0.3s ease;
 }
 
 .fade-enter-from,

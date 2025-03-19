@@ -58,26 +58,25 @@ const handleSwitchChange = (value) => {
   keyPressTestCount.value++;
 };
 
-// TODO 行程测试偶现卡死
 watch(keyPressTestCount, async () => {
   if (testEnabled.value) {
-    // const result = await performanceStore.getRm6X21Travel();
-    // maxMM.value = result.max;
-    // pressStatus.value = result.press;
-    // keyPressTestCount.value++;
+    const result = await performanceStore.getRm6X21Travel();
+    maxMM.value = result.max;
+    pressStatus.value = result.press;
+    keyPressTestCount.value++;
 
-    try {
-      const result = await withTimeout(performanceStore.getRm6X21Travel(), 100); // 5-second timeout
-      maxMM.value = result.max;
-      pressStatus.value = result.press;
-      keyPressTestCount.value++;
-    } catch (error) {
-      console.error('Error or timeout in getRm6X21Travel:', error);
-      keyPressTestCount.value = 0;
-      testEnabled.value = false;
-      maxMM.value = 0;
-      pressStatus.value = 0;
-    }
+    // try {
+    //   const result = await withTimeout(performanceStore.getRm6X21Travel(), 100); // 5-second timeout
+    //   maxMM.value = result.max;
+    //   pressStatus.value = result.press;
+    //   keyPressTestCount.value++;
+    // } catch (error) {
+    //   console.error('Error or timeout in getRm6X21Travel:', error);
+    //   keyPressTestCount.value = 0;
+    //   testEnabled.value = false;
+    //   maxMM.value = 0;
+    //   pressStatus.value = 0;
+    // }
   }
 });
 
