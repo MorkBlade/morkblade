@@ -1,0 +1,132 @@
+/* styles.css */
+/* 去除默认的内外边距 */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* 设置基本的字体和颜色 */
+html {
+  /* font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; */
+  font-size: 16px;
+  color: #333;
+}
+
+/* 初始化 #app 的样式 */
+#app {
+  min-height: 100vh;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+@font-face {
+  font-family: 'CN Heavy';
+  src: url('@/assets/fonts/SourceHanSansCN-Heavy.otf');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'CN Regular';
+  src: url('@/assets/fonts/SourceHanSansCN-Regular.otf');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'CN oblique';
+  src: url('@/assets/fonts/SourceHanSansCN-oblique.otf');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+body {
+  font-family: 'CN Regular', sans-serif;
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* 标准语法 */
+
+  .el-switch__core .el-switch__inner .is-icon,
+  .el-switch__core .el-switch__inner .is-text {
+    color: #242424;
+  }
+
+  .el-slider.is-vertical .el-slider__runway {
+    margin: 0 3.5px !important;
+    background-color: transparent;
+  }
+  .el-slider__button {
+    display: none;
+  }
+  .el-slider__button.hover,
+  .el-slider__button:hover,
+  .el-slider__button-wrapper.hover,
+  .el-slider__button-wrapper:hover,
+  .el-slider__runway.is-disabled .el-slider__button-wrapper:hover {
+    cursor: default;
+  }
+  .el-slider__runway {
+    background-color: transparent !important;
+  }
+  .el-slider__bar {
+    background-color: rgb(145, 188, 0) !important;
+    border-radius: 20px !important;
+    transition: all 0.1s linear;
+  }
+  .el-color-picker__trigger {
+    width: 30px;
+    height: 30px;
+    border: none !important;
+  }
+  .el-color-picker__color-inner,
+  .el-color-picker__color {
+    border-radius: 50%;
+  }
+
+  .el-color-picker__color {
+    border: none;
+  }
+  .el-color-picker .el-color-picker__icon {
+    display: none;
+  }
+  .IroWheel {
+    width: 150px !important;
+    height: 150px !important;
+    padding: 5px;
+    box-sizing: border-box;
+  }
+  .IroWheelHue {
+    position: static !important;
+  }
+  .IroWheelBorder {
+    border: 3px solid rgb(37, 37, 37) !important;
+  }
+  .IroSlider {
+    width: 150px !important;
+    height: 14px !important;
+    background-image: url('@/assets/images/IroSlider.svg') !important;
+    background-size: cover !important;
+    background-repeat: no-repeat !important;
+  }
+
+  .IroHandle {
+    width: 15px !important;
+    height: 15px !important;
+    top: -13px !important;
+    left: -15px !important;
+  }
+  .IroSliderGradient {
+    top: 3px !important;
+    left: 2.5px !important;
+    width: 144px !important;
+    height: 8px !important;
+  }
+}

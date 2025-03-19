@@ -1,0 +1,154 @@
+// export const APP_MENU = [
+//   { key: 'performance', icon: 'adjustment', text: '性能设置' },
+//   { key: 'lighting', icon: 'lightbulb', text: '灯光RGB设置' },
+//   { key: 'customKey', icon: 'keyboard', text: '键盘键值修改' },
+//   { key: 'highLevelKey', icon: 'grid-view', text: '高级键功能' },
+//   { key: 'macro', icon: 'git-pull-request', text: '宏录制' },
+// ];
+
+export const APP_MENU = {
+  keyboard: [
+    {
+      key: 'performance',
+      text: '性能设置',
+      icon: 'adjustment',
+    },
+    {
+      key: 'advancedFeatures',
+      text: '高级功能',
+      icon: 'animation',
+    },
+    {
+      key: 'lighting',
+      text: '灯光RGB设置',
+      icon: 'lightbulb',
+    },
+    {
+      key: 'customKey',
+      text: '键盘键值修改',
+      icon: 'keyboard',
+    },
+    {
+      key: 'highLevelKey',
+      text: '高级键功能',
+      icon: 'grid-view',
+    },
+    // {
+    //   key: 'macro',
+    //   text: '宏录制',
+    //   icon: 'git-pull-request',
+    // },
+  ],
+  settings: [
+    {
+      key: 'firmware',
+      text: '更新',
+      icon: 'refresh',
+    },
+    // {
+    //   key: 'language',
+    //   text: '语言切换',
+    //   icon: 'translate',
+    // },
+  ],
+  help: [
+    {
+      key: 'faq',
+      text: 'FAQ',
+      icon: 'help-circle',
+    },
+  ],
+};
+
+export const LIGHT_SLEEP_DELAY = [
+  { label: '1 min', id: 1 },
+  { label: '2 min', id: 2 },
+  { label: '3 min', id: 3 },
+  { label: '5 min', id: 4 },
+  { label: '10 min', id: 5 },
+  { label: '15 min', id: 6 },
+  { label: '20 min', id: 7 },
+  { label: '25 min', id: 8 },
+  { label: '30 min', id: 9 },
+  { label: '45 min', id: 10 },
+  { label: '60 min', id: 11 },
+  { label: '120 min', id: 12 },
+  { label: '永不', id: 0 },
+];
+export const LIGHT_DYNAMIC_MODES = [
+  { label: '波纹荡漾', id: 1 },
+  { label: '潮起潮落', id: 2 },
+  { label: '涟漪轻漾', id: 3 },
+  { label: '旋转风暴', id: 4 },
+  { label: '幸运彩虹', id: 5 },
+  { label: '闪耀彩虹', id: 6 },
+  { label: '熠熠生辉', id: 7 },
+  { label: '移动窗格', id: 8 },
+  { label: '波形变换', id: 9 },
+  { label: '移形换影', id: 10 },
+  { label: '正弦曲线', id: 11 },
+  { label: '行云流水', id: 12 },
+  { label: '百花争艳', id: 13 },
+  { label: '斑斓镶嵌', id: 14 },
+  { label: '雨落如注', id: 15 },
+  { label: '跃动不息', id: 16 },
+  { label: '踏雪无痕', id: 17 },
+  { label: '踏雪寻梅', id: 18 },
+  { label: '镭射穿云', id: 19 },
+  { label: '水波荡漾', id: 20 },
+];
+export const KEY_SHAFT = [
+  { id: 1, name: '磁玉pro', maxTravel: 3300, minTravel: 10, src: '/src/assets/images/wanciwang.webp' },
+  { id: 2, name: '万磁王RGB', maxTravel: 3300, minTravel: 10, src: '/src/assets/images/ciyu.webp' },
+  { id: 3, name: '万磁王', maxTravel: 3300, minTravel: 10, src: '/src/assets/images/wanciwang.webp' },
+  { id: 4, name: '磁玉gaming', maxTravel: 3400, minTravel: 10, src: '/src/assets/images/ciyu.webp' },
+  { id: 5, name: '天王磁轴标准版', maxTravel: 3500, minTravel: 10, src: '/src/assets/images/wanciwang.webp' },
+  { id: 6, name: '天王磁轴电竞版', maxTravel: 3400, minTravel: 10, src: '/src/assets/images/ciyu.webp' },
+  { id: 7, name: '万磁王pom', maxTravel: 3400, minTravel: 10, src: '/src/assets/images/ciyu.webp' },
+  { id: 8, name: '磁轴8', maxTravel: 3300, minTravel: 10, src: '/src/assets/images/ciyu.webp' },
+];
+export const HIGH_LEVEL_KEYS = [
+  {
+    buttonText: 'SOCD',
+    description: '单击按键开启持续触发，按住按键为正常触发。',
+    type: 'SOCD',
+  },
+  {
+    buttonText: 'DKS',
+    description: '单个按键实现四种功能:您可以根据4种不同的。',
+    type: 'DKS',
+  },
+  {
+    buttonText: 'MT',
+    description: '按住和单击按键实现不同功能。',
+    type: 'MT',
+  },
+  // {
+  //   buttonText: 'MPT',
+  //   description: '单个按键可在三个不同的深度触发三个不同的按键.',
+  // },
+  // {
+  //   buttonText: 'TGL',
+  //   description: '单击按键开启持续触发，按住按键为正常触发。',
+  // },
+  // {
+  //   buttonText: 'END',
+  //   description: '单击按键开启持续触发，按住按键为正常触发。',
+  // },
+
+  // {
+  //   buttonText: 'RS',
+  //   description: '单击按键开启持续触发，按住按键为正常触发。',
+  // },
+  // {
+  //   buttonText: 'MACRO',
+  //   description: '单击按键开启持续触发，按住按键为正常触发。',
+  // },
+];
+
+export const DKS_MODES = [
+  '后覆盖（后按下的按键会覆盖前一个）',
+  '红框中的按键优先',
+  '橘框中的按键优先',
+  '中性（两个按键都按下都不生效）',
+];

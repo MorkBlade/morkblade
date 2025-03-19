@@ -1,0 +1,411 @@
+<template>
+  <div class="custom-light">
+    <div class="preinstall-light">
+      <p>预设</p>
+      <div class="custom-box">
+        <div
+          class="custom"
+          v-for="(ite, idx) in 9"
+          :key="ite"
+          :class="{ 'is-checked': currentPreset === idx }"
+          @click="changePreinstall(idx)"
+        >
+          <img :src="`/src/assets/images/customlight${idx + 1}.svg`" alt="" />
+          <span class="color-text">{{ customList[idx] }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="color-picker-box">
+      <div class="color-info">
+        <div class="rgb-values">
+          <div class="rgb-input">
+            <span>R</span>
+            <input type="number" v-model.number="rgb.r" min="0" max="255" @input="updateFromRgb" />
+          </div>
+          <div class="rgb-input">
+            <span>G</span>
+            <input type="number" v-model.number="rgb.g" min="0" max="255" @input="updateFromRgb" />
+          </div>
+          <div class="rgb-input">
+            <span>B</span>
+            <input type="number" v-model.number="rgb.b" min="0" max="255" @input="updateFromRgb" />
+          </div>
+        </div>
+        <div class="scale-values">
+          <div class="color-preview" :style="{ backgroundColor: selectedColor }"></div>
+          <input type="text" v-model="selectedColor" @input="updateColor" />
+        </div>
+      </div>
+      <div class="color-wheel-container">
+        <div ref="colorWheelRef" class="color-wheel"></div>
+        <svg>
+          <defs>
+            <g id="handle">
+              <!-- 手柄的svg内容开始 -->
+              <!-- <rect x="0" y="0" width="6" height="6" r="2" fill="none" stroke-width="2" stroke="#fff"></rect> -->
+              <!-- <rect x="0" y="0" width="6" height="6" r="2" fill="none" stroke-width="2" stroke="#fff"></rect> -->
+              <circle cx="6" cy="6" r="6" fill="none" stroke-width="1.5" stroke="#fff"></circle>
+              <!-- <circle cx="6" cy="6" r="4" fill="none" stroke-width="2" stroke="#fff"></circle> -->
+              <!-- 手柄的svg内容结束 -->
+              <!-- <image href="@/assets/images/luminance_btn.svg" x="0" y="0" width="20" height="20" /> -->
+            </g>
+          </defs>
+        </svg>
+      </div>
+      <div class="color-blocks">
+        <div
+          v-for="color in colorList"
+          :key="color"
+          :style="{ backgroundColor: color }"
+          @click="changeColor(color)"
+        ></div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import iro from '@jaames/iro';
+import services from '@/services/index';
+import { useKeyboardStore, useLightSettingStore } from '@/stores';
+import preInstallColorList from '@/configs/customColor/index.js';
+
+const emit = defineEmits(['changeCustomLight']);
+
+const keyboardStore = useKeyboardStore();
+const lightSettingStore = useLightSettingStore();
+const { currentLayoutData } = storeToRefs(keyboardStore);
+const { currentPreset } = storeToRefs(lightSettingStore);
+// const checked = ref(null);
+const customList = ['彩虹', '海浪', '炼狱', '迈阿密', '夏日微风', '交流发电机', '粘土', 'Lekker', 'Love'];
+const colorList = ['#080cfe', '#ff0000', '#ffff00', '#fe00e9', '#00fe2f', '#fe3602', '#ffffff', '#1481fe', '#00ffd8'];
+
+const colorWheelRef = ref(null);
+const selectedColor = ref('#ffffa8');
+const rgb = ref({ r: 255, g: 255, b: 168 });
+let colorPicker = ref(null);
+
+// 初始化色轮
+onMounted(() => {
+  if (colorWheelRef.value) {
+    colorPicker = new iro.ColorPicker(colorWheelRef.value, {
+      width: 165,
+      color: selectedColor.value,
+      handleRadius: 8, // 手柄大小
+      // 设置手柄属性
+      handleProps: {
+        className: 'custom-handle', // 添加自定义类名
+      },
+      handleSvg: '#handle',
+      layout: [
+        { component: iro.ui.Wheel }, // 色轮
+        { component: iro.ui.Slider, options: { sliderType: 'value' } }, // 亮度滑块
+      ],
+    });
+
+    // 监听颜色变化事件
+    colorPicker.on('color:change', (color) => {
+      selectedColor.value = color.hexString;
+      rgb.value = color.rgb;
+    });
+  }
+});
+
+// 从RGB输入更新色轮
+const updateFromRgb = () => {
+  // 确保RGB值在有效范围内
+  rgb.value.r = Math.min(255, Math.max(0, rgb.value.r));
+  rgb.value.g = Math.min(255, Math.max(0, rgb.value.g));
+  rgb.value.b = Math.min(255, Math.max(0, rgb.value.b));
+
+  const newColor = `rgb(${rgb.value.r}, ${rgb.value.g}, ${rgb.value.b})`;
+  if (colorPicker) {
+    colorPicker.color.set(newColor);
+    selectedColor.value = colorPicker.color.hexString;
+  }
+  emit('changeCustomLight', rgb.value);
+};
+
+// 验证颜色值是否有效
+const isValidColor = (color) => {
+  try {
+    // 尝试创建一个新的 iro.Color 实例
+    new iro.Color(color);
+    return true;
+  } catch (e) {
+    return false;
+  }
+};
+
+// 更新手动输入的颜色值
+const updateColor = (event) => {
+  let inputColor = event.target.value;
+
+  // 如果输入的不是以#开头，且长度为6位，则自动添加#
+  if (!inputColor.startsWith('#') && inputColor.length === 6) {
+    inputColor = '#' + inputColor;
+    selectedColor.value = inputColor; // 更新显示的值
+  }
+
+  // 只有当输入是完整的颜色值时才更新色轮
+  if (inputColor.length === 7 && isValidColor(inputColor)) {
+    colorPicker.color.set(inputColor);
+    const color = colorPicker.color;
+    rgb.value = {
+      r: Math.round(color.rgb.r),
+      g: Math.round(color.rgb.g),
+      b: Math.round(color.rgb.b),
+    };
+    emit('changeCustomLight', rgb.value);
+  }
+};
+
+// 组件卸载时销毁实例
+onBeforeUnmount(() => {
+  if (colorPicker) {
+    colorPicker.off('color:change');
+    colorPicker = null;
+  }
+});
+
+const changeColor = (clickColor) => {
+  selectedColor.value = clickColor;
+  colorPicker.color.set(clickColor);
+  const color = colorPicker.color;
+  rgb.value = {
+    r: Math.round(color.rgb.r),
+    g: Math.round(color.rgb.g),
+    b: Math.round(color.rgb.b),
+  };
+  emit('changeCustomLight', rgb.value);
+};
+
+const changePreinstall = async (idx) => {
+  lightSettingStore.setCurrentPreset(idx);
+
+  const colorUpdates = {};
+  const apiCalls = [];
+
+  // 先收集所有颜色更新
+  Object.entries(preInstallColorList[idx]).forEach(([key, color]) => {
+    const rgbMatch = color.match(/rgb\((\d+),(\d+),(\d+)\)/);
+    if (rgbMatch) {
+      const [_, r, g, b] = rgbMatch;
+      // 存储颜色更新
+      colorUpdates[key] = `rgb(${r}, ${g}, ${b})`;
+      // 收集 API 调用
+      apiCalls.push({
+        key: Number(key),
+        r: Number(r),
+        g: Number(g),
+        b: Number(b),
+      });
+    }
+  });
+
+  // 先一次性更新 store，立即更新 UI
+  lightSettingStore.$patch((state) => {
+    state.keyColors = {
+      ...state.keyColors,
+      ...colorUpdates,
+    };
+  });
+
+  // 然后并行执行所有 API 调用
+  debounceApiCalls(apiCalls);
+};
+
+let debounceTimer = null;
+const debounceApiCalls = (apiCalls) => {
+  // 清除之前的定时器
+  if (debounceTimer) {
+    clearTimeout(debounceTimer);
+  }
+
+  // 设置新的定时器，延迟500ms执行
+  debounceTimer = setTimeout(async () => {
+    await Promise.all(apiCalls.map((params) => services.setCustomLighting(params)));
+    debounceTimer = null;
+  }, 200);
+};
+
+onBeforeUnmount(() => {
+  if (debounceTimer) {
+    clearTimeout(debounceTimer);
+    debounceTimer = null;
+  }
+});
+</script>
+
+<style scoped lang="scss">
+.custom-light {
+  display: flex;
+
+  .preinstall-light {
+    width: 270px;
+    height: 290px;
+    box-sizing: border-box;
+    padding: 0 10px 0 20px;
+    background-image: url('@/assets/images/static_light_bg.svg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    overflow: hidden;
+
+    p {
+      font-size: 15px;
+      font-family: 'CN Heavy';
+      color: #ccc;
+      text-align: center;
+      margin: 15px 0 10px 0;
+    }
+
+    .custom-box {
+      display: flex;
+      flex-wrap: wrap;
+
+      .custom {
+        width: 70px;
+        height: 70px;
+        margin: 0 10px 10px 0;
+        font-size: 10px;
+        padding-top: 10px;
+        margin-bottom: 10px;
+        font-family: 'CN Heavy';
+        color: #fff;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        box-sizing: border-box;
+        cursor: pointer;
+        background-image: url('@/assets/images/light_item.svg');
+        background-size: cover;
+        background-repeat: no-repeat;
+
+        img {
+          width: 30px;
+          height: 30px;
+          object-fit: fill;
+        }
+
+        span {
+          margin-top: 5px;
+        }
+      }
+
+      .is-checked {
+        background-image: url('@/assets/images/checked_light.svg');
+      }
+    }
+  }
+
+  .color-picker-box {
+    width: 590px;
+    height: 290px;
+    margin: 0 30px;
+    padding: 0px 10px 0 20px;
+    display: flex;
+    box-sizing: border-box;
+    font-family: 'CN Heavy';
+    background-image: url('@/assets/images/dynamic_bg.svg');
+    background-size: cover;
+    background-repeat: no-repeat;
+
+    .rgb-values {
+      margin: 60px 0 0 70px;
+
+      .rgb-input {
+        width: 100px;
+        height: 36px;
+        display: flex;
+        margin-bottom: 10px;
+        align-items: center;
+        background-image: url('@/assets/images/rgb.svg');
+        background-size: cover;
+        background-repeat: no-repeat;
+
+        span {
+          margin: 0 18px;
+          font-size: 13px;
+          color: #ffffff;
+          font-family: 'CN Heavy';
+        }
+        input {
+          width: 25px;
+          font-size: 10px;
+          margin-left: 12px;
+          color: #cccccc;
+          text-align: center;
+          font-family: 'CN Heavy';
+          background-color: transparent;
+          border: none;
+          outline: none;
+        }
+        /* For Webkit browsers (Chrome, Safari) */
+        input[type='number']::-webkit-inner-spin-button,
+        input[type='number']::-webkit-outer-spin-button {
+          -webkit-appearance: none;
+          margin: 0;
+        }
+
+        /* For Firefox */
+        input[type='number'] {
+          -moz-appearance: textfield; /* Firefox */
+        }
+      }
+    }
+
+    .scale-values {
+      width: 120px;
+      height: 36px;
+      margin-left: 50px;
+      display: flex;
+      align-items: center;
+      background-image: url('@/assets/images/scale_values.svg');
+      background-size: cover;
+      background-repeat: no-repeat;
+
+      .color-preview {
+        width: 15px;
+        height: 15px;
+        margin: 0 15px;
+        border-radius: 50%;
+      }
+      input {
+        width: 50px;
+        font-size: 10px;
+        margin-left: 10px;
+        color: #ffffff;
+        text-align: center;
+        font-family: 'CN Heavy';
+        background-color: transparent;
+        border: none;
+        outline: none;
+      }
+    }
+
+    .color-wheel-container {
+      width: 152px;
+      margin: 38px 50px 0 50px;
+    }
+
+    .color-blocks {
+      width: 160px;
+      margin-top: 90px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      align-content: flex-start;
+
+      div {
+        width: 20px;
+        height: 20px;
+        margin-right: 20px;
+        margin-bottom: 20px;
+        border-radius: 50%;
+        cursor: pointer;
+      }
+    }
+  }
+}
+</style>

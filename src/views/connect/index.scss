@@ -1,0 +1,94 @@
+.connect {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-image: url('@/assets/images/banner.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100% 100%;
+}
+
+.connect-header {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  margin-top: 30px;
+}
+
+.connect-logo {
+  width: 228px;
+  height: 25px;
+  margin-left: 30px;
+  cursor: pointer;
+}
+
+.connect-operate {
+  margin-right: 40px;
+}
+
+.connect-operate button {
+  width: 58px;
+  height: 35px;
+  color: #fff;
+  background-color: #4c4e4f;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.connect-operate span {
+  margin-left: 40px;
+  color: #fff;
+  font-weight: 400;
+  font-size: 18px;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 6px;
+  cursor: pointer;
+  text-decoration-color: yellow;
+}
+
+.connect-operate span:last-child {
+  text-decoration: none;
+}
+
+.connect-title {
+  position: relative;
+  z-index: 2;
+  margin-top: 60px;
+  text-align: center;
+}
+
+.connect-title span {
+  color: #fff;
+  font-size: 40px;
+  // font-weight: 500;
+  font-family: PingFang;
+  letter-spacing: 3px;
+}
+
+.connect-title h1 {
+  position: relative;
+  margin-top: 5px;
+  color: #fff;
+  font-weight: 900;
+  font-size: 91px;
+  font-family: ArialBlack;
+  letter-spacing: 3px;
+}
+
+.connect-title p {
+  margin-top: 10px;
+  color: #ffc800;
+  font-weight: 500;
+  font-size: 30px;
+  font-family: PingFang;
+  letter-spacing: 3px;
+  text-decoration: underline;
+  cursor: pointer;
+  text-decoration-style: dashed;
+  text-decoration-color: #ffc800;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 10px;
+}

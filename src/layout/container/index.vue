@@ -1,0 +1,53 @@
+<template>
+  <div class="container">
+    <Navigation />
+    <Transition name="fade" mode="out-in">
+      <div class="content-wrapper">
+        <Transition name="fade">
+          <Keyboard v-if="!isSettingsRoute" key="keyboard" />
+        </Transition>
+        <!-- 路由视图的过渡 -->
+        <router-view v-slot="{ Component }">
+          <Transition name="fade" mode="out-in">
+            <div class="view-wrapper" :key="route.path">
+              <component :is="Component" />
+            </div>
+          </Transition>
+        </router-view>
+      </div>
+    </Transition>
+  </div>
+</template>
+
+<script setup>
+import Navigation from './navigation/index.vue';
+const Keyboard = defineAsyncComponent(() => import('@/keyboard/index.vue'));
+const route = useRoute();
+const isSettingsRoute = computed(() => route.path === '/settings');
+</script>
+
+<style scoped lang="scss">
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .content-wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>

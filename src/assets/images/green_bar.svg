@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="4" height="22" viewBox="0 0 4 22">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #91bc00;
+        fill-rule: evenodd;
+      }
+    </style>
+  </defs>
+  <path id="矩形_1" data-name="矩形 1" class="cls-1" d="M1.825,0.158a2,2,0,0,1,2,2v18a2,2,0,0,1-4,0v-18A2,2,0,0,1,1.825.158Z"/>
+</svg>
