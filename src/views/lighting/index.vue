@@ -120,7 +120,7 @@ const changeMenu = (idx) => {
       lightSettingStore.updateEnterCustom(true);
       break;
     default:
-      // formData.type = 'static';
+      formData.type = 'static';
       lightSettingStore.updateEnterCustom(false);
       break;
   }

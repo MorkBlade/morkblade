@@ -1,6 +1,6 @@
 <template>
   <div class="axis-setting">
-    <mCarousel :carouselData="KEY_SHAFT" @handleSave="handleSaveAxis" />
+    <mCarousel :carouselData="KEY_SHAFT" :btnText="'应用轴体'" @handleSave="handleSaveAxis" />
   </div>
 </template>
 

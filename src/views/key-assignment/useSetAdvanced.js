@@ -112,16 +112,33 @@ const useSetAdvanced = () => {
 
   onMounted(async () => {
     resetKeys();
-    const { maxTouchTravel: max, minTouchTravel: min, precision: step } = await performanceStore.getMaxMinTravel();
-    minTouchTravel.value = min;
-    maxTouchTravel.value = max;
-    precision.value = step;
+    try {
+      const travelData = await performanceStore.getMaxMinTravel();
+      if (travelData) {
+        const { maxTouchTravel: max, minTouchTravel: min, precision: step } = travelData;
+        minTouchTravel.value = min;
+        maxTouchTravel.value = max;
+        precision.value = step;
+      } else {
+        console.error('getMaxMinTravel returned null or undefined');
+        // Set default values or handle the error as needed
+        minTouchTravel.value = 0;
+        maxTouchTravel.value = 4;
+        precision.value = 0;
+      }
+    } catch (error) {
+      console.error('Error fetching max/min travel:', error);
+      // Handle the error, possibly setting default values
+      minTouchTravel.value = 0;
+      maxTouchTravel.value = 4;
+      precision.value = 0;
+    }
   });
 
   // 计算当前的高级键
   const advancedItems = computed(() => {
     const value = [];
-    console.log('advancedItems:>>>>', highLevelKeyStore.highLevelKeys);
+    // console.log('advancedItems:>>>>', highLevelKeyStore.highLevelKeys);
     const keys = Object.keys(highLevelKeyStore.highLevelKeys);
     keys.forEach((keyId) => {
       // 显示的文案

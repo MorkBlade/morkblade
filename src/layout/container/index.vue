@@ -5,7 +5,7 @@
       <div class="content-wrapper">
         <Transition name="fade">
           <KeepAlive>
-            <Keyboard v-if="!isSettingsRoute" key="keyboard" />
+            <Keyboard v-if="!isNotShow" key="keyboard" />
           </KeepAlive>
         </Transition>
         <!-- 路由视图的过渡 -->
@@ -25,7 +25,9 @@
 import Navigation from './navigation/index.vue';
 const Keyboard = defineAsyncComponent(() => import('@/keyboard/index.vue'));
 const route = useRoute();
-const isSettingsRoute = computed(() => route.path === '/settings');
+const isNotShow = computed(() => {
+  return route.path === '/settings' || route.path === '/connect' || route.path === '/macro' || route.path === '/';
+});
 </script>
 
 <style scoped lang="scss">

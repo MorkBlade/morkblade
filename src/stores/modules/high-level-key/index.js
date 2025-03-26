@@ -93,8 +93,6 @@ const useHighLevelKeyStore = defineStore('highLevelKey', {
 
     async getRS(keyValue) {
       const result = await services.getRS(keyValue);
-      console.log('getRSgetRSgetRS', result);
-      // const dksAll = await services.getDksAll(keyValue);
       this.highLevelKeys[keyValue] = { keyValue, type: 'rs', dks: { ...result } };
     },
     async setRS({ key, dks }) {

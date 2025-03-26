@@ -188,6 +188,7 @@ const usePerformanceStore = defineStore('performance', {
     // 获取行程校准的数据
     async getRm6X21Calibration(keyboard) {
       const result = await services.getRm6X21Calibration();
+      // console.log('getRm6X21Calibration log res', result);
       for (let y = 0; y < keyboard.length; y++) {
         if (!this.calibrations[y]) this.calibrations[y] = [];
         for (let x = 0; x < keyboard[y].length; x++) {

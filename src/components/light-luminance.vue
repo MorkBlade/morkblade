@@ -50,6 +50,7 @@ import horizontalSlider from './horizontal-slider.vue';
 const formData = defineModel();
 const emits = defineEmits(['changeSleepDelay', 'changeLuminance', 'changeSpeed']);
 const defaultHeight = ref(0);
+console.log('asdfasdas', formData.value.sleepDelay);
 const selectedId = ref(formData.value.sleepDelay);
 // const luminanceVal = ref(0);
 // const speedVal = ref(0);
@@ -59,11 +60,13 @@ const selectedId = ref(formData.value.sleepDelay);
 const toggleDropdown = () => {
   defaultHeight.value = defaultHeight.value ? 0 : 200;
 };
-// watch(
-//   () => formData.value,
-//   (newVal) => {},
-//   { deep: true },
-// );
+watch(
+  () => formData.value.sleepDelay,
+  (newVal) => {
+    selectedId.value = newVal;
+  },
+  { deep: true },
+);
 
 const selectItem = (item) => {
   if (!item) {

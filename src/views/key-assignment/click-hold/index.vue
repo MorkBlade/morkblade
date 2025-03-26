@@ -4,15 +4,15 @@
       <div class="click-box">
         <span>单击:</span>
         <div class="key-box" @mouseenter="onMouseEn('click')" @mouseleave="onMouseLe('click')">
-          <p :class="{ 'hover-bg': !mtInfo.dks[0] }">{{ keyText[0] }}</p>
+          <p :class="{ 'hover-bg': !mtInfo.dks[0] }" @mouseup="KeydropFirst">{{ keyText[0] }}</p>
           <div class="del_btn" @click="onClick" v-show="mtInfo.dks[0] && clickDelIndex === 0"></div>
         </div>
       </div>
       <div class="hold-box">
         <span>长按:</span>
         <div class="key-box" @mouseenter="onMouseEn" @mouseleave="onMouseLe">
-          <p :class="{ 'hover-bg': !mtInfo.dks[1] }">{{ keyText[1] }}</p>
-          <div class="del_btn" @click="onLongPress" v-show="mtInfo.dks[0] && longDelIndex === 0"></div>
+          <p :class="{ 'hover-bg': !mtInfo.dks[1] }" @mouseup="KeydropSec">{{ keyText[1] }}</p>
+          <div class="del_btn" @click="onLongPress" v-show="mtInfo.dks[1] && longDelIndex === 0"></div>
         </div>
       </div>
       <div class="save-btn" @click="handleKeyTypeChange">
@@ -112,6 +112,14 @@ const handleMtKey = (keyVal) => {
   } else if (!mtInfo.value.dks[1]) {
     mtInfo.value.dks[1] = keyVal;
   }
+};
+
+const KeydropFirst = () => {
+  if (!mtInfo.value.dks[0]) mtInfo.value.dks[0] = keyboardStore.selectKey.value;
+};
+
+const KeydropSec = () => {
+  if (!mtInfo.value.dks[1]) mtInfo.value.dks[1] = keyboardStore.selectKey.value;
 };
 
 const save = async () => {

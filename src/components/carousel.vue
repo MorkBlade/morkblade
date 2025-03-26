@@ -8,7 +8,7 @@
         :style="{ transform: `translateX(${offsetVal}px)` }"
       >
         <div
-          v-for="(item, index) in carouselData"
+          v-for="(item, index) in localCarouselData"
           :key="item.src"
           :class="{ selected: currentIdx === index }"
           :data-id="item.id"
@@ -20,7 +20,7 @@
     </div>
     <div class="right-arrow" @click="nextClick()"></div>
     <div class="save-btn-box">
-      <saveConfigBtn :btnText="props.btnText" @saveConfig="saveConfig" />
+      <saveConfigBtn :btnText="btnText" @saveConfig="saveConfig" />
     </div>
   </div>
 </template>
@@ -28,7 +28,7 @@
 <script setup>
 import saveConfigBtn from './save-config-btn.vue';
 
-const props = defineProps({
+const { carouselData, btnText } = defineProps({
   carouselData: {
     type: Array,
     default: [],
@@ -43,8 +43,8 @@ const SLIDE_WIDTH = 175;
 const currentIdx = ref(6);
 const offsetVal = ref(0);
 const noTransition = ref(false);
-const originalLength = computed(() => props.carouselData.length);
-const carouselData = ref([...props.carouselData.slice(-3), ...props.carouselData, ...props.carouselData.slice(0, 3)]);
+const originalLength = computed(() => carouselData.length);
+const localCarouselData = ref([...carouselData.slice(-3), ...carouselData, ...carouselData.slice(0, 3)]);
 
 // console.log(carouselData.value.length);
 let flag = false;

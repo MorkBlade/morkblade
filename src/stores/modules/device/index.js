@@ -11,7 +11,8 @@ const state = {
   connectDeviceNum: 0,
   connectDeviceStatus: false,
   requestDeviceStatus: null,
-  isConnecting: false, // 连接状态锁
+  updateSuc: false,
+  isDeviceConnected: false, // 添加设备连接状态
 };
 const useDeviceStore = defineStore('device', {
   state: () => state,
@@ -23,19 +24,7 @@ const useDeviceStore = defineStore('device', {
 
   actions: {
     async connectDevice() {
-      if (this.isConnecting) {
-        return this.connectDeviceStatus;
-      }
-      console.log('connectDeviceconnectDeviceconnectDevice');
       try {
-        if (this.device?.id) {
-          try {
-            await services.close(this.device.id);
-          } catch (error) {
-            console.log('关闭设备出错:', error);
-          }
-        }
-
         services.on('GETDEVICEINFO', (requestDeviceStatus) => {
           this.requestDeviceStatus = requestDeviceStatus;
         });
@@ -57,6 +46,7 @@ const useDeviceStore = defineStore('device', {
             if (this.connectDeviceNum === 2 && device) {
               setTimeout(async () => {
                 await services.reconnection(device, this.device.id);
+                console.log('重连成功');
                 this.connectDeviceNum = 0;
               }, 100);
             }
@@ -64,11 +54,10 @@ const useDeviceStore = defineStore('device', {
         });
         // 监听设备拔插
         if (devices.length > 0) {
-          this.isConnecting = true;
           const [device] = devices;
           this.devices = devices;
-          this.device = device;
           if (device) {
+            console.log('初始化设备');
             await services.init(device.id);
             this.connectDeviceStatus = true;
             return true;

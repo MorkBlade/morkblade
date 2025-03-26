@@ -3,7 +3,10 @@
     class="key"
     :class="keyItem !== 1 ? 'key' + String(keyboardLayout[rowIndex][colIndex]).replace('.', '_') : ''"
     :style="active ? { borderColor: '#91bc00' } : ''"
-    @click="onChecked(keyItem.key, rowIndex, colIndex)"
+    @click.stop="onChecked(keyItem.key, rowIndex, colIndex)"
+    @dragenter.prevent
+    @dragover.prevent
+    @mouseup="(e) => Keydrop(e, rowIndex, colIndex)"
   >
     <p class="top-key">{{ byteToKey[keyItem.value] }}</p>
     <!-- <p class="center-key" v-if="!singleTravel && !rtReleaseTravel && !rtPressTravel">{{ byteToKey[keyItem.key] }}</p> -->
@@ -21,7 +24,15 @@
     <div class="advanced-key-box" v-if="route.path === '/key-assignment'">
       <span class="advanced-tag" v-if="advancedTag">{{ advancedTag }}</span>
     </div>
-    <div class="color-key" v-if="lightSettingStore.enterCustom" :style="{ backgroundColor: currentKeyColor }">
+    <div
+      class="color-key"
+      v-if="lightSettingStore.enterCustom"
+      :style="{ backgroundColor: currentKeyColor }"
+      @mousedown.stop="(e) => startMouseDown(e, keyItem.key)"
+      @mouseenter="handleMouseOver(keyItem.key)"
+      @mouseleave="onMouseLeave"
+      @mouseup.stop="startMouseUp"
+    >
       <p class="top-key" v-if="singleTravel || rtReleaseTravel || rtPressTravel">{{ byteToKey[keyItem.value] }}</p>
     </div>
     <img :src="VeriftIcon" class="verify_icon" v-if="route.path === '/key-calibration' && verifySuc" />
@@ -64,6 +75,7 @@ const currentPerformanceData = computed(() => performanceStore.value);
 const selectedKey = reactive([]);
 const route = useRoute();
 const isShow = ref(false);
+const inChangLight = ref(false);
 
 const keyboardLayout = reactive([
   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
@@ -77,6 +89,19 @@ const keyboardLayout = reactive([
 emitter.on('in-the-where', ({ value }) => {
   currentModel.value = value;
 });
+
+watch(
+  () => route.path,
+  (newPath) => {
+    if (newPath === '/performance') {
+      isShow.value = true;
+    } else {
+      isShow.value = false;
+    }
+    if (newPath !== 'lighting') lightSettingStore.updateEnterCustom(false);
+  },
+  { immediate: true },
+);
 
 const currentKeyColor = computed(() => {
   return lightSettingStore.getKeyColor(keyItem.key) || 'rgba(255, 255, 255,0)';
@@ -163,30 +188,46 @@ const axisVal = computed(() => {
   return null;
 });
 
-const onChecked = async (key, rowIndex, colIndex) => {
-  // console.log(key, lightSettingStore.currentColor);
-  const result = await services.setCustomLighting({ key, ...lightSettingStore.currentColor });
-  const { R, G, B } = result;
-  const color = `rgb(${R}, ${G}, ${B})`;
+const changeKeyLightColor = async (key) => {
+  const { r, g, b } = lightSettingStore.currentColor;
+  const color = `rgb(${r}, ${g}, ${b})`;
   lightSettingStore.setKeyColor(key, color);
-  // console.log('onChecked set custom light', result);
+  await services.setCustomLighting({ key, ...lightSettingStore.currentColor });
+};
+
+const onChecked = async () => {
+  // console.log('onCheckedonCheckedonChecked');
   if (route.path !== '/lighting' || (route.path == '/lighting' && !lightSettingStore.enterCustom)) {
     emit('click');
   }
 };
 
-watch(
-  () => route.path,
-  (newPath) => {
-    if (newPath === '/performance') {
-      isShow.value = true;
-    } else {
-      isShow.value = false;
-    }
-    if (newPath !== 'lighting') lightSettingStore.updateEnterCustom(false);
-  },
-  { immediate: true },
-);
+const startMouseDown = (e, key) => {
+  console.log('xxxxxx');
+  if (e.button === 0) {
+    console.log('asda');
+    keyboardStore.inChangLight = true;
+    changeKeyLightColor(key);
+  }
+};
+
+const handleMouseOver = (key) => {
+  if (keyboardStore.inChangLight) {
+    changeKeyLightColor(key);
+  }
+};
+
+const startMouseUp = (e) => {
+  if (e.button === 0) {
+    keyboardStore.inChangLight = false;
+  }
+};
+
+const Keydrop = async (e, rowIndex, colIndex) => {
+  if (!keyboardStore.isDraging) return;
+  e.preventDefault();
+  keyboardStore.updateKey({ colIndex: colIndex, rowIndex: rowIndex });
+};
 </script>
 
 <style scoped lang="scss">

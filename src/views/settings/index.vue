@@ -78,23 +78,27 @@
         </div>
         <div class="firmware-update">
           <span>固件更新:</span>
-          <div class="cover-list" :class="selectedFirItem ? 'is-selected' : ''" @click="toggleDropdown('firmware')">
+          <div
+            class="cover-list"
+            :class="selectedFirItem !== null ? 'is-selected' : ''"
+            @click="toggleDropdown('firmware')"
+          >
             <img
               class="change-icon"
-              :src="selectedFirItem ? '/src/assets/images/changed.svg' : '/src/assets/images/change.svg'"
+              :src="selectedFirItem !== null ? '/src/assets/images/changed.svg' : '/src/assets/images/change.svg'"
               alt=""
             />
-            <span>{{ selectedFirItem || '请选择' }}</span>
+            <span>{{ firmwareList[selectedFirItem] || '请选择' }}</span>
             <img
               class="down-icon"
-              :src="selectedFirItem ? '/src/assets/images/down_icon.svg' : '/src/assets/images/down_icon2.svg'"
+              :src="selectedFirItem !== null ? '/src/assets/images/down_icon.svg' : '/src/assets/images/down_icon2.svg'"
             />
             <div class="drop-list" :style="{ height: `${firmwareDefHeight}px` }">
               <ul>
                 <li
                   v-for="(ite, idx) in firmwareList"
                   :key="ite"
-                  :class="{ 'checked-item': ite == selectedFirItem }"
+                  :class="{ 'checked-item': idx == selectedFirItem }"
                   @click.stop="selectItem(idx, 'firmware')"
                 >
                   {{ ite }}
@@ -149,30 +153,46 @@
       </div>
     </div>
   </div>
-  <mDialog v-model:isShow="isShow" @sure="onSure" @cancel="onCancel" />
+  <mDialog
+    v-model:isShow="isShow"
+    :isUpdate="isUpdate"
+    :progress="progress"
+    :updateRes="updateRes"
+    @sure="onSure"
+    @cancel="onCancel"
+  />
 </template>
 
 <script setup>
 import { useAppStore, useDeviceStore, usePerformanceStore } from '@/stores';
 import mDialog from '@/components/dialog.vue';
 
+import services from '@/services/index.js';
+
+const router = useRouter();
 const appStore = useAppStore();
 const deviceStore = useDeviceStore();
 const performanceStore = usePerformanceStore();
 
-const KeyboardSN = computed(() => appStore.baseInfo?.KeyboardSN);
-const appVersion = computed(() => appStore.baseInfo?.appVersion);
-
 const RateDefHeight = ref(0); //高度
 const firmwareDefHeight = ref(0); //高度
 const selectedRateItem = ref('');
-const selectedFirItem = ref('');
+const selectedFirItem = ref(null);
 const isShow = ref(false);
+const isUpdate = ref(false);
 const curClickBtn = ref(null);
 
 // 按钮状态
 const restBtnStatus = ref(false);
 const updateBtnStatus = ref(false);
+const progress = ref(0);
+const updateRes = ref(null);
+
+const urlList = ['/api/update_esports.bin', '/api/update_highlight.bin', '/api/update_beta.bin'];
+
+const KeyboardSN = computed(() => appStore.baseInfo?.KeyboardSN);
+const appVersion = computed(() => appStore.baseInfo?.appVersion);
+const keyboardRunMode = computed(() => appStore.baseInfo?.KeyboardRunMode);
 
 onMounted(async () => {
   const rate = await performanceStore.getRateOfReturn();
@@ -196,10 +216,10 @@ const firmwareList = computed(() => {
 const toggleDropdown = (keyCode) => {
   switch (keyCode) {
     case 'firmware':
-      firmwareDefHeight.value = firmwareDefHeight.value ? 0 : 400;
+      firmwareDefHeight.value = firmwareDefHeight.value ? 0 : 135;
       break;
     default:
-      RateDefHeight.value = RateDefHeight.value ? 0 : 400;
+      RateDefHeight.value = RateDefHeight.value ? 0 : 135;
       break;
   }
 };
@@ -209,7 +229,7 @@ const selectItem = (idx, keyCode) => {
 
   switch (keyCode) {
     case 'firmware':
-      selectedFirItem.value = firmwareList.value[idx];
+      selectedFirItem.value = idx;
       firmwareDefHeight.value = 0;
       break;
     default:
@@ -221,6 +241,7 @@ const selectItem = (idx, keyCode) => {
 };
 
 const recoverRate = () => {
+  isUpdate.value = false;
   restBtnStatus.value = false;
   isShow.value = true;
   curClickBtn.value = 'rest';
@@ -236,6 +257,7 @@ const onMouseEnter = (keyCode) => {
       break;
   }
 };
+
 const onMouseLeave = (keyCode) => {
   switch (keyCode) {
     case 'firmware':
@@ -248,23 +270,83 @@ const onMouseLeave = (keyCode) => {
 };
 
 const updateFirware = () => {
+  updateRes.value = null;
+  isUpdate.value = true;
   updateBtnStatus.value = false;
   isShow.value = true;
   curClickBtn.value = 'update';
 };
 
-const onSure = async () => {
-  isShow.value = false;
-  // selectedRateItem.value = RateOfReturnList.value[0];
-  // performanceStore.setRateOfReturn(0);
+const onSure = async (keyCode) => {
   if (curClickBtn.value === 'rest') {
     await deviceStore.factoryDataReset();
   } else {
+    console.log('asdasdasd', keyCode);
+    if (keyCode === 'enterBoot') {
+      toBoot();
+    } else if (keyCode === 'reconnect') {
+      reconnect();
+    } else if (keyCode === 'update' && keyboardRunMode.value !== 255) {
+      getFirmWarePack(urlList[selectedFirItem.value]);
+    }
   }
   curClickBtn.value = null;
 };
+
 const onCancel = () => {
   isShow.value = false;
+};
+
+const toBoot = async () => {
+  await services.toBoot();
+};
+
+const reconnect = async () => {
+  await deviceStore.connectDevice();
+};
+
+const getFirmWarePack = async (url) => {
+  fetch(url)
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.arrayBuffer();
+    })
+    .then((arrayBuffer) => {
+      const blob = new Blob([arrayBuffer], { type: 'application/octet-stream' });
+
+      const reader = new FileReader();
+      reader.onload = async function (e) {
+        const resultArrayBuffer = reader.result;
+        try {
+          const result = await services.updateBin(resultArrayBuffer, (data) => {
+            const { current, total } = data;
+            progress.value = parseFloat(((current / total) * 100).toFixed(2));
+            console.log('current and total:>>>', current / total);
+          });
+          console.log('update suc-------------> ', result);
+          updateRes.value = true;
+          deviceStore.updateSuc = true;
+          setTimeout(() => {
+            router.push({
+              path: '/key-calibration',
+              replace: true,
+            });
+          }, 2000);
+        } catch (error) {
+          console.log('update failed----------->', error);
+          updateRes.value = false;
+        }
+        // 假设 updateFile.raw 是一个 Blob 对象
+        // updateFile = { raw: blob };
+        // console.log(updateFile.raw);
+      };
+      reader.readAsArrayBuffer(blob);
+    })
+    .catch((error) => {
+      console.error('Error fetching the .bin file:', error);
+    });
 };
 </script>
 
@@ -415,6 +497,7 @@ const onCancel = () => {
       padding-right: 5px;
       overflow-y: scroll;
       transition: height 0.3s ease;
+      background-color: #000;
 
       ul {
         list-style-type: none;

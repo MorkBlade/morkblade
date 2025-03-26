@@ -23,6 +23,11 @@ const routes = [
     component: () => import('@/views/key-assignment/index.vue'),
   },
   {
+    path: '/macro',
+    name: 'macro',
+    component: () => import('@/views/macro/index.vue'),
+  },
+  {
     path: '/lighting',
     name: 'lighting',
     component: () => import('@/views/lighting/index.vue'),
@@ -44,6 +49,6 @@ const router = createRouter({
   routes,
 });
 
-createRouteGuard(router);
+// createRouteGuard(router);
 
 export default router;

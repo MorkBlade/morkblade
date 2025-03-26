@@ -18,7 +18,7 @@
     </div>
     <div class="tip-box">
       <img src="@/assets/images/warn_icon.svg" alt="" />
-      <span>提示：保存选择按钮为机械模式</span>
+      <span>提示：保存选择按钮为RT模式</span>
     </div>
     <saveConfigBtn @saveConfig="onSure" />
   </div>

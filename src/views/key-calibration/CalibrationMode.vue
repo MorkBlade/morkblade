@@ -113,9 +113,9 @@ watch(
   // { immediate: true },
 );
 
-// TODO 偶现无法进入校准模式
+// TODO 偶现无法进入校准模式/卡死
 watch(keyPressTestCount, async () => {
-  console.log('keyPressTestCountkeyPressTestCountkeyPressTestCount', isStart);
+  // console.log('keyPressTestCountkeyPressTestCountkeyPressTestCount', isStart);
   if (isStart) {
     let mmBuff = 0;
     const { max } = await performanceStore.getRm6X21Calibration(keyboardStore.keyboard);

@@ -5,14 +5,14 @@
         <div>
           <span>按键1:</span>
           <div class="key-box" @mouseenter="onMouseEn('key1')" @mouseleave="onMouseLe('key1')">
-            <p :class="{ 'hover-bg': !socdInfo.pos[0] }" @click="clickFirKey">{{ keyText[0] }}</p>
+            <p :class="{ 'hover-bg': !socdInfo.pos[0] }" @mouseup="KeydropFirst">{{ keyText[0] }}</p>
             <div class="del_btn" @click="onClick('key1')" v-show="socdInfo.pos[0] && key1Index === 0"></div>
           </div>
         </div>
         <div>
           <span>按键2:</span>
           <div class="key-box" @mouseenter="onMouseEn" @mouseleave="onMouseLe">
-            <p :class="{ 'hover-bg': !socdInfo.pos[1] }" @click="clickSecKey">{{ keyText[1] }}</p>
+            <p :class="{ 'hover-bg': !socdInfo.pos[1] }" @mouseup="KeydropSec">{{ keyText[1] }}</p>
             <div class="del_btn" @click="onClick" v-show="socdInfo.pos[1] && key2Index === 0"></div>
           </div>
         </div>
@@ -53,12 +53,14 @@
 
 <script setup>
 import keyboard from '@/configs/byte-to-key/keyboard';
-import { useHighLevelKeyStore } from '@/stores';
+import { useHighLevelKeyStore, useKeyboardStore } from '@/stores';
 
 import mDialog from '@/components/dialog.vue';
 import characterCard from '@/components/character-card.vue';
 
+const keyboardStore = useKeyboardStore();
 const highLevelKeyStore = useHighLevelKeyStore();
+
 const defaultHeight = ref(0);
 const isShow = ref(false);
 const key1Index = ref(-1);
@@ -130,6 +132,22 @@ const handleSocdKey = (keyVal) => {
     socdInfo.value.pos[0] = keyVal;
     socdInfo.value.key[0] = keyVal;
   } else if (!socdInfo.value.pos[1]) {
+    socdInfo.value.pos[1] = keyVal;
+    socdInfo.value.key[1] = keyVal;
+  }
+};
+
+const KeydropFirst = () => {
+  const keyVal = keyboardStore.selectKey.value;
+  if (!socdInfo.value.pos[0]) {
+    socdInfo.value.pos[0] = keyVal;
+    socdInfo.value.key[0] = keyVal;
+  }
+};
+
+const KeydropSec = () => {
+  const keyVal = keyboardStore.selectKey.value;
+  if (!socdInfo.value.pos[1]) {
     socdInfo.value.pos[1] = keyVal;
     socdInfo.value.key[1] = keyVal;
   }

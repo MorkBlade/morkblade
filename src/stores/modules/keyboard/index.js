@@ -9,6 +9,8 @@ const state = {
   currentLayoutData: [],
   selectKey: { x: 0, y: 0, value: 0 },
   activeKeys: [], // 存储当前选中的键帽值
+  isDraging: false,
+  inChangLight: false,
 };
 
 const useKeyboardStore = defineStore('keyboard', {
@@ -19,13 +21,13 @@ const useKeyboardStore = defineStore('keyboard', {
   actions: {
     // 初始化键盘布局
     async defKey() {
-      // console.log('defKey render===================================>>>');
+      console.log('defKey render===================================>>>');
       const result = await services.defKey();
       // console.log('defKey log res:>>>>>', result);
       if (result) {
+        // console.log('------------------------------------ defkey has data ------------------------------------');
         const keyboardData = result.filter((item) => item.length > 0);
         this.keyboard = keyboardData;
-        // console.log('------------------------------------ defkey has data ------------------------------------');
         const performance = usePerformanceStore();
         performance.getKeyPerformance(keyboardData);
         performance.getAllDpDr(keyboardData);
@@ -64,6 +66,7 @@ const useKeyboardStore = defineStore('keyboard', {
       try {
         // 使用 Promise.allSettled 替代 Promise.all 以防止一个失败影响所有
         const results = await Promise.allSettled(batches.map((batch) => services.getLayoutKeyInfo(batch)));
+        // console.log('results----------------------------->', results);
         // 处理结果
         const data = [];
         results.forEach((result, index) => {
@@ -124,7 +127,7 @@ const useKeyboardStore = defineStore('keyboard', {
         const result = await services.setKey([{ key, layout, value }]);
         const data = result[0];
         this.currentLayoutData[rowIndex][colIndex] = data;
-        console.log('updateKey log', this.currentLayoutData);
+        // console.log('updateKey log', this.currentLayoutData);
       } catch (e) {
         console.log(e);
       }

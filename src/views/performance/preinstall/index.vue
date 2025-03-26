@@ -1,6 +1,6 @@
 <template>
   <div class="preinstall-box">
-    <mCarousel :carouselData="carouselData" />
+    <mCarousel :carouselData="carouselData" :btnText="'应用预设'" />
   </div>
 </template>
 

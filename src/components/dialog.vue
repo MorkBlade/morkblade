@@ -2,31 +2,68 @@
   <div class="m-dialog" v-if="isShow">
     <div class="shadow">
       <div class="dialog-content">
-        <p>{{ textContent }}</p>
-        <div class="btn-group">
-          <div class="sure-btn" @click="onSure">
-            <img src="@/assets/images/sure_icon.svg" alt="" />
-            <span>确认</span>
+        <template v-if="!isUpdate">
+          <p>{{ textContent }}</p>
+          <div class="btn-group">
+            <div class="sure-btn" @click="onSure">
+              <img src="@/assets/images/sure_icon.svg" alt="" />
+              <span>确认</span>
+            </div>
+            <div class="cancel-btn" @click="onCancel">
+              <img src="@/assets/images/cancel_icon.svg" alt="" />
+              <span>取消</span>
+            </div>
           </div>
-          <div class="cancel-btn" @click="onCancel">
-            <img src="@/assets/images/cancel_icon.svg" alt="" />
-            <span>取消</span>
+        </template>
+        <template v-else>
+          <div class="progress" v-if="enterUpdate">
+            <p v-if="updateSuc || updateRes !== null" class="update-tip">
+              {{ updateRes ? '升级之后请重新校准' : '升级失败请重试' }}
+            </p>
+            <div v-else>
+              <span>升级中...</span>
+              <el-progress
+                :percentage="progress"
+                :color="'#91bc00'"
+                :stroke-width="16"
+                :text-inside="true"
+                :text-color="'#000 !important'"
+              ></el-progress>
+            </div>
           </div>
-        </div>
+          <div class="btn-group" v-else>
+            <div class="update-btn" :style="updateStep !== 0 ? { left: '215px' } : ''" @click="onSure('enterBoot')">
+              <img class="update-img" src="@/assets/images/sure_icon.svg" alt="" />
+              <span class="update-text">{{ text[updateStep] }}</span>
+            </div>
+            <div class="cancel-btn" @click="onCancel" v-if="updateStep === 0">
+              <img src="@/assets/images/cancel_icon.svg" alt="" />
+              <span>取消</span>
+            </div>
+          </div>
+        </template>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { watch } from 'vue';
+import { onBeforeUnmount, watch } from 'vue';
 
-const { textContent, isShow } = defineProps({
+const { textContent, isShow, isUpdate, progress, updateRes } = defineProps({
   textContent: String,
   isShow: { type: Boolean, default: false },
+  isUpdate: { type: Boolean, default: false },
+  progress: { type: Number, default: 0 },
+  updateRes: Boolean,
 });
 
 const emits = defineEmits(['update:isShow', 'sure', 'cancel']);
+
+const enterUpdate = ref(false);
+const updateSuc = ref(false);
+const updateStep = ref(0);
+const text = ['进入升级模式', '连接', '升级'];
 
 const preventBackgroundScroll = (event) => {
   event.preventDefault();
@@ -45,17 +82,46 @@ watch(
   },
 );
 
+watch(
+  () => updateRes,
+  (newVal) => {
+    console.log('update res is:>>>>>>>>', updateRes);
+    if (newVal) {
+      updateSuc.value = true;
+    } else {
+      setTimeout(() => {
+        emits('update:isShow', false);
+      }, 1000);
+    }
+  },
+);
+
 // 组件卸载时确保移除事件监听
 onBeforeUnmount(() => {
   window.removeEventListener('wheel', preventBackgroundScroll);
 });
 
 const onSure = () => {
-  emits('update:isShow', false); // 更新父组件的状态
-  emits('sure');
+  if (!isUpdate) {
+    updateStep.value = 0;
+    emits('update:isShow', false); // 更新父组件的状态
+  }
+
+  let keyCode;
+  if (!updateStep.value) {
+    keyCode = 'enterBoot';
+  } else if (updateStep.value === 1) {
+    keyCode = 'reconnect';
+  } else if (updateStep.value === 2) {
+    keyCode = 'update';
+    enterUpdate.value = true;
+  }
+  updateStep.value++;
+  emits('sure', keyCode);
 };
 
 const onCancel = () => {
+  updateStep.value = 0;
   emits('update:isShow', false); // 更新父组件的状态
   emits('cancel');
 };
@@ -95,8 +161,10 @@ const onCancel = () => {
 
     .btn-group {
       display: flex;
+      overflow: hidden;
 
       .sure-btn,
+      .update-btn,
       .cancel-btn {
         width: 170px;
         height: 40px;
@@ -118,15 +186,59 @@ const onCancel = () => {
           object-fit: fill;
           margin: 0 50px 0 10px;
         }
+
+        .update-img {
+          margin-right: 0;
+        }
+        .update-text {
+          display: inline-block;
+          width: 120px;
+          height: 30px;
+          text-align: center;
+          font-size: 20px;
+          margin-left: 13px;
+        }
+      }
+      .reconnect {
+        width: 100px;
+        height: 50px;
+        background-color: skyblue;
+        margin: 50px 10px 0 0;
       }
 
-      .sure-btn {
+      .sure-btn,
+      .update-btn {
         left: 60px;
       }
 
       .cancel-btn {
         left: 370px;
       }
+    }
+
+    .progress {
+      width: 400px;
+      height: 20px;
+      margin: 100px 0 0 100px;
+
+      span {
+        display: inline-block;
+        font-size: 20px;
+        color: #ccc;
+        margin: 0 0 5px 5px;
+      }
+
+      ::v-deep(.el-progress-bar__innerText) {
+        color: #000;
+      }
+    }
+
+    .update-tip {
+      margin: 0;
+      width: 600px;
+      text-align: center;
+      position: absolute;
+      left: 0;
     }
   }
 }

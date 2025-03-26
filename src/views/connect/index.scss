@@ -92,3 +92,32 @@
   text-decoration-thickness: 1px;
   text-underline-offset: 10px;
 }
+
+.update-box {
+  display: flex;
+  justify-content: center; /* 水平居中 */
+  align-items: center; /* 垂直居中 */
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  & div {
+    width: 220px;
+    height: 100px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-sizing: border-box;
+    padding: 20px 10px;
+
+    ::v-deep(.el-progress-bar__innerText) {
+      color: #000;
+    }
+
+    ::v-deep(.el-progress) {
+      width: 200px;
+      height: 20px;
+      background-color: transparent;
+    }
+  }
+}

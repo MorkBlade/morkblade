@@ -10,7 +10,7 @@
       <div>
         <div class="dks-key">
           <div class="key-box" @mouseenter="onMouseEn('key1')" @mouseleave="onMouseLe('key1')">
-            <p>{{ keyText[0] }}</p>
+            <p @mouseup="KeydropFirst">{{ keyText[0] }}</p>
             <div class="del_btn" @click="onDelKey('key1')" v-show="keyText[0] && delKeyShow[0]"></div>
           </div>
           <span
@@ -29,7 +29,7 @@
         </div>
         <div class="dks-key">
           <div class="key-box" @mouseenter="onMouseEn('key2')" @mouseleave="onMouseLe('key2')">
-            <p>{{ keyText[1] }}</p>
+            <p @mouseup="KeydropSec">{{ keyText[1] }}</p>
             <div class="del_btn" @click="onDelKey('key2')" v-show="keyText[1] && delKeyShow[1]"></div>
           </div>
           <span
@@ -48,7 +48,7 @@
         </div>
         <div class="dks-key">
           <div class="key-box" @mouseenter="onMouseEn('key3')" @mouseleave="onMouseLe('key3')">
-            <p>{{ keyText[2] }}</p>
+            <p @mouseup="KeydropThir">{{ keyText[2] }}</p>
             <div class="del_btn" @click="onDelKey('key3')" v-show="keyText[2] && delKeyShow[2]"></div>
           </div>
           <span
@@ -67,7 +67,7 @@
         </div>
         <div class="dks-key">
           <div class="key-box" @mouseenter="onMouseEn" @mouseleave="onMouseLe">
-            <p>{{ keyText[3] }}</p>
+            <p @mouseup="KeydropFour">{{ keyText[3] }}</p>
             <div class="del_btn" @click="onDelKey" v-show="keyText[3] && delKeyShow[3]"></div>
           </div>
           <span
@@ -416,10 +416,12 @@ const onMousedown = (key) => {
   // 添加一个临时的 mousemove 监听器来检测是否开始拖动
   const tempMouseMove = (event) => {
     // 如果鼠标移动且按下时间超过 200ms，则认为是拖拽操作
-    if (Date.now() - mouseDownTime.value > 200) {
+    if (Date.now() - mouseDownTime.value > 100) {
       document.addEventListener('mousemove', onMouseMove);
       document.addEventListener('mouseup', stopDrag);
       document.removeEventListener('mousemove', tempMouseMove);
+
+      elements.value[key].classList.add('grabbing');
     }
   };
 
@@ -437,7 +439,8 @@ const onMouseMove = (event) => {
 
   if (deltaX !== 0) {
     const currentKey = currentKeys[activeRow.value];
-    widths[currentKey] += deltaX > 0 ? 3 : -3;
+    // widths[currentKey] += deltaX > 0 ? 3 : -3;
+    widths[currentKey] += deltaX; // 根据鼠标移动的实际距离调整宽度
 
     // 获取当前span的索引
     const currentIndex = parseInt(currentKey.split('-')[1]);
@@ -478,6 +481,7 @@ const stopDrag = () => {
     });
   }
 
+  elements.value[currentKey].classList.remove('grabbing');
   document.removeEventListener('mousemove', onMouseMove);
   document.removeEventListener('mouseup', stopDrag);
 };
@@ -550,6 +554,22 @@ const parse8BitToBooleans = (num) => {
     result[6] = true;
   }
   return result;
+};
+
+const KeydropFirst = () => {
+  if (!dksInfo.value.dks[0]) dksInfo.value.dks[0] = keyboardStore.selectKey.value;
+};
+
+const KeydropSec = () => {
+  if (!dksInfo.value.dks[1]) dksInfo.value.dks[1] = keyboardStore.selectKey.value;
+};
+
+const KeydropThir = () => {
+  if (!dksInfo.value.dks[2]) dksInfo.value.dks[2] = keyboardStore.selectKey.value;
+};
+
+const KeydropFour = () => {
+  if (!dksInfo.value.dks[3]) dksInfo.value.dks[3] = keyboardStore.selectKey.value;
 };
 
 const save = () => {
@@ -682,6 +702,11 @@ defineExpose({ save });
         background-image: none;
         background-color: rgb(145, 188, 0);
         border-radius: 10px;
+        cursor: grab;
+
+        &.grabbing {
+          cursor: grabbing; // 拖动时的状态
+        }
       }
     }
 

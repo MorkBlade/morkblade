@@ -5,14 +5,14 @@
         <div>
           <span>按键1:</span>
           <div class="key-box" @mouseenter="onMouseEn('key1')" @mouseleave="onMouseLe('key1')">
-            <p :class="{ 'hover-bg': !rsInfo.dks[0] }" @click="clickFirKey">{{ keyText[0] }}</p>
+            <p :class="{ 'hover-bg': !rsInfo.dks[0] }" @mouseup="KeydropFirst">{{ keyText[0] }}</p>
             <div class="del_btn" @click="onClick('key1')" v-show="rsInfo.dks[0] && key1Index === 0"></div>
           </div>
         </div>
         <div>
           <span>按键2:</span>
           <div class="key-box" @mouseenter="onMouseEn" @mouseleave="onMouseLe">
-            <p :class="{ 'hover-bg': !rsInfo.dks[1] }" @click="clickSecKey">{{ keyText[1] }}</p>
+            <p :class="{ 'hover-bg': !rsInfo.dks[1] }" @mouseup="KeydropSec">{{ keyText[1] }}</p>
             <div class="del_btn" @click="onClick" v-show="rsInfo.dks[1] && key2Index === 0"></div>
           </div>
         </div>
@@ -29,7 +29,7 @@
 
 <script setup>
 import keyboard from '@/configs/byte-to-key/keyboard';
-import { useHighLevelKeyStore } from '@/stores';
+import { useHighLevelKeyStore, useKeyboardStore } from '@/stores';
 
 import mDialog from '@/components/dialog.vue';
 import characterCard from '@/components/character-card.vue';
@@ -40,7 +40,10 @@ const rsInfo = defineModel('rsInfo', {
 });
 
 const emits = defineEmits(['handleDialoConfirm', 'handleKeyTypeChange']);
+
+const keyboardStore = useKeyboardStore();
 const highLevelKeyStore = useHighLevelKeyStore();
+
 const isShow = ref(false);
 const key1Index = ref(-1);
 const key2Index = ref(-1);
@@ -91,6 +94,14 @@ const handleRsKey = (keyVal) => {
   } else if (!rsInfo.value.dks[1]) {
     rsInfo.value.dks[1] = keyVal;
   }
+};
+
+const KeydropFirst = () => {
+  if (!rsInfo.value.dks[0]) rsInfo.value.dks[0] = keyboardStore.selectKey.value;
+};
+
+const KeydropSec = () => {
+  if (!rsInfo.value.dks[1]) rsInfo.value.dks[1] = keyboardStore.selectKey.value;
 };
 
 const onClick = (keyCode) => {

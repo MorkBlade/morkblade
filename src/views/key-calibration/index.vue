@@ -17,7 +17,7 @@
       <div class="text-box">
         <span>校准时请完全按下按键并保持1到2秒</span>
         <span>同时上下左右轻微晃动按键。</span>
-        <span>注意:快速的按下并抬起按键</span>
+        <span>注意：快速的按下并抬起按键</span>
         <span>会导致校准的结果不准确。</span>
       </div>
       <div
@@ -34,10 +34,11 @@
   </div>
 </template>
 <script setup>
-import { usePerformanceStore } from '@/stores';
-import byteToKey from '@/configs/byte-to-key/keyboard.js';
+import { useDeviceStore, useKeyboardStore, usePerformanceStore } from '@/stores';
 import CalibrationMode from './CalibrationMode.vue';
 
+const deviceStore = useDeviceStore();
+const keyboardStore = useKeyboardStore();
 const performanceStore = usePerformanceStore();
 const isAct = ref(false);
 const isStart = ref(false);
@@ -76,10 +77,6 @@ const switchClass = computed(() => {
 
 const addKey = (event) => {
   const { key } = event;
-
-  // const keyByte = Object.entries(byteToKey).find(([byte, keyName]) => keyName.toLowerCase() === key.toLowerCase())?.[0];
-  // console.log('log keyByte:>>>>>>', keyByte);
-
   const existingKey = keys.value.find((k) => k.name === key);
 
   if (existingKey) {
@@ -114,7 +111,30 @@ const removeKey = (id) => {
   }
 };
 
-onMounted(() => {
+const delay = (ms) => {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+};
+
+onMounted(async () => {
+  if (deviceStore.updateSuc) {
+    await deviceStore.connectDevice();
+    delay(100);
+    await keyboardStore.defKey();
+    setTimeout(async () => {
+      deviceStore.updateSuc = false;
+      try {
+        onStart();
+      } catch (error) {
+        console.error('Error in setTimeout:', error);
+        await deviceStore.connectDevice();
+        delay(2000);
+        onStart();
+      }
+    }, 2000);
+  }
+
   window.addEventListener('keydown', addKey);
   window.addEventListener('keyup', releaseKey);
 });

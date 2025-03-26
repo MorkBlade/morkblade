@@ -25,8 +25,6 @@ const formData = defineModel();
 const emit = defineEmits(['changeKeyLight']);
 
 const lightSettingStore = useLightSettingStore();
-const { staticLightColorChecked, dynamicLightBtnChecked } = storeToRefs(lightSettingStore);
-const curStaticIdx = ref(0);
 
 const changeDynamicLight = (idx) => {
   // handleTypeChange('dynamic');

@@ -41,9 +41,9 @@ const localStaticColorList = ref([]);
 const emits = defineEmits(['checkStaticLight', 'checkLogoStaticLight']);
 
 // watch(
-//   () => staticColorCheckList,
+//   () => lightType,
 //   (newVal) => {
-//     checkedLight.value = newVal;
+//     console.log('lightType', lightType);
 //   },
 // );
 

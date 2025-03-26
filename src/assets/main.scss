@@ -54,6 +54,10 @@ body {
   -ms-user-select: none; /* Internet Explorer/Edge */
   user-select: none; /* 标准语法 */
 
+  &.dragging {
+    cursor: grabbing !important; /* 自定义鼠标指针样式 */
+  }
+
   .el-switch__core .el-switch__inner .is-icon,
   .el-switch__core .el-switch__inner .is-text {
     color: #242424;

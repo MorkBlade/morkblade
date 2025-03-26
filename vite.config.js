@@ -34,4 +34,14 @@ export default defineConfig({
       },
     },
   },
+  server: {
+    proxy: {
+      '/api': {
+        target: 'https://morkblade.lewike.com/',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''), // 如果需要去掉 /api 前缀
+      },
+    },
+  },
+  assetsInclude: ['**/*.bin'],
 });

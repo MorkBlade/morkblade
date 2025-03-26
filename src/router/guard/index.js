@@ -2,7 +2,8 @@ import { useDeviceStore } from '@/stores';
 import { setRouteEmitter } from '@/utils/router-listener.js';
 
 function setupPageGuard(router) {
-  router.beforeEach(async (to) => {
+  router.beforeEach(async (to, from, next) => {
+    next();
     setRouteEmitter(to);
   });
 }
@@ -16,15 +17,15 @@ export default function createRouteGuard(router) {
     }
     const deviceStore = useDeviceStore();
     try {
-      const result = await deviceStore.connectDevice();
-      if (result) {
-        next();
-      } else {
-        if (to.path !== '/connect') {
-          next({ path: '/connect', replace: true });
-        } else {
+      if (!deviceStore.connectDeviceStatus) {
+        const result = await deviceStore.connectDevice();
+        if (result) {
           next();
+        } else {
+          next({ path: '/connect', replace: true });
         }
+      } else {
+        next();
       }
     } catch (error) {
       console.error('设备连接失败:', error);
