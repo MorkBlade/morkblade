@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 
 import services from '@/services/index';
-import { usePerformanceStore } from '@/stores';
+import { usePerformanceStore, useMacroStore } from '@/stores';
 
 const state = {
   keyboard: [],
@@ -110,8 +110,13 @@ const useKeyboardStore = defineStore('keyboard', {
     },
 
     // 拖拽的按键
-    updateSelectKey(key) {
-      this.selectKey.value = key;
+    updateSelectKey(data) {
+      if (typeof data === 'number') {
+        this.selectKey.value = data;
+      } else {
+        const macroStore = useMacroStore();
+        macroStore.selectMacro = data;
+      }
     },
 
     // 更新按键

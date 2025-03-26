@@ -6,15 +6,17 @@
     @mouseenter="onMouseEnter"
     @mouseleave="onMouseLeave"
   >
-    <img src="@/assets/images/save_icon.svg" alt="" />
-    <span>{{ props.btnText }}</span>
+    <img :src="icon" alt="" />
+    <span>{{ btnText }}</span>
   </div>
   <mDialog v-model:isShow="isShow" @sure="onSure" @cancel="onCancel" />
 </template>
 
 <script setup>
 import mDialog from '@/components/dialog.vue';
-const props = defineProps({
+import defaultIcon from '@/assets/images/save_icon.svg';
+
+const { btnText, tag } = defineProps({
   btnText: {
     type: String,
     default: '保存更改',
@@ -22,6 +24,10 @@ const props = defineProps({
   tag: {
     // 标识要保存什么数据
     type: String,
+  },
+  icon: {
+    type: String,
+    default: defaultIcon,
   },
 });
 const emits = defineEmits(['saveConfig']);

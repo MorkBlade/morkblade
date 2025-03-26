@@ -2,10 +2,6 @@
   width: 100%;
   height: 100%;
   overflow: hidden;
-  background-image: url('@/assets/images/banner.png');
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: 100% 100%;
 }
 
 .connect-header {
@@ -57,14 +53,16 @@
   position: relative;
   z-index: 2;
   margin-top: 60px;
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .connect-title span {
   color: #fff;
-  font-size: 40px;
+  font-size: 30px;
   // font-weight: 500;
-  font-family: PingFang;
+  font-family: 'CN Regular';
   letter-spacing: 3px;
 }
 
@@ -72,25 +70,93 @@
   position: relative;
   margin-top: 5px;
   color: #fff;
-  font-weight: 900;
-  font-size: 91px;
-  font-family: ArialBlack;
+  font-size: 100px;
+  font-family: 'CN Heavy';
   letter-spacing: 3px;
 }
 
 .connect-title p {
-  margin-top: 10px;
-  color: #ffc800;
-  font-weight: 500;
+  width: 200px;
+  height: 45px;
+  margin-top: 50px;
+  line-height: 45px;
+  text-align: center;
+  color: #000;
   font-size: 30px;
-  font-family: PingFang;
-  letter-spacing: 3px;
-  text-decoration: underline;
+  font-family: 'CN Heavy';
+  background-image: url('@/assets/images/connect.gif');
+  background-size: cover;
+  background-repeat: no-repeat;
   cursor: pointer;
-  text-decoration-style: dashed;
-  text-decoration-color: #ffc800;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 10px;
+
+  img {
+    width: 20px;
+    height: 20px;
+    object-fit: fill;
+  }
+}
+
+.connect-guide {
+  width: 100%;
+  height: 400px;
+  margin-top: 100px;
+  display: flex;
+  // align-items: center;
+  justify-content: center;
+
+  & .guide-item {
+    width: 400px;
+    height: 300px;
+    box-sizing: border-box;
+    border: 3px solid #242424;
+    border-radius: 15px;
+    background-color: #000;
+    position: relative;
+
+    & p {
+      color: #fff;
+      font-size: 16px;
+      font-family: 'CN Heavy';
+      margin: 10px 0 0 30px;
+    }
+
+    &__icon1 {
+      margin: 100px 0 0 100px;
+    }
+    &__icon2 {
+      margin: 50px 0 0 50px;
+    }
+    &__icon3 {
+      margin: 80px 0 0 25px;
+    }
+
+    .step {
+      width: 100%;
+      color: #fff;
+      font-size: 15px;
+      font-family: 'CN Heavy';
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      left: 0;
+      bottom: -80px;
+
+      img {
+        width: 30px;
+        height: 30px;
+        object-fit: fill;
+        margin-right: 10px;
+      }
+    }
+  }
+
+  .next_icon {
+    width: 20px;
+    height: 40px;
+    object-fit: fill;
+    margin: 120px 40px;
+  }
 }
 
 .update-box {

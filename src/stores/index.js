@@ -5,6 +5,7 @@ import useDeviceStore from './modules/device/index.js';
 import useKeyboardStore from './modules/keyboard/index.js';
 import usePerformanceStore from './modules/performance/index.js';
 import useAppStore from './modules/app/index.js';
+import useMacroStore from './modules/macro/index.js';
 import useHighLevelKeyStore from './modules/high-level-key/index.js';
 
 const pinia = createPinia();
@@ -15,6 +16,7 @@ export {
   useKeyboardStore,
   usePerformanceStore,
   useAppStore,
+  useMacroStore,
   useHighLevelKeyStore,
 };
 

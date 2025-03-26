@@ -49,6 +49,6 @@ const router = createRouter({
   routes,
 });
 
-// createRouteGuard(router);
+createRouteGuard(router);
 
 export default router;

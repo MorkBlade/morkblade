@@ -32,7 +32,7 @@
         <key v-for="ite in mouse" :key="ite" :key-value="ite" @select="selectItem" />
       </template>
       <template v-if="checkedIdx === 5">
-        <key v-for="ite in macro" :key="ite" :key-value="ite" @select="selectItem" />
+        <key v-for="ite in macro" :key="ite.id || ite" :key-value="ite" @select="selectItem" />
       </template>
     </div>
   </div>
@@ -62,11 +62,7 @@ const extend = [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21
 const number = [30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98];
 const special = [45, 46, 47, 48, 49, 51, 52, 53, 54, 55, 56, 57];
 const basic = [40, 41, 42, 43, 44, 79, 80, 81, 82, 224, 225, 226, 227, 228, 229, 230, 231];
-const macro = [
-  58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 70, 71,
-  72, 73, 74, 75, 76, 77, 78, 61441, 61442, 61443, 4329, 4330, 4207, 4208, 4277, 4278, 4279, 4301, 4322, 4483, 4490,
-  4498, 4500, 4643,
-];
+const macro = JSON.parse(localStorage.getItem('localMacros')) || [];
 const keyboard = [
   61696, 61697, 61698, 61699, 61704, 61705, 61706, 61708, 61707, 62217, 62224, 62225, 62226, 62227, 62228, 62229, 62231,
   62245, 62246, 62247, 62248, 62249, 62250, 62251, 62252, 62255,
@@ -85,13 +81,14 @@ const activeKeys = computed(() => {
   return keyboardStore.activeKeys;
 });
 
-const onCheck = (ite) => {
-  checkedIdx.value = ite;
+const onCheck = (idx) => {
+  checkedIdx.value = idx;
 };
 
 const selectItem = async (keyVal) => {
+  console.log('selectItem is', keyVal);
   await keyboardStore.updateSelectKey(keyVal);
-  keyboardStore.updateKey({ colIndex: currentKeyX.value, rowIndex: currentKeyY.value });
+  // keyboardStore.updateKey({ colIndex: currentKeyX.value, rowIndex: currentKeyY.value });
 };
 
 emitter.on('key-click', ({ colIndex, rowIndex }) => {

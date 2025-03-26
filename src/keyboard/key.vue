@@ -6,7 +6,7 @@
     @click.stop="onChecked(keyItem.key, rowIndex, colIndex)"
     @dragenter.prevent
     @dragover.prevent
-    @mouseup="(e) => Keydrop(e, rowIndex, colIndex)"
+    @mouseup="(e) => Keydrop(e, rowIndex, colIndex, keyItem.key)"
   >
     <p class="top-key">{{ byteToKey[keyItem.value] }}</p>
     <!-- <p class="center-key" v-if="!singleTravel && !rtReleaseTravel && !rtPressTravel">{{ byteToKey[keyItem.key] }}</p> -->
@@ -47,7 +47,8 @@ import { KEY_SHAFT } from '@/configs/constant/index.js';
 import services from '@/services/index';
 import byteToKey from '@/configs/byte-to-key/keyboard.js';
 import emitter from '@/utils/app-emitter';
-import { usePerformanceStore, useAppStore, useKeyboardStore, useLightSettingStore } from '@/stores';
+import { usePerformanceStore, useAppStore, useMacroStore, useKeyboardStore, useLightSettingStore } from '@/stores';
+import keyboard from '@/configs/byte-to-key/keyboard.js';
 
 const {
   row: rowIndex,
@@ -65,6 +66,7 @@ const {
 const emit = defineEmits(['click']);
 
 const appStore = useAppStore();
+const macroStore = useMacroStore();
 const keyboardStore = useKeyboardStore();
 const performanceStore = usePerformanceStore();
 const lightSettingStore = useLightSettingStore();
@@ -223,10 +225,20 @@ const startMouseUp = (e) => {
   }
 };
 
-const Keydrop = async (e, rowIndex, colIndex) => {
+const Keydrop = async (e, rowIndex, colIndex, key) => {
   if (!keyboardStore.isDraging) return;
   e.preventDefault();
-  keyboardStore.updateKey({ colIndex: colIndex, rowIndex: rowIndex });
+  if (macroStore.selectMacro) {
+    console.log('拖拽的是宏按键');
+
+    if (macroStore && macroStore.macroInfo) {
+      macroStore.macroInfo.dks = key;
+      await macroStore.setMacro();
+    }
+    console.log(macroStore.macroInfo.dks);
+  } else {
+    keyboardStore.updateKey({ colIndex: colIndex, rowIndex: rowIndex });
+  }
 };
 </script>
 

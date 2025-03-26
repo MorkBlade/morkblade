@@ -14,7 +14,7 @@ import { useKeyboardStore } from '@/stores';
 const keyboardStore = useKeyboardStore();
 
 const { keyValue } = defineProps({
-  keyValue: { type: Number, required: true },
+  keyValue: { type: [Number, Object], required: true },
   // selectIdx: { type: Number, default: false },
 });
 
@@ -26,7 +26,7 @@ const defaultOffset = reactive({ left: 0, top: 0 });
 let dragStartTime = 0;
 
 const keyText = computed(() => {
-  return keyboard[keyValue];
+  return typeof keyValue === 'object' && keyValue.macroName ? keyValue.macroName : keyboard[keyValue] || '';
 });
 
 const handleClick = (e) => {

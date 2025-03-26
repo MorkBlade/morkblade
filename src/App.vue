@@ -1,9 +1,9 @@
 <template>
-  <div class="video-background">
-    <video autoplay muted playsinline ref="videoPlayer" @loadeddata="onVideoLoaded" @ended="onVideoEnded">
-      <source src="@/assets/video/bg.mp4" type="video/mp4" />
-    </video>
+  <div class="background">
+    <div class="bg-layer"></div>
+    <div class="bg-layer second-layer"></div>
   </div>
+  <img src="@/assets/images/bg_shadow.png" alt="" />
   <div class="app-content" :class="{ 'content-ready': isContentReady }">
     <Transition name="fade" mode="out-in">
       <component :is="route.path === '/connect' ? connectPage : layoutPage" />
@@ -14,49 +14,66 @@
 <script setup>
 import layoutPage from '@/layout/index.vue';
 import connectPage from '@/views/connect/index.vue';
+
 const route = useRoute();
-const videoPlayer = ref(null);
-const isVideoLoaded = ref(false);
 const isContentReady = ref(false);
 
-const onVideoEnded = () => {
-  // console.log('videoPlayer', videoPlayer);
-  if (videoPlayer.value) {
-    videoPlayer.value.currentTime = 0;
-    videoPlayer.value.play();
-  }
-};
-
-// 视频加载完成
-const onVideoLoaded = () => {
-  isVideoLoaded.value = true;
-  // 短暂延迟后显示内容
+onMounted(() => {
+  // 页面加载后显示内容
   setTimeout(() => {
     isContentReady.value = true;
   }, 100);
-};
+});
 </script>
 
-<style scoped>
-.video-background {
+<style scoped lang="scss">
+.background {
+  background-image: url('@/assets/images/bg.png');
+  background-size: cover;
+  background-repeat: repeat-x;
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   overflow: hidden;
-  z-index: -1; /* 将视频背景置于底层 */
+  z-index: -20;
 }
 
-video {
-  min-width: 100%;
-  min-height: 100%;
-  width: auto;
-  height: auto;
+.bg-layer {
+  background-image: url('@/assets/images/bg.png');
+  // background-size: cover;
+  background-repeat: repeat-x;
+  background-size: 100% 100%;
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  animation: slideLeft 10s linear infinite;
+}
+
+.second-layer {
+  left: 100%; /* 第二层从画面右侧开始 */
+}
+
+@keyframes slideLeft {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%); /* 向左移动一个屏幕宽度 */
+  }
+}
+
+img {
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: -10;
 }
 
 .app-content {
@@ -76,19 +93,5 @@ video {
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
-}
-
-@media (max-width: 768px) {
-  video {
-    width: 100%;
-    height: auto;
-  }
-}
-
-@media (min-width: 769px) and (max-height: 480px) {
-  video {
-    width: auto;
-    height: 100%;
-  }
 }
 </style>
