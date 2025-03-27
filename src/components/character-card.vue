@@ -36,6 +36,42 @@
 import key from './key.vue';
 import emitter from '@/utils/app-emitter';
 
+// 导入所有需要的图标
+import basicIcon from '@/assets/images/basic.svg';
+import basicIconChecked from '@/assets/images/basic_c.svg';
+import extendIcon from '@/assets/images/extend.svg';
+import extendIconChecked from '@/assets/images/extend_c.svg';
+import specialIcon from '@/assets/images/special.svg';
+import specialIconChecked from '@/assets/images/special_c.svg';
+import keyboardIcon from '@/assets/images/keyboard.svg';
+import keyboardIconChecked from '@/assets/images/keyboard_c.svg';
+import mouseIcon from '@/assets/images/mouse.svg';
+import mouseIconChecked from '@/assets/images/mouse_c.svg';
+
+// 创建图标映射对象
+const iconMap = {
+  'basic': {
+    default: basicIcon,
+    checked: basicIconChecked
+  },
+  'extend': {
+    default: extendIcon,
+    checked: extendIconChecked
+  },
+  'special': {
+    default: specialIcon,
+    checked: specialIconChecked
+  },
+  'keyboard': {
+    default: keyboardIcon,
+    checked: keyboardIconChecked
+  },
+  'mouse': {
+    default: mouseIcon,
+    checked: mouseIconChecked
+  }
+};
+
 const emit = defineEmits(['handleSendKey']);
 const checkedIdx = ref(0);
 const characterArr = [
@@ -61,7 +97,7 @@ const onCheck = (ite) => {
 };
 
 const getImageUrl = (icon, isChecked) => {
-  return new URL(`../assets/images/${icon}${isChecked ? '_c' : ''}.svg`, import.meta.url).href;
+  return isChecked ? iconMap[icon].checked : iconMap[icon].default;
 };
 
 const selectItem = (keyVal) => {

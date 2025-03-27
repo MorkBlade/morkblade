@@ -27,7 +27,7 @@
       </div>
       <img class="next_icon" src="@/assets/images/next_step.svg" alt="" />
       <div class="guide-item">
-        <p>点击连接键盘按钮</p>
+        <p>允许访问设备</p>
         <img class="guide-item__icon2" src="@/assets/images/guide2.svg" alt="" />
         <div class="step">
           <img src="@/assets/images/sure.svg" alt="" />
@@ -36,7 +36,7 @@
       </div>
       <img class="next_icon" src="@/assets/images/next_step.svg" alt="" />
       <div class="guide-item">
-        <p>点击连接键盘按钮</p>
+        <p>开始配置键盘</p>
         <img class="guide-item__icon3" src="@/assets/images/guide3.svg" alt="" />
         <div class="step">
           <img src="@/assets/images/sure.svg" alt="" />
@@ -82,9 +82,10 @@ const handleDeviceStoreClick = async () => {
     isUpdate.value = true;
     getFirmWarePack('/api/update_esports.bin');
     return;
-  }
-  if (result) {
-    router.push({ name: 'performance' });
+  } else {
+    if (result) {
+      router.push({ name: 'performance' });
+    }
   }
 };
 

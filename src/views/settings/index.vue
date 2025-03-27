@@ -32,16 +32,9 @@
             :class="selectedRateItem ? 'is-selected' : ''"
             @click="toggleDropdown('rateofreturn')"
           >
-            <img
-              class="change-icon"
-              :src="selectedRateItem ? '/src/assets/images/changed.svg' : '/src/assets/images/change.svg'"
-              alt=""
-            />
+            <img class="change-icon" :src="selectedRateItem ? changedIcon : changeIcon" alt="" />
             <span>{{ selectedRateItem || '请选择' }}</span>
-            <img
-              class="down-icon"
-              :src="selectedRateItem ? '/src/assets/images/down_icon.svg' : '/src/assets/images/down_icon2.svg'"
-            />
+            <img class="down-icon" :src="selectedRateItem ? downIcon : downIcon2" />
             <div class="drop-list" :style="{ height: `${RateDefHeight}px` }">
               <ul>
                 <li
@@ -83,16 +76,9 @@
             :class="selectedFirItem !== null ? 'is-selected' : ''"
             @click="toggleDropdown('firmware')"
           >
-            <img
-              class="change-icon"
-              :src="selectedFirItem !== null ? '/src/assets/images/changed.svg' : '/src/assets/images/change.svg'"
-              alt=""
-            />
+            <img class="change-icon" :src="selectedFirItem !== null ? changedIcon : changeIcon" alt="" />
             <span>{{ firmwareList[selectedFirItem] || '请选择' }}</span>
-            <img
-              class="down-icon"
-              :src="selectedFirItem !== null ? '/src/assets/images/down_icon.svg' : '/src/assets/images/down_icon2.svg'"
-            />
+            <img class="down-icon" :src="selectedFirItem !== null ? downIcon : downIcon2" />
             <div class="drop-list" :style="{ height: `${firmwareDefHeight}px` }">
               <ul>
                 <li
@@ -166,6 +152,10 @@
 <script setup>
 import { useAppStore, useDeviceStore, usePerformanceStore } from '@/stores';
 import mDialog from '@/components/dialog.vue';
+import changeIcon from '@/assets/images/change.svg';
+import changedIcon from '@/assets/images/changed.svg';
+import downIcon from '@/assets/images/down_icon.svg';
+import downIcon2 from '@/assets/images/down_icon2.svg';
 
 import services from '@/services/index.js';
 

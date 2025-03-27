@@ -27,7 +27,7 @@
         @mouseenter="onMouseEnter"
         @mouseleave="onMouseLeave"
       >
-        <img :src="isStart ? '/src/assets/images/stop_icon.svg' : '/src/assets/images/start_icon.svg'" alt="" />
+        <img :src="isStart ? stopIcon : startIcon" alt="" />
         <span>{{ isStart ? '结束校验' : '开始校验' }}</span>
       </div>
     </div>
@@ -35,7 +35,10 @@
 </template>
 <script setup>
 import { useDeviceStore, useKeyboardStore, usePerformanceStore } from '@/stores';
+
 import CalibrationMode from './CalibrationMode.vue';
+import startIcon from '@/assets/images/start_icon.svg';
+import stopIcon from '@/assets/images/stop_icon.svg';
 
 const deviceStore = useDeviceStore();
 const keyboardStore = useKeyboardStore();

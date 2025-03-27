@@ -8,11 +8,11 @@
         :index="ite.path"
         background-color="#000000"
         @click="handleClick(ite, idx)"
-        :style="getBackgroundStyle(ite, idx)"
+        :class="getNavItemClass(ite, idx)"
       >
         <template v-slot:title>
-          <span :style="{ color: getBackgroundStyle(ite, idx).color }">{{ ite.name }}</span>
-          <img :class="ite.icon" :src="getBackgroundStyle(ite, idx).iconUrl" />
+          <span :class="{ 'active-text': defaultActive === ite.path }">{{ ite.name }}</span>
+          <img :class="ite.icon" :src="getIconSrc(ite)" />
         </template>
       </el-menu-item>
     </el-menu>
@@ -20,13 +20,47 @@
 </template>
 
 <script setup>
-import navcheckedBg1 from '@/assets/images/nav_bg1_c.gif';
-import navcheckedBg2 from '@/assets/images/nav_bg2_c.gif';
-import navcheckedBg3 from '@/assets/images/nav_bg3_c.gif';
+// 导入所有图标文件 - 这是最可靠的方法
+import performanceW from '@/assets/images/performance-w.svg';
+import performanceB from '@/assets/images/performance-b.svg';
+import keyAssignmentW from '@/assets/images/key-assignment-w.svg';
+import keyAssignmentB from '@/assets/images/key-assignment-b.svg';
+import macroW from '@/assets/images/macro-w.svg';
+import macroB from '@/assets/images/macro-b.svg';
+import lightingW from '@/assets/images/lighting-w.svg';
+import lightingB from '@/assets/images/lighting-b.svg';
+import keyCalibrationW from '@/assets/images/key-calibration-w.svg';
+import keyCalibrationB from '@/assets/images/key-calibration-b.svg';
+import settingsW from '@/assets/images/settings-w.svg';
+import settingsB from '@/assets/images/settings-b.svg';
 
-const navBg1 = '/public/images/nav_bg1.svg';
-const navBg2 = '/public/images/nav_bg2.svg';
-const navBg3 = '/public/images/nav_bg3.svg';
+// 创建图标映射对象
+const iconMap = {
+  'performance': {
+    'w': performanceW,
+    'b': performanceB
+  },
+  'key-assignment': {
+    'w': keyAssignmentW,
+    'b': keyAssignmentB
+  },
+  'macro': {
+    'w': macroW,
+    'b': macroB
+  },
+  'lighting': {
+    'w': lightingW,
+    'b': lightingB
+  },
+  'key-calibration': {
+    'w': keyCalibrationW,
+    'b': keyCalibrationB
+  },
+  'settings': {
+    'w': settingsW,
+    'b': settingsB
+  }
+};
 
 const routesInfo = [
   { path: '/performance', name: '性能', icon: 'performance' },
@@ -62,31 +96,28 @@ watch(
   { immediate: true },
 );
 
-const getBackgroundStyle = computed(() => {
+const getNavItemClass = computed(() => {
   return (ite, idx) => {
     const isActive = defaultActive.value === ite.path;
-    const url = !idx
-      ? isActive
-        ? navcheckedBg1
-        : navBg1
-      : idx === routesInfo.length - 1
-        ? isActive
-          ? navcheckedBg3
-          : navBg3
-        : isActive
-          ? navcheckedBg2
-          : navBg2;
+    let positionClass = '';
 
-    return {
-      backgroundImage: `url(${url})`,
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      backgroundRepeat: 'no-repeat',
-      color: isActive ? '#000000' : '#ffffff',
-      iconUrl: `/src/assets/images/${ite.icon}-${isActive ? 'b' : 'w'}.svg`,
-    };
+    if (idx === 0) {
+      positionClass = isActive ? 'nav-first-active' : 'nav-first';
+    } else if (idx === routesInfo.length - 1) {
+      positionClass = isActive ? 'nav-last-active' : 'nav-last';
+    } else {
+      positionClass = isActive ? 'nav-middle-active' : 'nav-middle';
+    }
+
+    return [positionClass, { 'is-nav-active': isActive }];
   };
 });
+
+const getIconSrc = (ite) => {
+  const isActive = defaultActive.value === ite.path;
+  const type = isActive ? 'b' : 'w';
+  return iconMap[ite.icon][type];
+};
 </script>
 
 <style scoped lang="scss">
@@ -118,6 +149,16 @@ const getBackgroundStyle = computed(() => {
     // font-weight: 600;
     font-family: 'CN oblique';
     background-color: transparent;
+
+    // 默认状态下的文本颜色
+    span {
+      color: #ffffff;
+    }
+
+    // 激活状态下的文本颜色
+    .active-text {
+      color: #000000;
+    }
   }
 
   img {
@@ -147,6 +188,49 @@ const getBackgroundStyle = computed(() => {
 
   .el-menu--horizontal > .el-menu-item {
     border: none;
+  }
+
+  // 添加不同位置的导航背景样式
+  .nav-first {
+    background-image: url('@/assets/images/nav_bg1.svg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  .nav-first-active {
+    background-image: url('@/assets/images/nav_bg1_c.gif');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  .nav-middle {
+    background-image: url('@/assets/images/nav_bg2.svg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  .nav-middle-active {
+    background-image: url('@/assets/images/nav_bg2_c.gif');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  .nav-last {
+    background-image: url('@/assets/images/nav_bg3.svg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  .nav-last-active {
+    background-image: url('@/assets/images/nav_bg3_c.gif');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
   }
 }
 </style>

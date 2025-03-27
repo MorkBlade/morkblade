@@ -8,10 +8,7 @@
         :class="checkedIdx == idx ? 'selected' : ''"
         @click="onCheck(idx)"
       >
-        <img
-          :src="checkedIdx == idx ? `/src/assets/images/${ite.icon}_c.svg` : `/src/assets/images/${ite.icon}.svg`"
-          alt=""
-        />
+        <img :src="getImageUrl(ite.icon, checkedIdx == idx)" alt="" />
         <span>{{ ite.name }}</span>
       </div>
     </div>
@@ -42,6 +39,49 @@
 import key from '@/components/key.vue';
 import emitter from '@/utils/app-emitter';
 import { useKeyboardStore, usePerformanceStore } from '@/stores';
+
+// 导入所有需要的图标
+import basicIcon from '@/assets/images/basic.svg';
+import basicIconChecked from '@/assets/images/basic_c.svg';
+import extendIcon from '@/assets/images/extend.svg';
+import extendIconChecked from '@/assets/images/extend_c.svg';
+import specialIcon from '@/assets/images/special.svg';
+import specialIconChecked from '@/assets/images/special_c.svg';
+import keyboardIcon from '@/assets/images/keyboard.svg';
+import keyboardIconChecked from '@/assets/images/keyboard_c.svg';
+import mouseIcon from '@/assets/images/mouse.svg';
+import mouseIconChecked from '@/assets/images/mouse_c.svg';
+import macroIcon from '@/assets/images/macro.svg';
+import macroIconChecked from '@/assets/images/macro_c.svg';
+
+// 创建图标映射对象
+const iconMap = {
+  'basic': {
+    default: basicIcon,
+    checked: basicIconChecked
+  },
+  'extend': {
+    default: extendIcon,
+    checked: extendIconChecked
+  },
+  'special': {
+    default: specialIcon,
+    checked: specialIconChecked
+  },
+  'keyboard': {
+    default: keyboardIcon,
+    checked: keyboardIconChecked
+  },
+  'mouse': {
+    default: mouseIcon,
+    checked: mouseIconChecked
+  },
+  'macro': {
+    default: macroIcon,
+    checked: macroIconChecked
+  }
+};
+
 const checkedIdx = ref(0);
 
 const currentKeyX = ref(null);
@@ -80,6 +120,10 @@ const hasCurrentKey = computed(() => {
 const activeKeys = computed(() => {
   return keyboardStore.activeKeys;
 });
+
+const getImageUrl = (icon, isChecked) => {
+  return isChecked ? iconMap[icon].checked : iconMap[icon].default;
+};
 
 const onCheck = (idx) => {
   checkedIdx.value = idx;
