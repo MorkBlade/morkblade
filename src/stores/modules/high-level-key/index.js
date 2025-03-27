@@ -19,8 +19,14 @@ const useHighLevelKeyStore = defineStore('highLevelKey', {
           // 1:dks 2:mpt 3:MT 4:TGL 5:END 6:MCR 8:SOCD 9:RS
           if (advancedKeyMode === 1) {
             this.getDks(keyValue);
+          } else if (advancedKeyMode === 2) {
+            this.getMpt(keyValue);
           } else if (advancedKeyMode === 3) {
             this.getMt(keyValue);
+          } else if (advancedKeyMode === 4) {
+            this.getTGL(keyValue);
+          } else if (advancedKeyMode === 5) {
+            this.getEnd(keyValue);
           } else if (advancedKeyMode === 8) {
             // socd的时候会重置出两个值
             this.getSocd(keyValue);
@@ -95,8 +101,57 @@ const useHighLevelKeyStore = defineStore('highLevelKey', {
       const result = await services.getRS(keyValue);
       this.highLevelKeys[keyValue] = { keyValue, type: 'rs', dks: { ...result } };
     },
+
     async setRS({ key, dks }) {
       const result = await services.setRS({ key, dks });
+      return result;
+    },
+
+    // 设置END
+    async setEnd(data, v) {
+      const { key, ...endInfo } = data;
+      console.log(endInfo);
+      const result = await services.setEND({ key, ...endInfo }, v);
+      return result;
+    },
+
+    // END
+    async getEnd(keyValue) {
+      const result = await services.getEND(keyValue);
+      this.highLevelKeys[keyValue] = { keyValue, type: 'end', end: { ...result } };
+      return result;
+    },
+
+    // TGL
+    async getTGL(keyValue) {
+      const result = await services.getTGL(keyValue);
+      this.highLevelKeys[keyValue] = { keyValue, type: 'tgl', tgl: { ...result } };
+      return result;
+    },
+
+    async setTGL(data) {
+      const { key, ...tglInfo } = data;
+      const result = await services.setTGL({ key, ...tglInfo });
+      return result;
+    },
+
+    // 设置MPT
+    async setMpt(data) {
+      const { key, ...mptInfo } = data;
+      const result = await services.setMpt({ key, ...mptInfo });
+      return result;
+    },
+
+    // MPT
+    async getMpt(keyValue) {
+      const result = await services.getMpt(keyValue);
+      this.highLevelKeys[keyValue] = { keyValue, type: 'mpt', mpt: { ...result } };
+      return result;
+    },
+
+    async getMacro(keyValue) {
+      const result = await services.getMacro(keyValue);
+      this.highLevelKeys[keyValue] = { keyValue, type: 'macro', macro: { ...result } };
       return result;
     },
   },

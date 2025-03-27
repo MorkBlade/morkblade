@@ -4,7 +4,7 @@
     <template v-if="itemData?.keyType === 'key'">
       <div class="outer-box">
         <p>更改事件按键</p>
-        <div class="key" @click="changeKey">{{ itemData?.key }}</div>
+        <div class="key" @click="changeKey">{{ keyboardWord[itemData?.keyCode] }}</div>
         <p>更改延迟数值</p>
         <input
           type="number"
@@ -32,14 +32,14 @@
     <template v-else>
       <div class="outer-box">
         <p :style="{ marginTop: '50px' }">更改延迟数值 单位(ms)</p>
-        <input type="number" :value="localDelay" @input="changeDelayVal" />
+        <input type="number" :value="itemData?.timeDifference" @input="changeDelayVal" />
       </div>
     </template>
   </div>
   <div class="character-container" v-if="showCharacter">
     <div class="content">
       <h3>更改事件按键:</h3>
-      <div class="key" @mouseup="Keydrop">space back</div>
+      <div class="key" @mouseup="Keydrop">{{ currentKey }}</div>
       <div class="tabs">
         <div
           class="tab-item"
@@ -93,9 +93,8 @@ import icon1 from '@/assets/images/sure.svg';
 import icon2 from '@/assets/images/clear_icon.svg';
 import keyboardWord from '@/configs/byte-to-key/keyboard';
 
-const { data, delay } = defineProps({
+const { data } = defineProps({
   data: { type: Object, default: {} },
-  delay: { type: Number, default: 0 },
 });
 
 const emit = defineEmits(['update:delay', 'update:key', 'update:status']);
@@ -103,9 +102,9 @@ const emit = defineEmits(['update:delay', 'update:key', 'update:status']);
 const keyboardStore = useKeyboardStore();
 const itemData = ref(null);
 const isActive = ref('');
-const localDelay = ref(delay);
 const showCharacter = ref(false);
 const checkedIdx = ref(0);
+const currentKey = ref(null);
 const characterArr = [
   { name: '基本字符', icon: 'basic' },
   { name: '扩展字符', icon: 'extend' },
@@ -124,15 +123,10 @@ const keyboard = [
 const mouse = [29441, 29442, 29443, 29444, 29445, 29446, 29447, 29448, 29449];
 
 watch(
-  () => delay,
-  (newValue) => {
-    localDelay.value = newValue;
-  },
-);
-watch(
   () => data,
   (newValue) => {
     itemData.value = newValue;
+    currentKey.value = keyboardWord[newValue?.keyCode];
   },
   { immediate: true, deep: true },
 );
@@ -168,16 +162,8 @@ const changeEventStatus = (status) => {
 
 const changeDelayVal = (e) => {
   const value = parseInt(e.target.value) || 0;
-  localDelay.value = value;
 
-  // 根据当前数据类型发送不同的更新事件
-  if (itemData.value && itemData.value.keyType === 'key') {
-    // 对于按键类型，更新 timeDifference
-    emit('update:delay', value);
-  } else if (itemData.value && itemData.value.keyType === 'delay') {
-    // 对于延迟类型，同样更新 timeDifference
-    emit('update:delay', value);
-  }
+  if (itemData.value) emit('update:delay', value);
 };
 
 const changeKey = () => {
@@ -186,14 +172,13 @@ const changeKey = () => {
 
 const Keydrop = () => {
   const keyVal = keyboardWord[keyboardStore.selectKey.value];
-  if (keyVal && itemData.value && itemData.value.keyType === 'key') {
-    // 发送按键更新事件
-    emit('update:key', keyVal);
+  currentKey.value = keyVal;
+  // if (keyVal && itemData.value && itemData.value.keyType === 'key') {
+  //   // 发送按键更新事件
+  //   emit('update:key', keyVal);
 
-    // 可选：关闭按键选择界面
-    showCharacter.value = false;
-  }
-  // console.log('Selected key for update:', keyVal);
+  //   showCharacter.value = false;
+  // }
 };
 
 const onCheck = (ite) => {

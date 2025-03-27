@@ -88,10 +88,6 @@ watch(
     console.log('update res is:>>>>>>>>', updateRes);
     if (newVal) {
       updateSuc.value = true;
-    } else {
-      setTimeout(() => {
-        emits('update:isShow', false);
-      }, 1000);
     }
   },
 );

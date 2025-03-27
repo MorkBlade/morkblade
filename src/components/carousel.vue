@@ -1,6 +1,6 @@
 <template>
-  <div class="carousel-box">
-    <div class="left-arrow" @click="prevClickSlide()"></div>
+  <div class="carousel-box" :style="{ marginLeft: `${offset}px`, width: `${width}px` }">
+    <div class="left-arrow" @click="prevClickSlide"></div>
     <div class="shadow" @mousedown="startDrag" @mousemove="onDrag" @mouseup="endDrag" @mouseleave="endDrag">
       <div
         class="carousel"
@@ -18,9 +18,14 @@
         </div>
       </div>
     </div>
-    <div class="right-arrow" @click="nextClick()"></div>
-    <div class="save-btn-box">
-      <saveConfigBtn :btnText="btnText" @saveConfig="saveConfig" />
+    <div class="right-arrow" @click="nextClick"></div>
+    <div class="bottom-taskbar">
+      <saveConfigBtn :btnText="btnText" @saveConfig="saveConfig" v-if="!showText" />
+      <div class="bottom-taskbar__text" v-if="showText">
+        <span :style="{ backgroundColor: localCarouselData[currentIdx]?.color }">
+          {{ localCarouselData[currentIdx]?.name }}
+        </span>
+      </div>
     </div>
   </div>
 </template>
@@ -28,16 +33,29 @@
 <script setup>
 import saveConfigBtn from './save-config-btn.vue';
 
-const { carouselData, btnText } = defineProps({
+const { carouselData, btnText, offset } = defineProps({
   carouselData: {
     type: Array,
     default: [],
   },
   btnText: {
     type: String,
+    default: '',
+  },
+  width: {
+    type: Number,
+    default: 1030,
+  },
+  offset: {
+    type: Number,
+    default: 160,
+  },
+  showText: {
+    type: Boolean,
+    default: false,
   },
 });
-const emit = defineEmits(['handleSave']);
+const emits = defineEmits(['handleSave', 'changeAxis']);
 
 const SLIDE_WIDTH = 175;
 const currentIdx = ref(6);
@@ -65,6 +83,7 @@ const prevClickSlide = () => {
       offsetVal.value = -(SLIDE_WIDTH * (originalLength.value - 1));
     }, 500);
   }
+  emits('changeAxis', localCarouselData.value[currentIdx.value].id);
   setTimeout(() => {
     flag = false;
   }, 300);
@@ -89,10 +108,11 @@ const nextClick = () => {
       offsetVal.value = 0;
     }, 500);
   }
+  emits('changeAxis', localCarouselData.value[currentIdx.value].id);
   setTimeout(() => {
     flag = false;
   }, 300);
-  // console.log('next click', currentIdx.value);
+  // console.log('next click', currentIdx.value, localCarouselData.value[currentIdx.value]);
 };
 
 // 初始化
@@ -145,7 +165,7 @@ const endDrag = () => {
 };
 
 const saveConfig = () => {
-  emit('handleSave', carouselData.value[currentIdx.value].id);
+  emits('handleSave', localCarouselData.value[currentIdx.value].id);
 };
 </script>
 
@@ -154,7 +174,7 @@ const saveConfig = () => {
   width: 1030px;
   height: 230px;
   display: flex;
-  margin-left: 160px;
+  // margin-left: 160px;
   position: relative;
 
   .left-arrow,
@@ -232,10 +252,28 @@ const saveConfig = () => {
     }
   }
 
-  .save-btn-box {
+  .bottom-taskbar {
     position: absolute;
     top: 230px;
     left: 345px;
+    &__text {
+      width: 150px;
+      margin-left: 38px;
+      margin-top: -10px;
+      display: flex;
+      justify-content: center;
+      span {
+        display: inline-block;
+        height: 20px;
+        line-height: 20px;
+        text-align: center;
+        padding: 0 15px;
+        border-radius: 10px;
+        color: #000;
+        font-size: 12px;
+        font-family: 'CN Heavy';
+      }
+    }
   }
 }
 </style>

@@ -22,9 +22,14 @@ const useSetAdvanced = () => {
   const dksInfo = reactive({ dks: [0, 0, 0, 0], trps: [0, 0, 0, 0], db: 1.4, db2: 3.0 });
   // mtInfo
   const mtInfo = reactive({ dks: [0, 0], delay: 200 });
-
   // rsInfo
   const rsInfo = reactive({ dks: [0, 0] });
+  // mptInfo
+  const mptInfo = reactive({ dks: [0, 0, 0], dbs: [0.5, 1.0, 1.5] });
+  // tglInfo
+  const tglInfo = reactive({ dks: 0, delay: 200 });
+  // endInfo
+  const endInfo = reactive({ dks: 0, delay: 200 });
 
   const edit = ref(false);
   const editKey = ref(0);
@@ -79,6 +84,14 @@ const useSetAdvanced = () => {
       Object.assign(socdInfo, { pos: [0, 0], key: [0, 0], type: 0, mode: 0 });
     } else if (type === 'RS') {
       Object.assign(rsInfo, { dks: [0, 0] });
+    } else if (type === 'MPT') {
+      Object.assign(mptInfo, { dks: [0, 0, 0], dbs: [0.5, 1.0, 1.5] });
+    } else if (type === 'END') {
+      Object.assign(endInfo, { dks: 0, delay: 200 });
+    } else if (type === 'TGL') {
+      Object.assign(tglInfo, { dks: 0, delay: 200 });
+    } else if (type === 'MACRO') {
+      Object.assign(macroInfo, { dks: 0, macroMode: 0, selectName: null, mode: 0, repeatCount: 1, repeatDelay: 1 });
     }
 
     console.log('handleKeyTypeChange log22222');
@@ -166,6 +179,9 @@ const useSetAdvanced = () => {
     dksInfo,
     mtInfo,
     rsInfo,
+    mptInfo,
+    tglInfo,
+    endInfo,
     maxTouchTravel,
     minTouchTravel,
     precision,

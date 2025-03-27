@@ -98,14 +98,35 @@ export const LIGHT_DYNAMIC_MODES = [
   { label: '水波荡漾', id: 20 },
 ];
 export const KEY_SHAFT = [
-  { id: 1, name: '磁玉pro', maxTravel: 3300, minTravel: 10, src: '/src/assets/images/wanciwang.webp' },
-  { id: 2, name: '万磁王RGB', maxTravel: 3300, minTravel: 10, src: '/src/assets/images/ciyu.webp' },
-  { id: 3, name: '万磁王', maxTravel: 3300, minTravel: 10, src: '/src/assets/images/wanciwang.webp' },
-  { id: 4, name: '磁玉gaming', maxTravel: 3400, minTravel: 10, src: '/src/assets/images/ciyu.webp' },
-  { id: 5, name: '天王磁轴标准版', maxTravel: 3500, minTravel: 10, src: '/src/assets/images/wanciwang.webp' },
-  { id: 6, name: '天王磁轴电竞版', maxTravel: 3400, minTravel: 10, src: '/src/assets/images/ciyu.webp' },
-  { id: 7, name: '万磁王pom', maxTravel: 3400, minTravel: 10, src: '/src/assets/images/ciyu.webp' },
-  { id: 8, name: '磁轴8', maxTravel: 3300, minTravel: 10, src: '/src/assets/images/ciyu.webp' },
+  {
+    id: 1,
+    name: '磁玉pro',
+    maxTravel: 3300,
+    minTravel: 10,
+    color: '#91bc00',
+    src: '/src/assets/images/wanciwang.webp',
+  },
+  { id: 2, name: '万磁王RGB', maxTravel: 3300, minTravel: 10, color: '#8400ff', src: '/src/assets/images/ciyu.webp' },
+  { id: 3, name: '万磁王', maxTravel: 3300, minTravel: 10, color: '#fff', src: '/src/assets/images/wanciwang.webp' },
+  { id: 4, name: '磁玉gaming', maxTravel: 3400, minTravel: 10, color: '#f0ff0f', src: '/src/assets/images/ciyu.webp' },
+  {
+    id: 5,
+    name: '天王磁轴标准版',
+    maxTravel: 3500,
+    minTravel: 10,
+    color: '#fbfbbb',
+    src: '/src/assets/images/wanciwang.webp',
+  },
+  {
+    id: 6,
+    name: '天王磁轴电竞版',
+    maxTravel: 3400,
+    minTravel: 10,
+    color: '#febbef',
+    src: '/src/assets/images/ciyu.webp',
+  },
+  { id: 7, name: '万磁王pom', maxTravel: 3400, minTravel: 10, color: '#fbcfbc', src: '/src/assets/images/ciyu.webp' },
+  { id: 8, name: '磁轴8', maxTravel: 3300, minTravel: 10, color: '#fafa', src: '/src/assets/images/ciyu.webp' },
 ];
 export const HIGH_LEVEL_KEYS = [
   {

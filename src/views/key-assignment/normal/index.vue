@@ -121,7 +121,7 @@ emitter.on('key-click', ({ colIndex, rowIndex }) => {
       margin-left: 50px;
       box-sizing: border-box;
       font-family: 'CN Heavy';
-      color: #242424;
+      color: #505050;
       display: flex;
       align-items: center;
       justify-content: center;

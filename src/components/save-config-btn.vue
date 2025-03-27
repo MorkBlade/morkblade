@@ -16,7 +16,7 @@
 import mDialog from '@/components/dialog.vue';
 import defaultIcon from '@/assets/images/save_icon.svg';
 
-const { btnText, tag } = defineProps({
+const { btnText, tag, disabled } = defineProps({
   btnText: {
     type: String,
     default: '保存更改',
@@ -29,6 +29,10 @@ const { btnText, tag } = defineProps({
     type: String,
     default: defaultIcon,
   },
+  disabled: {
+    type: Boolean,
+    default: false,
+  },
 });
 const emits = defineEmits(['saveConfig']);
 
@@ -36,6 +40,7 @@ const isShow = ref(false);
 const isAct = ref(false);
 
 const saveConfig = () => {
+  if (disabled) return;
   isAct.value = false;
   isShow.value = true;
 };

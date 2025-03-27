@@ -21,7 +21,7 @@ const useKeyboardStore = defineStore('keyboard', {
   actions: {
     // 初始化键盘布局
     async defKey() {
-      console.log('defKey render===================================>>>');
+      // console.log('defKey render===================================>>>');
       const result = await services.defKey();
       // console.log('defKey log res:>>>>>', result);
       if (result) {

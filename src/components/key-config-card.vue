@@ -41,6 +41,20 @@
         <p :style="{ marginRight: '8px' }">{{ keyboard[ite.keyId] }}</p>
         <p v-if="isNextItemRs(idx)">{{ keyboard[advancedData[idx + 1].keyId] }}</p>
       </template>
+      <template v-else-if="ite.type === 'end'">
+        <p>{{ keyboard[ite.keyId] }}</p>
+        <p>{{ keyboard[ite.end.dks] }}</p>
+      </template>
+      <template v-else-if="ite.type === 'tgl'">
+        <p>{{ keyboard[ite.keyId] }}</p>
+        <p>{{ keyboard[ite.tgl.dks] }}</p>
+      </template>
+      <template v-else-if="ite.type === 'mpt'">
+        <p>{{ keyboard[ite.keyId] }}</p>
+        <p>{{ keyboard[ite.mpt.dks[0]] }}</p>
+        <p>{{ keyboard[ite.mpt.dks[1]] }}</p>
+        <p>{{ keyboard[ite.mpt.dks[2]] }}</p>
+      </template>
       <img
         class="separation"
         src="@/assets/images/separation.svg"

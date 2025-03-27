@@ -1,18 +1,26 @@
 <template>
-  <div class="click-hold-box">
+  <div class="mt-box">
     <div class="left-config-box">
-      <div class="click-box">
-        <span>单击:</span>
-        <div class="key-box" @mouseenter="onMouseEn('click')" @mouseleave="onMouseLe('click')">
-          <p :class="{ 'hover-bg': !mtInfo.dks[0] }" @mouseup="KeydropFirst">{{ keyText[0] }}</p>
-          <div class="del_btn" @click="onClick" v-show="mtInfo.dks[0] && clickDelIndex === 0"></div>
+      <div class="key-group">
+        <div class="click-box">
+          <span>单击:</span>
+          <div class="key-box" @mouseenter="onMouseEn('click')" @mouseleave="onMouseLe('click')">
+            <p :class="{ 'hover-bg': !mtInfo.dks[0] }" @mouseup="KeydropFirst">{{ keyText[0] }}</p>
+            <div class="del_btn" @click="onClick" v-show="mtInfo.dks[0] && clickDelIndex === 0"></div>
+          </div>
+        </div>
+        <div class="hold-box">
+          <span>长按:</span>
+          <div class="key-box" @mouseenter="onMouseEn" @mouseleave="onMouseLe">
+            <p :class="{ 'hover-bg': !mtInfo.dks[1] }" @mouseup="KeydropSec">{{ keyText[1] }}</p>
+            <div class="del_btn" @click="onLongPress" v-show="mtInfo.dks[1] && longDelIndex === 0"></div>
+          </div>
         </div>
       </div>
-      <div class="hold-box">
-        <span>长按:</span>
-        <div class="key-box" @mouseenter="onMouseEn" @mouseleave="onMouseLe">
-          <p :class="{ 'hover-bg': !mtInfo.dks[1] }" @mouseup="KeydropSec">{{ keyText[1] }}</p>
-          <div class="del_btn" @click="onLongPress" v-show="mtInfo.dks[1] && longDelIndex === 0"></div>
+      <div class="delay-slider">
+        <p>长按触发延时(单位:ms)</p>
+        <div class="slider-block">
+          <el-slider v-model="mtInfo.delay" :min="0" :max="10000" />
         </div>
       </div>
       <div class="save-btn" @click="handleKeyTypeChange">
@@ -91,7 +99,7 @@ const onMouseLe = (keyCode) => {
 
 const handleKeyTypeChange = () => {
   console.log(activeKeys.value);
-  console.log('handleKeyTypeChangehandleKeyTypeChangehandleKeyTypeChange', mtInfo.value.dks);
+  // console.log('handleKeyTypeChangehandleKeyTypeChangehandleKeyTypeChange', mtInfo.value.dks);
   if (!activeKeys.value.length) return;
 
   isShow.value = true;
@@ -140,7 +148,7 @@ defineExpose({ save });
 </script>
 
 <style scoped lang="scss">
-.click-hold-box {
+.mt-box {
   display: flex;
 
   .left-config-box {
@@ -150,62 +158,110 @@ defineExpose({ save });
     background-size: cover;
     background-repeat: no-repeat;
 
-    .click-box,
-    .hold-box {
+    .key-group {
+      margin-top: 50px;
+      margin-bottom: 25px;
       display: flex;
       justify-content: center;
       align-items: center;
-
-      .key-box {
-        position: relative;
-        margin-left: 20px;
-      }
-
-      .del_btn {
-        height: 50px;
-        width: 50px;
-        position: absolute;
-        left: 0;
-        top: 0;
-        background-image: url('@/assets/images/del_key.svg');
-        background-size: cover;
-        background-repeat: no-repeat;
-        cursor: pointer;
-        transition: all 0.3s;
-      }
-
-      span {
-        font-size: 15px;
-        font-family: 'CN Heavy';
-        color: #fff;
-      }
-      p {
-        height: 50px;
-        width: 50px;
-        line-height: 1;
-        font-size: 12px;
+      .click-box,
+      .hold-box {
         display: flex;
         justify-content: center;
         align-items: center;
-        text-align: center;
-        box-sizing: border-box;
-        color: #fff;
-        font-family: 'Arial Bold';
-        background-image: url('@/assets/images/key_bg.svg');
-        background-size: cover;
-        background-repeat: no-repeat;
-        cursor: pointer;
 
-        &.hover-bg:hover {
-          background-image: url('@/assets/images/key_bgC.svg');
+        .key-box {
+          position: relative;
+          margin-left: 20px;
+        }
+
+        .del_btn {
+          height: 50px;
+          width: 50px;
+          position: absolute;
+          left: 0;
+          top: 0;
+          background-image: url('@/assets/images/del_key.svg');
+          background-size: cover;
+          background-repeat: no-repeat;
+          cursor: pointer;
+          transition: all 0.3s;
+        }
+
+        span {
+          font-size: 15px;
+          font-family: 'CN Heavy';
+          color: #fff;
+        }
+        p {
+          height: 50px;
+          width: 50px;
+          line-height: 1;
+          font-size: 12px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          text-align: center;
+          box-sizing: border-box;
+          color: #fff;
+          font-family: 'Arial Bold';
+          background-image: url('@/assets/images/key_bg.svg');
+          background-size: cover;
+          background-repeat: no-repeat;
+          cursor: pointer;
+
+          &.hover-bg:hover {
+            background-image: url('@/assets/images/key_bgC.svg');
+          }
         }
       }
+      .click-box {
+        // margin-top: 50px;
+      }
+      .hold-box {
+        // margin: 20px 0 50px 0;
+      }
     }
-    .click-box {
-      margin-top: 50px;
-    }
-    .hold-box {
-      margin: 20px 0 50px 0;
+
+    .delay-slider {
+      padding: 0 50px;
+      margin-bottom: 15px;
+      box-sizing: border-box;
+
+      p {
+        margin-bottom: 20px;
+        text-align: center;
+        color: #fff;
+        font-size: 15px;
+        font-family: 'CN Heavy';
+      }
+
+      .slider-block {
+        width: 200px;
+        height: 20px;
+        box-sizing: border-box;
+        padding: 0 4px;
+        background-image: url('@/assets/images/luminance.svg');
+        background-size: cover;
+        background-repeat: no-repeat;
+      }
+      ::v-deep(.el-slider) {
+        width: 192px;
+        height: 14px;
+      }
+      ::v-deep(.el-slider__button) {
+        display: block;
+        width: 24px;
+        height: 24px;
+        margin: 10px 10px;
+        border: none;
+        background-image: url('@/assets/images/luminance_btn.svg');
+        background-size: cover;
+        background-repeat: no-repeat;
+      }
+      ::v-deep(.el-slider__bar) {
+        height: 12px;
+      }
     }
 
     .save-btn {

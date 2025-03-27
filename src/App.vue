@@ -22,7 +22,7 @@ onMounted(() => {
   // 页面加载后显示内容
   setTimeout(() => {
     isContentReady.value = true;
-  }, 100);
+  }, 300);
 });
 </script>
 

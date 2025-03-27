@@ -9,12 +9,12 @@
         :class="{ 'is-checked': currentChecked(idx) }"
         @click="onClick(idx)"
       >
-        <template v-if="idx === 7">
-          <img src="@/assets/images/colorful.png" alt="" />
-        </template>
-        <template v-else>
-          <el-color-picker v-model="ite.color" @change="onChange" />
-        </template>
+        <!-- <template v-if="idx === 7"> -->
+        <!-- <img src="@/assets/images/colorful.png" alt="" /> -->
+        <!-- </template> -->
+        <!-- <template v-else> -->
+        <el-color-picker v-model="ite.color" @change="onChange" />
+        <!-- </template> -->
         <span class="color-text">{{ idx === 7 ? '彩色' : `灯光${idx + 1}` }}</span>
       </div>
     </div>
@@ -60,7 +60,8 @@ const currentChecked = computed(() => {
 watch(
   () => staticLightColorList,
   (newVal) => {
-    localStaticColorList.value = [...staticLightColorList, { color: '#ffffff', id: 7 }];
+    // localStaticColorList.value = [...staticLightColorList, { color: '#ffffff', id: 7 }];
+    localStaticColorList.value = [...staticLightColorList];
   },
 );
 // TODO 灯光初始化

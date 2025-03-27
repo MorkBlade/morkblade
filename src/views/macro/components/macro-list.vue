@@ -30,12 +30,14 @@
 </template>
 
 <script setup>
-// 使用 defineModel 代替 props + emits
+import { useMacroStore } from '@/stores';
+
 const macros = defineModel('macros', { default: () => [] });
 
 // 通知父组件选中的宏索引
 const emit = defineEmits(['checkedMacroIdx']);
 
+const macroStore = useMacroStore();
 const curMacroIdx = ref(0);
 
 const formatTimestamp = (timestamp) => {
@@ -60,7 +62,10 @@ const checkMacro = (idx) => {
   emit('checkedMacroIdx', idx);
 };
 
+let flag = false;
 const addMacro = () => {
+  if (flag) return;
+  flag = true;
   if (macros.value.length >= 15) return;
 
   const times = Date.now();
@@ -72,11 +77,14 @@ const addMacro = () => {
     data: [],
     mode: 0,
     repeatCount: 1,
-    repeatInterval: 1
+    repeatInterval: 1,
   };
 
   // 直接修改模型值
   macros.value = [...macros.value, macro];
+  setTimeout(() => {
+    flag = false;
+  }, 1000);
 };
 
 const copyMacro = (macro) => {
@@ -85,7 +93,7 @@ const copyMacro = (macro) => {
   macroJSON.createTime = times;
   macroJSON.id = parseInt(times / 1000);
   macroJSON.macroName = '宏' + (macros.value.length + 1);
-  
+
   macroJSON.mode = macro.mode || 0;
   macroJSON.repeatCount = macro.repeatCount || 1;
   macroJSON.repeatInterval = macro.repeatInterval || 1;
@@ -95,6 +103,10 @@ const copyMacro = (macro) => {
 };
 
 const delMacro = (id) => {
+  if (macroStore.usedMacro.indexOf(id) > -1) {
+    console.log('宏正在使用中，无法删除');
+    return;
+  }
   // 创建新数组以触发响应式更新
   macros.value = macros.value.filter((item) => item.id !== id);
 };

@@ -116,7 +116,7 @@ watch(
 );
 
 onMounted(async () => {
-  console.log('keyboard onMounted');
+  // console.log('keyboard onMounted');
   try {
     // 您的mounted逻辑
     await keyboardStore.defKey();

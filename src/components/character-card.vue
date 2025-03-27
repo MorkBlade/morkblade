@@ -92,7 +92,7 @@ const selectItem = (keyVal) => {
       margin-left: 10px;
       box-sizing: border-box;
       font-family: 'CN Heavy';
-      color: #242424;
+      color: #505050;
       display: flex;
       justify-content: center;
       align-items: center;

@@ -6,15 +6,24 @@
         v-for="(item, i) in internalMacroData"
         :key="`macro-item-${i}-${item.key || i}`"
         class="item"
-        :class="[item.keyType === 'key' ? 'key' : 'delay', { 'selected-item': selectedItemIndex === i }]"
-        :style="{ top: positions[i] + 'px', position: 'absolute', zIndex: draggingIndex === i ? 999 : '' }"
+        :class="[
+          item.keyType === 'key' ? 'key' : 'delay',
+          { 'selected-item': selectedCreateTime === item.createTime },
+          { dragging: draggingIndex === i },
+        ]"
+        :style="{
+          top: positions[i] + 'px',
+          position: 'absolute',
+          zIndex: draggingIndex === i ? 999 : '',
+          transition: draggingIndex === i ? 'none' : 'top 0.3s ease',
+        }"
         @click="changeItemInfo($event, item, i)"
       >
-        <span class="handle" @mousedown="startDrag($event, i)"></span>
+        <span class="handle" @mousedown="startDrag($event, i, item.createTime)"></span>
         <div class="content">
           <img :src="item.status === 0 ? keyupIcon : keydownIcon" alt="" v-if="item.keyType === 'key'" />
           <span :class="item.keyType === 'key' ? 'keyVal' : 'delayVal'">
-            {{ item.keyType === 'key' ? item.key : item.timeDifference + 'ms' }}
+            {{ item.keyType === 'key' ? keyboardWord[item.keyCode] : item.timeDifference + 'ms' }}
           </span>
           <span class="time-diff" v-if="item.keyType === 'key'">{{ item.timeDifference.toFixed(2) + 'ms' }}</span>
           <img class="copy-icon" src="@/assets/images/copy_icon.svg" alt="" @click="copyItem(item, i)" />
@@ -68,6 +77,7 @@ import stopIcon from '@/assets/images/stop_icon.svg';
 import delayIcon from '@/assets/images/delay_icon.svg';
 import eventsIcon from '@/assets/images/events_icon.svg';
 import clearIcon from '@/assets/images/clear_icon.svg';
+import keyboardWord from '@/configs/byte-to-key/keyboard';
 
 const props = defineProps({
   macroData: { type: Array, default: () => [] },
@@ -91,6 +101,7 @@ const savePositionInfo = ref([]);
 const internalMacroData = ref([]);
 const keyList = ref({ data: [] });
 const selectedItemIndex = ref(null);
+const selectedCreateTime = ref(null);
 
 const operationNameList = [
   { name: '开始录制', icon: startIcon },
@@ -99,12 +110,138 @@ const operationNameList = [
   { name: '清除序列', icon: clearIcon },
 ];
 
+const keyValueDictionary = {
+  8: 42, // backspace
+  9: 43, // tab
+  12: 156, // clear
+  13: 40, // enter
+  16: 225, // l-shift
+  17: 224, // l-ctrl
+  18: 226, // l-alt
+  19: 4279, // pause
+  20: 130, // caps lock
+  27: 41, // esc
+  32: 44, // space
+  33: 157, // prior
+  34: 174, // next
+  35: 77, // end
+  36: 74, // home
+  37: 80, // left
+  38: 82, // up
+  39: 79, // right
+  40: 81, // down
+  41: 119, // select
+  42: 70, // print
+  43: 116, // execute
+  45: 73, // insert
+  46: 76, // delete
+  47: 117, // help
+  48: 39, // 0 equal braceright
+  49: 30, // 1 exclam onesuperior
+  50: 31, // 2 quotedbl twosuperior
+  51: 32, // 3 section threesuperior
+  52: 33, // 4 dollar
+  53: 34, // 5 percent
+  54: 35, // 6 ampersand
+  55: 36, // 7 slash braceleft
+  56: 37, // 8 parenleft bracketleft
+  57: 38, // 9 parenright bracketright
+  65: 4, // A
+  66: 5, // B
+  67: 6, // C
+  68: 7, // D
+  69: 8, // E
+  70: 9, // F
+  71: 10, // G
+  72: 11, // H
+  73: 12, // I
+  74: 13, // J
+  75: 14, // K
+  76: 15, // L
+  77: 16, // M
+  78: 17, // N
+  79: 18, // O
+  80: 19, // P
+  81: 20, // Q
+  82: 21, // R
+  83: 22, // S
+  84: 23, // T
+  85: 24, // U
+  86: 25, // V
+  87: 26, // W
+  88: 27, // X
+  89: 28, // Y
+  90: 29, // Z
+  91: 227, // l-win
+  96: 98, // PAD0
+  97: 89, // PAD1
+  98: 90, // PAD2
+  99: 91, // PAD3
+  100: 92, // PAD4
+  101: 93, // PAD5
+  102: 94, // PAD6
+  103: 95, // PAD7
+  104: 96, // PAD8
+  105: 97, // PAD9
+  106: 85, // PAD*
+  107: 87, // PAD+
+  108: 84, // PAD/
+  109: 86, // PAD-
+  110: 99, // PAD.
+  111: 84, // PAD/
+  112: 58, // F1
+  113: 59, // F2
+  114: 60, // F3
+  115: 61, // F4
+  116: 62, // F5
+  117: 63, // F6
+  118: 64, // F7
+  119: 65, // F8
+  120: 66, // F9
+  121: 67, // F10
+  122: 68, // F11
+  123: 69, // F12
+  124: 104, // F13
+  125: 105, // F14
+  126: 106, // F15
+  127: 107, // F16
+  128: 108, // F17
+  129: 109, // F18
+  130: 110, // F19
+  131: 111, // F20
+  132: 112, // F21
+  133: 113, // F22
+  134: 114, // F23
+  135: 115, // F24
+  136: 83, // NUM LOCK
+  137: 71, // Scroll Lock
+  144: 83, // NUM LOCK
+  186: 51, // ;
+  187: 46, // =
+  188: 54, // ,
+  189: 45, // -
+  190: 55, // 。
+  191: 56, // /
+  192: 52, // ''
+  210: 87, // +
+  219: 47, // [
+  220: 49, // \
+  221: 48, // ]
+  222: 52, // ''
+
+  500: 229, // r-shift
+  501: 228, // r-ctrl
+  502: 230, // r-alt
+  503: 231, // r-win
+};
+
 const changeIcon = computed(() => {
   return isStart.value ? stopIcon : startIcon;
 });
 
 onMounted(() => {
   calcPosition();
+  // getKeysByValue('75');
 });
 
 // watch(
@@ -126,6 +263,7 @@ watch(
   () => props.macroData,
   (newVal) => {
     internalMacroData.value = Array.isArray(newVal) ? [...newVal] : [];
+    // internalMacroData.value = data;
   },
   { immediate: true, deep: true },
 );
@@ -162,9 +300,10 @@ const onClick = (idx) => {
       break;
     case 1:
       const value = {
-        type: 'delay',
+        keyType: 'delay',
         key: '',
         status: '',
+        createTime: Date.now(),
         timeDifference: 20,
       };
 
@@ -236,7 +375,7 @@ const handleKeydown = (event) => {
     keyType: 'key',
     key: key,
     status: 1,
-    keyCode,
+    keyCode: keyValueDictionary[keyCode],
     code,
     timeStamp,
     type: type,
@@ -273,7 +412,7 @@ const handleKeyup = (event) => {
     keyType: 'key',
     key: key,
     status: 0,
-    keyCode,
+    keyCode: keyValueDictionary[keyCode],
     code,
     timeStamp,
     type: type,
@@ -334,7 +473,6 @@ const copyItem = (item, index) => {
 
 const deleteItem = (item) => {
   const itemIndex = internalMacroData.value.findIndex((dataItem) => dataItem === item);
-
   if (itemIndex !== -1) {
     internalMacroData.value.splice(itemIndex, 1);
     emit('updateMacro', [...internalMacroData.value]);
@@ -347,6 +485,7 @@ const changeItemInfo = (e, item, index) => {
   e.stopPropagation();
   macroDataItem.value = JSON.parse(JSON.stringify(item));
   selectedItemIndex.value = index;
+  selectedCreateTime.value = item.createTime;
 };
 
 const onMouseEnter = (idx) => {
@@ -356,9 +495,9 @@ const onMouseLeave = (idx) => {
   isAct.value = null;
 };
 
-const startDrag = (event, index) => {
+const startDrag = (event, index, time) => {
   draggingIndex.value = index;
-
+  selectedCreateTime.value = time;
   // 记录鼠标开始拖动时的位置
   startY = event.clientY;
 
@@ -380,21 +519,25 @@ const onDrag = (event) => {
 
   // 直接根据鼠标移动的距离来更新元素位置
   positions.value[draggingIndex.value] = savePositionInfo.value[draggingIndex.value] + deltaY;
-  // console.log(positions.value[draggingIndex.value]);
+
   // 获取拖动元素的中心位置
   const dragItemCenter = positions.value[draggingIndex.value] + 25; // 假设元素高度为50px，取中心点
 
   // 向上交换检测：检查是否应该与上一个元素交换位置
   if (draggingIndex.value > 0) {
     // 获取上一个元素的位置
-    const prevItemCenter = savePositionInfo.value[draggingIndex.value - 1] + 25;
+    const prevItemTop = savePositionInfo.value[draggingIndex.value - 1];
+    const prevItemCenter = prevItemTop + 25;
 
-    // 如果拖动元素中心位置超过了上一个元素的中心位置，进行交换
-    if (dragItemCenter < prevItemCenter) {
-      // 保存当前拖动元素的实际视觉位置
+    // 使用更小的阈值，让交换更早触发
+    // 当拖动项的顶部接近上一项的1/3处时触发交换
+    const swapThreshold = 15; // 可调整此值改变灵敏度
+
+    if (positions.value[draggingIndex.value] < prevItemTop + swapThreshold) {
+      // 保存当前拖动元素的视觉位置
       const currentVisualPosition = positions.value[draggingIndex.value];
 
-      // 交换数据数组中的元素
+      // 数据交换
       [internalMacroData.value[draggingIndex.value], internalMacroData.value[draggingIndex.value - 1]] = [
         internalMacroData.value[draggingIndex.value - 1],
         internalMacroData.value[draggingIndex.value],
@@ -403,18 +546,25 @@ const onDrag = (event) => {
       // 更新所有元素的"正确"位置
       savePositionInfo.value = internalMacroData.value.map((_, index) => index * 65);
 
-      // 更新非拖动元素的位置
-      const newPositions = [...savePositionInfo.value];
+      // 使用Vue的过渡系统，保持动画效果
+      // 对于被交换的元素，设置新的目标位置，Vue 的transition会处理过渡动画
+      for (let i = 0; i < positions.value.length; i++) {
+        if (i !== draggingIndex.value && i !== draggingIndex.value - 1) {
+          // 其他元素保持在其应有位置
+          positions.value[i] = savePositionInfo.value[i];
+        }
+      }
 
-      // 保持拖动元素的视觉位置不变
-      const oldIndex = draggingIndex.value;
+      // 交换的上一个元素移到拖动元素原来的正确位置
+      positions.value[draggingIndex.value - 1] = savePositionInfo.value[draggingIndex.value];
+
+      // 拖动元素保持在当前视觉位置，继续跟随鼠标
+      positions.value[draggingIndex.value - 1] = currentVisualPosition;
+
+      // 更新拖动索引
       draggingIndex.value = draggingIndex.value - 1;
-      newPositions[draggingIndex.value] = currentVisualPosition;
 
-      // 应用新位置
-      positions.value = newPositions;
-
-      // 调整startY以反映新的位置关系，保持拖动的连贯性
+      // 调整起始点，保持拖动流畅
       startY = event.clientY;
     }
   }
@@ -422,14 +572,18 @@ const onDrag = (event) => {
   // 向下交换检测：检查是否应该与下一个元素交换位置
   if (draggingIndex.value < internalMacroData.value.length - 1) {
     // 获取下一个元素的位置
-    const nextItemCenter = savePositionInfo.value[draggingIndex.value + 1] + 25;
+    const nextItemTop = savePositionInfo.value[draggingIndex.value + 1];
+    const nextItemCenter = nextItemTop + 25;
 
-    // 如果拖动元素中心位置超过了下一个元素的中心位置，进行交换
-    if (dragItemCenter > nextItemCenter) {
-      // 保存当前拖动元素的实际视觉位置
+    // 使用更小的阈值，让交换更早触发
+    // 当拖动项的底部接近下一项的2/3处时触发交换
+    const swapThreshold = 35; // 可调整此值改变灵敏度
+
+    if (positions.value[draggingIndex.value] + 50 > nextItemTop + swapThreshold) {
+      // 保存当前拖动元素的视觉位置
       const currentVisualPosition = positions.value[draggingIndex.value];
 
-      // 交换数据数组中的元素
+      // 数据交换
       [internalMacroData.value[draggingIndex.value], internalMacroData.value[draggingIndex.value + 1]] = [
         internalMacroData.value[draggingIndex.value + 1],
         internalMacroData.value[draggingIndex.value],
@@ -438,18 +592,26 @@ const onDrag = (event) => {
       // 更新所有元素的"正确"位置
       savePositionInfo.value = internalMacroData.value.map((_, index) => index * 65);
 
-      // 更新非拖动元素的位置
-      const newPositions = [...savePositionInfo.value];
+      // 使用Vue的过渡系统，保持动画效果
+      // 对于被交换的元素，设置新的目标位置，Vue 的transition会处理过渡动画
+      for (let i = 0; i < positions.value.length; i++) {
+        if (i !== draggingIndex.value && i !== draggingIndex.value + 1) {
+          // 其他元素保持在其应有位置
+          positions.value[i] = savePositionInfo.value[i];
+        }
+      }
 
-      // 保持拖动元素的视觉位置不变
-      const oldIndex = draggingIndex.value;
+      // 交换的下一个元素移到拖动元素原来的正确位置
+      positions.value[draggingIndex.value + 1] = savePositionInfo.value[draggingIndex.value];
+
+      // 拖动元素保持在当前视觉位置，继续跟随鼠标
+      // 这里是关键：我们不更新拖动元素的位置，而是更新索引
+      positions.value[draggingIndex.value] = currentVisualPosition;
+
+      // 更新拖动索引
       draggingIndex.value = draggingIndex.value + 1;
-      newPositions[draggingIndex.value] = currentVisualPosition;
 
-      // 应用新位置
-      positions.value = newPositions;
-
-      // 调整startY以反映新的位置关系，保持拖动的连贯性
+      // 调整起始点，保持拖动流畅
       startY = event.clientY;
     }
   }
@@ -458,20 +620,29 @@ const onDrag = (event) => {
 const endDrag = () => {
   if (draggingIndex.value === null) return;
 
-  // 计算最终应该放置的位置(匀速动画)
+  // 标记结束拖动，添加一个变量跟踪拖动结束状态
+  const draggedIndex = draggingIndex.value;
+  draggingIndex.value = null;
+
+  // 计算最终应该放置的位置
   const finalPositions = internalMacroData.value.map((_, index) => index * 65);
 
-  // 设置元素最终位置
-  positions.value = finalPositions;
-  savePositionInfo.value = [...finalPositions];
+  // 允许过渡动画生效的延迟
+  setTimeout(() => {
+    // 设置元素最终位置
+    positions.value = finalPositions;
+    savePositionInfo.value = [...finalPositions];
+  }, 10); // 小延迟确保状态更新先发生
 
   // 重置状态
-  draggingIndex.value = null;
   document.body.style.cursor = 'default'; // 恢复默认光标
 
   // 移除事件监听器
   document.removeEventListener('mousemove', onDrag);
   document.removeEventListener('mouseup', endDrag);
+
+  // 通知父组件更新数据
+  emit('updateMacro', [...internalMacroData.value]);
 };
 
 const updateMacroItemKey = (newKey) => {
@@ -479,20 +650,24 @@ const updateMacroItemKey = (newKey) => {
   if (selectedItemIndex.value === null || !macroDataItem.value) return;
 
   // 更新本地数据
-  macroDataItem.value.key = newKey;
+  macroDataItem.value.key = getKeysByValue(newKey);
+  macroDataItem.value.keyCode = newKey;
 
   // 更新内部数组中的项
   if (internalMacroData.value[selectedItemIndex.value]) {
-    internalMacroData.value[selectedItemIndex.value].key = newKey;
+    internalMacroData.value[selectedItemIndex.value].key = getKeysByValue(newKey);
+    internalMacroData.value[selectedItemIndex.value].keyCode = newKey;
 
     // 创建新的引用以确保触发响应式更新
     internalMacroData.value = [...internalMacroData.value];
 
     // 通知父组件
     emit('updateMacro', internalMacroData.value);
-
-    // console.log('已更新按键值:', newKey);
   }
+};
+
+const getKeysByValue = (targetValue) => {
+  return Object.keys(keyValueDictionary).filter((key) => keyValueDictionary[key] === targetValue);
 };
 
 const updateMacroItemDelay = (newDelay) => {
@@ -627,6 +802,7 @@ const updateMacroTypeSettings = (newSettings) => {
       display: flex;
       justify-content: center;
       align-items: center;
+      transition: top 0.3s ease; /* 全局应用过渡效果 */
     }
 
     .key,
@@ -636,7 +812,7 @@ const updateMacroTypeSettings = (newSettings) => {
       border-radius: 30px;
       border: 3px solid #202020;
       background-color: #000;
-      transition: transform 0.3s ease-in-out;
+      // transition: transform 0.3s ease-in-out;
       cursor: pointer;
 
       &:hover {
@@ -657,6 +833,10 @@ const updateMacroTypeSettings = (newSettings) => {
         background-size: cover;
         background-repeat: no-repeat;
         cursor: grab;
+
+        &:active {
+          cursor: grabbing;
+        }
       }
 
       .content {
@@ -719,6 +899,14 @@ const updateMacroTypeSettings = (newSettings) => {
       height: 50px;
       margin-left: 265px;
     }
+
+    /* 拖动中的元素不应用过渡 */
+    .dragging {
+      opacity: 0.9;
+      transform: scale(1.02);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      transition: none !important; /* 强制覆盖其他过渡效果 */
+    }
   }
 
   .button-group {
@@ -765,12 +953,22 @@ const updateMacroTypeSettings = (newSettings) => {
 }
 
 .moveing {
-  opacity: 0;
+  // opacity: 0;
 }
 
-.list-move, /* 对移动中的元素应用的过渡 */
-    .list-enter-active,
-    .list-leave-active {
-  transition: all 0.2s ease;
+/* 确保列表动画正确应用 */
+.list-move {
+  transition: transform 0.3s ease;
+}
+
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.3s ease;
+}
+
+.list-enter-from,
+.list-leave-to {
+  opacity: 0;
+  transform: translateY(30px);
 }
 </style>

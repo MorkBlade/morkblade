@@ -13,8 +13,8 @@
     </div>
     <div class="display-area">
       <normal v-if="currentComponent === 'normal'" />
-      <clickHold
-        v-else-if="currentComponent === 'clickHold'"
+      <mt
+        v-else-if="currentComponent === 'MT'"
         ref="childRef"
         v-model:mt-info="mtInfo"
         :edit="edit"
@@ -22,27 +22,54 @@
         @handleKeyTypeChange="handleKeyTypeChange"
         @handleDialoConfirm="handleDialoConfirm"
       />
+      <dks
+        v-else-if="currentComponent === 'DKS'"
+        ref="childRef"
+        v-model:dks-info="dksInfo"
+        :max-touch-travel="maxTouchTravel"
+        :min-touch-travel="minTouchTravel"
+        :precision="precision"
+        :edit="edit"
+        :edit-key="editKey"
+        @handleKeyTypeChange="handleKeyTypeChange"
+        @handleDialoConfirm="handleDialoConfirm"
+      />
       <socd
-        v-else-if="currentComponent === 'socd'"
+        v-else-if="currentComponent === 'SOCD'"
         ref="childRef"
         v-model:socd-info="socdInfo"
         @handleKeyTypeChange="handleKeyTypeChange"
         @handleDialoConfirm="handleDialoConfirm"
       />
       <rs
-        v-else-if="currentComponent === 'rs'"
+        v-else-if="currentComponent === 'RS'"
         ref="childRef"
         v-model:rs-info="rsInfo"
         @handleKeyTypeChange="handleKeyTypeChange"
         @handleDialoConfirm="handleDialoConfirm"
       />
-      <dks
-        v-else-if="currentComponent === 'dks'"
+      <tgl
+        v-else-if="currentComponent === 'TGL'"
         ref="childRef"
-        v-model:dks-info="dksInfo"
-        :max-touch-travel="maxTouchTravel"
-        :min-touch-travel="minTouchTravel"
-        :precision="precision"
+        v-model:tgl-info="tglInfo"
+        :edit="edit"
+        :edit-key="editKey"
+        @handleKeyTypeChange="handleKeyTypeChange"
+        @handleDialoConfirm="handleDialoConfirm"
+      />
+      <mpt
+        v-else-if="currentComponent === 'MPT'"
+        ref="childRef"
+        v-model:mpt-info="mptInfo"
+        :edit="edit"
+        :edit-key="editKey"
+        @handleKeyTypeChange="handleKeyTypeChange"
+        @handleDialoConfirm="handleDialoConfirm"
+      />
+      <end
+        v-else-if="currentComponent === 'END'"
+        ref="childRef"
+        v-model:end-info="endInfo"
         :edit="edit"
         :edit-key="editKey"
         @handleKeyTypeChange="handleKeyTypeChange"
@@ -62,10 +89,13 @@ import useSetAdvanced from './useSetAdvanced.js';
 import { useHighLevelKeyStore, useKeyboardStore, usePerformanceStore } from '@/stores';
 
 import normal from './normal/index.vue';
-import clickHold from './click-hold/index.vue';
+import mt from './mt/index.vue';
+import dks from './dks/index.vue';
 import socd from './socd/index.vue';
 import rs from './rs/index.vue';
-import dks from './dks/index.vue';
+import tgl from './tgl/index.vue';
+import mpt from './mpt/index.vue';
+import end from './end/index.vue';
 import keyConfigCard from '@/components/key-config-card.vue';
 
 const keyboardStore = useKeyboardStore();
@@ -73,7 +103,7 @@ const performanceStore = usePerformanceStore();
 const highLevelKeyStore = useHighLevelKeyStore();
 
 const clickItem = ref(0);
-const performanceItem = ['普通', '单击/长按', 'DKS', 'SOCD', 'RS'];
+const performanceItem = ['普通', '单击/长按', 'DKS', 'SOCD', 'RS', 'TGL', 'MPT', 'END'];
 
 const changeMenu = (idx) => {
   clickItem.value = idx;
@@ -82,13 +112,19 @@ const changeMenu = (idx) => {
 const currentComponent = computed(() => {
   switch (clickItem.value) {
     case 1:
-      return 'clickHold';
+      return 'MT';
     case 2:
-      return 'dks';
+      return 'DKS';
     case 3:
-      return 'socd';
+      return 'SOCD';
     case 4:
-      return 'rs';
+      return 'RS';
+    case 5:
+      return 'TGL';
+    case 6:
+      return 'MPT';
+    case 7:
+      return 'END';
     default:
       return 'normal';
   }
@@ -101,6 +137,9 @@ const {
   dksInfo,
   mtInfo,
   rsInfo,
+  mptInfo,
+  tglInfo,
+  endInfo,
   maxTouchTravel,
   minTouchTravel,
   precision,
@@ -131,12 +170,47 @@ const delConfig = async (keyId) => {
   padding-top: 30px;
   overflow: hidden;
 
+  .left-menu {
+    width: 245px;
+    height: 300px;
+    margin-right: 15px;
+    padding-right: 5px;
+    box-sizing: border-box;
+    overflow-y: scroll;
+
+    &::-webkit-scrollbar {
+      height: 10px;
+      width: 8px;
+    }
+
+    /* 滚动条轨道 */
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    /* 滚动条手柄 */
+    &::-webkit-scrollbar-thumb {
+      background: #000;
+      border-radius: 1 0px;
+    }
+
+    /* 隐藏滚动条 */
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* 当容器被悬停时显示滚动条 */
+    &:hover::-webkit-scrollbar {
+      display: block;
+    }
+  }
+
   .key-assignment-item {
     width: 200px;
     height: 42px;
     font-size: 20px;
     color: #fff;
-    margin: 0 30px;
+    margin-left: 30px;
     display: flex;
     align-items: center;
     justify-content: center;

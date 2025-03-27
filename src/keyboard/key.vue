@@ -36,7 +36,9 @@
       <p class="top-key" v-if="singleTravel || rtReleaseTravel || rtPressTravel">{{ byteToKey[keyItem.value] }}</p>
     </div>
     <img :src="VeriftIcon" class="verify_icon" v-if="route.path === '/key-calibration' && verifySuc" />
-    <div class="axis" v-if="route.path === '/performance' && axisVal !== null">{{ KEY_SHAFT[axisVal]?.name }}</div>
+    <div v-if="route.path === '/performance' && axisVal !== null" class="axis">
+      <span :style="{ backgroundColor: KEY_SHAFT[axisVal]?.color }"></span>
+    </div>
   </div>
 </template>
 
@@ -205,9 +207,9 @@ const onChecked = async () => {
 };
 
 const startMouseDown = (e, key) => {
-  console.log('xxxxxx');
+  // console.log('xxxxxx');
   if (e.button === 0) {
-    console.log('asda');
+    // console.log('asda');
     keyboardStore.inChangLight = true;
     changeKeyLightColor(key);
   }
@@ -235,7 +237,6 @@ const Keydrop = async (e, rowIndex, colIndex, key) => {
       macroStore.macroInfo.dks = key;
       await macroStore.setMacro();
     }
-    console.log(macroStore.macroInfo.dks);
   } else {
     keyboardStore.updateKey({ colIndex: colIndex, rowIndex: rowIndex });
   }
@@ -330,17 +331,25 @@ const Keydrop = async (e, rowIndex, colIndex, key) => {
 
 .axis {
   width: 100%;
-  height: 12px;
-  color: #fcff00;
-  font-size: 12px;
-  font-family: 'CN Heavy';
-  text-align: center;
-  white-space: nowrap; /* 防止文本换行 */
-  overflow: hidden; /* 超出部分隐藏 */
-  text-overflow: ellipsis; /* 超出部分用省略号表示 */
+  // height: 20px;
+  display: flex;
+  justify-content: center;
   position: absolute;
   left: 0;
   bottom: 1px;
+
+  span {
+    display: inline-block;
+    width: 30px;
+    height: 10px;
+    line-height: 16px;
+    text-align: center;
+    padding: 0 2px;
+    border-radius: 10px;
+    color: #000;
+    font-size: 10px;
+    font-family: 'CN Heavy';
+  }
 }
 
 .key1_25 {

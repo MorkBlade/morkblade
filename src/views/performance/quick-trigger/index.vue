@@ -67,7 +67,7 @@ const rtEnabled = ref(true);
 const rtPressTravel = ref(performanceStore.rtPressTravel);
 const rtReleaseTravel = ref(performanceStore.rtReleaseTravel);
 const singleTravel = ref(performanceStore.singleTouchTravel);
-const rtPressLinkRelease = ref(false);
+const rtPressLinkRelease = ref(true);
 
 // onMounted(async () => {
 //   emitter.emit('rt-enabled', { value: rtEnabled.value });

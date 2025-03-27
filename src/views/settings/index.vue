@@ -334,9 +334,26 @@ const getFirmWarePack = async (url) => {
               replace: true,
             });
           }, 2000);
+
+          setTimeout(() => {
+            // 10s后检查是否在进行
+            if (!progress.value) {
+              isShow.value = false;
+              router.push({
+                path: '/',
+                replace: true,
+              });
+            }
+          }, 10000);
         } catch (error) {
           console.log('update failed----------->', error);
           updateRes.value = false;
+          setTimeout(() => {
+            router.push({
+              path: '/',
+              replace: true,
+            });
+          }, 2000);
         }
         // 假设 updateFile.raw 是一个 Blob 对象
         // updateFile = { raw: blob };
