@@ -29,8 +29,8 @@ const useKeyboardStore = defineStore('keyboard', {
         const keyboardData = result.filter((item) => item.length > 0);
         this.keyboard = keyboardData;
         const performance = usePerformanceStore();
-        performance.getKeyPerformance(keyboardData);
-        performance.getAllDpDr(keyboardData);
+        await performance.getKeyPerformance(keyboardData);
+        await performance.getAllDpDr(keyboardData);
         await this.getLayoutKeyInfo();
       }
     },

@@ -31,7 +31,6 @@
     </div>
     <div class="keyboard-container">
       <div class="keyboard">
-        <!-- TODO 刷新key数据丢失(defKey初始化有问题) -->
         <div class="row" v-for="(item, rowIndex) in currentLayoutData" :key="item">
           <key
             v-for="(ite, colIndex) in item"

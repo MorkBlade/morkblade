@@ -51,25 +51,25 @@ onMounted(() => {
 
 <style scoped lang="scss">
 .performance-container {
-  width: 1600px;
-  height: 350px;
-  margin-top: 25px;
+  width: var(--performance-container-width);
+  height: var(--performance-container-height);
+  margin-top: var(--performance-container-margin-top);
   display: flex;
   background-image: url('@/assets/images/performance_bg.svg');
   background-size: cover;
   background-repeat: no-repeat;
   position: relative;
   box-sizing: border-box;
-  padding-top: 30px;
+  padding-top: var(--performance-container-padding-top);
   overflow: hidden;
 
   .performance-item {
-    width: 200px;
-    height: 42px;
-    font-size: 20px;
+    width: var(--performance-item-width);
+    height: var(--performance-item-height);
+    font-size: var(--performance-item-font-size);
     color: #fff;
-    margin: 0 30px;
-    line-height: 36px;
+    margin: var(--performance-item-margin);
+    line-height: var(--performance-item-line-height);
     font-family: 'CN oblique';
     display: flex;
     justify-content: center;
@@ -77,13 +77,13 @@ onMounted(() => {
     background-image: url('@/assets/images/performance_item_bg.svg');
     background-size: cover;
     background-repeat: no-repeat;
-    margin-bottom: 20px;
+    margin-bottom: var(--performance-item-margin-bottom);
     cursor: pointer;
   }
 
   .display-area {
-    width: 1310px;
-    height: 290px;
+    width: var(--display-area-width);
+    height: var(--display-area-height);
   }
   .is-active {
     background-image: url('@/assets/images/performance_item_bgC.gif');

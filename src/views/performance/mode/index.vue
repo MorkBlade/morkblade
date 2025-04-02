@@ -7,7 +7,7 @@
         :min="min"
         :max="max"
         :title="title"
-        :offsetX="280"
+        :offsetX="getOffsetX()"
         :disabled="disabled"
         @sendKeyVal="handleTriggerPointChange"
       />
@@ -23,8 +23,8 @@ import travelTestCard from '@/components/travel-test-card.vue';
 import setTravelCard from '@/components/set-travel-card.vue';
 import saveConfig from './components/save-config.vue';
 
-const min = 0; // 最小值
-const max = 4; // 最大值
+const min = 0.005; // 最小值
+const max = 3.3; // 最大值
 const title = '按键行程设置';
 
 const keyboardStore = useKeyboardStore();
@@ -98,6 +98,13 @@ const saveSingleConfig = async () => {
   });
   await Promise.all(promises);
 };
+
+// 添加一个获取 CSS 变量值的函数
+const getOffsetX = () => {
+  const offsetXValue = getComputedStyle(document.documentElement).getPropertyValue('--mode-offset-x');
+  console.log('offsetXValue', offsetXValue);
+  return parseInt(offsetXValue) || `${280}px`; // 提供一个默认值以防 CSS 变量未定义
+};
 </script>
 
 <style scoped lang="scss">
@@ -105,9 +112,9 @@ const saveSingleConfig = async () => {
   display: flex;
 
   .keystroke {
-    height: 290px;
-    width: 740px;
-    margin: 0 30px;
+    height: var(--mode-keystroke-height);
+    width: var(--mode-keystroke-width);
+    margin: var(--mode-keystroke-margin);
     background-image: url('@/assets/images/keystroke_bg.svg');
     background-size: cover;
     background-repeat: no-repeat;

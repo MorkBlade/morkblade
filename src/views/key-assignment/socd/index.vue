@@ -20,7 +20,7 @@
       <div class="delay-slider">
         <p>延时(单位:ms)</p>
         <div class="slider-block">
-          <el-slider v-model="delay" :min="0" :max="10000" />
+          <el-slider v-model="socdInfo.delay" :min="0" :max="200" />
         </div>
       </div>
       <div class="cover-list" :class="DKS_MODES[socdInfo.mode] ? 'is-selected' : ''" @click="toggleDropdown">
@@ -68,7 +68,7 @@ const keyboardStore = useKeyboardStore();
 const highLevelKeyStore = useHighLevelKeyStore();
 
 const defaultHeight = ref(0);
-const delay = ref(200);
+const delay = ref(0);
 const isShow = ref(false);
 const key1Index = ref(-1);
 const key2Index = ref(-1);
@@ -76,7 +76,7 @@ const DKS_MODES = ['后覆盖', '第一个键优先', '第二个键优先', '中
 
 const socdInfo = defineModel('socdInfo', {
   type: Object,
-  default: () => ({ pos: [0, 0], key: [0, 0], type: 0, mode: 0 }),
+  default: () => ({ pos: [0, 0], key: [0, 0], type: 0, mode: 0, delay: 0 }),
 });
 
 const keyText = computed(() => {

@@ -24,7 +24,7 @@
       <span>行程测试</span>
       <el-switch
         v-model="testEnabled"
-        :width="73"
+        :width="getSwitchWidth()"
         inline-prompt
         active-text="ON"
         inactive-text="OFF"
@@ -68,9 +68,18 @@ watch(keyPressTestCount, async () => {
 });
 
 const dynamicHeight = computed(() => {
-  const height = -190 + (maxMM.value / 4.0) * 260;
-  // 限制最大高度为 190px
-  return Math.min(Math.max(height, -190), 0);
+  // 使用 CSS 变量获取基准值
+  const baseValue = getComputedStyle(document.documentElement).getPropertyValue('--progress-inner-height');
+  const baseHeight = parseInt(baseValue) || 190;
+
+  // 计算高度比例
+  const heightRatio = baseHeight / 190; // 使用原始值 190 作为基准
+
+  // 计算动态高度
+  const height = -baseHeight + (maxMM.value / 4.0) * ((baseHeight * 260) / 190);
+
+  // 限制最大高度
+  return Math.min(Math.max(height, -baseHeight), 0);
 });
 
 // 组件销毁
@@ -82,12 +91,18 @@ const withTimeout = (promise, ms) => {
   const timeout = new Promise((_, reject) => setTimeout(() => reject(new Error('Operation timed out')), ms));
   return Promise.race([promise, timeout]);
 };
+
+// 添加一个获取开关宽度的函数
+const getSwitchWidth = () => {
+  const switchWidthValue = getComputedStyle(document.documentElement).getPropertyValue('--switch-width');
+  return parseInt(switchWidthValue) || 73; // 提供一个默认值以防 CSS 变量未定义
+};
 </script>
 
 <style scoped lang="scss">
 .travel-test-card {
-  width: 260px;
-  height: 290px;
+  width: var(--travel-card-width);
+  height: var(--travel-card-height);
   // display: flex;
   background-image: url('@/assets/images/formation_test_bg.svg');
   background-size: cover;
@@ -95,40 +110,40 @@ const withTimeout = (promise, ms) => {
   overflow: hidden;
 
   .scale-box {
-    margin-top: 20px;
+    margin-top: var(--scale-box-margin-top);
     display: flex;
     position: relative;
 
     &:first-child {
-      margin-left: 60px;
+      margin-left: var(--scale-box-margin-left);
     }
 
     .scale-img {
-      width: 25px;
-      height: 200px;
+      width: var(--scale-img-width);
+      height: var(--scale-img-height);
       object-fit: cover;
     }
 
     .progress-bar {
-      width: 30px;
-      height: 200px;
-      margin: 0 10px;
+      width: var(--progress-bar-width);
+      height: var(--progress-bar-height);
+      margin: var(--progress-bar-margin);
       box-sizing: border-box;
-      padding-top: 5px;
+      padding-top: var(--progress-bar-padding-top);
       position: relative;
       background-image: url('@/assets/images/progress_bar.svg');
       background-size: cover;
       background-repeat: no-repeat;
 
       div {
-        width: 20px;
-        height: 190px;
+        width: var(--progress-inner-width);
+        height: var(--progress-inner-height);
         display: block;
         // height: 0;
         position: absolute;
-        border-radius: 5px;
-        top: 5px;
-        left: 5px;
+        border-radius: var(--progress-inner-border-radius);
+        top: var(--progress-inner-top);
+        left: var(--progress-inner-left);
         overflow: hidden;
       }
 
@@ -136,10 +151,8 @@ const withTimeout = (promise, ms) => {
         width: 100%;
         height: 100%;
         object-fit: fill;
-        transform: translateX(-190px);
-        transition:
-          all 0.2,
-          s ease-in-out;
+        transform: translateX(var(--progress-transform-value));
+        transition: all 0.2s ease-in-out;
         // background-image: url('@/assets/images/progress.png');
         // background-size: cover;
         // background-repeat: no-repeat;
@@ -155,58 +168,58 @@ const withTimeout = (promise, ms) => {
 
     .nums {
       position: absolute;
-      height: 200px;
-      top: -5px;
-      left: 110px;
+      height: var(--nums-height);
+      top: var(--nums-top);
+      left: var(--nums-left);
       background-color: pink;
 
       p {
         color: #ccc;
-        font-size: 13px;
+        font-size: var(--scale-font-size);
         position: absolute;
         font-family: 'CN Regular';
       }
       .scale_1 {
-        top: 54px;
+        top: var(--scale-1-top);
       }
       .scale_2 {
-        top: 114px;
+        top: var(--scale-2-top);
       }
       .scale_3 {
-        top: 172px;
+        top: var(--scale-3-top);
       }
       .scale_3_3 {
-        top: 191px;
+        top: var(--scale-3-3-top);
       }
     }
   }
 
   .switch-box {
-    width: 170px;
-    height: 36px;
-    line-height: 34px;
-    margin: 14px 0 0 40px;
+    width: var(--switch-box-width);
+    height: var(--switch-box-height);
+    line-height: var(--switch-box-line-height);
+    margin: var(--switch-box-margin);
     background-image: url('@/assets/images/switch_bg.svg');
     background-size: cover;
     background-repeat: no-repeat;
 
     span {
-      font-size: 13px;
+      font-size: var(--switch-text-font-size);
       color: #ccc;
       font-family: 'CN Heavy';
       // -webkit-text-stroke: 1px #000000;
-      margin-left: 16px;
+      margin-left: var(--switch-text-margin-left);
     }
 
     .el-switch {
-      margin-left: 20px;
+      margin-left: var(--switch-margin-left);
       --el-switch-on-color: rgb(145, 188, 0);
       --el-switch-off-color: rgba(0, 0, 0, 0);
       font-family: 'CN Heavy';
 
       .custom-active-action {
-        width: 18px;
-        height: 18px;
+        width: var(--custom-action-width);
+        height: var(--custom-action-height);
       }
 
       // &.is-checked {

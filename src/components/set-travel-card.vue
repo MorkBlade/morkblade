@@ -29,11 +29,11 @@
       </div>
       <img class="slider-img isreverse" src="/src/assets/images/keystroke_scale_bg.svg" alt="" />
       <div class="nums">
-        <p class="scale_0">{{ deadZone ? '0.01' : '0.20' }}</p>
-        <p class="scale_1">{{ deadZone ? '0.25' : '1.00' }}</p>
-        <p class="scale_2">{{ deadZone ? '0.50' : '2.00' }}</p>
-        <p class="scale_3">{{ deadZone ? '0.75' : '3.00' }}</p>
-        <p class="scale_4">{{ deadZone ? '1.00' : '4.00' }}</p>
+        <p class="scale_0">{{ deadZone ? '0.01' : '0.005' }}</p>
+        <p class="scale_1">{{ deadZone ? '0.25' : '0.10' }}</p>
+        <p class="scale_2">{{ deadZone ? '0.50' : '1.00' }}</p>
+        <p class="scale_3">{{ deadZone ? '0.75' : '2.00' }}</p>
+        <p class="scale_4">{{ deadZone ? '1.00' : '3.30' }}</p>
       </div>
     </div>
     <div class="text-box">
@@ -64,12 +64,13 @@ const { title, keyVal, sliderVal, min, max, offsetX, deadZone } = defineProps({
   offsetX: { type: Number },
   disabled: { type: Boolean, default: false },
   deadZone: { type: Boolean, default: false },
+  normal: { type: Boolean, default: true },
 });
 
 const emits = defineEmits(['sendKeyVal']);
 const slider = ref(null);
 const sliderContainer = ref(null);
-const step = 0.1; // 步进值
+const step = 0.001; // 步进值
 const sliderHeight = 192; // 滑块高度
 const psliderVal = ref(null);
 let dragging = false;
@@ -135,7 +136,7 @@ const updateValue = (clientY) => {
   percentage = Math.max(0, Math.min(1, percentage)); // 确保百分比在0到1之间
   let newValue = max - percentage * (max - min);
   newValue = Math.round(newValue / step) * step; // 根据步进值四舍五入
-  psliderVal.value = parseFloat(newValue.toFixed(1)); // 保留一位小数
+  psliderVal.value = parseFloat(newValue.toFixed(3)); // 保留一位小数
   emits('sendKeyVal', psliderVal.value);
 };
 
@@ -160,14 +161,14 @@ onUnmounted(() => {
 
 <style scoped lang="scss">
 .travel-test-card {
-  width: 180px;
+  width: 200px;
   box-sizing: border-box;
   padding-top: 20px;
   // margin-left: 280px;
   overflow: hidden;
   .slider_box {
     display: flex;
-    margin-left: 28px;
+    margin-left: 33px;
     position: relative;
 
     .slider-img {
@@ -243,7 +244,7 @@ onUnmounted(() => {
   }
 
   .text-box {
-    width: 180px;
+    width: 190px;
     height: 36px;
     line-height: 32px;
     margin-top: 14px;
@@ -259,7 +260,7 @@ onUnmounted(() => {
       margin-left: 24px;
 
       & input {
-        width: 30px;
+        width: 40px;
         height: 100%;
         text-align: center;
         color: #ccc;

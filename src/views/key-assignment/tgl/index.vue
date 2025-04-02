@@ -11,7 +11,7 @@
       <div class="delay-slider">
         <p>长按触发延时(单位:ms)</p>
         <div class="slider-block">
-          <el-slider v-model="tglInfo.delay" :min="0" :max="10000" tooltip-class="custom-tooltip" />
+          <el-slider v-model="tglInfo.delay" :min="0" :max="200" tooltip-class="custom-tooltip" />
         </div>
       </div>
       <div class="save-btn" @click="saveConfig">

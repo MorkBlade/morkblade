@@ -209,7 +209,6 @@ onMounted(async () => {
   for (let i = 0; i < 4; i++) {
     clickData[i] = parse8BitToBooleans(dksInfo.value.trps[i]);
   }
-  // console.log('onMounted log', clickData);
 });
 
 const db = computed(() => dksInfo.value.db);

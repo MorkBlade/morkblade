@@ -11,7 +11,7 @@
       <div class="delay-slider">
         <p>延时(单位:ms)</p>
         <div class="slider-block">
-          <el-slider v-model="endInfo.delay" :min="0" :max="10000" />
+          <el-slider v-model="endInfo.delay" :min="0" :max="200" />
         </div>
       </div>
       <div class="save-btn" @click="saveConfig">

@@ -50,26 +50,26 @@ import mouseIconChecked from '@/assets/images/mouse_c.svg';
 
 // 创建图标映射对象
 const iconMap = {
-  'basic': {
+  basic: {
     default: basicIcon,
-    checked: basicIconChecked
+    checked: basicIconChecked,
   },
-  'extend': {
+  extend: {
     default: extendIcon,
-    checked: extendIconChecked
+    checked: extendIconChecked,
   },
-  'special': {
+  special: {
     default: specialIcon,
-    checked: specialIconChecked
+    checked: specialIconChecked,
   },
-  'keyboard': {
+  keyboard: {
     default: keyboardIcon,
-    checked: keyboardIconChecked
+    checked: keyboardIconChecked,
   },
-  'mouse': {
+  mouse: {
     default: mouseIcon,
-    checked: mouseIconChecked
-  }
+    checked: mouseIconChecked,
+  },
 };
 
 const emit = defineEmits(['handleSendKey']);
@@ -87,8 +87,8 @@ const number = [30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 89, 90, 91, 92, 93, 94, 
 const special = [45, 46, 47, 48, 49, 51, 52, 53, 54, 55, 56, 57];
 const basic = [40, 41, 42, 43, 44, 79, 80, 81, 82, 224, 225, 226, 227, 228, 229, 230, 231];
 const keyboard = [
-  61696, 61697, 61698, 61699, 61704, 61705, 61706, 61708, 61707, 62217, 62224, 62225, 62226, 62227, 62228, 62229, 62231,
-  62245, 62246, 62247, 62248, 62249, 62250, 62251, 62252, 62255,
+  61696, 61697, 61698, 61699, 62217, 62224, 62225, 62226, 62227, 62228, 62229, 62231, 62245, 62246, 62247, 62248, 62249,
+  62250, 62251, 62252, 62255,
 ];
 const mouse = [29441, 29442, 29443, 29444, 29445, 29446, 29447, 29448, 29449];
 

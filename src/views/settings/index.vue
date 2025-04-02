@@ -209,7 +209,7 @@ const toggleDropdown = (keyCode) => {
       firmwareDefHeight.value = firmwareDefHeight.value ? 0 : 135;
       break;
     default:
-      RateDefHeight.value = RateDefHeight.value ? 0 : 135;
+      RateDefHeight.value = RateDefHeight.value ? 0 : 320;
       break;
   }
 };

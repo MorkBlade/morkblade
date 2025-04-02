@@ -15,7 +15,6 @@
           top: positions[i] + 'px',
           position: 'absolute',
           zIndex: draggingIndex === i ? 999 : '',
-          transition: draggingIndex === i ? 'none' : 'top 0.3s ease',
         }"
         @click="changeItemInfo($event, item, i)"
       >
@@ -42,13 +41,17 @@
         v-for="(item, idx) in operationNameList"
         :key="item"
         class="operation-btn"
-        :class="{ 'is-active': isAct === idx, 'is-pending': switchClass(idx) }"
+        :class="{
+          'is-active': isAct === idx,
+          'is-pending': switchClass(idx),
+          'clear-btn': idx === operationNameList.length - 1,
+        }"
         @click="onClick(idx)"
         @mouseenter="onMouseEnter(idx)"
         @mouseleave="onMouseLeave(idx)"
       >
         <img :src="!idx ? changeIcon : item.icon" alt="" />
-        <span>{{ item.name }}</span>
+        <span>{{ !idx && isStart ? '结束录制' : item.name }}</span>
       </div>
     </div>
   </div>
@@ -536,14 +539,13 @@ const onDrag = (event) => {
     if (positions.value[draggingIndex.value] < prevItemTop + swapThreshold) {
       // 保存当前拖动元素的视觉位置
       const currentVisualPosition = positions.value[draggingIndex.value];
-
       // 数据交换
       [internalMacroData.value[draggingIndex.value], internalMacroData.value[draggingIndex.value - 1]] = [
         internalMacroData.value[draggingIndex.value - 1],
         internalMacroData.value[draggingIndex.value],
       ];
 
-      // 更新所有元素的"正确"位置
+      // 重置所有元素的正确位置
       savePositionInfo.value = internalMacroData.value.map((_, index) => index * 65);
 
       // 使用Vue的过渡系统，保持动画效果
@@ -556,9 +558,11 @@ const onDrag = (event) => {
       }
 
       // 交换的上一个元素移到拖动元素原来的正确位置
-      positions.value[draggingIndex.value - 1] = savePositionInfo.value[draggingIndex.value];
+      // positions.value[draggingIndex.value - 1] = savePositionInfo.value[draggingIndex.value];
+      positions.value[draggingIndex.value] = savePositionInfo.value[draggingIndex.value];
 
       // 拖动元素保持在当前视觉位置，继续跟随鼠标
+      // positions.value[draggingIndex.value] = positions.value[draggingIndex.value - 1];
       positions.value[draggingIndex.value - 1] = currentVisualPosition;
 
       // 更新拖动索引
@@ -602,11 +606,13 @@ const onDrag = (event) => {
       }
 
       // 交换的下一个元素移到拖动元素原来的正确位置
-      positions.value[draggingIndex.value + 1] = savePositionInfo.value[draggingIndex.value];
+      // positions.value[draggingIndex.value + 1] = savePositionInfo.value[draggingIndex.value];
+      positions.value[draggingIndex.value] = savePositionInfo.value[draggingIndex.value];
 
       // 拖动元素保持在当前视觉位置，继续跟随鼠标
       // 这里是关键：我们不更新拖动元素的位置，而是更新索引
-      positions.value[draggingIndex.value] = currentVisualPosition;
+      // positions.value[draggingIndex.value] = currentVisualPosition;
+      positions.value[draggingIndex.value + 1] = currentVisualPosition;
 
       // 更新拖动索引
       draggingIndex.value = draggingIndex.value + 1;
@@ -802,7 +808,7 @@ const updateMacroTypeSettings = (newSettings) => {
       display: flex;
       justify-content: center;
       align-items: center;
-      transition: top 0.3s ease; /* 全局应用过渡效果 */
+      transition: top 0.3s ease; /* 启用此过渡效果 */
     }
 
     .key,
@@ -812,7 +818,6 @@ const updateMacroTypeSettings = (newSettings) => {
       border-radius: 30px;
       border: 3px solid #202020;
       background-color: #000;
-      // transition: transform 0.3s ease-in-out;
       cursor: pointer;
 
       &:hover {
@@ -848,7 +853,6 @@ const updateMacroTypeSettings = (newSettings) => {
         display: flex;
         align-items: center;
         justify-content: center;
-        // position: relative;
 
         & img {
           width: 16px;
@@ -905,7 +909,7 @@ const updateMacroTypeSettings = (newSettings) => {
       opacity: 0.9;
       transform: scale(1.02);
       box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-      transition: none !important; /* 强制覆盖其他过渡效果 */
+      transition: none !important; /* 启用此覆盖 */
     }
   }
 
@@ -949,6 +953,9 @@ const updateMacroTypeSettings = (newSettings) => {
     .is-pending {
       background-image: url('/src/assets/images/pending_bg.svg');
     }
+    .clear-btn:hover {
+      background-image: url('/src/assets/images/pending_bg.svg');
+    }
   }
 }
 
@@ -956,14 +963,14 @@ const updateMacroTypeSettings = (newSettings) => {
   // opacity: 0;
 }
 
-/* 确保列表动画正确应用 */
+/* 恢复列表过渡效果 */
 .list-move {
-  transition: transform 0.3s ease;
+  // transition: transform 0.3s ease;
 }
 
 .list-enter-active,
 .list-leave-active {
-  transition: all 0.3s ease;
+  // transition: all 0.3s ease;
 }
 
 .list-enter-from,

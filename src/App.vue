@@ -24,11 +24,22 @@ onMounted(() => {
     isContentReady.value = true;
   }, 300);
 });
+function showCurrentResolution() {
+  const width = window.innerWidth;
+  const height = window.innerHeight;
+  const containerWidth = getComputedStyle(document.documentElement).getPropertyValue('--performance-container-width');
+
+  console.log(`当前分辨率: ${width}x${height}, 容器宽度变量: ${containerWidth}`);
+}
+
+// 页面加载时和调整窗口大小时检查
+window.addEventListener('load', showCurrentResolution);
+window.addEventListener('resize', showCurrentResolution);
 </script>
 
 <style scoped lang="scss">
 .background {
-  background-image: url('@/assets/images/bg.png');
+  background-image: url('@/assets/images/newbg.png');
   background-size: cover;
   background-repeat: repeat-x;
   position: fixed;
@@ -41,8 +52,8 @@ onMounted(() => {
 }
 
 .bg-layer {
-  background-image: url('@/assets/images/bg.png');
-  // background-size: cover;
+  background-image: url('@/assets/images/newbg.png');
+  background-size: cover;
   background-repeat: repeat-x;
   background-size: 100% 100%;
   position: absolute;

@@ -76,6 +76,13 @@ const useAppStore = defineStore('app', {
       this.baseInfo = baseInfo;
       return baseInfo;
     },
+
+    // 获取协议版本
+    async getProtocolVersion() {
+      const protocolVersion = await services.getApi({ type: 'ORDER_TYPE_PROTOCOL_VERSION' });
+      this.protocolVersion = protocolVersion;
+      return protocolVersion;
+    },
   },
 });
 export default useAppStore;

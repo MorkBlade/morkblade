@@ -1,4 +1,4 @@
-import './assets/main.scss';
+import './style/index.scss';
 import 'element-plus/dist/index.css';
 
 import ElementPlus from 'element-plus';

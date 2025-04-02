@@ -55,8 +55,8 @@ import linkedIcon from '@/assets/images/link2.svg';
 const keyboardStore = useKeyboardStore();
 const performanceStore = usePerformanceStore();
 
-const min = 0; // 最小值
-const max = 4; // 最大值
+const min = 0.005; // 最小值
+const max = 3.3; // 最大值
 const travelVal = ref(0);
 const RTKeyDown = ref(0);
 const RTKeyUp = ref(0);

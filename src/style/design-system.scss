@@ -1,0 +1,216 @@
+:root {
+  /* 常规分辨率 (1080p) */
+  --performance-container-width: 1600px;
+  --performance-container-height: 350px;
+  --performance-container-margin-top: 25px;
+  --performance-container-padding-top: 30px;
+  
+  --performance-item-width: 200px;
+  --performance-item-height: 42px;
+  --performance-item-font-size: 20px;
+  --performance-item-margin: 0 30px;
+  --performance-item-line-height: 36px;
+  --performance-item-margin-bottom: 20px;
+  
+  --display-area-width: 1310px;
+  --display-area-height: 290px;
+  
+  /* mode 组件的变量 */
+  --mode-keystroke-height: 290px;
+  --mode-keystroke-width: 740px;
+  --mode-keystroke-margin: 0 30px;
+  --mode-offset-x: 280px;
+  
+  /* travel-test-card 组件的变量 */
+  --travel-card-width: 260px;
+  --travel-card-height: 290px;
+  
+  --scale-box-margin-top: 20px;
+  --scale-box-margin-left: 60px;
+  
+  --scale-img-width: 25px;
+  --scale-img-height: 200px;
+  
+  --progress-bar-width: 30px;
+  --progress-bar-height: 200px;
+  --progress-bar-margin: 0 10px;
+  --progress-bar-padding-top: 5px;
+  
+  --progress-inner-width: 20px;
+  --progress-inner-height: 190px;
+  --progress-inner-top: 5px;
+  --progress-inner-left: 5px;
+  --progress-inner-border-radius: 5px;
+  
+  --progress-transform-value: -190px;
+  
+  --nums-top: -5px;
+  --nums-left: 110px;
+  --nums-height: 200px;
+  
+  --scale-font-size: 13px;
+  --scale-1-top: 54px;
+  --scale-2-top: 114px;
+  --scale-3-top: 172px;
+  --scale-3-3-top: 191px;
+  
+  --switch-box-width: 170px;
+  --switch-box-height: 36px;
+  --switch-box-line-height: 34px;
+  --switch-box-margin: 14px 0 0 40px;
+  
+  --switch-text-font-size: 13px;
+  --switch-text-margin-left: 16px;
+  --switch-margin-left: 20px;
+  
+  --custom-action-width: 18px;
+  --custom-action-height: 18px;
+  
+  --switch-width: 73px;
+}
+
+/* 2K 分辨率 (1440p) */
+@media screen and (min-width: 2000px) and (max-width: 3000px) {
+  :root {
+    --performance-container-width: 2000px;
+    --performance-container-height: 438px;
+    --performance-container-margin-top: 31px;
+    --performance-container-padding-top: 38px;
+    
+    --performance-item-width: 250px;
+    --performance-item-height: 53px;
+    --performance-item-font-size: 25px;
+    --performance-item-margin: 0 38px;
+    --performance-item-line-height: 45px;
+    --performance-item-margin-bottom: 25px;
+    
+    --display-area-width: 1638px;
+    --display-area-height: 363px;
+    
+    /* mode 组件的变量 */
+    --mode-keystroke-height: 363px;
+    --mode-keystroke-width: 925px;
+    --mode-keystroke-margin: 0 38px;
+    --mode-offset-x: 350px;
+    
+    /* travel-test-card 组件的变量 */
+    --travel-card-width: 325px;
+    --travel-card-height: 363px;
+    
+    --scale-box-margin-top: 25px;
+    --scale-box-margin-left: 75px;
+    
+    --scale-img-width: 31px;
+    --scale-img-height: 250px;
+    
+    --progress-bar-width: 38px;
+    --progress-bar-height: 250px;
+    --progress-bar-margin: 0 13px;
+    --progress-bar-padding-top: 6px;
+    
+    --progress-inner-width: 25px;
+    --progress-inner-height: 238px;
+    --progress-inner-top: 6px;
+    --progress-inner-left: 6px;
+    --progress-inner-border-radius: 6px;
+    
+    --progress-transform-value: -238px;
+    
+    --nums-top: -6px;
+    --nums-left: 138px;
+    --nums-height: 250px;
+    
+    --scale-font-size: 16px;
+    --scale-1-top: 68px;
+    --scale-2-top: 143px;
+    --scale-3-top: 215px;
+    --scale-3-3-top: 239px;
+    
+    --switch-box-width: 213px;
+    --switch-box-height: 45px;
+    --switch-box-line-height: 43px;
+    --switch-box-margin: 18px 0 0 50px;
+    
+    --switch-text-font-size: 16px;
+    --switch-text-margin-left: 20px;
+    --switch-margin-left: 25px;
+    
+    --custom-action-width: 23px;
+    --custom-action-height: 23px;
+    
+    --switch-width: 91px;
+  }
+}
+
+/* 4K 分辨率 (2160p) */
+@media screen and (min-width: 3001px) {
+  :root {
+    --performance-container-width: 3200px;
+    --performance-container-height: 700px;
+    --performance-container-margin-top: 50px;
+    --performance-container-padding-top: 60px;
+    
+    --performance-item-width: 400px;
+    --performance-item-height: 84px;
+    --performance-item-font-size: 40px;
+    --performance-item-margin: 0 60px;
+    --performance-item-line-height: 72px;
+    --performance-item-margin-bottom: 40px;
+    
+    --display-area-width: 2620px;
+    --display-area-height: 580px;
+    
+    /* mode 组件的变量 */
+    --mode-keystroke-height: 580px;
+    --mode-keystroke-width: 1480px;
+    --mode-keystroke-margin: 0 60px;
+    --mode-offset-x: 560px;
+    
+    /* travel-test-card 组件的变量 */
+    --travel-card-width: 520px;
+    --travel-card-height: 580px;
+    
+    --scale-box-margin-top: 40px;
+    --scale-box-margin-left: 120px;
+    
+    --scale-img-width: 50px;
+    --scale-img-height: 400px;
+    
+    --progress-bar-width: 60px;
+    --progress-bar-height: 400px;
+    --progress-bar-margin: 0 20px;
+    --progress-bar-padding-top: 10px;
+    
+    --progress-inner-width: 40px;
+    --progress-inner-height: 380px;
+    --progress-inner-top: 10px;
+    --progress-inner-left: 10px;
+    --progress-inner-border-radius: 10px;
+    
+    --progress-transform-value: -380px;
+    
+    --nums-top: -10px;
+    --nums-left: 220px;
+    --nums-height: 400px;
+    
+    --scale-font-size: 26px;
+    --scale-1-top: 108px;
+    --scale-2-top: 228px;
+    --scale-3-top: 344px;
+    --scale-3-3-top: 382px;
+    
+    --switch-box-width: 340px;
+    --switch-box-height: 72px;
+    --switch-box-line-height: 68px;
+    --switch-box-margin: 28px 0 0 80px;
+    
+    --switch-text-font-size: 26px;
+    --switch-text-margin-left: 32px;
+    --switch-margin-left: 40px;
+    
+    --custom-action-width: 36px;
+    --custom-action-height: 36px;
+    
+    --switch-width: 146px;
+  }
+}

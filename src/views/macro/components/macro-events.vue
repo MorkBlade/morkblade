@@ -8,7 +8,7 @@
         <p>更改延迟数值</p>
         <input
           type="number"
-          :value="itemData?.timeDifference"
+          :value="itemData?.timeDifference.toFixed(2)"
           :style="{ margin: '10px 0 20px 0' }"
           @input="changeDelayVal"
         />
@@ -32,7 +32,7 @@
     <template v-else>
       <div class="outer-box">
         <p :style="{ marginTop: '50px' }">更改延迟数值 单位(ms)</p>
-        <input type="number" :value="itemData?.timeDifference" @input="changeDelayVal" />
+        <input type="number" :value="itemData?.timeDifference.toFixed(2)" @input="changeDelayVal" />
       </div>
     </template>
   </div>
