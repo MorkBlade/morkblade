@@ -22,19 +22,8 @@ onMounted(() => {
   // 页面加载后显示内容
   setTimeout(() => {
     isContentReady.value = true;
-  }, 300);
+  }, 500);
 });
-function showCurrentResolution() {
-  const width = window.innerWidth;
-  const height = window.innerHeight;
-  const containerWidth = getComputedStyle(document.documentElement).getPropertyValue('--performance-container-width');
-
-  console.log(`当前分辨率: ${width}x${height}, 容器宽度变量: ${containerWidth}`);
-}
-
-// 页面加载时和调整窗口大小时检查
-window.addEventListener('load', showCurrentResolution);
-window.addEventListener('resize', showCurrentResolution);
 </script>
 
 <style scoped lang="scss">
