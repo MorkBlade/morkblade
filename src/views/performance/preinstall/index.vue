@@ -6,13 +6,18 @@
 
 <script setup>
 import mCarousel from '@/components/carousel.vue';
+import preInstallIcon1 from '@/assets/images/cs.svg';
+import preInstallIcon2 from '@/assets/images/key.svg';
+import preInstallIcon3 from '@/assets/images/lol.svg';
+import preInstallIcon4 from '@/assets/images/osu.svg';
+import preInstallIcon5 from '@/assets/images/woman.png';
 
 const carouselData = [
-  { src: '/src/assets/images/cs.svg' },
-  { src: '/src/assets/images/key.svg' },
-  { src: '/src/assets/images/lol.svg' },
-  { src: '/src/assets/images/osu.svg' },
-  { src: '/src/assets/images/woman.png' },
+  { src: preInstallIcon1 },
+  { src: preInstallIcon2 },
+  { src: preInstallIcon3 },
+  { src: preInstallIcon4 },
+  { src: preInstallIcon5 },
 ];
 </script>
 

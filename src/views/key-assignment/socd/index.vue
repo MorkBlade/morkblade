@@ -24,16 +24,9 @@
         </div>
       </div>
       <div class="cover-list" :class="DKS_MODES[socdInfo.mode] ? 'is-selected' : ''" @click="toggleDropdown">
-        <img
-          class="change-icon"
-          :src="DKS_MODES[socdInfo.mode] ? '/src/assets/images/changed.svg' : '/src/assets/images/change.svg'"
-          alt=""
-        />
+        <img class="change-icon" :src="DKS_MODES[socdInfo.mode] ? changedIcon : changeIcon" alt="" />
         <span class="mode-text">{{ DKS_MODES[socdInfo.mode] || '请选择' }}</span>
-        <img
-          class="down-icon"
-          :src="DKS_MODES[socdInfo.mode] ? '/src/assets/images/down_icon.svg' : '/src/assets/images/down_icon2.svg'"
-        />
+        <img class="down-icon" :src="DKS_MODES[socdInfo.mode] ? downIcon1 : downIcon2" />
         <div class="drop-list" :style="{ height: `${defaultHeight}px` }">
           <ul>
             <li
@@ -63,6 +56,10 @@ import { useHighLevelKeyStore, useKeyboardStore } from '@/stores';
 
 import mDialog from '@/components/dialog.vue';
 import characterCard from '@/components/character-card.vue';
+import changeIcon from '@/assets/images/change.svg';
+import changedIcon from '@/assets/images/changed.svg';
+import downIcon1 from '/src/assets/images/down_icon.svg';
+import downIcon2 from '/src/assets/images/down_icon2.svg';
 
 const keyboardStore = useKeyboardStore();
 const highLevelKeyStore = useHighLevelKeyStore();
@@ -338,7 +335,7 @@ defineExpose({ save });
         height: 100%;
         border: none;
         color: #fff;
-        font-size: 18px;
+        font-size: 16px;
         font-family: 'CN Heavy';
         margin-left: 12px;
         // margin: 5px 10px 0 40px;

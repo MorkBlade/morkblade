@@ -97,6 +97,15 @@ export const LIGHT_DYNAMIC_MODES = [
   { label: '镭射穿云', id: 19 },
   { label: '水波荡漾', id: 20 },
 ];
+
+import axisIcon1 from '@/assets/images/wanciwang.webp';
+import axisIcon2 from '@/assets/images/ciyu.webp';
+import axisIcon3 from '@/assets/images/wanciwang.webp';
+import axisIcon4 from '@/assets/images/ciyu.webp';
+import axisIcon5 from '@/assets/images/wanciwang.webp';
+import axisIcon6 from '@/assets/images/ciyu.webp';
+import axisIcon7 from '@/assets/images/wanciwang.webp';
+import axisIcon8 from '@/assets/images/ciyu.webp';
 export const KEY_SHAFT = [
   {
     id: 1,
@@ -104,18 +113,18 @@ export const KEY_SHAFT = [
     maxTravel: 3300,
     minTravel: 10,
     color: '#91bc00',
-    src: '/src/assets/images/wanciwang.webp',
+    src: axisIcon1,
   },
-  { id: 2, name: '万磁王RGB', maxTravel: 3300, minTravel: 10, color: '#8400ff', src: '/src/assets/images/ciyu.webp' },
-  { id: 3, name: '万磁王', maxTravel: 3300, minTravel: 10, color: '#fff', src: '/src/assets/images/wanciwang.webp' },
-  { id: 4, name: '磁玉gaming', maxTravel: 3400, minTravel: 10, color: '#f0ff0f', src: '/src/assets/images/ciyu.webp' },
+  { id: 2, name: '万磁王RGB', maxTravel: 3300, minTravel: 10, color: '#8400ff', src: axisIcon2 },
+  { id: 3, name: '万磁王', maxTravel: 3300, minTravel: 10, color: '#fff', src: axisIcon3 },
+  { id: 4, name: '磁玉gaming', maxTravel: 3400, minTravel: 10, color: '#f0ff0f', src: axisIcon4 },
   {
     id: 5,
     name: '天王磁轴标准版',
     maxTravel: 3500,
     minTravel: 10,
     color: '#fbfbbb',
-    src: '/src/assets/images/wanciwang.webp',
+    src: axisIcon5,
   },
   {
     id: 6,
@@ -123,10 +132,10 @@ export const KEY_SHAFT = [
     maxTravel: 3400,
     minTravel: 10,
     color: '#febbef',
-    src: '/src/assets/images/ciyu.webp',
+    src: axisIcon6,
   },
-  { id: 7, name: '万磁王pom', maxTravel: 3400, minTravel: 10, color: '#fbcfbc', src: '/src/assets/images/ciyu.webp' },
-  { id: 8, name: '磁轴8', maxTravel: 3300, minTravel: 10, color: '#fafa', src: '/src/assets/images/ciyu.webp' },
+  { id: 7, name: '万磁王pom', maxTravel: 3400, minTravel: 10, color: '#fbcfbc', src: axisIcon7 },
+  { id: 8, name: '磁轴8', maxTravel: 3300, minTravel: 10, color: '#fafa', src: axisIcon8 },
 ];
 export const HIGH_LEVEL_KEYS = [
   {
