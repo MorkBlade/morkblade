@@ -40,10 +40,12 @@
 
 <script setup>
 import keyboard from '@/configs/byte-to-key/keyboard';
+import { ElMessage } from 'element-plus';
 import { useAppStore, useHighLevelKeyStore, useKeyboardStore } from '@/stores';
 
 import mDialog from '@/components/dialog.vue';
 import characterCard from '@/components/character-card.vue';
+import warnIcon from '@/assets/images/warn_icon.svg';
 
 const mptInfo = defineModel('mptInfo', {
   type: Object,
@@ -81,7 +83,16 @@ const activeKeys = computed(() => {
 });
 
 const saveConfig = () => {
-  if (!activeKeys.value.length) return;
+  if (!activeKeys.value.length) {
+    ElMessage({
+      grouping: true,
+      duration: 1000,
+      dangerouslyUseHTMLString: true,
+      message: `<span class="custom-message"><img src="${warnIcon}" class="warn-icon"/>请先选择需要修改的按键</span>`,
+      customClass: 'custom-message-container',
+    });
+    return;
+  }
   isShow.value = true;
 };
 
@@ -171,10 +182,10 @@ defineExpose({ save });
   display: flex;
 
   .left-config {
-    width: 300px;
-    height: 290px;
+    width: var(--assignment-leftbox-width);
+    height: var(--size-290);
     box-sizing: border-box;
-    padding-top: 20px;
+    padding-top: var(--spacing-20);
     background-image: url('@/assets/images/click_hold_bg.svg');
     background-size: cover;
     background-repeat: no-repeat;
@@ -193,8 +204,8 @@ defineExpose({ save });
       }
 
       .del_btn {
-        height: 50px;
-        width: 50px;
+        height: var(--size-50);
+        width: var(--size-50);
         position: absolute;
         left: 0;
         top: 0;
@@ -207,16 +218,16 @@ defineExpose({ save });
 
       span {
         display: flex;
-        font-size: 15px;
+        font-size: var(--font-size-15);
         font-family: 'CN Heavy';
         color: #fff;
-        margin-right: 10px;
+        margin-right: var(--spacing-10);
       }
       p {
-        height: 50px;
-        width: 50px;
+        height: var(--size-50);
+        width: var(--size-50);
         line-height: 1;
-        font-size: 12px;
+        font-size: var(--font-size-12);
         color: #fff;
         display: flex;
         justify-content: center;
@@ -236,39 +247,40 @@ defineExpose({ save });
       }
 
       .slider-block {
-        width: 200px;
-        height: 20px;
-        padding: 0 4px;
-        margin-top: 20px;
+        width: var(--size-200);
+        height: var(--socd-slider-height);
+        padding: 0 var(--spacing-4);
+        margin-top: var(--spacing-20);
         box-sizing: border-box;
         background-image: url('@/assets/images/luminance.svg');
         background-size: cover;
         background-repeat: no-repeat;
 
         ::v-deep(.el-slider) {
-          width: 192px;
-          height: 14px;
+          width: calc(var(--size-200) - var(--size-8));
+          height: var(--size-14);
+          transition: all 0.1s ease-in-out;
         }
         ::v-deep(.el-slider__button) {
           display: block;
-          width: 24px;
-          height: 24px;
-          margin: 10px 10px;
+          width: calc(var(--size-32) - var(--size-8));
+          height: calc(var(--size-32) - var(--size-8));
+          margin: var(--socd-el-button-margin);
           border: none;
           background-image: url('@/assets/images/luminance_btn.svg');
           background-size: cover;
           background-repeat: no-repeat;
         }
         ::v-deep(.el-slider__bar) {
-          height: 12px;
+          height: calc(var(--size-20) - var(--size-8));
         }
       }
     }
 
     .save-btn {
-      width: 170px;
-      height: 40px;
-      margin-left: 65px;
+      width: var(--size-170);
+      height: var(--size-40);
+      margin-left: var(--spacing-65);
       box-sizing: border-box;
       font-family: 'CN Heavy';
       background-image: url('/src/assets/images/save_bg.svg');
@@ -282,20 +294,20 @@ defineExpose({ save });
       }
 
       img {
-        width: 20px;
-        height: 20px;
+        width: var(--size-20);
+        height: var(--size-20);
         object-fit: fill;
         position: absolute;
-        top: 10px;
-        left: 10px;
+        top: var(--spacing-10);
+        left: var(--spacing-10);
       }
 
       span {
-        font-size: 18px;
+        font-size: var(--font-size-18);
         color: #fff;
         position: absolute;
-        top: 6px;
-        left: 65px;
+        top: var(--spacing-6);
+        left: var(--spacing-65);
       }
     }
     .is-active {

@@ -158,29 +158,29 @@ const delConfig = async (keyId) => {
 
 <style scoped lang="scss">
 .key-assignment {
-  width: 1600px;
-  height: 350px;
-  margin-top: 25px;
+  width: var(--size-1600);
+  height: var(--size-350);
+  margin-top: var(--spacing-25);
   display: flex;
   background-image: url('@/assets/images/performance_bg.svg');
   background-size: cover;
   background-repeat: no-repeat;
   position: relative;
   box-sizing: border-box;
-  padding-top: 30px;
+  padding-top: var(--spacing-30);
   overflow: hidden;
 
   .left-menu {
-    width: 245px;
-    height: 300px;
-    margin-right: 15px;
-    padding-right: 5px;
+    width: var(--assignment-menu-width);
+    height: var(--size-300);
+    margin-right: var(--spacing-15);
+    padding-right: var(--spacing-5);
     box-sizing: border-box;
     overflow-y: scroll;
 
     &::-webkit-scrollbar {
-      height: 10px;
-      width: 8px;
+      height: var(--size-10);
+      width: var(--size-8);
     }
 
     /* 滚动条轨道 */
@@ -191,7 +191,7 @@ const delConfig = async (keyId) => {
     /* 滚动条手柄 */
     &::-webkit-scrollbar-thumb {
       background: #000;
-      border-radius: 1 0px;
+      border-radius: var(--spacing-1) 0px;
     }
 
     /* 隐藏滚动条 */
@@ -206,11 +206,11 @@ const delConfig = async (keyId) => {
   }
 
   .key-assignment-item {
-    width: 200px;
-    height: 42px;
-    font-size: 20px;
+    width: var(--menu-item-width);
+    height: var(--menu-item-height);
+    font-size: var(--font-size-20);
     color: #fff;
-    margin-left: 30px;
+    margin-left: var(--spacing-30);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -218,13 +218,13 @@ const delConfig = async (keyId) => {
     background-image: url('@/assets/images/performance_item_bg.svg');
     background-size: cover;
     background-repeat: no-repeat;
-    margin-bottom: 20px;
+    margin-bottom: var(--spacing-20);
     cursor: pointer;
   }
 
   .display-area {
-    width: 1010px;
-    height: 290px;
+    width: calc(var(--axis-width) + var(--size-10));
+    height: var(--size-290);
   }
   .is-active {
     background-image: url('@/assets/images/performance_item_bgC.gif');
@@ -232,13 +232,13 @@ const delConfig = async (keyId) => {
   }
 
   .right-config-box {
-    width: 300px;
-    height: 290px;
-    padding-top: 20px;
+    width: var(--size-300);
+    height: var(--size-290);
+    padding-top: var(--spacing-20);
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    padding-left: 20px;
+    padding-left: var(--spacing-20);
     // align-items: center;
     background-image: url('@/assets/images/right_config_bg.svg');
     background-size: cover;
@@ -247,8 +247,8 @@ const delConfig = async (keyId) => {
 
     /* 滚动条整体样式 */
     &::-webkit-scrollbar {
-      height: 10px;
-      width: 5px;
+      height: var(--size-10);
+      width: var(--spacing-5);
     }
 
     /* 滚动条轨道 */

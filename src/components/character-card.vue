@@ -108,24 +108,24 @@ const selectItem = (keyVal) => {
 
 <style scoped lang="scss">
 .character-card {
-  width: 650px;
-  height: 290px;
+  width: var(--character-card-width);
+  height: var(--character-card-height);
   background-image: url('@/assets/images/character_bg.svg');
   background-size: cover;
   background-repeat: no-repeat;
   overflow: hidden;
-  margin: 0 30px;
+  margin: 0 var(--spacing-25) 0 var(--spacing-30);
 
   .tabs {
     display: flex;
-    margin: 20px 0 20px 20px;
+    margin: var(--spacing-20) 0 var(--spacing-20) var(--spacing-20);
 
     .tab-item {
-      width: 110px;
-      height: 30px;
+      width: var(--character-card-tab-width);
+      height: var(--size-30);
       line-height: 1;
-      font-size: 15px;
-      margin-left: 10px;
+      font-size: var(--font-size-15);
+      margin-left: var(--spacing-10);
       box-sizing: border-box;
       font-family: 'CN Heavy';
       color: #505050;
@@ -139,11 +139,11 @@ const selectItem = (keyVal) => {
       cursor: pointer;
 
       img {
-        width: 20px;
-        height: 20px;
+        width: var(--size-20);
+        height: var(--size-20);
         object-fit: fill;
         vertical-align: middle;
-        margin-right: 5px;
+        margin-right: var(--spacing-5);
       }
     }
 
@@ -154,8 +154,8 @@ const selectItem = (keyVal) => {
   }
 
   .keys-box {
-    width: 650px;
-    margin-left: 30px;
+    width: var(--size-650);
+    margin-left: var(--spacing-30);
     display: flex;
     flex-wrap: wrap;
     overflow-y: scroll;

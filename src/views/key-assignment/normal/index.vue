@@ -147,8 +147,8 @@ emitter.on('key-click', ({ colIndex, rowIndex }) => {
 
 <style scoped lang="scss">
 .normal-box {
-  width: 1310px;
-  height: 290px;
+  width: var(--size-1310);
+  height: var(--size-290);
   background-image: url('@/assets/images/preinstall_bg.svg');
   background-size: cover;
   background-repeat: no-repeat;
@@ -156,13 +156,13 @@ emitter.on('key-click', ({ colIndex, rowIndex }) => {
 
   .tabs {
     display: flex;
-    margin: 30px 0 20px 30px;
+    margin: var(--spacing-30) 0 var(--spacing-20) var(--spacing-30);
 
     .tab-item {
-      width: 150px;
-      height: 30px;
-      font-size: 15px;
-      margin-left: 50px;
+      width: var(--character-card-tab-width2);
+      height: var(--character-card-tab-height);
+      font-size: var(--font-size-15);
+      margin-left: var(--character-card-tab-left);
       box-sizing: border-box;
       font-family: 'CN Heavy';
       color: #505050;
@@ -175,11 +175,11 @@ emitter.on('key-click', ({ colIndex, rowIndex }) => {
       cursor: pointer;
 
       img {
-        width: 20px;
-        height: 20px;
+        width: var(--size-20);
+        height: var(--size-20);
         object-fit: fill;
         vertical-align: middle;
-        margin-right: 5px;
+        margin-right: var(--spacing-5);
       }
     }
 
@@ -190,8 +190,8 @@ emitter.on('key-click', ({ colIndex, rowIndex }) => {
   }
 
   .keys-box {
-    width: 1190px;
-    margin-left: 60px;
+    width: calc(var(--axis-width) + var(--size-190));
+    margin-left: var(--spacing-60);
     display: flex;
     flex-wrap: wrap;
 

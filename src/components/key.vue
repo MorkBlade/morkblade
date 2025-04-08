@@ -74,11 +74,11 @@ const stopDrag = () => {
 
 <style lang="scss" scoped>
 .key {
-  width: 50px;
-  height: 50px;
+  width: var(--size-50);
+  height: var(--size-50);
   line-height: 1;
-  font-size: 12px;
-  margin: 0 10px 10px 0;
+  font-size: var(--font-size-12);
+  margin: 0 var(--character-card-key-right) var(--spacing-10) 0;
   text-align: center;
   font-family: 'CN Heavy';
   background-image: url('@/assets/images/key_bg.svg');

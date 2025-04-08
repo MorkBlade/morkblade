@@ -142,4 +142,34 @@ body {
     width: var(--size-144) !important;
     height: var(--size-8) !important;
   }
+
+  .custom-message-container {
+    height: 40px !important;
+    padding: 0 25px !important;
+    background-color: #000 !important;
+    color: #fff !important;
+    border-radius: 20px !important;
+    border: none;
+    top: 70% !important;
+    /* box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.3) !important; */
+  }
+
+  .custom-message-container .el-message__icon {
+    display: none !important;
+  }
+
+  .custom-message {
+    display: flex;
+    align-items: center;
+    font-family: 'CN Heavy';
+    font-size: 16px;
+    color: #fff !important;
+  }
+
+  .warn-icon {
+    width: 15px;
+    height: 15px;
+    margin-right: 10px;
+    vertical-align: middle;
+  }
 }

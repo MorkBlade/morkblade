@@ -6,8 +6,8 @@
     <div class="language-list" :style="{ height: `${defaultHeight}px` }">
       <ul>
         <li v-for="(language, index) in languages" :key="index" @click="selectLanguage(language.name)">
-          <p></p>
-          <img :src="language.icon" alt="" />
+          <p v-if="language.name === selectedLanguage"></p>
+          <img :src="language.name === selectedLanguage ? language.selectedIcon : language.icon" alt="" />
         </li>
       </ul>
     </div>
@@ -16,20 +16,39 @@
 
 <script setup>
 import languageIcon from '@/assets/images/language.svg';
-import zhIcon from '@/assets/images/zh-black.svg';
+
+import zhIcon1 from '@/assets/images/zhIcon1.svg';
+import zhIcon2 from '@/assets/images/zhIcon2.svg';
+import enIcon1 from '@/assets/images/enIcon1.svg';
+import enIcon2 from '@/assets/images/enIcon2.svg';
+import jpIcon1 from '@/assets/images/jpIcon1.svg';
+import jpIcon2 from '@/assets/images/jpIcon2.svg';
+import krIcon1 from '@/assets/images/krIcon1.svg';
+import krIcon2 from '@/assets/images/krIcon2.svg';
+
 const defaultHeight = ref(0);
 
 // 定义语言选项
 const languages = [
   {
     name: 'zh-CN',
-    icon: zhIcon,
-    selectedIcon: '@/assets/images/zh-selected-icon.gif',
+    icon: zhIcon1,
+    selectedIcon: zhIcon2,
   },
   {
     name: 'en-US',
-    icon: '',
-    selectedIcon: '@/assets/images/zh-selected-icon.gif',
+    icon: enIcon1,
+    selectedIcon: enIcon2,
+  },
+  {
+    name: 'ko-KR',
+    icon: krIcon1,
+    selectedIcon: krIcon2,
+  },
+  {
+    name: 'ja-JP',
+    icon: jpIcon1,
+    selectedIcon: jpIcon2,
   },
 ];
 
@@ -90,6 +109,7 @@ const selectLanguage = (language) => {
     overflow: hidden;
 
     li {
+      position: relative;
       list-style: none;
       padding: 10px;
       cursor: pointer;

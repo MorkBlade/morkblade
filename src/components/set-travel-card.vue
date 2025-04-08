@@ -90,7 +90,6 @@ watch(
 const handleStyle = computed(() => {
   const percentage = (psliderVal.value - min) / (max - min);
   let top = percentage * sliderHeight.value.replace('px', '') - 10 + 'px';
-  console.log('handleStyle', sliderHeight.value, top);
   return {
     top, // 根据进度计算底部位置
   };

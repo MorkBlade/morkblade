@@ -44,12 +44,14 @@
 
 <script setup>
 import emitter from '@/utils/app-emitter';
+import { ElMessage } from 'element-plus';
 import { useKeyboardStore, usePerformanceStore } from '@/stores';
 import { scaleValue } from '@/utils/responsive.js';
 
 import travelTestCard from '@/components/travel-test-card.vue';
 import setTravelCard from '@/components/set-travel-card.vue';
 import saveConfig from './components/save-config.vue';
+import sureIcon from '@/assets/images/sure.svg';
 
 import linkIcon from '@/assets/images/link1.svg';
 import linkedIcon from '@/assets/images/link2.svg';
@@ -207,7 +209,16 @@ const saveRtConfig = async () => {
       performanceStore.setSingleTravel(keyValue.value, performanceValue[y][x].single.singleTravel),
     ]);
   });
-  await Promise.all(promises);
+  const res = await Promise.all(promises);
+  if (res) {
+    ElMessage({
+      grouping: true,
+      duration: 1000,
+      dangerouslyUseHTMLString: true,
+      message: `<span class="custom-message"><img src="${sureIcon}" class="warn-icon"/>修改成功</span>`,
+      customClass: 'custom-message-container',
+    });
+  }
 };
 </script>
 

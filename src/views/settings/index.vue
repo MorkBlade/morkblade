@@ -142,6 +142,8 @@
   <mDialog
     v-model:isShow="isShow"
     :isUpdate="isUpdate"
+    :dialogTitle="updateTitle"
+    :textContent="textContent"
     :progress="progress"
     :updateRes="updateRes"
     @sure="onSure"
@@ -152,6 +154,7 @@
 <script setup>
 import { useAppStore, useDeviceStore, usePerformanceStore } from '@/stores';
 import mDialog from '@/components/dialog.vue';
+import { scaleValue } from '@/utils/responsive.js';
 import changeIcon from '@/assets/images/change.svg';
 import changedIcon from '@/assets/images/changed.svg';
 import downIcon from '@/assets/images/down_icon.svg';
@@ -171,6 +174,8 @@ const selectedFirItem = ref(null);
 const isShow = ref(false);
 const isUpdate = ref(false);
 const curClickBtn = ref(null);
+const textContent = ref(''); // 弹窗提示内容
+const updateTitle = ref('');
 
 // 按钮状态
 const restBtnStatus = ref(false);
@@ -206,10 +211,10 @@ const firmwareList = computed(() => {
 const toggleDropdown = (keyCode) => {
   switch (keyCode) {
     case 'firmware':
-      firmwareDefHeight.value = firmwareDefHeight.value ? 0 : 135;
+      firmwareDefHeight.value = firmwareDefHeight.value ? 0 : scaleValue(135);
       break;
     default:
-      RateDefHeight.value = RateDefHeight.value ? 0 : 320;
+      RateDefHeight.value = RateDefHeight.value ? 0 : scaleValue(320);
       break;
   }
 };
@@ -231,6 +236,8 @@ const selectItem = (idx, keyCode) => {
 };
 
 const recoverRate = () => {
+  textContent.value = '是否恢复出厂设置？';
+  updateTitle.value = '';
   isUpdate.value = false;
   restBtnStatus.value = false;
   isShow.value = true;
@@ -260,6 +267,8 @@ const onMouseLeave = (keyCode) => {
 };
 
 const updateFirware = () => {
+  textContent.value = `1.点击开始升级后键盘会进入BOOT模式，\n连接BOOT设备后开始升级。\n2.升级过程中请不要关闭窗口\n3.升级完成后点击确认会重新连接键盘`;
+  updateTitle.value = '固件升级';
   updateRes.value = null;
   isUpdate.value = true;
   updateBtnStatus.value = false;
@@ -318,12 +327,12 @@ const getFirmWarePack = async (url) => {
           console.log('update suc-------------> ', result);
           updateRes.value = true;
           deviceStore.updateSuc = true;
-          setTimeout(() => {
-            router.push({
-              path: '/key-calibration',
-              replace: true,
-            });
-          }, 2000);
+          // setTimeout(() => {
+          //   router.push({
+          //     path: '/key-calibration',
+          //     replace: true,
+          //   });
+          // }, 2000);
 
           setTimeout(() => {
             // 10s后检查是否在进行
@@ -363,28 +372,28 @@ const getFirmWarePack = async (url) => {
   flex-direction: column;
   align-items: center;
   width: 100%;
-  font-size: 15px;
+  font-size: var(--font-size-15);
   font-family: 'CN Heavy';
   color: #cccccc;
   position: absolute;
   left: 0;
-  top: 150px;
+  top: var(--spacing-150);
 
   .settings-center {
-    width: 1500px;
+    width: var(--size-1500);
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    margin-top: 25px;
+    margin-top: var(--spacing-25);
   }
 
   .device-info,
   .firmware-version,
   .device-set,
   .firmware-set {
-    width: 700px;
-    height: 200px;
-    margin-bottom: 30px;
+    width: var(--size-700);
+    height: var(--setting-item-height);
+    margin-bottom: var(--spacing-30);
     background-image: url('@/assets/images/settings_bg1.svg');
     background-size: cover;
     background-repeat: no-repeat;
@@ -393,17 +402,17 @@ const getFirmWarePack = async (url) => {
   }
 
   .update-log {
-    width: 1500px;
-    height: 200px;
-    border-radius: 20px;
-    border: 3px solid rgb(37, 37, 37);
+    width: var(--size-1500);
+    height: var(--size-200);
+    border-radius: var(--size-20);
+    border: var(--spacing-3) solid rgb(37, 37, 37);
     box-sizing: border-box;
     background-color: #000000;
   }
 
   p {
-    margin: 20px 0 15px 30px;
-    font-size: 15px;
+    margin: var(--spacing-20) 0 var(--spacing-15) var(--spacing-30);
+    font-size: var(--font-size-15);
     font-family: 'CN Heavy';
     color: #cccccc;
   }
@@ -412,32 +421,32 @@ const getFirmWarePack = async (url) => {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-top: 20px;
+    margin-top: var(--spacing-20);
     font-family: 'CN Heavy';
     color: #ffffff;
 
     & span {
-      font-size: 16px;
+      font-size: var(--font-size-16);
     }
   }
 
   .content-box {
     display: flex;
     justify-content: center;
-    font-size: 16px;
+    font-size: var(--font-size-16);
     font-family: 'CN Heavy';
     color: #ffffff;
 
     & span {
-      margin-top: 20px;
+      margin-top: var(--spacing-20);
     }
     & span:first-child {
-      margin-right: 10px;
+      margin-right: var(--spacing-10);
     }
   }
 
   .firmware-update {
-    margin-top: 20px;
+    margin-top: var(--spacing-20);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -445,7 +454,7 @@ const getFirmWarePack = async (url) => {
     color: #ffffff;
 
     & span {
-      font-size: 16px;
+      font-size: var(--font-size-16);
     }
   }
 
@@ -457,13 +466,13 @@ const getFirmWarePack = async (url) => {
     color: #ffffff;
 
     & span {
-      font-size: 16px;
+      font-size: var(--font-size-16);
     }
   }
   .cover-list {
-    width: 170px;
-    height: 40px;
-    margin-left: 10px;
+    width: var(--size-170);
+    height: var(--size-40);
+    margin-left: var(--spacing-10);
     display: flex;
     align-items: center;
     background-image: url('@/assets/images/select_bg.svg');
@@ -473,14 +482,14 @@ const getFirmWarePack = async (url) => {
     cursor: pointer;
 
     .change-icon {
-      width: 20px;
-      height: 20px;
+      width: var(--size-20);
+      height: var(--size-20);
       object-fit: fill;
-      margin-left: 11px;
+      margin-left: calc(var(--spacing-10) + var(--spacing-1));
     }
     .down-icon {
-      width: 13px;
-      height: 8px;
+      width: var(--size-13);
+      height: var(--size-8);
       object-fit: fill;
     }
 
@@ -488,20 +497,20 @@ const getFirmWarePack = async (url) => {
       border: none;
       color: #fff;
       display: inline-block;
-      margin: 8px 0 0 16px;
-      height: 31px;
-      font-size: 18px;
+      margin: var(--spacing-8) 0 0 var(--spacing-16);
+      height: calc(var(--spacing-30) + var(--spacing-1));
+      font-size: var(--font-size-18);
       font-family: 'CN Heavy';
-      margin: 5px 10px 0 40px;
+      margin: var(--spacing-5) var(--spacing-10) 0 var(--spacing-40);
     }
 
     .drop-list {
       position: absolute;
-      top: 45px;
-      left: 4px;
+      top: var(--spacing-45);
+      left: var(--spacing-4);
       z-index: 2;
       box-sizing: border-box;
-      padding-right: 5px;
+      padding-right: var(--spacing-5);
       overflow-y: scroll;
       transition: height 0.3s ease;
       background-color: #000;
@@ -509,11 +518,11 @@ const getFirmWarePack = async (url) => {
       ul {
         list-style-type: none;
         li {
-          width: 160px;
-          height: 40px;
-          padding: 10px;
+          width: var(--size-160);
+          height: var(--size-40);
+          padding: var(--spacing-10);
           text-align: center;
-          margin-bottom: 5px;
+          margin-bottom: var(--spacing-5);
           color: #fff;
           font-family: 'CN Heavy';
           background-image: url('@/assets/images/item_bg.svg');
@@ -530,8 +539,8 @@ const getFirmWarePack = async (url) => {
 
     /* 滚动条整体样式 */
     .drop-list::-webkit-scrollbar {
-      height: 10px;
-      width: 5px;
+      height: var(--spacing-10);
+      width: var(--spacing-5);
     }
 
     /* 滚动条轨道 */
@@ -564,9 +573,9 @@ const getFirmWarePack = async (url) => {
 
   .save-btn,
   .update-btn {
-    width: 170px;
-    height: 40px;
-    margin-left: 10px;
+    width: var(--size-170);
+    height: var(--size-40);
+    margin-left: var(--spacing-10);
     background-image: url('/src/assets/images/save_bg.svg');
     background-size: cover;
     background-repeat: no-repeat;
@@ -574,22 +583,22 @@ const getFirmWarePack = async (url) => {
     cursor: pointer;
 
     img {
-      width: 20px;
-      height: 20px;
+      width: var(--size-20);
+      height: var(--size-20);
       object-fit: fill;
       position: absolute;
-      top: 10px;
-      left: 10px;
+      top: var(--spacing-10);
+      left: var(--spacing-10);
     }
 
     span {
-      width: 109px;
+      width: calc(var(--size-100) + var(--spacing-9));
       text-align: center;
-      font-size: 18px;
+      font-size: var(--font-size-18);
       color: #fff;
       position: absolute;
-      top: 6px;
-      left: 50px;
+      top: var(--spacing-6);
+      left: var(--spacing-50);
     }
   }
   .is-active {
@@ -604,13 +613,13 @@ const getFirmWarePack = async (url) => {
       display: flex;
       flex-direction: column;
       align-items: center;
-      margin-top: 10px;
-      font-size: 16px;
+      margin-top: var(--spacing-10);
+      font-size: var(--font-size-16);
       font-family: 'CN Heavy';
       color: #ffffff;
 
       div {
-        margin-bottom: 10px;
+        margin-bottom: var(--spacing-10);
       }
     }
   }

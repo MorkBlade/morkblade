@@ -2,7 +2,7 @@
   <div
     class="key"
     :class="keyItem !== 1 ? 'key' + String(keyboardLayout[rowIndex][colIndex]).replace('.', '_') : ''"
-    :style="active ? { borderColor: '#91bc00' } : ''"
+    :style="active ? { border: '2px solid #91bc00' } : ''"
     @click.stop="onChecked(keyItem.key, rowIndex, colIndex)"
     @dragenter.prevent
     @dragover.prevent
@@ -13,8 +13,8 @@
     <div class="show-val-box" v-if="route.path === '/performance'">
       <p class="single-travel" v-if="singleTravel !== null">{{ singleTravel }}</p>
       <template v-if="currentModel == 'mechanicalMode' || currentModel == 'quickTrigger'">
-        <span class="rt-press-travel" v-if="rtPressTravel !== null">{{ rtPressTravel + ' / ' }}</span>
-        <span class="rt-release-travel" v-if="rtReleaseTravel !== null">{{ rtReleaseTravel }}</span>
+        <p class="rt-press-travel" v-if="rtPressTravel !== null">{{ rtPressTravel }}</p>
+        <p class="rt-release-travel" v-if="rtReleaseTravel !== null">{{ rtReleaseTravel }}</p>
       </template>
       <template v-if="currentModel == 'deadZone'">
         <span class="rt-release-travel">{{ pressDeadTravel + ' / ' }}</span>
@@ -265,9 +265,11 @@ const Keydrop = async (e, rowIndex, colIndex, key) => {
   p {
     text-align: center;
     color: #fff;
-    font-size: 14px;
-    font-family: 'Arial BOLD';
-    margin-top: 1px;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: 'Arial';
+    margin-bottom: 2px;
+    // margin-top: 1px;
   }
 
   // .center-key {
@@ -281,18 +283,21 @@ const Keydrop = async (e, rowIndex, colIndex, key) => {
   //   justify-content: center;
   // }
   .single-travel {
-    font-size: 10px;
+    font-size: 8px;
+    font-weight: 100;
     color: #91bc00;
+    margin-bottom: 1px;
     // margin-top: 5px;
-    font-family: 'Arial Refular';
+    font-family: 'Arial';
   }
 
   .rt-release-travel,
   .rt-press-travel {
-    bottom: 2px;
-    font-size: 10px;
+    // bottom: 2px;
+    font-size: 8px;
+    margin-bottom: 1px;
     color: #fcff00;
-    font-family: 'Arial Refular';
+    font-family: 'Arial';
   }
 
   .advanced-tag {

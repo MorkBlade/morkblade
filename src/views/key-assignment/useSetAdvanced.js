@@ -1,5 +1,8 @@
 import keyboard from '@/configs/byte-to-key/keyboard.js';
+import { ElMessage } from 'element-plus';
 import { useHighLevelKeyStore, useKeyboardStore, usePerformanceStore } from '@/stores';
+
+import sureIcon from '@/assets/images/sure.svg';
 
 const useSetAdvanced = () => {
   const highLevelKeyStore = useHighLevelKeyStore();
@@ -103,8 +106,17 @@ const useSetAdvanced = () => {
 
   const handleDialoConfirm = async () => {
     try {
-      await childRef.value?.save();
+      const res = await childRef.value?.save();
       await resetKeys();
+      if (res) {
+        ElMessage({
+          grouping: true,
+          duration: 1000,
+          dangerouslyUseHTMLString: true,
+          message: `<span class="custom-message"><img src="${sureIcon}" class="warn-icon"/>修改成功</span>`,
+          customClass: 'custom-message-container',
+        });
+      }
     } catch (error) {
       console.log(error);
     } finally {

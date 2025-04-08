@@ -52,6 +52,8 @@
 
 <script setup>
 import keyboard from '@/configs/byte-to-key/keyboard';
+import { ElMessage } from 'element-plus';
+import { scaleValue } from '@/utils/responsive.js';
 import { useHighLevelKeyStore, useKeyboardStore } from '@/stores';
 
 import mDialog from '@/components/dialog.vue';
@@ -60,6 +62,7 @@ import changeIcon from '@/assets/images/change.svg';
 import changedIcon from '@/assets/images/changed.svg';
 import downIcon1 from '/src/assets/images/down_icon.svg';
 import downIcon2 from '/src/assets/images/down_icon2.svg';
+import warnIcon from '@/assets/images/warn_icon.svg';
 
 const keyboardStore = useKeyboardStore();
 const highLevelKeyStore = useHighLevelKeyStore();
@@ -88,7 +91,7 @@ const keyText = computed(() => {
 const emits = defineEmits(['handleKeyTypeChange', 'handleDialoConfirm']);
 
 const toggleDropdown = () => {
-  defaultHeight.value = defaultHeight.value ? 0 : 90;
+  defaultHeight.value = defaultHeight.value ? 0 : scaleValue(90);
 };
 
 const selectItem = (item) => {
@@ -119,6 +122,16 @@ const onMouseLe = (keyCode) => {
 };
 
 const saveConfig = () => {
+  if (!socdInfo.value.pos[0] || !socdInfo.value.pos[1]) {
+    ElMessage({
+      grouping: true,
+      duration: 1000,
+      dangerouslyUseHTMLString: true,
+      message: `<span class="custom-message"><img src="${warnIcon}" class="warn-icon"/>请先选择需要修改的按键</span>`,
+      customClass: 'custom-message-container',
+    });
+    return;
+  }
   isShow.value = true;
 };
 
@@ -192,8 +205,8 @@ defineExpose({ save });
   display: flex;
 
   .left-config {
-    width: 300px;
-    height: 290px;
+    width: var(--assignment-leftbox-width);
+    height: var(--size-290);
     background-image: url('@/assets/images/click_hold_bg.svg');
     background-size: cover;
     background-repeat: no-repeat;
@@ -204,7 +217,7 @@ defineExpose({ save });
       justify-content: center;
       align-items: center;
       box-sizing: border-box;
-      padding: 20px 0 15px 0;
+      padding: var(--spacing-20) 0 var(--spacing-15) 0;
 
       .key-box {
         position: relative;
@@ -212,8 +225,8 @@ defineExpose({ save });
       }
 
       .del_btn {
-        height: 50px;
-        width: 50px;
+        height: var(--size-50);
+        width: var(--size-50);
         position: absolute;
         left: 0;
         top: 0;
@@ -230,23 +243,23 @@ defineExpose({ save });
         align-items: center;
       }
       span {
-        width: 50px;
+        width: var(--size-50);
         display: flex;
-        font-size: 15px;
+        font-size: var(--font-size-15);
         font-family: 'CN Heavy';
         color: #fff;
         // margin-left: 20px;
       }
       p {
-        height: 50px;
-        width: 50px;
+        height: var(--size-50);
+        width: var(--size-50);
         line-height: 1;
-        font-size: 12px;
+        font-size: var(--font-size-12);
         color: #fff;
         display: flex;
         justify-content: center;
         align-items: center;
-        margin-right: 20px;
+        margin-right: var(--spacing-20);
         text-align: center;
         box-sizing: border-box;
         font-family: 'Arial Bold';
@@ -262,51 +275,52 @@ defineExpose({ save });
     }
 
     .delay-slider {
-      padding: 0 50px;
-      margin-bottom: 15px;
+      padding: 0 var(--spacing-50);
+      margin-bottom: var(--spacing-15);
       box-sizing: border-box;
 
       p {
-        margin-bottom: 20px;
+        margin-bottom: var(--spacing-20);
         text-align: center;
         color: #fff;
-        font-size: 15px;
+        font-size: var(--font-size-15);
         font-family: 'CN Heavy';
       }
 
       .slider-block {
-        width: 200px;
-        height: 20px;
+        width: var(--size-200);
+        height: var(--socd-slider-height);
         box-sizing: border-box;
-        padding: 0 4px;
+        padding: 0 var(--spacing-4);
         background-image: url('@/assets/images/luminance.svg');
         background-size: cover;
         background-repeat: no-repeat;
       }
       ::v-deep(.el-slider) {
-        width: 192px;
-        height: 14px;
+        width: calc(var(--size-200) - var(--size-8));
+        height: var(--size-14);
+        transition: all 0.1s ease-in-out;
       }
       ::v-deep(.el-slider__button) {
         display: block;
-        width: 24px;
-        height: 24px;
-        margin: 10px 10px;
+        width: calc(var(--size-32) - var(--size-8));
+        height: calc(var(--size-32) - var(--size-8));
+        margin: var(--socd-el-button-margin);
         border: none;
         background-image: url('@/assets/images/luminance_btn.svg');
         background-size: cover;
         background-repeat: no-repeat;
       }
       ::v-deep(.el-slider__bar) {
-        height: 12px;
+        height: calc(var(--size-20) - var(--size-8));
       }
     }
 
     .cover-list {
-      width: 170px;
-      height: 40px;
-      margin-left: 65px;
-      margin-bottom: 10px;
+      width: var(--size-170);
+      height: var(--size-40);
+      margin-left: var(--spacing-65);
+      margin-bottom: var(--spacing-10);
       display: flex;
       align-items: center;
       background-image: url('@/assets/images/select_bg.svg');
@@ -316,14 +330,14 @@ defineExpose({ save });
       cursor: pointer;
 
       .change-icon {
-        width: 20px;
-        height: 20px;
+        width: var(--size-20);
+        height: var(--size-20);
         object-fit: fill;
-        margin-left: 11px;
+        margin-left: calc(var(--spacing-10) + var(--spacing-1));
       }
       .down-icon {
-        width: 13px;
-        height: 8px;
+        width: var(--size-13);
+        height: var(--size-8);
         object-fit: fill;
       }
 
@@ -331,23 +345,23 @@ defineExpose({ save });
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 100px;
+        width: var(--size-100);
         height: 100%;
         border: none;
         color: #fff;
-        font-size: 16px;
+        font-size: var(--font-size-16);
         font-family: 'CN Heavy';
-        margin-left: 12px;
+        margin-left: var(--spacing-12);
         // margin: 5px 10px 0 40px;
       }
 
       .drop-list {
         position: absolute;
-        top: 45px;
-        left: 4px;
+        top: var(--spacing-45);
+        left: var(--spacing-4);
         z-index: 2;
         box-sizing: border-box;
-        padding-right: 5px;
+        padding-right: var(--spacing-5);
         overflow-y: auto;
         transition: height 0.3s ease;
 
@@ -355,11 +369,11 @@ defineExpose({ save });
           list-style-type: none;
           background-color: #000;
           li {
-            width: 160px;
-            height: 40px;
-            padding: 10px;
+            width: calc(var(--size-200) - var(--size-40));
+            height: var(--size-40);
+            padding: var(--spacing-10);
             text-align: center;
-            margin-bottom: 5px;
+            margin-bottom: var(--spacing-5);
             color: #fff;
             font-family: 'CN Heavy';
             background-image: url('@/assets/images/item_bg.svg');
@@ -375,8 +389,8 @@ defineExpose({ save });
 
         /* 滚动条整体样式 */
         &::-webkit-scrollbar {
-          height: 10px;
-          width: 5px;
+          height: var(--size-10);
+          width: var(--spacing-5);
         }
 
         /* 滚动条轨道 */
@@ -414,9 +428,9 @@ defineExpose({ save });
     }
 
     .save-btn {
-      width: 170px;
-      height: 40px;
-      margin-left: 65px;
+      width: var(--size-170);
+      height: var(--size-40);
+      margin-left: var(--spacing-65);
       font-family: 'CN Heavy';
       background-image: url('/src/assets/images/save_bg.svg');
       background-size: cover;
@@ -429,20 +443,20 @@ defineExpose({ save });
       }
 
       img {
-        width: 20px;
-        height: 20px;
+        width: var(--size-20);
+        height: var(--size-20);
         object-fit: fill;
         position: absolute;
-        top: 10px;
-        left: 10px;
+        top: var(--spacing-10);
+        left: var(--spacing-10);
       }
 
       span {
-        font-size: 18px;
+        font-size: var(--font-size-18);
         color: #fff;
         position: absolute;
-        top: 6px;
-        left: 65px;
+        top: var(--spacing-6);
+        left: var(--spacing-65);
       }
     }
     .is-active {

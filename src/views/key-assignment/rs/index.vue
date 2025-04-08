@@ -29,10 +29,12 @@
 
 <script setup>
 import keyboard from '@/configs/byte-to-key/keyboard';
+import { ElMessage } from 'element-plus';
 import { useHighLevelKeyStore, useKeyboardStore } from '@/stores';
 
 import mDialog from '@/components/dialog.vue';
 import characterCard from '@/components/character-card.vue';
+import warnIcon from '@/assets/images/warn_icon.svg';
 
 const rsInfo = defineModel('rsInfo', {
   type: Object,
@@ -53,6 +55,16 @@ const keyText = computed(() => {
 });
 
 const saveConfig = () => {
+  if (!rsInfo.value.dks[0] || !rsInfo.value.dks[1]) {
+    ElMessage({
+      grouping: true,
+      duration: 1000,
+      dangerouslyUseHTMLString: true,
+      message: `<span class="custom-message"><img src="${warnIcon}" class="warn-icon"/>请先选择需要修改的按键</span>`,
+      customClass: 'custom-message-container',
+    });
+    return;
+  }
   isShow.value = true;
 };
 
@@ -137,8 +149,8 @@ defineExpose({ save });
   display: flex;
 
   .left-config {
-    width: 300px;
-    height: 290px;
+    width: var(--assignment-leftbox-width);
+    height: var(--size-290);
     background-image: url('@/assets/images/click_hold_bg.svg');
     background-size: cover;
     background-repeat: no-repeat;
@@ -149,7 +161,7 @@ defineExpose({ save });
       justify-content: center;
       align-items: center;
       box-sizing: border-box;
-      padding: 80px 0 90px 0;
+      padding: var(--spacing-80) 0 var(--spacing-90) 0;
 
       .key-box {
         position: relative;
@@ -157,8 +169,8 @@ defineExpose({ save });
       }
 
       .del_btn {
-        height: 50px;
-        width: 50px;
+        height: var(--size-50);
+        width: var(--size-50);
         position: absolute;
         left: 0;
         top: 0;
@@ -175,23 +187,23 @@ defineExpose({ save });
         align-items: center;
       }
       span {
-        width: 50px;
+        width: var(--size-50);
         display: flex;
-        font-size: 15px;
+        font-size: var(--font-size-15);
         font-family: 'CN Heavy';
         color: #fff;
         // margin-left: 20px;
       }
       p {
-        height: 50px;
-        width: 50px;
+        height: var(--size-50);
+        width: var(--size-50);
         line-height: 1;
-        font-size: 12px;
+        font-size: var(--font-size-12);
         color: #fff;
         display: flex;
         justify-content: center;
         align-items: center;
-        margin-right: 20px;
+        margin-right: var(--spacing-20);
         text-align: center;
         box-sizing: border-box;
         font-family: 'Arial Bold';
@@ -207,9 +219,9 @@ defineExpose({ save });
     }
 
     .save-btn {
-      width: 170px;
-      height: 40px;
-      margin-left: 65px;
+      width: var(--size-170);
+      height: var(--size-40);
+      margin-left: var(--spacing-65);
       font-family: 'CN Heavy';
       background-image: url('/src/assets/images/save_bg.svg');
       background-size: cover;
@@ -222,20 +234,20 @@ defineExpose({ save });
       }
 
       img {
-        width: 20px;
-        height: 20px;
+        width: var(--size-20);
+        height: var(--size-20);
         object-fit: fill;
         position: absolute;
-        top: 10px;
-        left: 10px;
+        top: var(--spacing-10);
+        left: var(--spacing-10);
       }
 
       span {
-        font-size: 18px;
+        font-size: var(--font-size-18);
         color: #fff;
         position: absolute;
-        top: 6px;
-        left: 65px;
+        top: var(--spacing-6);
+        left: var(--spacing-65);
       }
     }
     .is-active {

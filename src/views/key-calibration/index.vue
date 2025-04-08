@@ -150,24 +150,24 @@ onUnmounted(() => {
 
 <style scoped lang="scss">
 .key-calibration-container {
-  width: 1600px;
-  height: 350px;
-  margin-top: 25px;
+  width: var(--size-1600);
+  height: var(--size-350);
+  margin-top: var(--spacing-25);
   display: flex;
   background-image: url('@/assets/images/performance_bg.svg');
   background-size: cover;
   background-repeat: no-repeat;
   position: relative;
   box-sizing: border-box;
-  padding-top: 30px;
+  padding-top: var(--spacing-30);
   overflow: hidden;
 
   .show-key-box {
-    width: 300px;
-    height: 290px;
+    width: var(--assignment-leftbox-width);
+    height: var(--character-card-height);
     box-sizing: border-box;
-    padding-left: 20px;
-    margin-left: 30px;
+    padding-left: var(--spacing-20);
+    margin-left: var(--spacing-30);
     background-image: url('@/assets/images/show_key_bg.svg');
     background-size: cover;
     background-repeat: no-repeat;
@@ -175,8 +175,8 @@ onUnmounted(() => {
 
     p {
       text-align: center;
-      margin: 20px 0 20px -20px;
-      font-size: 15px;
+      margin: var(--spacing-20) 0 var(--spacing-20) calc(var(--spacing-20) * -1);
+      font-size: var(--font-size-15);
       font-family: 'CN Heavy';
       color: #cccccc;
     }
@@ -186,10 +186,10 @@ onUnmounted(() => {
       flex-wrap: wrap;
 
       div {
-        height: 50px;
-        width: 50px;
-        margin: 0 20px 10px 0;
-        font-size: 16px;
+        height: var(--size-50);
+        width: var(--size-50);
+        margin: 0 var(--spacing-20) var(--spacing-10) 0;
+        font-size: var(--font-size-16);
         font-family: 'Airal Blod';
         color: #ffffff;
         display: flex;
@@ -203,9 +203,9 @@ onUnmounted(() => {
   }
 
   .echarts-box {
-    width: 880px;
-    height: 290px;
-    margin: 0 30px;
+    width: var(--calibration-echarts-width);
+    height: var(--size-290);
+    margin: 0 var(--spacing-30);
     display: flex;
     background-image: url('@/assets/images/echarts_box_bg.svg');
     background-size: cover;
@@ -220,10 +220,10 @@ onUnmounted(() => {
   }
 
   .start-box {
-    width: 300px;
-    height: 290px;
+    width: var(--assignment-leftbox-width);
+    height: var(--character-card-height);
     box-sizing: border-box;
-    padding-left: 20px;
+    padding-left: var(--spacing-20);
     background-image: url('@/assets/images/show_key_bg.svg');
     background-size: cover;
     background-repeat: no-repeat;
@@ -232,7 +232,7 @@ onUnmounted(() => {
     text-align: center;
     flex-direction: column;
     align-content: center;
-    font-size: 15px;
+    font-size: var(--font-size-15);
     color: #cccccc;
     font-family: 'CN Heavy';
 
@@ -240,12 +240,12 @@ onUnmounted(() => {
       display: flex;
       align-items: center;
       justify-content: center;
-      margin: 10px 0;
+      margin: var(--spacing-10) 0;
       img {
-        width: 15px;
-        height: 15px;
+        width: var(--size-15);
+        height: var(--size-15);
         object-fit: fill;
-        margin-right: 5px;
+        margin-right: var(--spacing-5);
       }
     }
     .text-box {
@@ -253,14 +253,14 @@ onUnmounted(() => {
       flex-direction: column;
 
       & span {
-        margin-bottom: 20px;
+        margin-bottom: var(--spacing-20);
       }
     }
 
     .start-btn {
-      width: 170px;
-      height: 40px;
-      margin-left: 45px;
+      width: var(--size-170);
+      height: var(--size-40);
+      margin-left: var(--spacing-45);
       font-family: 'CN Heavy';
       background-image: url('/src/assets/images/save_bg.svg');
       background-size: cover;
@@ -269,20 +269,20 @@ onUnmounted(() => {
       cursor: pointer;
 
       img {
-        width: 20px;
-        height: 20px;
+        width: var(--size-20);
+        height: var(--size-20);
         object-fit: fill;
         position: absolute;
-        top: 10px;
-        left: 10px;
+        top: var(--spacing-10);
+        left: var(--spacing-10);
       }
 
       span {
-        font-size: 18px;
+        font-size: var(--font-size-18);
         color: #fff;
         position: absolute;
-        top: 6px;
-        left: 65px;
+        top: var(--spacing-6);
+        left: var(--spacing-65);
       }
     }
     .is-active {

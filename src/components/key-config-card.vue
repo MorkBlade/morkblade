@@ -122,11 +122,11 @@ const onCancel = () => {
 
 <style scoped lang="scss">
 .config-card {
-  width: 260px;
-  height: 80px;
+  width: var(--assignment-config-card-width);
+  height: var(--size-80);
   display: flex;
-  padding-left: 10px;
-  margin-bottom: 10px;
+  padding-left: var(--spacing-10);
+  margin-bottom: var(--spacing-10);
   box-sizing: border-box;
   position: relative;
   background-image: url('@/assets/images/card_bg.svg');
@@ -134,9 +134,9 @@ const onCancel = () => {
   background-repeat: no-repeat;
 
   p {
-    width: 40px;
-    height: 40px;
-    font-size: 9px;
+    width: var(--size-40);
+    height: var(--size-40);
+    font-size: var(--font-size-9);
     color: #ffffff;
     font-family: 'CN Heavy';
     display: flex;
@@ -146,53 +146,53 @@ const onCancel = () => {
     background-image: url('@/assets/images/small_key.svg');
     background-size: cover;
     background-repeat: no-repeat;
-    margin-top: 26px;
-    margin-right: 8px;
+    margin-top: calc(var(--spacing-30) - var(--spacing-4));
+    margin-right: calc(var(--spacing-10) - var(--spacing-2));
   }
   & p:first-child {
-    margin-right: 16px;
+    margin-right: var(--spacing-16);
   }
 
   .separation {
-    height: 32px;
-    width: 6px;
+    height: var(--size-32);
+    width: var(--spacing-6);
     object-fit: fill;
     position: absolute;
-    left: 56px;
-    top: 30px;
+    left: calc(var(--size-40) + var(--size-16));
+    top: var(--size-30);
   }
 
   .del_btn {
-    width: 28px;
-    height: 15px;
+    width: var(--size-28);
+    height: var(--size-15);
     border: none;
     cursor: pointer;
     background-color: transparent;
     position: absolute;
-    top: 6px;
-    right: 10px;
+    top: var(--spacing-6);
+    right: var(--spacing-10);
 
     .del_icon {
-      width: 12px;
-      height: 12px;
+      width: var(--size-12);
+      height: var(--size-12);
       object-fit: fill;
-      margin-left: 15px;
+      margin-left: var(--spacing-15);
       position: absolute;
-      top: -2px;
-      left: 2px;
+      top: calc(var(--scale-1) + var(--scale-1));
+      left: var(--spacing-2);
     }
   }
 
   .title {
-    font-size: 10px;
-    width: 60px;
-    height: 20px;
+    font-size: var(--font-size-10);
+    width: var(--size-60);
+    height: var(--size-20);
     display: flex;
     align-items: center;
     justify-content: center;
     font-family: 'CN Heavy';
     position: absolute;
-    top: 1px;
+    top: var(--spacing-1);
     left: 0;
   }
 }

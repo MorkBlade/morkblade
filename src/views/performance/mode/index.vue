@@ -17,11 +17,14 @@
 </template>
 
 <script setup>
+import { ElMessage } from 'element-plus';
 import { useKeyboardStore, usePerformanceStore } from '@/stores';
 import emitter from '@/utils/app-emitter';
+
 import travelTestCard from '@/components/travel-test-card.vue';
 import setTravelCard from '@/components/set-travel-card.vue';
 import saveConfig from './components/save-config.vue';
+import sureIcon from '@/assets/images/sure.svg';
 
 const min = 0.005; // 最小值
 const max = 3.3; // 最大值
@@ -96,13 +99,21 @@ const saveSingleConfig = async () => {
     performanceStore.setPerformanceMode(keyValue.value, touchMode, advancedKeyMode);
     performanceStore.setSingleTravel(keyValue.value, singleTravel.value);
   });
-  await Promise.all(promises);
+  const res = await Promise.all(promises);
+  if (res) {
+    ElMessage({
+      grouping: true,
+      duration: 1000,
+      dangerouslyUseHTMLString: true,
+      message: `<span class="custom-message"><img src="${sureIcon}" class="warn-icon"/>修改成功</span>`,
+      customClass: 'custom-message-container',
+    });
+  }
 };
 
 // 添加一个获取 CSS 变量值的函数
 const getOffsetX = () => {
   const offsetXValue = getComputedStyle(document.documentElement).getPropertyValue('--mode-offset-x-280');
-  console.log('offsetXValue', offsetXValue);
   return parseInt(offsetXValue) || `${280}px`; // 提供一个默认值以防 CSS 变量未定义
 };
 </script>

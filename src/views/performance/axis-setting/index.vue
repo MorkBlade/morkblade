@@ -19,19 +19,21 @@
         <span>轴体名称:</span>
         <span>{{ travelRange }}</span>
       </div>
-      <saveConfigBtn btnText="应用轴体" @saveConfig="handleSaveAxis" :disabled="activeKeys.length === 0" />
+      <saveConfigBtn btnText="应用轴体" @saveConfig="handleSaveAxis" />
     </div>
   </div>
 </template>
 
 <script setup>
 import services from '@/services/index';
+import { ElMessage } from 'element-plus';
 import { scaleValue } from '@/utils/responsive.js';
 import { useKeyboardStore } from '@/stores';
 import { KEY_SHAFT } from '@/configs/constant/index.js';
 
 import mCarousel from '@/components/carousel.vue';
 import saveConfigBtn from '@/components/save-config-btn.vue';
+import sureIcon from '@/assets/images/sure.svg';
 
 const keyboardStore = useKeyboardStore();
 const checkAixsId = ref(3);
@@ -60,7 +62,16 @@ const handleSaveAxis = async () => {
       const keyValue = currentLayoutData[y][x];
       services.setAxis(keyValue.value, checkAixsId.value);
     });
-    await Promise.all(promises);
+    const res = await Promise.all(promises);
+    if (res) {
+      ElMessage({
+        grouping: true,
+        duration: 1000,
+        dangerouslyUseHTMLString: true,
+        message: `<span class="custom-message"><img src="${sureIcon}" class="warn-icon"/>修改成功</span>`,
+        customClass: 'custom-message-container',
+      });
+    }
   }
 };
 

@@ -4,7 +4,9 @@
       <div class="title-box">
         <div class="title" v-for="(ite, idx) in titleData" :key="ite.name">
           <p>{{ ite.name }}</p>
-          <span>{{ idx == 0 || idx == 2 ? Number(db).toFixed(2) + 'mm' : Number(db2).toFixed(2) + 'mm' }}</span>
+          <span @click="idx == 0 || idx == 2 ? (delayPageShow1 = true) : (delayPageShow2 = true)">{{
+            idx == 0 || idx == 2 ? Number(db).toFixed(2) + 'mm' : Number(db2).toFixed(2) + 'mm'
+          }}</span>
         </div>
       </div>
       <div>
@@ -92,14 +94,29 @@
     </div>
     <characterCard @handleSendKey="handleDksKey" />
   </div>
+  <dskDelay
+    v-model:delayPageShow="delayPageShow1"
+    :delay="dksInfo.db"
+    title="抬起行程"
+    @changeDelay="changeDksDelay1"
+  />
+  <dskDelay
+    v-model:delayPageShow="delayPageShow2"
+    :delay="dksInfo.db2"
+    title="触底行程"
+    @changeDelay="changeDksDelay2"
+  />
   <mDialog v-model:isShow="isShow" @sure="onSure" @cancel="onCancel" />
 </template>
 
 <script setup>
 import keyboard from '@/configs/byte-to-key/keyboard';
+import { ElMessage } from 'element-plus';
 import { useHighLevelKeyStore, useKeyboardStore } from '@/stores';
 
 import mDialog from '@/components/dialog.vue';
+import dskDelay from './components/delay.vue';
+import warnIcon from '@/assets/images/warn_icon.svg';
 
 const dksInfo = defineModel('dksInfo', {
   type: Object,
@@ -119,6 +136,8 @@ const { maxTouchTravel, minTouchTravel, precision, edit, editKey } = defineProps
 const emits = defineEmits(['handleKeyTypeChange', 'handleDialoConfirm']);
 
 const isShow = ref(false);
+const delayPageShow1 = ref(false);
+const delayPageShow2 = ref(false);
 const isDragStates = reactive({
   0: false,
   1: false,
@@ -155,52 +174,57 @@ const titleData = [
   { name: '完全抬起', val: '1.50' },
 ];
 
+// 获取CSS变量
+const getDksKeyWidth = (num) => {
+  return parseInt(getComputedStyle(document.documentElement).getPropertyValue(`--dks-key-width${num}`));
+};
+
 // 根据不同位置设置最大宽度限制
 const maxWidths = {
-  1: 185, // 第一个span最大宽度 (132 - 78)
-  2: 130, // 第二个span最大宽度 (185 - 132)
-  3: 80, // 第三个span最大宽度 (240 - 185)
-  4: 20, // 最后一个span最大宽度
+  1: getDksKeyWidth(7), // 第一个span最大宽度 (132 - 78)
+  2: getDksKeyWidth(5), // 第二个span最大宽度 (185 - 132)
+  3: getDksKeyWidth(3), // 第三个span最大宽度 (240 - 185)
+  4: getDksKeyWidth(1), // 最后一个span最大宽度
 };
 
 // 添加宽度映射配置
 const widthAdjustments = {
   1: [
-    { threshold: 60, width: 20 },
-    { threshold: 110, width: 80 },
-    { threshold: 165, width: 130 },
-    { threshold: Infinity, width: 185 },
+    { threshold: getDksKeyWidth(2), width: getDksKeyWidth(1) },
+    { threshold: getDksKeyWidth(4), width: getDksKeyWidth(3) },
+    { threshold: getDksKeyWidth(6), width: getDksKeyWidth(5) },
+    { threshold: Infinity, width: getDksKeyWidth(7) },
   ],
   2: [
-    { threshold: 60, width: 20 },
-    { threshold: 110, width: 80 },
-    { threshold: Infinity, width: 130 },
+    { threshold: getDksKeyWidth(2), width: getDksKeyWidth(1) },
+    { threshold: getDksKeyWidth(4), width: getDksKeyWidth(3) },
+    { threshold: Infinity, width: getDksKeyWidth(5) },
   ],
   3: [
-    { threshold: 60, width: 20 },
-    { threshold: Infinity, width: 80 },
+    { threshold: getDksKeyWidth(2), width: getDksKeyWidth(1) },
+    { threshold: Infinity, width: getDksKeyWidth(3) },
   ],
 };
 
 // 添加点击数据映射配置
 const clickDataMapping = {
   1: {
-    20: [[0]],
-    80: [[0, 1, 2, 3]],
-    130: [[0, 1, 2, 3, 4]],
-    185: [[0, 1, 2, 3, 4, 5]],
+    [getDksKeyWidth(1)]: [[0]],
+    [getDksKeyWidth(3)]: [[0, 1, 2, 3]],
+    [getDksKeyWidth(5)]: [[0, 1, 2, 3, 4]],
+    [getDksKeyWidth(7)]: [[0, 1, 2, 3, 4, 5]],
   },
   2: {
-    20: [[1]],
-    80: [[1, 2, 3]],
-    130: [[1, 2, 3, 4, 5]],
+    [getDksKeyWidth(1)]: [[1]],
+    [getDksKeyWidth(3)]: [[1, 2, 3]],
+    [getDksKeyWidth(5)]: [[1, 2, 3, 4, 5]],
   },
   3: {
-    20: [[3]],
-    80: [[3, 4, 5]],
+    [getDksKeyWidth(1)]: [[3]],
+    [getDksKeyWidth(3)]: [[3, 4, 5]],
   },
   4: {
-    20: [[5]],
+    [getDksKeyWidth(1)]: [[5]],
   },
 };
 
@@ -327,7 +351,7 @@ const getKey = (containerIdx, itemIdx) => {
 
 const getWidth = (key) => {
   if (!(key in widths)) {
-    widths[key] = 20; // 初始化宽度
+    widths[key] = getDksKeyWidth(1); // 初始化宽度
   }
   return widths[key];
 };
@@ -360,10 +384,10 @@ const onClick = (key) => {
     // 点击同一行的不同 span
     if (curRow) {
       // widths[curRow] = previousWidths[curRow] || 20;
-      widths[curRow] = 20;
+      widths[curRow] = getDksKeyWidth(1);
     }
     previousWidths[key] = widths[key];
-    widths[key] = 20;
+    widths[key] = getDksKeyWidth(1);
     isDragStates[keyRow] = true;
     currentKeys[keyRow] = key;
 
@@ -383,12 +407,12 @@ const onClick = (key) => {
     isDragStates[keyRow] = !isDragStates[keyRow];
     if (!isDragStates[keyRow]) {
       // widths[key] = previousWidths[key] || 20;
-      widths[key] = 20;
+      widths[key] = getDksKeyWidth(1);
       currentKeys[keyRow] = null;
 
       // 同样使用整行赋值的方式更新
       const newRowData = [false, false, false, false, false, false, false];
-      const mapping = clickDataMapping[col]?.[20];
+      const mapping = clickDataMapping[col]?.[getDksKeyWidth(1)];
       if (mapping) {
         mapping.forEach((indices) => {
           indices.forEach((index) => {
@@ -486,7 +510,16 @@ const stopDrag = () => {
 };
 
 const saveConfig = () => {
-  if (activeKeys.value.length === 0) return;
+  if (activeKeys.value.length === 0) {
+    ElMessage({
+      grouping: true,
+      duration: 1000,
+      dangerouslyUseHTMLString: true,
+      message: `<span class="custom-message"><img src="${warnIcon}" class="warn-icon"/>请先选择需要修改的按键</span>`,
+      customClass: 'custom-message-container',
+    });
+    return;
+  }
   isShow.value = true;
 };
 
@@ -497,6 +530,13 @@ const onSure = () => {
 };
 const onCancel = () => {
   isShow.value = false;
+};
+
+const changeDksDelay1 = (delay) => {
+  dksInfo.value.db = delay;
+};
+const changeDksDelay2 = (delay) => {
+  dksInfo.value.db2 = delay;
 };
 
 const handleDksKey = (keyVal) => {
@@ -592,8 +632,8 @@ defineExpose({ save });
   display: flex;
 
   .left-config {
-    width: 300px;
-    height: 290px;
+    width: var(--assignment-leftbox-width);
+    height: var(--size-290);
     background-image: url('@/assets/images/click_hold_bg.svg');
     background-size: cover;
     background-repeat: no-repeat;
@@ -601,8 +641,8 @@ defineExpose({ save });
 
     .title-box {
       display: flex;
-      margin-left: 65px;
-      font-size: 11px;
+      margin-left: var(--spacing-65);
+      font-size: var(--font-size-11);
       font-family: 'CN Heavy';
       color: #ccc;
       text-align: center;
@@ -612,12 +652,14 @@ defineExpose({ save });
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        margin: 20px 10px 0 0;
+        margin: var(--spacing-20) var(--spacing-10) 0 0;
+        text-decoration: underline;
+        cursor: pointer;
         p {
           color: #fff;
         }
         span {
-          font-size: 8px;
+          font-size: var(--font-size-8);
         }
       }
     }
@@ -630,15 +672,15 @@ defineExpose({ save });
       .key-box {
         position: relative;
         box-sizing: border-box;
-        padding: 0 20px 5px 20px;
+        padding: 0 var(--spacing-20) var(--spacing-5) var(--spacing-20);
         // margin-left: 20px;
       }
 
       .del_btn {
-        height: 40px;
-        width: 40px;
+        height: var(--size-40);
+        width: var(--size-40);
         position: absolute;
-        left: 20px;
+        left: var(--spacing-20);
         top: 0;
         background-image: url('@/assets/images/del_key.svg');
         background-size: cover;
@@ -648,10 +690,10 @@ defineExpose({ save });
       }
 
       p {
-        width: 40px;
-        height: 40px;
+        width: var(--size-40);
+        height: var(--size-40);
         color: #fff;
-        font-size: 12px;
+        font-size: var(--font-size-12);
         font-family: 'Arial Bold';
         // margin: 0 20px 5px 20px;
         display: flex;
@@ -670,9 +712,9 @@ defineExpose({ save });
       }
 
       span {
-        width: 20px;
-        height: 20px;
-        margin-right: 35px;
+        // width: var(--size-20);
+        height: var(--dks-key-height);
+        margin-right: var(--spacing-35);
         // display: inline-block;
         position: absolute;
         background-image: url('@/assets/images/add.svg');
@@ -681,26 +723,26 @@ defineExpose({ save });
         // background-position: center;
         cursor: pointer;
         &:nth-child(2) {
-          left: 78px;
+          left: var(--dks-key-left1);
           z-index: 4;
         }
         &:nth-child(3) {
-          left: 132px;
+          left: var(--dks-key-left2);
           z-index: 3;
         }
         &:nth-child(4) {
-          left: 185px;
+          left: var(--dks-key-left3);
           z-index: 2;
         }
         &:last-child {
-          left: 240px;
+          left: var(--dks-key-left4);
         }
       }
 
       .is-drag {
         background-image: none;
         background-color: rgb(145, 188, 0);
-        border-radius: 10px;
+        border-radius: var(--spacing-10);
         cursor: grab;
 
         &.grabbing {
@@ -710,36 +752,36 @@ defineExpose({ save });
     }
 
     .save-btn {
-      width: 170px;
-      height: 40px;
-      margin-top: 5px;
-      margin-left: 65px;
+      width: var(--size-170);
+      height: var(--size-40);
+      margin-top: var(--spacing-5);
+      margin-left: var(--spacing-65);
       font-family: 'CN Heavy';
       background-image: url('/src/assets/images/save_bg.svg');
       background-size: cover;
       background-repeat: no-repeat;
       position: relative;
       cursor: pointer;
+      &:hover {
+        background-image: url('/src/assets/images/save_bgc.svg');
+      }
 
       img {
-        width: 20px;
-        height: 20px;
+        width: var(--size-20);
+        height: var(--size-20);
         object-fit: fill;
         position: absolute;
-        top: 10px;
-        left: 10px;
+        top: var(--spacing-10);
+        left: var(--spacing-10);
       }
 
       span {
-        font-size: 18px;
+        font-size: var(--font-size-18);
         color: #fff;
         position: absolute;
-        top: 6px;
-        left: 65px;
+        top: var(--spacing-6);
+        left: var(--spacing-65);
       }
-    }
-    .is-active {
-      background-image: url('/src/assets/images/save_bgc.svg');
     }
   }
 }

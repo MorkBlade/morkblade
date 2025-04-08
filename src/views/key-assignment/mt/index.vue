@@ -20,7 +20,7 @@
       <div class="delay-slider">
         <p>长按触发延时(单位:ms)</p>
         <div class="slider-block">
-          <el-slider v-model="mtInfo.delay" :min="0" :max="200" />
+          <el-slider v-model="mtInfo.delay" :min="0" :max="200" :step="1" />
         </div>
       </div>
       <div class="save-btn" @click="handleKeyTypeChange">
@@ -35,10 +35,12 @@
 
 <script setup>
 import keyboard from '@/configs/byte-to-key/keyboard';
+import { ElMessage } from 'element-plus';
 import { useHighLevelKeyStore, useKeyboardStore } from '@/stores';
 
 import mDialog from '@/components/dialog.vue';
 import characterCard from '@/components/character-card.vue';
+import warnIcon from '@/assets/images/warn_icon.svg';
 
 const keyboardStore = useKeyboardStore();
 const highLevelKeyStore = useHighLevelKeyStore();
@@ -100,7 +102,16 @@ const onMouseLe = (keyCode) => {
 const handleKeyTypeChange = () => {
   console.log(activeKeys.value);
   // console.log('handleKeyTypeChangehandleKeyTypeChangehandleKeyTypeChange', mtInfo.value.dks);
-  if (!activeKeys.value.length) return;
+  if (!activeKeys.value.length) {
+    ElMessage({
+      grouping: true,
+      duration: 1000,
+      dangerouslyUseHTMLString: true,
+      message: `<span class="custom-message"><img src="${warnIcon}" class="warn-icon"/>请先选择需要修改的按键</span>`,
+      customClass: 'custom-message-container',
+    });
+    return;
+  }
 
   isShow.value = true;
 };
@@ -152,15 +163,15 @@ defineExpose({ save });
   display: flex;
 
   .left-config-box {
-    width: 300px;
-    height: 290px;
+    width: var(--assignment-leftbox-width);
+    height: var(--size-290);
     background-image: url('@/assets/images/click_hold_bg.svg');
     background-size: cover;
     background-repeat: no-repeat;
 
     .key-group {
-      margin-top: 50px;
-      margin-bottom: 25px;
+      margin-top: var(--spacing-50);
+      margin-bottom: var(--spacing-25);
       display: flex;
       justify-content: center;
       align-items: center;
@@ -172,12 +183,12 @@ defineExpose({ save });
 
         .key-box {
           position: relative;
-          margin-left: 20px;
+          margin-left: var(--spacing-20);
         }
 
         .del_btn {
-          height: 50px;
-          width: 50px;
+          height: var(--size-50);
+          width: var(--size-50);
           position: absolute;
           left: 0;
           top: 0;
@@ -189,15 +200,16 @@ defineExpose({ save });
         }
 
         span {
-          font-size: 15px;
+          font-size: var(--font-size-15);
           font-family: 'CN Heavy';
           color: #fff;
         }
         p {
-          height: 50px;
-          width: 50px;
+          height: var(--size-50);
+          width: var(--size-50);
+          margin-right: var(--spacing-20);
           line-height: 1;
-          font-size: 12px;
+          font-size: var(--font-size-12);
           display: flex;
           justify-content: center;
           align-items: center;
@@ -224,50 +236,51 @@ defineExpose({ save });
     }
 
     .delay-slider {
-      padding: 0 50px;
-      margin-bottom: 15px;
+      padding: 0 var(--spacing-50);
+      margin-bottom: var(--spacing-15);
       box-sizing: border-box;
 
       p {
-        margin-bottom: 20px;
+        margin-bottom: var(--spacing-20);
         text-align: center;
         color: #fff;
-        font-size: 15px;
+        font-size: var(--font-size-15);
         font-family: 'CN Heavy';
       }
 
       .slider-block {
-        width: 200px;
-        height: 20px;
+        width: var(--size-200);
+        height: var(--socd-slider-height);
         box-sizing: border-box;
-        padding: 0 4px;
+        padding: 0 var(--spacing-4);
         background-image: url('@/assets/images/luminance.svg');
         background-size: cover;
         background-repeat: no-repeat;
       }
       ::v-deep(.el-slider) {
-        width: 192px;
-        height: 14px;
+        width: calc(var(--size-200) - var(--size-8));
+        height: var(--size-14);
+        transition: all 0.1s ease-in-out;
       }
       ::v-deep(.el-slider__button) {
         display: block;
-        width: 24px;
-        height: 24px;
-        margin: 10px 10px;
+        width: calc(var(--size-32) - var(--size-8));
+        height: calc(var(--size-32) - var(--size-8));
+        margin: var(--mt-el-button-margin);
         border: none;
         background-image: url('@/assets/images/luminance_btn.svg');
         background-size: cover;
         background-repeat: no-repeat;
       }
       ::v-deep(.el-slider__bar) {
-        height: 12px;
+        height: calc(var(--size-20) - var(--size-8));
       }
     }
 
     .save-btn {
-      width: 170px;
-      height: 40px;
-      margin-left: 65px;
+      width: var(--size-170);
+      height: var(--size-40);
+      margin-left: var(--spacing-65);
       font-family: 'CN Heavy';
       background-image: url('/src/assets/images/save_bg.svg');
       background-size: cover;
@@ -280,20 +293,20 @@ defineExpose({ save });
       }
 
       img {
-        width: 20px;
-        height: 20px;
+        width: var(--size-20);
+        height: var(--size-20);
         object-fit: fill;
         position: absolute;
-        top: 10px;
-        left: 10px;
+        top: var(--spacing-10);
+        left: var(--spacing-10);
       }
 
       span {
-        font-size: 18px;
+        font-size: var(--font-size-18);
         color: #fff;
         position: absolute;
-        top: 6px;
-        left: 65px;
+        top: var(--spacing-6);
+        left: var(--spacing-65);
       }
     }
     .is-active {

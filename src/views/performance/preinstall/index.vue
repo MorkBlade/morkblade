@@ -5,12 +5,15 @@
 </template>
 
 <script setup>
+import { ElMessage } from 'element-plus';
+
 import mCarousel from '@/components/carousel.vue';
 import preInstallIcon1 from '@/assets/images/cs.svg';
 import preInstallIcon2 from '@/assets/images/key.svg';
 import preInstallIcon3 from '@/assets/images/lol.svg';
 import preInstallIcon4 from '@/assets/images/osu.svg';
 import preInstallIcon5 from '@/assets/images/woman.png';
+import sureIcon from '@/assets/images/sure.svg';
 
 const carouselData = [
   { src: preInstallIcon1 },

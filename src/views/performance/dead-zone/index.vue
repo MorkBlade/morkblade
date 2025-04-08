@@ -43,12 +43,15 @@
 </template>
 
 <script setup>
+import { ElMessage } from 'element-plus';
 import { scaleValue } from '@/utils/responsive.js';
 import { useKeyboardStore, usePerformanceStore } from '@/stores';
+import emitter from '@/utils/app-emitter';
+
 import travelTestCard from '@/components/travel-test-card.vue';
 import setTravelCard from '@/components/set-travel-card.vue';
 import saveConfig from './components/save-config.vue';
-import emitter from '@/utils/app-emitter';
+import sureIcon from '@/assets/images/sure.svg';
 
 const keyboardStore = useKeyboardStore();
 const performanceStore = usePerformanceStore();
@@ -151,7 +154,16 @@ const saveDeadZoneTravel = async () => {
     performanceStore.setDp(keyValue.value, pressDead.value);
     performanceStore.setDr(keyValue.value, releaseDead.value);
   });
-  await Promise.all(promises);
+  const res = await Promise.all(promises);
+  if (res) {
+    ElMessage({
+      grouping: true,
+      duration: 1000,
+      dangerouslyUseHTMLString: true,
+      message: `<span class="custom-message"><img src="${sureIcon}" class="warn-icon"/>修改成功</span>`,
+      customClass: 'custom-message-container',
+    });
+  }
 };
 </script>
 

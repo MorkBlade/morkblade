@@ -15,7 +15,7 @@
 defineOptions({ name: 'DeviceCalibrationMode' });
 
 import echarts from '@/configs/echarts/index.js';
-import { watch } from 'vue';
+import { scaleValue } from '@/utils/responsive.js';
 import { useKeyboardStore, usePerformanceStore } from '@/stores';
 
 const performanceStore = usePerformanceStore();
@@ -32,7 +32,13 @@ const count = ref(0);
 const notification = ref(null);
 const option = {
   tooltip: {},
-  grid: { left: 15, right: 15, top: 10, bottom: 10, containLabel: true },
+  grid: {
+    left: scaleValue(15),
+    right: scaleValue(15),
+    top: scaleValue(10),
+    bottom: scaleValue(10),
+    containLabel: true,
+  },
   xAxis: {
     type: 'value',
     min: 0,
@@ -154,34 +160,34 @@ onUnmounted(() => {
   }
 
   .chart-container {
-    width: 760px;
-    height: 206px;
+    width: var(--echarts-container-width);
+    height: var(--echarts-container-height);
     position: absolute;
     z-index: 1;
-    margin: 50px 0 0 74px;
+    margin: var(--spacing-50) 0 0 calc(var(--spacing-75) - var(--spacing-1));
   }
 
   img {
-    width: 760px;
-    height: 206px;
+    width: var(--echarts-container-width);
+    height: var(--echarts-container-height);
     object-fit: fill;
     position: absolute;
-    left: 89px;
-    top: 42px;
+    left: calc(var(--spacing-90) - var(--spacing-1));
+    top: calc(var(--spacing-45) - var(--spacing-3));
   }
 
   .calibration-nums {
-    width: 20px;
+    width: var(--size-20);
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
-    gap: 16px;
-    font-size: 15px;
+    gap: var(--spacing-16);
+    font-size: var(--font-size-15);
     color: #ffffff;
     font-family: 'CN Regular';
     position: absolute;
-    top: 47px;
-    left: 55px;
+    top: calc(var(--spacing-50) - var(--spacing-3));
+    left: var(--spacing-55);
   }
 }
 </style>
