@@ -69,14 +69,14 @@ watch(keyPressTestCount, async () => {
 
 const dynamicHeight = computed(() => {
   // 使用 CSS 变量获取基准值
-  const baseValue = getComputedStyle(document.documentElement).getPropertyValue('--progress-inner-height');
+  const baseValue = getComputedStyle(document.documentElement).getPropertyValue('--size-260');
   const baseHeight = parseInt(baseValue) || 190;
 
   // 计算高度比例
   const heightRatio = baseHeight / 190; // 使用原始值 190 作为基准
 
   // 计算动态高度
-  const height = -baseHeight + (maxMM.value / 4.0) * ((baseHeight * 260) / 190);
+  const height = -baseHeight + (maxMM.value / 4.0) * ((baseHeight * baseHeight) / 190);
 
   // 限制最大高度
   return Math.min(Math.max(height, -baseHeight), 0);
@@ -101,8 +101,8 @@ const getSwitchWidth = () => {
 
 <style scoped lang="scss">
 .travel-test-card {
-  width: var(--travel-card-width);
-  height: var(--travel-card-height);
+  width: var(--size-260);
+  height: var(--size-290);
   // display: flex;
   background-image: url('@/assets/images/formation_test_bg.svg');
   background-size: cover;
@@ -110,40 +110,40 @@ const getSwitchWidth = () => {
   overflow: hidden;
 
   .scale-box {
-    margin-top: var(--scale-box-margin-top);
+    margin-top: var(--spacing-20);
     display: flex;
     position: relative;
 
     &:first-child {
-      margin-left: var(--scale-box-margin-left);
+      margin-left: var(--spacing-60);
     }
 
     .scale-img {
-      width: var(--scale-img-width);
-      height: var(--scale-img-height);
+      width: var(--spacing-25);
+      height: var(--size-200);
       object-fit: cover;
     }
 
     .progress-bar {
-      width: var(--progress-bar-width);
-      height: var(--progress-bar-height);
-      margin: var(--progress-bar-margin);
+      width: var(--spacing-30);
+      height: var(--size-200);
+      margin: 0 var(--spacing-10);
+      padding-top: var(--spacing-5);
       box-sizing: border-box;
-      padding-top: var(--progress-bar-padding-top);
       position: relative;
       background-image: url('@/assets/images/progress_bar.svg');
       background-size: cover;
       background-repeat: no-repeat;
 
       div {
-        width: var(--progress-inner-width);
-        height: var(--progress-inner-height);
+        width: var(--spacing-20);
+        height: var(--size-190);
         display: block;
         // height: 0;
         position: absolute;
-        border-radius: var(--progress-inner-border-radius);
-        top: var(--progress-inner-top);
-        left: var(--progress-inner-left);
+        border-radius: var(--spacing-5);
+        top: var(--spacing-5);
+        left: var(--spacing-5);
         overflow: hidden;
       }
 
@@ -151,7 +151,7 @@ const getSwitchWidth = () => {
         width: 100%;
         height: 100%;
         object-fit: fill;
-        transform: translateX(var(--progress-transform-value));
+        transform: translateX(var(--translate-x-value));
         transition: all 0.2s ease-in-out;
         // background-image: url('@/assets/images/progress.png');
         // background-size: cover;
@@ -168,63 +168,68 @@ const getSwitchWidth = () => {
 
     .nums {
       position: absolute;
-      height: var(--nums-height);
-      top: var(--nums-top);
-      left: var(--nums-left);
+      height: var(--size-200);
+      top: calc(var(--spacing-5) - var(--spacing-10));
+      left: var(--spacing-110);
       background-color: pink;
 
       p {
         color: #ccc;
-        font-size: var(--scale-font-size);
+        font-size: var(--font-size-13);
         position: absolute;
         font-family: 'CN Regular';
       }
       .scale_1 {
-        top: var(--scale-1-top);
+        top: var(--scale-54);
       }
       .scale_2 {
-        top: var(--scale-2-top);
+        top: var(--scale-114);
       }
       .scale_3 {
-        top: var(--scale-3-top);
+        top: var(--scale-172);
       }
       .scale_3_3 {
-        top: var(--scale-3-3-top);
+        top: var(--scale-191);
       }
     }
   }
 
   .switch-box {
-    width: var(--switch-box-width);
-    height: var(--switch-box-height);
-    line-height: var(--switch-box-line-height);
-    margin: var(--switch-box-margin);
+    width: var(--size-170);
+    height: var(--size-36);
+    line-height: var(--size-34);
+    margin: var(--spacing-14) 0 0 var(--spacing-40);
     background-image: url('@/assets/images/switch_bg.svg');
     background-size: cover;
     background-repeat: no-repeat;
 
     span {
-      font-size: var(--switch-text-font-size);
+      font-size: var(--font-size-13);
       color: #ccc;
       font-family: 'CN Heavy';
       // -webkit-text-stroke: 1px #000000;
-      margin-left: var(--switch-text-margin-left);
+      margin-left: var(--spacing-16);
     }
 
     .el-switch {
-      margin-left: var(--switch-margin-left);
+      margin-left: var(--spacing-20);
       --el-switch-on-color: rgb(145, 188, 0);
       --el-switch-off-color: rgba(0, 0, 0, 0);
       font-family: 'CN Heavy';
 
       .custom-active-action {
-        width: var(--custom-action-width);
-        height: var(--custom-action-height);
+        width: var(--size-22);
+        height: var(--size-22);
       }
 
       // &.is-checked {
       //   color: #000000;
       // }
+    }
+
+    ::v-deep(.el-switch__core) {
+      border-radius: var(--spacing-10);
+      height: var(--size-20) !important;
     }
   }
 }

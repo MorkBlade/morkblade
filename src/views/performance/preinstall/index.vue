@@ -23,8 +23,8 @@ const carouselData = [
 
 <style scoped lang="scss">
 .preinstall-box {
-  width: 1310px;
-  height: 290px;
+  width: var(--size-1310);
+  height: var(--size-290);
   background-image: url('@/assets/images/preinstall_bg.svg');
   background-size: cover;
   background-repeat: no-repeat;

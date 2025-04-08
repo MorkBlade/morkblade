@@ -51,7 +51,7 @@
         <el-progress
           :percentage="progress"
           :color="'#91bc00'"
-          :stroke-width="16"
+          :stroke-width="scaleValue(16)"
           :text-inside="true"
           :text-color="'#000 !important'"
         ></el-progress>
@@ -65,6 +65,7 @@
 
 import services from '@/services/index.js';
 import { useAppStore, useDeviceStore } from '@/stores';
+import { scaleValue } from '@/utils/responsive.js';
 
 const router = useRouter();
 const deviceStore = useDeviceStore();

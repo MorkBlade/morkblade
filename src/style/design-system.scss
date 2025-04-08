@@ -1,216 +1,374 @@
 :root {
   /* 常规分辨率 (1080p) */
-  --performance-container-width: 1600px;
-  --performance-container-height: 350px;
-  --performance-container-margin-top: 25px;
-  --performance-container-padding-top: 30px;
-  
-  --performance-item-width: 200px;
-  --performance-item-height: 42px;
-  --performance-item-font-size: 20px;
-  --performance-item-margin: 0 30px;
-  --performance-item-line-height: 36px;
-  --performance-item-margin-bottom: 20px;
-  
-  --display-area-width: 1310px;
-  --display-area-height: 290px;
-  
-  /* mode 组件的变量 */
-  --mode-keystroke-height: 290px;
-  --mode-keystroke-width: 740px;
-  --mode-keystroke-margin: 0 30px;
-  --mode-offset-x: 280px;
-  
-  /* travel-test-card 组件的变量 */
-  --travel-card-width: 260px;
-  --travel-card-height: 290px;
-  
-  --scale-box-margin-top: 20px;
-  --scale-box-margin-left: 60px;
-  
-  --scale-img-width: 25px;
-  --scale-img-height: 200px;
-  
-  --progress-bar-width: 30px;
-  --progress-bar-height: 200px;
-  --progress-bar-margin: 0 10px;
-  --progress-bar-padding-top: 5px;
-  
-  --progress-inner-width: 20px;
-  --progress-inner-height: 190px;
-  --progress-inner-top: 5px;
-  --progress-inner-left: 5px;
-  --progress-inner-border-radius: 5px;
-  
-  --progress-transform-value: -190px;
-  
-  --nums-top: -5px;
-  --nums-left: 110px;
-  --nums-height: 200px;
-  
-  --scale-font-size: 13px;
-  --scale-1-top: 54px;
-  --scale-2-top: 114px;
-  --scale-3-top: 172px;
-  --scale-3-3-top: 191px;
-  
-  --switch-box-width: 170px;
-  --switch-box-height: 36px;
-  --switch-box-line-height: 34px;
-  --switch-box-margin: 14px 0 0 40px;
-  
-  --switch-text-font-size: 13px;
-  --switch-text-margin-left: 16px;
-  --switch-margin-left: 20px;
-  
-  --custom-action-width: 18px;
-  --custom-action-height: 18px;
-  
+  --spacing-2: 2px;
+  --spacing-3: 3px;
+  --spacing-5: 5px;
+  --spacing-6: 6px;
+  --spacing-9: 9px;
+  --spacing-10: 10px;
+  --spacing-14: 14px;
+  --spacing-15: 15px;
+  --spacing-16: 16px;
+  --spacing-20: 20px;
+  --spacing-24: 24px;
+  --spacing-25: 25px;
+  --spacing-30: 30px;
+  --spacing-33: 33px;
+  --spacing-35: 35px;
+  --spacing-38: 38px;
+  --spacing-40: 40px;
+  --spacing-45: 45px;
+  --spacing-50: 50px;
+  --spacing-60: 60px;
+  --spacing-70: 70px;
+  --spacing-75: 75px;
+  --spacing-65: 65px;
+  --spacing-90: 90px;
+  --spacing-95: 95px;
+  --spacing-105: 105px;
+  --spacing-110: 110px;
+  --spacing-120: 120px;
+  --spacing-130: 130px;
+
+  --size-8: 8px;
+  --size-13: 13px;
+  --size-14: 14px;
+  --size-15: 15px;
+  --size-16: 16px;
+  --size-18: 18px;
+  --size-20: 20px;
+  --size-22: 22px;
+  --size-25: 25px;
+  --size-28: 28px;
+  --size-30: 30px;
+  --size-32: 32px;
+  --size-34: 34px;
+  --size-35: 35px;
+  --size-36: 36px;
+  --size-40: 40px;
+  --size-42: 42px;
+  --size-50: 50px;
+  --size-55: 55px;
+  --size-78: 78px;
+  --size-100: 100px;
+  --size-130: 130px;
+  --size-144: 144px;
+  --size-150: 150px;
+  --size-170: 170px;
+  --size-180: 180px;
+  --size-190: 190px;
+  --size-200: 200px;
+  --size-220: 220px;
+  --size-230: 230px;
+  --size-250: 250px;
+  --size-260: 260px;
+  --size-290: 290px;
+  --size-300: 300px;
+  --size-306: 306px;
+  --size-350: 350px;
+  --size-400: 400px;
+  --size-1310: 1310px;
+  --size-1600: 1600px;
+
+  --font-size-10: 10px;
+  --font-size-12: 12px;
+  --font-size-13: 13px;
+  --font-size-14: 14px;
+  --font-size-15: 15px;
+  --font-size-16: 16px;
+  --font-size-18: 18px;
+  --font-size-20: 20px;
+  --font-size-30: 30px;
+  --font-size-100: 100px;
+
+  --menu-item-width: 200px;
+  --menu-item-height: 42px;
+
+  /* connect 组件的变量 */
+  --connect-logo-height: 228px;
+  --connect-operate-width: 58px;
+
+  /* performance 组件的变量 */
+  --performance-center-box-width: 740px;
+  --performance-link-btn-left: 480px;
+  --performance-link-btn-top: 112px;
   --switch-width: 73px;
+  --mode-offset-x-280: 280px;
+  --translate-x-value: -190px;
+  --scale-54: 54px;
+  --scale-114: 114px;
+  --scale-172: 172px;
+  --scale-191: 191px;
+  --scale-42: 42px;
+  --scale-92: 92px;
+  --scale-142: 142px;
+  --scale-190: 190px;
+  --scale-1: -1px;
+  --scale-55: 55px;
+  --scale-117: 117px;
+  --scale-178: 178px;
+  --scale-241: 241px;
+  --slider-height: 192px;
+  --slider-point-left: 0;
+  --dead-zone-height: 60;
+  --axis-width: 1000px;
+  --carousel-outer-width: 1030px;
+  --carousel-inner-width: 1275px;
+  --carousel-shadow-width: 925px;
+  --carousel-offset-x: 175;
 }
 
-/* 2K 分辨率 (1440p) */
+/* 2K 分辨率 (1440p) 2560*1440 
+  问距值(spacing): 从约1.25倍降到约1.1-1.15倍
+  尺寸值(size): 从约1.25倍降到约1.1-1.15倍
+  字体大小:从约1.25倍降到约1.15-1.2倍
+  组件尺寸:从约1.25倍降到约1.15倍
+*/
 @media screen and (min-width: 2000px) and (max-width: 3000px) {
   :root {
-    --performance-container-width: 2000px;
-    --performance-container-height: 438px;
-    --performance-container-margin-top: 31px;
-    --performance-container-padding-top: 38px;
-    
-    --performance-item-width: 250px;
-    --performance-item-height: 53px;
-    --performance-item-font-size: 25px;
-    --performance-item-margin: 0 38px;
-    --performance-item-line-height: 45px;
-    --performance-item-margin-bottom: 25px;
-    
-    --display-area-width: 1638px;
-    --display-area-height: 363px;
-    
-    /* mode 组件的变量 */
-    --mode-keystroke-height: 363px;
-    --mode-keystroke-width: 925px;
-    --mode-keystroke-margin: 0 38px;
-    --mode-offset-x: 350px;
-    
-    /* travel-test-card 组件的变量 */
-    --travel-card-width: 325px;
-    --travel-card-height: 363px;
-    
-    --scale-box-margin-top: 25px;
-    --scale-box-margin-left: 75px;
-    
-    --scale-img-width: 31px;
-    --scale-img-height: 250px;
-    
-    --progress-bar-width: 38px;
-    --progress-bar-height: 250px;
-    --progress-bar-margin: 0 13px;
-    --progress-bar-padding-top: 6px;
-    
-    --progress-inner-width: 25px;
-    --progress-inner-height: 238px;
-    --progress-inner-top: 6px;
-    --progress-inner-left: 6px;
-    --progress-inner-border-radius: 6px;
-    
-    --progress-transform-value: -238px;
-    
-    --nums-top: -6px;
-    --nums-left: 138px;
-    --nums-height: 250px;
-    
-    --scale-font-size: 16px;
-    --scale-1-top: 68px;
-    --scale-2-top: 143px;
-    --scale-3-top: 215px;
-    --scale-3-3-top: 239px;
-    
-    --switch-box-width: 213px;
-    --switch-box-height: 45px;
-    --switch-box-line-height: 43px;
-    --switch-box-margin: 18px 0 0 50px;
-    
-    --switch-text-font-size: 16px;
-    --switch-text-margin-left: 20px;
-    --switch-margin-left: 25px;
-    
-    --custom-action-width: 23px;
-    --custom-action-height: 23px;
-    
-    --switch-width: 91px;
+    /* 间距 */
+    --spacing-2: 2px;
+    --spacing-3: 4px;
+    --spacing-5: 6px;
+    --spacing-6: 7px;
+    --spacing-9: 10px;
+    --spacing-10: 12px;
+    --spacing-14: 16px;
+    --spacing-15: 18px;
+    --spacing-16: 18px;
+    --spacing-20: 24px;
+    --spacing-24: 28px;
+    --spacing-25: 29px;
+    --spacing-30: 35px;
+    --spacing-33: 38px;
+    --spacing-35: 40px;
+    --spacing-38: 44px;
+    --spacing-40: 45px;
+    --spacing-45: 54px;
+    --spacing-50: 55px;
+    --spacing-60: 66px;
+    --spacing-65: 72px;
+    --spacing-70: 77px;
+    --spacing-75: 85px;
+    --spacing-90: 100px;
+    --spacing-95: 105px;
+    --spacing-105: 115px;
+    --spacing-110: 120px;
+    --spacing-120: 130px;
+    --spacing-130: 143px;
+
+    /* 尺寸 */
+    --size-8: 9px;
+    --size-13: 15px;
+    --size-14: 16px;
+    --size-15: 17px;
+    --size-16: 18px;
+    --size-18: 20px;
+    --size-20: 22px;
+    --size-22: 26px;
+    --size-25: 28px;
+    --size-28: 32px;
+    --size-30: 34px;
+    --size-32: 36px;
+    --size-34: 38px;
+    --size-35: 40px;
+    --size-36: 41px;
+    --size-40: 45px;
+    --size-42: 46px;
+    --size-50: 60px;
+    --size-55: 65px;
+    --size-78: 90px;
+    --size-100: 115px;
+    --size-130: 150px;
+    --size-144: 165px;
+    --size-150: 170px;
+    --size-170: 195px;
+    --size-180: 200px;
+    --size-190: 228px;
+    --size-200: 240px;
+    --size-220: 250px;
+    --size-230: 265px;
+    --size-250: 275px;
+    --size-260: 295px;
+    --size-290: 330px;
+    --size-300: 340px;
+    --size-306: 350px;
+    --size-350: 400px;
+    --size-400: 450px;
+    --size-1310: 1500px;
+    --size-1600: 1840px;
+
+    /* 字体大小 */
+    --font-size-10: 12px;
+    --font-size-12: 14px;
+    --font-size-13: 15px;
+    --font-size-14: 16px;
+    --font-size-15: 17px;
+    --font-size-16: 18px;
+    --font-size-18: 20px;
+    --font-size-20: 22px;
+    --font-size-30: 34px;
+    --font-size-100: 115px;
+
+    --menu-item-width: 230px;
+    --menu-item-height: 48px;
+
+    /* connect 组件的变量 */
+    --connect-logo-height: 260px;
+    --connect-operate-width: 68px;
+
+    /* performance 组件的变量 */
+    --performance-center-box-width: 850px;
+    --performance-link-btn-left: 555px;
+    --performance-link-btn-top: 130px;
+    --switch-width: 83px;
+    --mode-offset-x-280: 320px;
+    --translate-x-value: -220px;
+    --scale-54: 62px;
+    --scale-114: 130px;
+    --scale-172: 195px;
+    --scale-191: 220px;
+    --scale-42: 48px;
+    --scale-92: 105px;
+    --scale-142: 160px;
+    --scale-190: 215px;
+    --scale-1: -1px;
+    --scale-55: 63px;
+    --scale-117: 134px;
+    --scale-178: 204px;
+    --scale-241: 277px;
+    --slider-height: 230px;
+    --slider-point-left: 1px;
+    --dead-zone-height: 66;
+    --axis-width: 1150px;
+    --carousel-outer-width: 1150px;
+    --carousel-inner-width: 1450px;
+    --carousel-shadow-width: 1050px;
+    --carousel-offset-x: 200;
   }
 }
 
-/* 4K 分辨率 (2160p) */
+/* 4K 分辨率 (2160p) 3840*2160 */
 @media screen and (min-width: 3001px) {
   :root {
-    --performance-container-width: 3200px;
-    --performance-container-height: 700px;
-    --performance-container-margin-top: 50px;
-    --performance-container-padding-top: 60px;
-    
-    --performance-item-width: 400px;
-    --performance-item-height: 84px;
-    --performance-item-font-size: 40px;
-    --performance-item-margin: 0 60px;
-    --performance-item-line-height: 72px;
-    --performance-item-margin-bottom: 40px;
-    
-    --display-area-width: 2620px;
-    --display-area-height: 580px;
-    
-    /* mode 组件的变量 */
-    --mode-keystroke-height: 580px;
-    --mode-keystroke-width: 1480px;
-    --mode-keystroke-margin: 0 60px;
-    --mode-offset-x: 560px;
-    
-    /* travel-test-card 组件的变量 */
-    --travel-card-width: 520px;
-    --travel-card-height: 580px;
-    
-    --scale-box-margin-top: 40px;
-    --scale-box-margin-left: 120px;
-    
-    --scale-img-width: 50px;
-    --scale-img-height: 400px;
-    
-    --progress-bar-width: 60px;
-    --progress-bar-height: 400px;
-    --progress-bar-margin: 0 20px;
-    --progress-bar-padding-top: 10px;
-    
-    --progress-inner-width: 40px;
-    --progress-inner-height: 380px;
-    --progress-inner-top: 10px;
-    --progress-inner-left: 10px;
-    --progress-inner-border-radius: 10px;
-    
-    --progress-transform-value: -380px;
-    
-    --nums-top: -10px;
-    --nums-left: 220px;
-    --nums-height: 400px;
-    
-    --scale-font-size: 26px;
-    --scale-1-top: 108px;
-    --scale-2-top: 228px;
-    --scale-3-top: 344px;
-    --scale-3-3-top: 382px;
-    
-    --switch-box-width: 340px;
-    --switch-box-height: 72px;
-    --switch-box-line-height: 68px;
-    --switch-box-margin: 28px 0 0 80px;
-    
-    --switch-text-font-size: 26px;
-    --switch-text-margin-left: 32px;
-    --switch-margin-left: 40px;
-    
-    --custom-action-width: 36px;
-    --custom-action-height: 36px;
-    
+    /* 间距 */
+    --spacing-2: 4px;
+    --spacing-3: 6px;
+    --spacing-5: 10px;
+    --spacing-6: 12px;
+    --spacing-9: 18px;
+    --spacing-10: 20px;
+    --spacing-14: 28px;
+    --spacing-15: 30px;
+    --spacing-16: 32px;
+    --spacing-20: 40px;
+    --spacing-24: 48px;
+    --spacing-25: 50px;
+    --spacing-30: 60px;
+    --spacing-33: 66px;
+    --spacing-35: 70px;
+    --spacing-38: 76px;
+    --spacing-40: 80px;
+    --spacing-45: 90px;
+    --spacing-50: 100px;
+    --spacing-60: 120px;
+    --spacing-65: 130px;
+    --spacing-70: 140px;
+    --spacing-75: 150px;
+    --spacing-90: 180px;
+    --spacing-95: 190px;
+    --spacing-105: 210px;
+    --spacing-110: 220px;
+    --spacing-120: 240px;
+    --spacing-130: 260px;
+
+    /* 尺寸 */
+    --size-8: 16px;
+    --size-13: 26px;
+    --size-14: 28px;
+    --size-15: 30px;
+    --size-16: 32px;
+    --size-18: 36px;
+    --size-20: 40px;
+    --size-22: 44px;
+    --size-25: 50px;
+    --size-28: 56px;
+    --size-30: 60px;
+    --size-32: 64px;
+    --size-34: 68px;
+    --size-35: 70px;
+    --size-36: 72px;
+    --size-40: 80px;
+    --size-42: 84px;
+    --size-50: 100px;
+    --size-55: 110px;
+    --size-78: 156px;
+    --size-100: 200px;
+    --size-130: 260px;
+    --size-144: 288px;
+    --size-150: 300px;
+    --size-170: 340px;
+    --size-180: 360px;
+    --size-190: 380px;
+    --size-200: 400px;
+    --size-220: 440px;
+    --size-230: 460px;
+    --size-250: 500px;
+    --size-260: 520px;
+    --size-290: 580px;
+    --size-300: 600px;
+    --size-306: 612px;
+    --size-350: 700px;
+    --size-400: 800px;
+    --size-1310: 2620px;
+    --size-1600: 3200px;
+
+    /* 字体大小 */
+    --font-size-10: 20px;
+    --font-size-12: 24px;
+    --font-size-13: 26px;
+    --font-size-14: 28px;
+    --font-size-15: 30px;
+    --font-size-16: 32px;
+    --font-size-18: 36px;
+    --font-size-20: 40px;
+    --font-size-30: 60px;
+    --font-size-100: 200px;
+
+    --menu-item-width: 400px;
+    --menu-item-height: 84px;
+
+    /* connect 组件的变量 */
+    --connect-logo-height: 456px;
+    --connect-operate-width: 116px;
+
+    /* performance 组件的变量 */
+    --performance-center-box-width: 1480px;
+    --performance-link-btn-left: 1000px;
+    --performance-link-btn-top: 224px;
     --switch-width: 146px;
+    --mode-offset-x-280: 560px;
+    --translate-x-value: -380px;
+    --scale-54: 108px;
+    --scale-114: 228px;
+    --scale-172: 344px;
+    --scale-191: 382px;
+    --scale-42: 84px;
+    --scale-92: 184px;
+    --scale-142: 284px;
+    --scale-190: 380px;
+    --scale-1: -2px;
+    --scale-55: 110px;
+    --scale-117: 234px;
+    --scale-178: 356px;
+    --scale-241: 482px;
+    --slider-height: 384px;
+    --slider-point-left: 2px;
+    --dead-zone-height: 120;
+    --axis-width: 2000px;
+    --carousel-outer-width: 2060px;
+    --carousel-inner-width: 2550px;
+    --carousel-shadow-width: 1850px;
+    --carousel-offset-x: 350;
   }
 }

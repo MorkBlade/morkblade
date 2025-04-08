@@ -37,8 +37,8 @@ const saveConfig = () => {
 
 <style scoped lang="scss">
 .save-config-box {
-  width: 260px;
-  height: 290px;
+  width: var(--size-260);
+  height: var(--size-290);
   display: flex;
   text-align: center;
   flex-direction: column;
@@ -46,31 +46,31 @@ const saveConfig = () => {
   background-image: url('@/assets/images/formation_test_bg.svg');
   background-size: cover;
   background-repeat: no-repeat;
-  font-size: 15px;
+  font-size: var(--font-size-15);
   color: #cccccc;
   font-family: 'CN Heavy';
 
   .config-box1 {
-    margin: 20px 0 30px 0;
+    margin: var(--spacing-20) 0 var(--spacing-30) 0;
   }
 
   .tip-box {
-    margin: 90px 0 20px 0;
+    margin: var(--spacing-90) 0 var(--spacing-20) 0;
 
     img {
-      width: 13px;
-      height: 13px;
+      width: var(--size-13);
+      height: var(--size-13);
       object-fit: fill;
     }
 
     span {
-      font-size: 13px;
-      margin-left: 5px;
+      font-size: var(--font-size-13);
+      margin-left: var(--spacing-5);
     }
   }
 
   .save_btn {
-    margin-top: 130px;
+    margin-top: var(--spacing-130);
   }
 }
 </style>

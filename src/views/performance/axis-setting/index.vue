@@ -4,8 +4,8 @@
       <mCarousel
         :carouselData="KEY_SHAFT"
         :btnText="'应用轴体'"
-        :offset="25"
-        :width="920"
+        :offset="scaleValue(25)"
+        :width="scaleValue(920)"
         showText
         @changeAxis="changeAxis"
       />
@@ -26,6 +26,7 @@
 
 <script setup>
 import services from '@/services/index';
+import { scaleValue } from '@/utils/responsive.js';
 import { useKeyboardStore } from '@/stores';
 import { KEY_SHAFT } from '@/configs/constant/index.js';
 
@@ -73,18 +74,18 @@ const changeAxis = (axisID) => {
   display: flex;
 
   &__setting {
-    width: 1000px;
-    height: 290px;
+    width: var(--axis-width);
+    height: var(--size-290);
     background-image: url('@/assets/images/axis_bg.svg');
     background-size: cover;
     background-repeat: no-repeat;
     overflow: hidden;
   }
   &__info {
-    width: 300px;
-    height: 290px;
-    margin-left: 30px;
-    padding-left: 20px;
+    width: var(--size-306);
+    height: var(--size-290);
+    margin-left: var(--spacing-30);
+    padding-left: var(--spacing-20);
     box-sizing: border-box;
     background-image: url('@/assets/images/axis_info_bg.svg');
     background-size: cover;
@@ -93,16 +94,16 @@ const changeAxis = (axisID) => {
 
     .axis-name,
     .axis-travel {
-      margin-top: 50px;
+      margin-top: var(--spacing-50);
       color: #fff;
-      font-size: 15px;
+      font-size: var(--font-size-15);
       font-family: 'CN Heavy';
       display: flex;
       justify-content: center;
     }
 
     .axis-travel {
-      margin-bottom: 60px;
+      margin-bottom: var(--spacing-60);
     }
   }
 }

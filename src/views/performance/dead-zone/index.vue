@@ -4,7 +4,7 @@
     <div class="key-setting-box">
       <setTravelCard
         :sliderVal="pressDead"
-        :offsetX="40"
+        :offsetX="scaleValue(40)"
         :min="min"
         :max="max"
         :disabled="disabled"
@@ -14,7 +14,7 @@
       />
       <setTravelCard
         :sliderVal="releaseDead"
-        :offsetX="40"
+        :offsetX="scaleValue(40)"
         :min="min"
         :max="max"
         :disabled="disabled"
@@ -43,6 +43,7 @@
 </template>
 
 <script setup>
+import { scaleValue } from '@/utils/responsive.js';
 import { useKeyboardStore, usePerformanceStore } from '@/stores';
 import travelTestCard from '@/components/travel-test-card.vue';
 import setTravelCard from '@/components/set-travel-card.vue';
@@ -58,7 +59,9 @@ const pressDeadHeight = ref(10);
 const releaseDeadHeight = ref(10);
 const pressDead = ref(0.2);
 const releaseDead = ref(0.2);
-const maxKeyDeadHeight = 60; // 最大高度
+const maxKeyDeadHeight = computed(() => {
+  return Number(getComputedStyle(document.documentElement).getPropertyValue('--dead-zone-height').trim());
+}); // 使用CSS变量
 
 const activeKeys = computed(() => {
   return keyboardStore.activeKeys;
@@ -94,9 +97,9 @@ emitter.on('key-click', ({ colIndex, rowIndex }) => {
   currentKeyY.value = rowIndex;
   if (hasCurrentKey.value) {
     const { pressDead, releaseDead } = perdeadZoneValue.value[rowIndex][colIndex];
-    const releaseHeight = (releaseDead / max) * maxKeyDeadHeight;
+    const releaseHeight = (releaseDead / max) * maxKeyDeadHeight.value;
     releaseDeadHeight.value = Math.round(releaseHeight);
-    const pressHeight = (pressDead / max) * maxKeyDeadHeight;
+    const pressHeight = (pressDead / max) * maxKeyDeadHeight.value;
     pressDeadHeight.value = Math.round(pressHeight);
   }
 });
@@ -111,7 +114,7 @@ const handlePressDeadChange = async (value) => {
     const x = Number(key1);
     const y = Number(key2);
     // const keyValue = currentLayoutData[y][x];
-    const height = (value || performanceValue[y][x].pressDead / max) * maxKeyDeadHeight;
+    const height = (value || performanceValue[y][x].pressDead / max) * maxKeyDeadHeight.value;
     pressDeadHeight.value = Math.round(height);
     performanceValue[y][x].pressDead = value;
     // performanceStore.setDp(keyValue.value, value);
@@ -129,7 +132,7 @@ const handleReleaseDeadChange = async (value) => {
     const x = Number(key1);
     const y = Number(key2);
     // const keyValue = currentLayoutData[y][x];
-    const height = (value || performanceValue[y][x].pressDead / max) * maxKeyDeadHeight;
+    const height = (value || performanceValue[y][x].pressDead / max) * maxKeyDeadHeight.value;
     releaseDeadHeight.value = Math.round(height);
     performanceValue[y][x].releaseDead = value;
     // performanceStore.setDr(keyValue.value, value);
@@ -158,29 +161,29 @@ const saveDeadZoneTravel = async () => {
 
   .key-setting-box {
     display: flex;
-    height: 290px;
-    width: 740px;
-    margin: 0 30px;
+    height: var(--size-290);
+    width: var(--performance-center-box-width);
+    margin: 0 var(--spacing-30);
     background-image: url('@/assets/images/keystroke_bg.svg');
     background-size: cover;
     background-repeat: no-repeat;
     position: relative;
 
     .setTravelCard1 {
-      margin-left: 40px;
+      margin-left: var(--spacing-40);
     }
   }
 
   .key-dead-preview {
     display: flex;
     position: absolute;
-    top: 20px;
-    right: 70px;
+    top: var(--spacing-20);
+    right: var(--spacing-70);
 
     .key-dead-scale {
-      width: 40px;
-      height: 250px;
-      margin: 0 10px;
+      width: var(--size-40);
+      height: var(--size-250);
+      margin: 0 var(--spacing-10);
       position: relative;
       background-image: url('@/assets/images/key_dead_bg.svg');
       background-size: cover;
@@ -188,26 +191,26 @@ const saveDeadZoneTravel = async () => {
 
       .top-box,
       .bottom-box {
-        width: 28px;
-        height: 50px;
-        border-radius: 3px;
+        width: var(--size-28);
+        height: var(--size-50);
+        border-radius: var(--border-radius-3);
         background-color: rgb(253, 255, 0);
         position: absolute;
-        left: 6.5px;
+        left: var(--spacing-6);
         transition: height 0.3s ease;
       }
 
       .top-box {
-        top: 6px;
+        top: var(--spacing-6);
       }
       .bottom-box {
-        bottom: 6px;
+        bottom: var(--spacing-6);
       }
     }
 
     img {
-      height: 250px;
-      width: 25px;
+      height: var(--size-250);
+      width: var(--size-25);
       object-fit: fill;
     }
 
@@ -216,33 +219,33 @@ const saveDeadZoneTravel = async () => {
     }
 
     .nums {
-      height: 200px;
-      margin-left: 10px;
+      height: var(--size-200);
+      margin-left: var(--spacing-10);
       position: absolute;
-      top: -5px;
-      left: 110px;
+      top: calc(var(--spacing-5) - var(--spacing-10));
+      left: var(--spacing-110);
       // background-color: pink;
 
       p {
         color: #ccc;
-        font-size: 13px;
+        font-size: var(--font-size-13);
         position: absolute;
         font-family: 'CN Regular';
       }
       .scale_0 {
-        top: -1px;
+        top: var(--scale-1);
       }
       .scale_1 {
-        top: 55px;
+        top: var(--scale-55);
       }
       .scale_2 {
-        top: 117px;
+        top: var(--scale-117);
       }
       .scale_3 {
-        top: 178px;
+        top: var(--scale-178);
       }
       .scale_3_3 {
-        top: 241px;
+        top: var(--scale-241);
       }
     }
   }

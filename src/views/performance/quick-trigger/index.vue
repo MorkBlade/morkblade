@@ -4,7 +4,7 @@
     <div class="key-setting-box">
       <setTravelCard
         :sliderVal="singleTravel"
-        :offsetX="40"
+        :offsetX="scaleValue(40)"
         :min="min"
         :max="max"
         :disabled="disabled"
@@ -13,7 +13,7 @@
       />
       <setTravelCard
         :sliderVal="rtPressTravel"
-        :offsetX="80"
+        :offsetX="scaleValue(40)"
         :min="min"
         :max="max"
         :disabled="disabled"
@@ -22,7 +22,7 @@
       />
       <setTravelCard
         :sliderVal="rtReleaseTravel"
-        :offsetX="40"
+        :offsetX="scaleValue(40)"
         :min="min"
         :max="max"
         :disabled="disabled"
@@ -43,8 +43,10 @@
 </template>
 
 <script setup>
-import { useKeyboardStore, usePerformanceStore } from '@/stores';
 import emitter from '@/utils/app-emitter';
+import { useKeyboardStore, usePerformanceStore } from '@/stores';
+import { scaleValue } from '@/utils/responsive.js';
+
 import travelTestCard from '@/components/travel-test-card.vue';
 import setTravelCard from '@/components/set-travel-card.vue';
 import saveConfig from './components/save-config.vue';
@@ -215,22 +217,22 @@ const saveRtConfig = async () => {
 
   .key-setting-box {
     display: flex;
-    height: 290px;
-    width: 740px;
-    margin: 0 30px;
+    height: var(--size-290);
+    width: var(--performance-center-box-width);
+    margin: 0 var(--spacing-25);
     background-image: url('@/assets/images/keystroke_bg.svg');
     background-size: cover;
     background-repeat: no-repeat;
     position: relative;
 
     .setTravelCard1 {
-      margin-left: 40px;
+      margin-left: var(--spacing-40);
     }
   }
 
   .link-btn {
-    width: 35px;
-    height: 35px;
+    width: var(--size-35);
+    height: var(--size-35);
     cursor: pointer;
     display: flex;
     justify-content: center;
@@ -239,11 +241,11 @@ const saveRtConfig = async () => {
     background-size: cover;
     background-repeat: no-repeat;
     position: absolute;
-    left: 482px;
-    top: 112px;
+    left: var(--performance-link-btn-left);
+    top: var(--performance-link-btn-top);
     img {
-      width: 16px;
-      height: 16px;
+      width: var(--size-16);
+      height: var(--size-16);
       object-fit: fill;
     }
   }

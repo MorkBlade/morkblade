@@ -21,7 +21,7 @@
           vertical
           disabled
           :step="step"
-          :height="sliderHeight + 'px'"
+          :height="sliderHeight"
           :min="min"
           :max="max"
           v-model="psliderVal"
@@ -71,7 +71,9 @@ const emits = defineEmits(['sendKeyVal']);
 const slider = ref(null);
 const sliderContainer = ref(null);
 const step = 0.001; // 步进值
-const sliderHeight = 192; // 滑块高度
+const sliderHeight = computed(() => {
+  return getComputedStyle(document.documentElement).getPropertyValue('--slider-height').trim();
+}); // 滑块高度
 const psliderVal = ref(null);
 let dragging = false;
 let startY = 0;
@@ -87,7 +89,8 @@ watch(
 // 计算滑块样式
 const handleStyle = computed(() => {
   const percentage = (psliderVal.value - min) / (max - min);
-  let top = percentage * sliderHeight - 10 + 'px';
+  let top = percentage * sliderHeight.value.replace('px', '') - 10 + 'px';
+  console.log('handleStyle', sliderHeight.value, top);
   return {
     top, // 根据进度计算底部位置
   };
@@ -161,26 +164,26 @@ onUnmounted(() => {
 
 <style scoped lang="scss">
 .travel-test-card {
-  width: 200px;
+  width: var(--size-200);
   box-sizing: border-box;
-  padding-top: 20px;
+  padding-top: var(--spacing-20);
   // margin-left: 280px;
   overflow: hidden;
   .slider_box {
     display: flex;
-    margin-left: 33px;
+    margin-left: var(--spacing-33);
     position: relative;
 
     .slider-img {
-      width: 25px;
-      height: 200px;
+      width: var(--size-25);
+      height: var(--size-200);
       object-fit: fill;
     }
 
     .progress-bar {
-      width: 22px;
-      height: 200px;
-      margin: 0 9px;
+      width: var(--size-22);
+      height: var(--size-200);
+      margin: 0 var(--spacing-9);
       position: relative;
       background-image: url('@/assets/images/travel_progress_bg.svg');
       background-size: cover;
@@ -188,12 +191,12 @@ onUnmounted(() => {
 
       .el-slider {
         transform: rotate(180deg);
-        --el-slider-height: 15px;
+        --el-slider-height: var(--size-15);
       }
 
       .slider-btn {
-        width: 22px;
-        height: 22px;
+        width: var(--size-22);
+        height: var(--size-22);
         cursor: grab;
         position: absolute;
         top: 0;
@@ -216,38 +219,38 @@ onUnmounted(() => {
 
     .nums {
       position: absolute;
-      height: 200px;
-      top: -5px;
-      left: 95px;
+      height: var(--size-200);
+      top: calc(var(--spacing-5) * -1);
+      left: var(--spacing-95);
       background-color: pink;
 
       p {
         color: #ccc;
-        font-size: 13px;
+        font-size: var(--font-size-13);
         position: absolute;
-        top: 2px;
+        top: var(--spacing-2);
         font-family: 'CN Regular';
       }
       .scale_1 {
-        top: 42px;
+        top: var(--scale-42);
       }
       .scale_2 {
-        top: 92px;
+        top: var(--scale-92);
       }
       .scale_3 {
-        top: 142px;
+        top: var(--scale-142);
       }
       .scale_4 {
-        top: 190px;
+        top: var(--scale-190);
       }
     }
   }
 
   .text-box {
-    width: 190px;
-    height: 36px;
-    line-height: 32px;
-    margin-top: 14px;
+    width: var(--size-190);
+    height: var(--size-36);
+    line-height: var(--size-32);
+    margin-top: var(--spacing-14);
     display: flex;
     align-items: center;
     position: relative;
@@ -256,13 +259,14 @@ onUnmounted(() => {
     background-repeat: no-repeat;
 
     .travel-input {
-      font-size: 10px;
-      margin-left: 24px;
+      font-size: var(--font-size-10);
+      margin-left: var(--spacing-24);
 
       & input {
-        width: 40px;
+        width: var(--size-40);
         height: 100%;
         text-align: center;
+        font-size: var(--font-size-14);
         color: #ccc;
         font-family: 'CN Heavy';
         background-color: transparent;
@@ -283,24 +287,24 @@ onUnmounted(() => {
     }
 
     & span:last-child {
-      font-size: 10px;
+      font-size: var(--font-size-10);
       color: #ccc;
       font-family: 'CN Heavy';
       position: absolute;
-      top: 2px;
-      left: 120px;
+      top: var(--spacing-2);
+      left: var(--spacing-120);
       // margin-left: 20px;
     }
 
     & span:first-child {
       display: inline-block;
-      width: 78px;
-      font-size: 13px;
+      width: var(--size-78);
+      font-size: var(--font-size-13);
       text-align: center;
       color: #ccc;
       font-family: 'CN Heavy';
       // -webkit-text-stroke: 1px #000000;
-      margin-left: 16px;
+      margin-left: var(--spacing-16);
     }
   }
 }

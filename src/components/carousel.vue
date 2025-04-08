@@ -32,6 +32,7 @@
 
 <script setup>
 import saveConfigBtn from './save-config-btn.vue';
+import { scaleValue } from '@/utils/responsive.js';
 
 const { carouselData, btnText, offset } = defineProps({
   carouselData: {
@@ -44,11 +45,11 @@ const { carouselData, btnText, offset } = defineProps({
   },
   width: {
     type: Number,
-    default: 1030,
+    default: scaleValue(1030),
   },
   offset: {
     type: Number,
-    default: 160,
+    default: scaleValue(160),
   },
   showText: {
     type: Boolean,
@@ -57,7 +58,10 @@ const { carouselData, btnText, offset } = defineProps({
 });
 const emits = defineEmits(['handleSave', 'changeAxis']);
 
-const SLIDE_WIDTH = 175;
+const SLIDE_WIDTH = computed(() => {
+  const value = getComputedStyle(document.documentElement).getPropertyValue('--carousel-offset-x').trim();
+  return parseInt(value, 10);
+});
 const currentIdx = ref(6);
 const offsetVal = ref(0);
 const noTransition = ref(false);
@@ -70,7 +74,7 @@ const prevClickSlide = () => {
   if (flag) return;
   flag = true;
   currentIdx.value--;
-  offsetVal.value += SLIDE_WIDTH;
+  offsetVal.value += SLIDE_WIDTH.value;
   noTransition.value = false;
 
   // 当到达前面添加的项时需要跳转
@@ -80,7 +84,8 @@ const prevClickSlide = () => {
       // 跳转到原数组的最后一项（位置在 原数组长度+3-1）
       currentIdx.value = originalLength.value + 2;
       // 计算对应的偏移量
-      offsetVal.value = -(SLIDE_WIDTH * (originalLength.value - 1));
+      offsetVal.value = -(SLIDE_WIDTH.value * (originalLength.value - 1));
+      console.log('prev click', currentIdx.value, offsetVal.value, SLIDE_WIDTH.value, originalLength.value - 1);
     }, 500);
   }
   emits('changeAxis', localCarouselData.value[currentIdx.value].id);
@@ -94,7 +99,7 @@ const nextClick = () => {
   if (flag) return;
   flag = true;
   currentIdx.value++;
-  offsetVal.value -= SLIDE_WIDTH;
+  offsetVal.value -= SLIDE_WIDTH.value;
   noTransition.value = false;
 
   // 当到达后面添加的项时需要跳转
@@ -119,7 +124,7 @@ const nextClick = () => {
 onMounted(() => {
   // 设置初始位置
   currentIdx.value = 6;
-  offsetVal.value = -(SLIDE_WIDTH * 3);
+  offsetVal.value = -(SLIDE_WIDTH.value * 3);
   // offsetVal.value = -525;
   // console.log('初始化：', {
   //   总长度: carouselData.value.length,
@@ -171,17 +176,17 @@ const saveConfig = () => {
 
 <style scoped lang="scss">
 .carousel-box {
-  width: 1030px;
-  height: 230px;
+  width: var(--carousel-outer-width);
+  height: var(--size-230);
   display: flex;
   // margin-left: 160px;
   position: relative;
 
   .left-arrow,
   .right-arrow {
-    width: 15px;
-    height: 25px;
-    margin-top: 105px;
+    width: var(--size-15);
+    height: var(--size-25);
+    margin-top: var(--spacing-105);
     cursor: pointer;
     background-image: url('@/assets/images/arrow.svg');
     background-size: cover;
@@ -196,7 +201,7 @@ const saveConfig = () => {
   }
 
   .shadow {
-    width: 925px;
+    width: var(--carousel-shadow-width);
     display: flex;
     justify-content: center;
     overflow: hidden;
@@ -205,20 +210,20 @@ const saveConfig = () => {
     // padding-left: 75px;
 
     .carousel {
-      width: 1275px;
+      width: var(--carousel-inner-width);
       display: flex;
       align-items: center;
-      margin-right: 75px;
+      margin-right: var(--spacing-75);
       box-sizing: border-box;
-      padding-left: 75px;
+      padding-left: var(--spacing-75);
       // transform: translateX(-175px);
       transition: transform 0.5s ease;
 
       .slide {
-        width: 100px;
-        height: 100px;
+        width: var(--size-100);
+        height: var(--size-100);
         overflow: hidden;
-        margin-left: 75px;
+        margin-left: var(--spacing-75);
         flex-shrink: 0;
         // transition: transform 0.5s ease;
         background-image: url('@/assets/images/check_item.svg');
@@ -230,8 +235,8 @@ const saveConfig = () => {
         // transition: all 0.3s;
 
         img {
-          width: 50px;
-          height: 50px;
+          width: var(--size-50);
+          height: var(--size-50);
           object-fit: fill;
         }
       }
@@ -241,8 +246,8 @@ const saveConfig = () => {
       }
 
       .selected {
-        width: 150px;
-        height: 150px;
+        width: var(--size-150);
+        height: var(--size-150);
         background-image: url('@/assets/images/checked_item.svg');
       }
     }
@@ -254,23 +259,23 @@ const saveConfig = () => {
 
   .bottom-taskbar {
     position: absolute;
-    top: 230px;
-    left: 345px;
+    top: var(--size-230);
+    left: calc(var(--size-350) - var(--spacing-5));
     &__text {
-      width: 150px;
-      margin-left: 38px;
-      margin-top: -10px;
+      width: var(--size-150);
+      margin-left: var(--spacing-38);
+      margin-top: var(--spacing-10);
       display: flex;
       justify-content: center;
       span {
         display: inline-block;
-        height: 20px;
-        line-height: 20px;
+        height: var(--size-20);
+        line-height: var(--size-20);
         text-align: center;
-        padding: 0 15px;
-        border-radius: 10px;
+        padding: 0 var(--spacing-15);
+        border-radius: var(--spacing-10);
         color: #000;
-        font-size: 12px;
+        font-size: var(--font-size-12);
         font-family: 'CN Heavy';
       }
     }

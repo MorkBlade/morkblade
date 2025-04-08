@@ -63,9 +63,9 @@ const onCancel = () => {
 
 <style scoped lang="scss">
 .save-btn {
-  width: 170px;
-  height: 40px;
-  margin-left: 45px;
+  width: var(--size-170);
+  height: var(--size-40);
+  margin-left: var(--spacing-45);
   font-family: 'CN Heavy';
   background-image: url('/src/assets/images/save_bg.svg');
   background-size: cover;
@@ -74,20 +74,20 @@ const onCancel = () => {
   cursor: pointer;
 
   img {
-    width: 20px;
-    height: 20px;
+    width: var(--size-20);
+    height: var(--size-20);
     object-fit: fill;
     position: absolute;
-    top: 10px;
-    left: 10px;
+    top: var(--spacing-10);
+    left: var(--spacing-10);
   }
 
   span {
-    font-size: 18px;
+    font-size: var(--font-size-18);
     color: #fff;
     position: absolute;
-    top: 6px;
-    left: 65px;
+    top: var(--spacing-6);
+    left: var(--spacing-65);
   }
 }
 .is-active {

@@ -101,7 +101,7 @@ const saveSingleConfig = async () => {
 
 // 添加一个获取 CSS 变量值的函数
 const getOffsetX = () => {
-  const offsetXValue = getComputedStyle(document.documentElement).getPropertyValue('--mode-offset-x');
+  const offsetXValue = getComputedStyle(document.documentElement).getPropertyValue('--mode-offset-x-280');
   console.log('offsetXValue', offsetXValue);
   return parseInt(offsetXValue) || `${280}px`; // 提供一个默认值以防 CSS 变量未定义
 };
@@ -112,9 +112,9 @@ const getOffsetX = () => {
   display: flex;
 
   .keystroke {
-    height: var(--mode-keystroke-height);
-    width: var(--mode-keystroke-width);
-    margin: var(--mode-keystroke-margin);
+    height: var(--size-290);
+    width: var(--performance-center-box-width);
+    margin: 0 var(--spacing-25);
     background-image: url('@/assets/images/keystroke_bg.svg');
     background-size: cover;
     background-repeat: no-repeat;
