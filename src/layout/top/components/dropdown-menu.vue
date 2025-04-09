@@ -76,10 +76,14 @@ const selectItem = async (index) => {
   rotate.value = rotate.value ? 0 : 180;
   defaultHeight.value = defaultHeight.value ? 0 : 400;
 
-  await appStore.setActiveConfig(index);
+  const res = await appStore.setActiveConfig(index);
   const timer = setTimeout(async () => {
     await keyboardStore.getLayoutKeyInfo();
     await performanceStore.getKeyPerformance(keyboardStore.keyboard);
+    if (res) {
+      appStore.changeConfig = true;
+      appStore.activeConfigIndex = index;
+    }
     clearTimeout(timer);
   }, 1000);
 };
@@ -94,12 +98,12 @@ const delConfig = (configInfo) => {
 <style scoped lang="scss">
 .dropdown-menu-container {
   position: relative;
-  width: 170px;
-  height: 40px;
-  top: 17px;
+  width: var(--size-170);
+  height: var(--size-40);
+  top: calc(var(--spacing-15) + var(--spacing-2));
   display: flex;
   align-content: center;
-  margin-left: 50px;
+  margin-left: var(--spacing-50);
   background-image: url('@/assets/images/config_bg.svg');
   background-size: cover;
   background-repeat: no-repeat;
@@ -108,30 +112,30 @@ const delConfig = (configInfo) => {
   /* flex: 1; */
 
   .change-icon {
-    width: 20px;
-    height: 20px;
+    width: var(--size-20);
+    height: var(--size-20);
     object-fit: fill;
     transform: rotate(90deg);
-    margin: 10px 0 0 10px;
+    margin: var(--spacing-10) 0 0 var(--spacing-10);
   }
 
   .dropdown-text {
     border: none;
     color: #fff;
     display: inline-block;
-    margin: 8px 0 0 16px;
-    font-size: 18px;
+    margin: var(--spacing-8) 0 0 var(--spacing-16);
+    font-size: var(--font-size-18);
     background-color: transparent;
     font-weight: 600;
     font-family: 'CN Heavy';
   }
 
   .down-icon {
-    width: 13px;
-    height: 8px;
+    width: var(--size-13);
+    height: var(--size-8);
     object-fit: fill;
     transition: transform 0.3s;
-    margin: 18px 0 0 10px;
+    margin: calc(var(--spacing-15) + var(--spacing-3)) 0 0 var(--spacing-10);
   }
 }
 
@@ -147,9 +151,9 @@ const delConfig = (configInfo) => {
   padding: 0;
   margin: 0;
   position: absolute;
-  top: 57px;
-  left: 50px;
-  width: 170px;
+  top: calc(var(--spacing-60) - var(--spacing-3));
+  left: var(--spacing-50);
+  width: var(--size-170);
   z-index: 10;
   /* display: none; */
   background-color: transparent;
@@ -157,8 +161,8 @@ const delConfig = (configInfo) => {
   overflow: hidden;
 
   p {
-    font-size: 14px;
-    margin-top: 5px;
+    font-size: var(--font-size-14);
+    margin-top: var(--spacing-5);
     text-align: center;
     color: #cccccc;
   }
@@ -168,12 +172,12 @@ const delConfig = (configInfo) => {
   }
 
   li {
-    width: 160px;
-    height: 40px;
-    padding: 10px;
-    margin-left: 5px;
+    width: var(--size-160);
+    height: var(--size-40);
+    padding: var(--spacing-10);
+    margin-left: var(--spacing-5);
     // font-weight: 600;
-    margin-bottom: 5px;
+    margin-bottom: var(--spacing-5);
     text-align: center;
     font-family: 'CN Heavy';
     background-image: url('@/assets/images/item_bg.svg');
@@ -191,8 +195,8 @@ const delConfig = (configInfo) => {
 
   .del_btn {
     display: inline-block;
-    width: 10px;
-    height: 13px;
+    width: var(--size-10);
+    height: var(--size-13);
     background-image: url('@/assets/images/del_btn.svg');
     background-size: cover;
     background-position: center;

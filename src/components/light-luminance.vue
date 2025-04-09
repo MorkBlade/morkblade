@@ -9,7 +9,11 @@
           alt=""
         />
         <span>{{ getSleepDelayLabel(formData?.sleepDelay) }}</span>
-        <img class="down-icon" :src="selectedId === formData.sleepDelay ? downArrowed : downArrow" />
+        <img
+          class="down-icon"
+          :src="selectedId === formData.sleepDelay ? downArrowed : downArrow"
+          :style="{ transform: `rotate(${rotate}deg)` }"
+        />
         <div class="drop-list" :style="{ height: `${defaultHeight}px` }">
           <ul>
             <li
@@ -39,7 +43,9 @@
 </template>
 
 <script setup>
+import { scaleValue } from '@/utils/responsive.js';
 import { LIGHT_SLEEP_DELAY } from '@/configs/constant/index.js';
+
 import changedSleepIcon from '@/assets/images/changed.svg';
 import changeSleepIcon from '@/assets/images/change.svg';
 import downArrowed from '@/assets/images/down_icon.svg';
@@ -50,7 +56,8 @@ import horizontalSlider from './horizontal-slider.vue';
 const formData = defineModel();
 const emits = defineEmits(['changeSleepDelay', 'changeLuminance', 'changeSpeed']);
 const defaultHeight = ref(0);
-console.log('asdfasdas', formData.value.sleepDelay);
+const rotate = ref(180);
+// console.log('asdfasdas', formData.value.sleepDelay);
 const selectedId = ref(formData.value.sleepDelay);
 // const luminanceVal = ref(0);
 // const speedVal = ref(0);
@@ -58,7 +65,8 @@ const selectedId = ref(formData.value.sleepDelay);
 // const LightSleepDelaySelect = ref(formData.value.sleepDelay);
 
 const toggleDropdown = () => {
-  defaultHeight.value = defaultHeight.value ? 0 : 200;
+  defaultHeight.value = defaultHeight.value ? 0 : scaleValue(590);
+  rotate.value = rotate.value ? 0 : 180;
 };
 watch(
   () => formData.value.sleepDelay,
@@ -73,7 +81,7 @@ const selectItem = (item) => {
     console.log('current is add');
   }
   defaultHeight.value = 0;
-  console.log(defaultHeight.value);
+  // console.log(defaultHeight.value);
 };
 const delays = [1, 2, 3, 5, 10, 15, 20, 25, 30, 45, 60, 120, 0];
 const changeLightSleepDelay = async (id) => {
@@ -105,8 +113,8 @@ const getSpeed = (val) => {
 
 <style scoped lang="scss">
 .light-luminance {
-  width: 390px;
-  height: 290px;
+  width: var(--lighting-set-width);
+  height: var(--size-290);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -115,11 +123,11 @@ const getSpeed = (val) => {
   background-repeat: no-repeat;
 
   .sleep-time-box {
-    margin-top: 30px;
+    margin-top: var(--spacing-30);
     .cover-list {
-      width: 170px;
-      height: 40px;
-      margin-left: 10px;
+      width: var(--size-170);
+      height: var(--size-40);
+      margin-left: var(--spacing-10);
       display: flex;
       align-items: center;
       background-image: url('@/assets/images/select_bg.svg');
@@ -129,47 +137,54 @@ const getSpeed = (val) => {
       cursor: pointer;
 
       .change-icon {
-        width: 20px;
-        height: 20px;
+        width: var(--size-20);
+        height: var(--size-20);
         object-fit: fill;
-        margin-left: 11px;
+        margin-left: var(--spacing-11);
       }
       .down-icon {
-        width: 13px;
-        height: 8px;
+        width: var(--size-13);
+        height: var(--size-8);
         object-fit: fill;
+        transition: transform 0.3s;
       }
 
       span {
         border: none;
         color: #fff;
         display: inline-block;
-        margin: 8px 0 0 16px;
-        height: 31px;
-        font-size: 18px;
+        margin: var(--spacing-8) 0 0 var(--spacing-16);
+        height: var(--size-31);
+        font-size: var(--font-size-18);
         font-family: 'CN Heavy';
-        margin: 5px 10px 0 40px;
+        margin: var(--spacing-5) var(--spacing-10) 0 var(--spacing-40);
       }
 
       .drop-list {
         position: absolute;
-        top: 45px;
-        left: 4px;
+        bottom: var(--spacing-45);
+        left: var(--spacing-4);
         z-index: 20;
         box-sizing: border-box;
-        padding-right: 5px;
+        padding-right: var(--spacing-5);
         overflow-y: scroll;
         transition: height 0.3s ease;
+        transform-origin: bottom;
+        display: flex;
+        flex-direction: column-reverse;
 
         ul {
           list-style-type: none;
           background-color: #000;
+          display: flex;
+          flex-direction: column-reverse;
+
           li {
-            width: 160px;
-            height: 40px;
-            padding: 10px;
+            width: var(--size-160);
+            height: var(--size-40);
+            padding: var(--spacing-10);
             text-align: center;
-            margin-bottom: 5px;
+            margin-bottom: var(--spacing-5);
             color: #fff;
             font-family: 'CN Heavy';
             background-image: url('@/assets/images/item_bg.svg');
@@ -185,8 +200,8 @@ const getSpeed = (val) => {
 
       /* 滚动条整体样式 */
       .drop-list::-webkit-scrollbar {
-        height: 10px;
-        width: 5px;
+        height: var(--size-10);
+        width: var(--spacing-5);
       }
 
       /* 滚动条轨道 */
@@ -226,7 +241,7 @@ const getSpeed = (val) => {
 
   .lumminance-box,
   .speed-box {
-    margin: 50px 20px 0 10px;
+    margin: var(--spacing-50) var(--spacing-20) 0 var(--spacing-10);
   }
   .sleep-time-box,
   .lumminance-box,

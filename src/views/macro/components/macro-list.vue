@@ -114,31 +114,31 @@ const delMacro = (id) => {
 
 <style scoped lang="scss">
 .macro-list-container {
-  width: 300px;
-  height: 756px;
+  width: var(--size-300);
+  height: var(--macro-height);
   box-sizing: border-box;
   background-color: #000;
-  border: 3px solid #202020;
-  border-radius: 15px;
+  border: var(--spacing-3) solid #202020;
+  border-radius: var(--spacing-15);
 
   h3 {
-    margin: 25px 0 34px 30px;
+    margin: var(--spacing-25) 0 calc(var(--spacing-35) - var(--spacing-1)) var(--spacing-30);
     line-height: 1;
     color: #fff;
-    font-size: 16px;
+    font-size: var(--font-size-16);
     font-family: 'CN Heavy';
   }
 
   .macro-list {
-    height: 670px;
+    height: var(--size-670);
     box-sizing: border-box;
-    padding-right: 5px;
-    padding-bottom: 90px;
+    padding-right: var(--spacing-5);
+    padding-bottom: var(--spacing-90);
     overflow-y: scroll;
 
     &::-webkit-scrollbar {
-      height: 10px;
-      width: 5px;
+      height: var(--spacing-10);
+      width: var(--spacing-5);
     }
 
     /* 滚动条轨道 */
@@ -161,14 +161,14 @@ const delMacro = (id) => {
       display: block;
     }
     .macro {
-      width: 250px;
-      height: 150px;
-      margin: 0 0 20px 25px;
+      width: var(--size-250);
+      height: var(--size-150);
+      margin: 0 0 var(--spacing-20) var(--spacing-25);
       box-sizing: border-box;
       color: #fff;
       background-color: #000;
-      border: 3px solid #202020;
-      border-radius: 15px;
+      border: var(--spacing-3) solid #202020;
+      border-radius: var(--spacing-15);
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -179,37 +179,37 @@ const delMacro = (id) => {
       }
 
       h4 {
-        margin: 20px 0 15px 0;
+        margin: var(--spacing-20) 0 var(--spacing-15) 0;
         line-height: 1;
         color: #fff;
-        font-size: 16px;
+        font-size: var(--font-size-16);
         font-family: 'CN Heavy';
       }
 
       p {
-        font-size: 10px;
+        font-size: var(--font-size-10);
       }
 
       .length {
-        margin: 10px 0 15px 0;
+        margin: var(--spacing-10) 0 var(--spacing-15) 0;
       }
 
       .controls-group {
-        width: 140px;
+        width: var(--size-140);
         display: flex;
         align-items: center;
         justify-content: space-between;
 
         span {
-          width: 60px;
-          height: 20px;
+          width: var(--size-60);
+          height: var(--size-20);
           color: #000;
-          font-size: 12px;
+          font-size: var(--font-size-12);
           font-family: 'CN Heavy';
-          line-height: 20px;
+          line-height: var(--spacing-20);
           text-align: center;
           vertical-align: middle;
-          border-radius: 5px;
+          border-radius: var(--spacing-5);
           cursor: pointer;
         }
 
@@ -223,29 +223,29 @@ const delMacro = (id) => {
     }
 
     .add-macro {
-      width: 250px;
-      height: 150px;
-      margin-left: 25px;
+      width: var(--size-250);
+      height: var(--size-150);
+      margin-left: var(--spacing-25);
       box-sizing: border-box;
       color: #fff;
       background-color: #000;
-      border: 3px solid #202020;
-      border-radius: 15px;
+      border: var(--spacing-3) solid #202020;
+      border-radius: var(--spacing-15);
       display: flex;
       align-items: center;
       justify-content: center;
 
       div {
-        width: 200px;
-        height: 30px;
+        width: var(--size-200);
+        height: var(--size-30);
         color: #fff;
-        font-size: 16px;
+        font-size: var(--font-size-16);
         font-family: 'CN Heavy';
         display: flex;
         align-items: center;
         justify-content: center;
         background-color: #000;
-        border-radius: 20px;
+        border-radius: var(--spacing-20);
         cursor: pointer;
         &:hover {
           background-color: #91bc00;
@@ -253,9 +253,9 @@ const delMacro = (id) => {
         }
 
         span {
-          width: 14px;
-          height: 14px;
-          margin-right: 10px;
+          width: var(--size-14);
+          height: var(--size-14);
+          margin-right: var(--spacing-10);
           background-image: url('@/assets/images/add_w.svg');
           background-size: cover;
           background-repeat: no-repeat;

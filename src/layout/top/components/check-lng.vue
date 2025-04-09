@@ -15,7 +15,7 @@
 </template>
 
 <script setup>
-import languageIcon from '@/assets/images/language.svg';
+import { scaleValue } from '@/utils/responsive.js';
 
 import zhIcon1 from '@/assets/images/zhIcon1.svg';
 import zhIcon2 from '@/assets/images/zhIcon2.svg';
@@ -25,6 +25,7 @@ import jpIcon1 from '@/assets/images/jpIcon1.svg';
 import jpIcon2 from '@/assets/images/jpIcon2.svg';
 import krIcon1 from '@/assets/images/krIcon1.svg';
 import krIcon2 from '@/assets/images/krIcon2.svg';
+import languageIcon from '@/assets/images/language.svg';
 
 const defaultHeight = ref(0);
 
@@ -57,14 +58,14 @@ const selectedLanguage = ref(null);
 
 // 切换下拉菜单状态
 const toggleDropdown = () => {
-  defaultHeight.value = defaultHeight.value ? 0 : 200;
+  defaultHeight.value = defaultHeight.value ? 0 : scaleValue(200);
 };
 
 // 选择语言
 const selectLanguage = (language) => {
-  console.log('click language', language);
+  // console.log('click language', language);
   selectedLanguage.value = language;
-  defaultHeight.value = defaultHeight.value ? 0 : 200;
+  defaultHeight.value = defaultHeight.value ? 0 : scaleValue(200);
 };
 </script>
 
@@ -73,27 +74,27 @@ const selectLanguage = (language) => {
   position: relative;
 
   .language-btn {
-    width: 38px;
-    height: 38px;
-    margin-top: 17px;
-    margin-right: 50px;
+    width: var(--spacing-38);
+    height: var(--spacing-38);
+    margin-top: calc(var(--spacing-16) + var(--spacing-1));
+    margin-right: var(--spacing-50);
     display: flex;
     align-items: center;
-    padding: 10px;
+    padding: var(--spacing-10);
     border: none;
     cursor: pointer;
     /* background: transparent; */
-    border-radius: 5px;
+    border-radius: var(--spacing-5);
     background: transparent;
     background-image: url('@/assets/images/bg-default.svg');
     background-size: cover;
     background-repeat: no-repeat;
 
     .cur-language-img {
-      width: 24px;
-      height: 24px;
-      margin-top: 0.5px;
-      margin-left: -3px;
+      width: var(--spacing-24);
+      height: var(--spacing-24);
+      margin-top: var(--spacing-1);
+      margin-left: calc(var(--spacing-3) * -1);
     }
   }
 
@@ -103,18 +104,18 @@ const selectLanguage = (language) => {
 
   .language-list {
     position: absolute;
-    top: 60px;
-    left: 0px;
+    top: var(--spacing-60);
+    left: 0;
     transition: height 0.3s ease;
     overflow: hidden;
 
     li {
       position: relative;
       list-style: none;
-      padding: 10px;
+      padding: var(--spacing-10);
       cursor: pointer;
-      width: 38px;
-      height: 38px;
+      width: var(--spacing-38);
+      height: var(--spacing-38);
       background-image: url('@/assets/images/bg.svg');
       background-size: 'cover';
       background-position: 'center';
@@ -131,13 +132,13 @@ const selectLanguage = (language) => {
 
     li p {
       position: absolute;
-      top: 7px;
-      left: 7px;
+      top: var(--spacing-7);
+      left: var(--spacing-7);
       right: 0;
       bottom: 0;
       z-index: 98;
-      width: 24px;
-      height: 24px;
+      width: var(--spacing-24);
+      height: var(--spacing-24);
       background-image: url('@/assets/images/green_bg.gif');
       background-size: cover;
       background-repeat: no-repeat;

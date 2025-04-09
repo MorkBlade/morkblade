@@ -133,24 +133,24 @@ body {
   .IroHandle {
     width: var(--size-15) !important;
     height: var(--size-15) !important;
-    top: calc(var(--spacing-13) * -1) !important;
-    left: calc(var(--spacing-15) * -1) !important;
+    top: var(--iro-handle-top) !important;
+    left: var(--iro-handle-left) !important;
   }
   .IroSliderGradient {
     top: var(--spacing-3) !important;
-    left: 2.5px !important;
+    left: var(--spacing-3) !important;
     width: var(--size-144) !important;
     height: var(--size-8) !important;
   }
 
   .custom-message-container {
-    height: 40px !important;
-    padding: 0 25px !important;
+    height: var(--size-40) !important;
+    padding: 0 var(--spacing-25) !important;
     background-color: #000 !important;
     color: #fff !important;
-    border-radius: 20px !important;
+    border-radius: var(--spacing-20) !important;
     border: none;
-    top: 70% !important;
+    top: 90% !important;
     /* box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.3) !important; */
   }
 
@@ -162,14 +162,14 @@ body {
     display: flex;
     align-items: center;
     font-family: 'CN Heavy';
-    font-size: 16px;
+    font-size: var(--font-size-16);
     color: #fff !important;
   }
 
   .warn-icon {
-    width: 15px;
-    height: 15px;
-    margin-right: 10px;
+    width: var(--size-15);
+    height: var(--size-15);
+    margin-right: var(--spacing-10);
     vertical-align: middle;
   }
 }

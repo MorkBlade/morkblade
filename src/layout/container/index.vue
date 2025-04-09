@@ -37,7 +37,7 @@ const isNotShow = computed(() => {
   align-items: center;
   width: 100%; // Ensure consistent width
   height: 100%; // Ensure consistent height
-  overflow: hidden; // Prevent overflow issues
+  // overflow: hidden; // Prevent overflow issues
   transition: all 0.3s ease; // Smooth transition for all properties
 
   .content-wrapper {

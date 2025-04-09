@@ -123,21 +123,21 @@ const checkDynamicLight = (idx) => {
 
 <style scoped lang="scss">
 .dynamic-light {
-  width: 590px;
-  height: 290px;
-  margin: 0 30px;
-  padding: 0px 10px 0 20px;
+  width: var(--lighting-dynamic-width);
+  height: var(--size-290);
+  margin: 0 var(--spacing-30);
+  padding: 0px var(--spacing-10) 0 var(--spacing-20);
   box-sizing: border-box;
   background-image: url('@/assets/images/dynamic_bg.svg');
   background-size: cover;
   background-repeat: no-repeat;
 
   p {
-    font-size: 15px;
+    font-size: var(--font-size-15);
     font-family: 'CN Heavy';
     color: #ccc;
     text-align: center;
-    margin: 15px 0 10px 0;
+    margin: var(--spacing-15) 0 var(--spacing-10) 0;
   }
 
   .dynamic-light-style {
@@ -145,26 +145,26 @@ const checkDynamicLight = (idx) => {
     flex-wrap: wrap;
 
     .style-box {
-      width: 70px;
-      height: 70px;
+      width: var(--size-70);
+      height: var(--size-70);
       display: flex;
       flex-direction: column;
       align-items: center;
-      margin: 0 10px 10px 0;
+      margin: 0 var(--lighting-item-right) var(--spacing-10) 0;
       cursor: pointer;
       background-image: url('@/assets/images/light_item.svg');
       background-size: cover;
       background-repeat: no-repeat;
 
       img {
-        width: 30px;
-        height: 30px;
+        width: var(--size-30);
+        height: var(--size-30);
         object-fit: fill;
-        margin: 10px 0 5px 0;
+        margin: var(--spacing-10) 0 var(--spacing-5) 0;
       }
 
       span {
-        font-size: 10px;
+        font-size: var(--font-size-10);
         color: #fff;
       }
     }

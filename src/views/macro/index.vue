@@ -88,12 +88,12 @@ const updateMacroData = (data, settings) => {
 
 <style scoped lang="scss">
 .macro-container {
-  margin-top: 25px;
+  margin-top: var(--spacing-25);
   width: 100%;
   display: flex;
   justify-content: center;
   position: absolute;
   left: 0;
-  top: 150px;
+  top: var(--spacing-150);
 }
 </style>

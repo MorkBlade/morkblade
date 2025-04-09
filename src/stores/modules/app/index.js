@@ -20,6 +20,7 @@ const useAppStore = defineStore('app', {
     isConfigPageOpen: false,
     baseInfo: {},
     keyboardName: '',
+    changeConfig: false,
   }),
 
   actions: {

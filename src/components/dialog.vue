@@ -143,35 +143,35 @@ const onCancel = () => {
   background-color: rgba(0, 0, 0, 0.7);
 
   .dialog-content {
-    width: 600px;
-    height: 300px;
+    width: var(--size-600);
+    height: var(--size-300);
     position: absolute;
     top: 50%;
     left: 50%;
-    margin-left: -300px;
-    margin-top: -150px;
+    margin-left: calc(var(--size-300) * -1);
+    margin-top: calc(var(--size-150) * -1);
     background-image: url('@/assets/images/dialog_bg.svg');
     background-size: cover;
     background-repeat: no-repeat;
 
     h3 {
-      font-size: 18px;
+      font-size: var(--font-size-18);
       font-weight: 500;
       color: #ffffff;
       font-family: 'CN Heavy';
-      margin-left: 65px;
-      margin-top: 15px;
+      margin-left: var(--spacing-65);
+      margin-top: var(--spacing-15);
     }
 
     p {
-      width: 440px;
-      height: 160px;
-      margin: 25px 0 0 80px;
+      width: var(--size-440);
+      height: var(--size-160);
+      margin: var(--spacing-25) 0 0 var(--spacing-80);
       text-align: center;
       display: flex;
       justify-content: center;
       align-items: center;
-      font-size: 18px;
+      font-size: var(--font-size-18);
       font-family: 'CN Heavy';
       color: #ffffff;
       white-space: pre-line;
@@ -180,9 +180,9 @@ const onCancel = () => {
 
     .update-progress {
       width: 100%;
-      height: 10px;
+      height: var(--size-10);
       position: absolute;
-      bottom: 80px;
+      bottom: var(--spacing-80);
       left: 0;
       display: flex;
       justify-content: center;
@@ -190,26 +190,26 @@ const onCancel = () => {
 
       &::before {
         content: '';
-        width: 507px;
-        height: 17px;
+        width: calc(var(--size-510) - var(--spacing-3));
+        height: var(--size-17);
         background-image: url('@/assets/images/update_progress_bd.svg');
         background-size: cover;
         background-repeat: no-repeat;
         position: absolute;
-        top: -3px;
-        left: 36px;
+        top: calc(var(--spacing-3) * -1);
+        left: var(--spacing-36);
       }
 
       span {
         display: inline-block;
-        font-size: 10px;
+        font-size: var(--font-size-10);
         font-family: 'CN Heavy';
         color: #fff;
-        margin-left: 5px;
+        margin-left: var(--spacing-5);
       }
 
       ::v-deep(.el-progress-bar) {
-        width: 500px;
+        width: var(--size-500);
       }
     }
 
@@ -220,9 +220,9 @@ const onCancel = () => {
       .sure-btn,
       .update-btn,
       .cancel-btn {
-        width: 170px;
-        height: 40px;
-        font-size: 22px;
+        width: var(--size-170);
+        height: var(--size-40);
+        font-size: var(--font-size-22);
         font-family: 'CN Heavy';
         color: #ffffff;
         cursor: pointer;
@@ -232,18 +232,18 @@ const onCancel = () => {
         background-size: cover;
         background-repeat: no-repeat;
         position: absolute;
-        bottom: 20px;
+        bottom: var(--spacing-20);
 
         img {
-          width: 20px;
-          height: 20px;
+          width: var(--size-20);
+          height: var(--size-20);
           object-fit: fill;
-          margin: 0 10px 0 10px;
+          margin: 0 var(--spacing-10) 0 var(--spacing-10);
         }
 
         span {
           display: inline-block;
-          width: 125px;
+          width: calc(var(--size-120) - var(--spacing-5));
           text-align: center;
         }
 
@@ -252,33 +252,33 @@ const onCancel = () => {
         }
         .update-text {
           display: inline-block;
-          width: 120px;
-          height: 30px;
+          width: var(--size-120);
+          height: var(--size-30);
           text-align: center;
-          font-size: 20px;
-          margin-left: 13px;
+          font-size: var(--font-size-20);
+          margin-left: var(--spacing-13);
         }
       }
       .reconnect {
-        width: 100px;
-        height: 50px;
+        width: var(--size-100);
+        height: var(--size-50);
         background-color: skyblue;
-        margin: 50px 10px 0 0;
+        margin: var(--spacing-50) var(--spacing-10) 0 0;
       }
 
       .sure-btn,
       .update-btn {
-        left: 60px;
+        left: var(--spacing-60);
       }
 
       .cancel-btn {
-        left: 370px;
+        left: calc(var(--size-400) - var(--size-30));
       }
     }
 
     .update-tip {
       margin: 0;
-      width: 600px;
+      width: var(--size-600);
       text-align: center;
       position: absolute;
       left: 0;

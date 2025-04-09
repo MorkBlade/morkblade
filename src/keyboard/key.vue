@@ -92,6 +92,7 @@ const keyboardLayout = reactive([
 
 emitter.on('in-the-where', ({ value }) => {
   currentModel.value = value;
+  performanceStore.currentModel = value;
 });
 
 watch(
@@ -168,7 +169,13 @@ const rtReleaseTravel = computed(() => {
 
 // 显示singleTravel
 const singleTravel = computed(() => {
-  return PerformanceData.value?.single.singleTravel || null;
+  if (
+    typeof parseFloat(PerformanceData.value?.single.singleTravel) === 'number' ||
+    typeof parseInt(PerformanceData.value?.single.singleTravel) === 'number'
+  ) {
+    return PerformanceData.value?.single.singleTravel;
+  }
+  return null;
 });
 
 const pressDeadTravel = computed(() => {
@@ -245,30 +252,30 @@ const Keydrop = async (e, rowIndex, colIndex, key) => {
 
 <style scoped lang="scss">
 .key {
-  width: 50px;
-  height: 50px;
+  width: var(--key--default-width);
+  height: var(--size-50);
   flex-shrink: 1;
   line-height: 1;
-  border-radius: 10px;
+  border-radius: var(--size-10);
   display: flex;
   flex-direction: column;
   align-items: center;
   // background-color: rgba(255, 255, 255, 0.2);
-  margin-right: 5px;
+  margin-right: var(--key-default-right);
   position: relative;
   box-sizing: border-box;
-  padding-top: 2px;
+  padding-top: var(--spacing-2);
   cursor: pointer;
-  border: 3px solid transparent;
+  border: var(--spacing-3) solid transparent;
   transition: border-color 0.2s ease;
   // border: 3px solid #91bc00;
   p {
     text-align: center;
     color: #fff;
-    font-size: 12px;
+    font-size: var(--font-size-12);
     font-weight: 600;
     font-family: 'Arial';
-    margin-bottom: 2px;
+    margin-bottom: var(--spacing-2);
     // margin-top: 1px;
   }
 
@@ -283,10 +290,10 @@ const Keydrop = async (e, rowIndex, colIndex, key) => {
   //   justify-content: center;
   // }
   .single-travel {
-    font-size: 8px;
+    font-size: var(--font-size-8);
     font-weight: 100;
     color: #91bc00;
-    margin-bottom: 1px;
+    margin-bottom: var(--spacing-1);
     // margin-top: 5px;
     font-family: 'Arial';
   }
@@ -294,23 +301,23 @@ const Keydrop = async (e, rowIndex, colIndex, key) => {
   .rt-release-travel,
   .rt-press-travel {
     // bottom: 2px;
-    font-size: 8px;
-    margin-bottom: 1px;
+    font-size: var(--font-size-8);
+    margin-bottom: var(--spacing-1);
     color: #fcff00;
     font-family: 'Arial';
   }
 
   .advanced-tag {
     display: inline-block;
-    width: 30px;
+    width: var(--size-30);
     box-sizing: border-box;
-    padding: 1px 0;
-    margin-top: 8px;
+    padding: var(--spacing-1) 0;
+    margin-top: var(--spacing-8);
     line-height: 1;
     text-align: center;
-    border-radius: 10px;
+    border-radius: var(--size-10);
     background-color: #91bc00;
-    font-size: 8px;
+    font-size: var(--font-size-8);
     font-family: 'CN Heavy';
     color: #000;
   }
@@ -318,7 +325,7 @@ const Keydrop = async (e, rowIndex, colIndex, key) => {
 .color-key {
   width: 100%;
   height: 100%;
-  border-radius: 6px;
+  border-radius: var(--spacing-6);
   position: absolute;
   top: 0;
   left: 0;
@@ -327,11 +334,11 @@ const Keydrop = async (e, rowIndex, colIndex, key) => {
 }
 
 .verify_icon {
-  width: 16px;
-  height: 16px;
+  width: var(--size-16);
+  height: var(--size-16);
   object-fit: fill;
   position: absolute;
-  bottom: 5px;
+  bottom: var(--spacing-5);
 }
 
 .axis {
@@ -341,42 +348,42 @@ const Keydrop = async (e, rowIndex, colIndex, key) => {
   justify-content: center;
   position: absolute;
   left: 0;
-  bottom: 1px;
+  bottom: var(--spacing-1);
 
   span {
     display: inline-block;
-    width: 30px;
-    height: 10px;
-    line-height: 16px;
+    width: var(--size-30);
+    height: var(--size-10);
+    line-height: var(--size-16);
     text-align: center;
-    padding: 0 2px;
-    border-radius: 10px;
+    padding: 0 var(--spacing-2);
+    border-radius: var(--size-10);
     color: #000;
-    font-size: 10px;
+    font-size: var(--font-size-10);
     font-family: 'CN Heavy';
   }
 }
 
 .key1_25 {
-  width: 62.5px;
+  width: var(--key-width1);
 }
 .key1_5 {
-  width: 75px;
+  width: var(--key-width2);
 }
 .key1_75 {
-  width: 87.5px;
+  width: var(--key-width3);
 }
 .key2 {
-  width: 100px;
+  width: var(--key-width4);
 }
 .key2_25 {
-  width: 116.5px;
+  width: var(--key-width5);
 }
 .key2_75 {
-  width: 142.5px;
+  width: var(--key-width6);
 }
 .key6_25 {
-  width: 342.5px;
+  width: var(--key-width7);
 }
 
 .key:hover {
@@ -384,32 +391,32 @@ const Keydrop = async (e, rowIndex, colIndex, key) => {
 }
 .key:nth-child(15) {
   position: absolute;
-  right: 128px;
+  right: var(--key-nth15-right);
 }
 .key:nth-child(16) {
   position: absolute;
-  right: 72px;
+  right: var(--key-fifth-row-right);
 }
 .key:nth-child(17) {
   position: absolute;
-  right: 20px;
+  right: var(--spacing-20);
 }
 .row:nth-child(5) .key:last-child {
   position: absolute;
-  right: 72px;
+  right: var(--key-fifth-row-right);
 }
 .row:last-child {
   .key:nth-child(9) {
     position: absolute;
-    right: 128px;
+    right: var(--key-nth15-right);
   }
   .key:nth-child(10) {
     position: absolute;
-    right: 74px;
+    right: calc(var(--spacing-75) - var(--spacing-1));
   }
   .key:last-child {
     position: absolute;
-    right: 20px;
+    right: var(--spacing-20);
   }
 }
 </style>

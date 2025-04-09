@@ -111,6 +111,13 @@ watch(
       keyboardStore.cancelSelectKey();
       handleOperationKey('cancelSelect');
     }
+    if (newPath !== '/key-assignment') {
+      const fnVal = 0;
+      checkedFn.value = Number(fnVal);
+      formData.fn = fnVal;
+      const { fn } = formData;
+      keyboardStore.getLayoutKeyInfo(fn);
+    }
   },
 );
 
@@ -246,19 +253,19 @@ const handleOperationKey = (value) => {
 <style scoped lang="scss">
 .key-page {
   position: relative;
-  width: 1340px;
+  width: var(--size-1340);
   display: flex;
   justify-content: center;
 
   .side-left-container,
   .side-right-container {
-    margin-top: 280px;
+    margin-top: var(--spacing-280);
   }
 
   .keyboard-container {
-    width: 1040px;
-    height: 380px;
-    margin: 25px 20px 0 20px;
+    width: var(--size-1040);
+    height: var(--size-380);
+    margin: var(--spacing-25) var(--spacing-20) 0 var(--spacing-20);
     background-image: url('@/assets/images/keyboard-bg.svg');
     background-size: cover;
     background-repeat: no-repeat;
@@ -272,55 +279,55 @@ const handleOperationKey = (value) => {
       background-repeat: no-repeat;
       position: relative;
       box-sizing: border-box;
-      padding: 21px 24px;
+      padding: var(--spacing-21) var(--spacing-24);
 
       .row {
         display: flex;
-        height: 50px;
-        margin-bottom: 5px;
+        height: var(--size-50);
+        margin-bottom: var(--key-row-bottom);
         overflow: hidden;
       }
       .row:first-child {
-        margin-bottom: 17.5px;
+        margin-bottom: var(--key-first-row-bottom);
 
         .key:first-child,
         .key:nth-child(5),
         .key:nth-child(9) {
-          margin-right: 17.5px;
+          margin-right: var(--key-first-row-right);
         }
         .key:nth-child(14) {
-          margin-left: 13px;
+          margin-left: var(--spacing-13);
         }
       }
     }
 
     .logo-light-bar {
-      width: 160px;
-      height: 20px;
+      width: var(--size-160);
+      height: var(--size-20);
       background-image: url('@/assets/images/logo_light_bar.svg');
       background-size: cover;
       background-repeat: no-repeat;
       position: absolute;
-      right: 24px;
-      top: 200px;
+      right: var(--spacing-24);
+      top: var(--size-200);
 
       & span {
-        width: 69px;
-        height: 4px;
-        border-radius: 4px;
+        width: calc(var(--spacing-70) - var(--spacing-1));
+        height: var(--spacing-4);
+        border-radius: var(--spacing-4);
         // background-color: rgba(135, 206, 235, 0.3);
         position: absolute;
-        top: 8px;
-        right: 5px;
+        top: var(--spacing-8);
+        right: var(--spacing-5);
       }
     }
   }
 
   .side-left-container div,
   .side-right-container div {
-    width: 120px;
-    height: 30px;
-    margin-bottom: 10px;
+    width: var(--keyboard-side-width);
+    height: var(--spacing-30);
+    margin-bottom: var(--spacing-10);
     background-image: url('@/assets/images/side_bg.svg');
     background-size: cover;
     background-repeat: no-repeat;
@@ -329,7 +336,7 @@ const handleOperationKey = (value) => {
   }
 
   .layer-container {
-    width: 130px;
+    width: var(--keyboard-side-width2);
     position: absolute;
     right: 0;
     bottom: 0;
@@ -337,10 +344,10 @@ const handleOperationKey = (value) => {
     flex-wrap: wrap;
 
     div {
-      width: 55px;
-      height: 30px;
-      margin: 0 10px 10px 0;
-      font-size: 13px;
+      width: var(--size-55);
+      height: var(--size-30);
+      margin: 0 var(--spacing-10) var(--spacing-10) 0;
+      font-size: var(--font-size-13);
       font-family: 'CN Heavy';
       color: #cccccc;
       display: flex;
@@ -364,11 +371,11 @@ const handleOperationKey = (value) => {
 
   .select-box {
     cursor: pointer;
-    font-size: 13px;
+    font-size: var(--font-size-13);
     font-family: 'CN Heavy';
     color: #ccc;
     text-align: center;
-    line-height: 30px;
+    line-height: var(--spacing-30);
   }
   .is-checked {
     background-image: url('@/assets/images/side_bgC.svg') !important;

@@ -15,7 +15,7 @@ import logo from './components/logo.vue';
 <style scoped>
 .top-box {
   width: 100%;
-  height: 74px;
+  height: calc(var(--spacing-70) + var(--spacing-4));
   background-color: #000000;
   display: flex;
   position: relative;

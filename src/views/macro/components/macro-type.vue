@@ -134,39 +134,39 @@ onMounted(() => {
 
 <style scoped lang="scss">
 .macro-type-container {
-  width: 300px;
-  height: 366px;
+  width: var(--size-300);
+  height: var(--macro-card-height);
   box-sizing: border-box;
   background-color: #000;
-  border: 3px solid #202020;
-  border-radius: 15px;
+  border: var(--spacing-3) solid #202020;
+  border-radius: var(--spacing-15);
 
   h3 {
-    margin: 25px 0 34px 30px;
+    margin: var(--spacing-25) 0 var(--spacing-34) var(--spacing-30);
     line-height: 1;
     color: #fff;
-    font-size: 16px;
+    font-size: var(--font-size-16);
     font-family: 'CN Heavy';
   }
 
   .type-item {
-    margin-left: 30px;
-    margin-bottom: 20px;
+    margin-left: var(--spacing-30);
+    margin-bottom: var(--spacing-20);
     display: flex;
     align-items: center;
 
     span {
-      margin-left: 10px;
+      margin-left: var(--spacing-10);
       color: #fff;
-      font-size: 14px;
+      font-size: var(--font-size-14);
       font-family: 'CN Heavy';
     }
     /* 移除默认样式 */
     input[type='radio'] {
       appearance: none; /* 移除默认样式 */
-      width: 18px;
-      height: 18px;
-      border: 3px solid #91bc00;
+      width: var(--size-18);
+      height: var(--size-18);
+      border: var(--spacing-3) solid #91bc00;
       border-radius: 50%;
       outline: none;
       cursor: pointer;
@@ -187,9 +187,9 @@ onMounted(() => {
     input[type='radio']:checked::after {
       content: '';
       display: block;
-      width: 8px;
-      height: 8px;
-      margin: 2px;
+      width: var(--size-8);
+      height: var(--size-8);
+      margin: var(--spacing-2);
       border-radius: 50%;
       background-color: #91bc00;
     }
@@ -197,24 +197,24 @@ onMounted(() => {
 
   .repeat-numbers {
     display: flex;
-    border-top: 10px solid transparent;
-    margin: 0 0 20px 30px;
+    border-top: var(--spacing-10) solid transparent;
+    margin: 0 0 var(--spacing-20) var(--spacing-30);
 
     span {
-      margin-right: 10px;
-      font-size: 16px;
+      margin-right: var(--spacing-10);
+      font-size: var(--font-size-16);
       font-family: 'CN Heavy';
       color: #fff;
     }
 
     .number-controller {
-      width: 80px;
-      height: 28px;
+      width: var(--size-80);
+      height: var(--size-28);
       display: flex;
       align-items: center;
       box-sizing: border-box;
-      border: 3px solid #1f1f1f;
-      border-radius: 20px;
+      border: var(--spacing-3) solid #1f1f1f;
+      border-radius: var(--spacing-20);
       overflow: hidden;
       user-select: none;
 
@@ -223,11 +223,11 @@ onMounted(() => {
         display: flex;
         justify-content: center;
         align-items: center;
-        width: 28px;
-        height: 28px;
+        width: var(--size-28);
+        height: var(--size-28);
         background-color: #181818;
         color: white;
-        font-size: 18px;
+        font-size: var(--font-size-18);
         font-weight: bold;
         border: none;
         cursor: pointer;
@@ -251,11 +251,11 @@ onMounted(() => {
       }
       .value {
         // flex: 1;
-        width: 40px;
+        width: var(--size-40);
         height: 100%;
         text-align: center;
         color: white;
-        font-size: 14px;
+        font-size: var(--font-size-14);
         font-weight: bold;
         font-family: 'Arial', sans-serif;
         background-color: #000;

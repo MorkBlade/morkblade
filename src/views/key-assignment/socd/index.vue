@@ -26,7 +26,11 @@
       <div class="cover-list" :class="DKS_MODES[socdInfo.mode] ? 'is-selected' : ''" @click="toggleDropdown">
         <img class="change-icon" :src="DKS_MODES[socdInfo.mode] ? changedIcon : changeIcon" alt="" />
         <span class="mode-text">{{ DKS_MODES[socdInfo.mode] || '请选择' }}</span>
-        <img class="down-icon" :src="DKS_MODES[socdInfo.mode] ? downIcon1 : downIcon2" />
+        <img
+          class="down-icon"
+          :src="DKS_MODES[socdInfo.mode] ? downIcon1 : downIcon2"
+          :style="{ transform: `rotate(${rotate}deg)` }"
+        />
         <div class="drop-list" :style="{ height: `${defaultHeight}px` }">
           <ul>
             <li
@@ -69,6 +73,7 @@ const highLevelKeyStore = useHighLevelKeyStore();
 
 const defaultHeight = ref(0);
 const delay = ref(0);
+const rotate = ref(180);
 const isShow = ref(false);
 const key1Index = ref(-1);
 const key2Index = ref(-1);
@@ -91,7 +96,8 @@ const keyText = computed(() => {
 const emits = defineEmits(['handleKeyTypeChange', 'handleDialoConfirm']);
 
 const toggleDropdown = () => {
-  defaultHeight.value = defaultHeight.value ? 0 : scaleValue(90);
+  defaultHeight.value = defaultHeight.value ? 0 : scaleValue(200);
+  rotate.value = rotate.value ? 0 : 180;
 };
 
 const selectItem = (item) => {
@@ -339,6 +345,7 @@ defineExpose({ save });
         width: var(--size-13);
         height: var(--size-8);
         object-fit: fill;
+        transition: transform 0.3s;
       }
 
       .mode-text {
@@ -357,17 +364,23 @@ defineExpose({ save });
 
       .drop-list {
         position: absolute;
-        top: var(--spacing-45);
+        bottom: var(--spacing-45);
         left: var(--spacing-4);
         z-index: 2;
         box-sizing: border-box;
         padding-right: var(--spacing-5);
         overflow-y: auto;
         transition: height 0.3s ease;
+        transform-origin: bottom;
+        display: flex;
+        flex-direction: column-reverse;
 
         ul {
           list-style-type: none;
           background-color: #000;
+          display: flex;
+          flex-direction: column-reverse;
+
           li {
             width: calc(var(--size-200) - var(--size-40));
             height: var(--size-40);

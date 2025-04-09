@@ -162,24 +162,24 @@ const changeLogoLight = async () => {
 
 <style scoped lang="scss">
 .lighting-box {
-  width: 1600px;
-  height: 350px;
-  margin-top: 25px;
+  width: var(--size-1600);
+  height: var(--size-350);
+  margin-top: var(--spacing-25);
   display: flex;
   background-image: url('@/assets/images/performance_bg.svg');
   background-size: cover;
   background-repeat: no-repeat;
   position: relative;
   box-sizing: border-box;
-  padding-top: 30px;
-  overflow: hidden;
+  padding-top: var(--spacing-30);
+  // overflow: hidden;
 
   .lighting-item {
-    width: 200px;
-    height: 42px;
-    font-size: 20px;
+    width: var(--lighting-item-width);
+    height: var(--lighting-item-height);
+    font-size: var(--font-size-20);
     color: #fff;
-    margin: 0 30px;
+    margin: 0 var(--spacing-30);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -187,7 +187,7 @@ const changeLogoLight = async () => {
     background-image: url('@/assets/images/performance_item_bg.svg');
     background-size: cover;
     background-repeat: no-repeat;
-    margin-bottom: 20px;
+    margin-bottom: var(--spacing-20);
     cursor: pointer;
   }
   .is-active {

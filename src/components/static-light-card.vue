@@ -92,21 +92,21 @@ const onChange = (color) => {
 
 <style scoped lang="scss">
 .static-light {
-  width: 270px;
-  height: 290px;
+  width: var(--lighting-static-width);
+  height: var(--size-290);
   box-sizing: border-box;
-  padding: 0 10px 0 20px;
+  padding: 0 var(--spacing-10) 0 var(--spacing-20);
   background-image: url('@/assets/images/static_light_bg.svg');
   background-size: cover;
   background-repeat: no-repeat;
   overflow: hidden;
 
   p {
-    font-size: 15px;
+    font-size: var(--font-size-15);
     font-family: 'CN Heavy';
     color: #ccc;
     text-align: center;
-    margin: 15px 0 10px 0;
+    margin: var(--spacing-15) 0 var(--spacing-10) 0;
   }
 
   .light-box {
@@ -114,11 +114,11 @@ const onChange = (color) => {
     flex-wrap: wrap;
 
     .light {
-      width: 70px;
-      height: 70px;
-      margin: 0 10px 10px 0;
-      font-size: 10px;
-      padding-top: 10px;
+      width: var(--size-70);
+      height: var(--size-70);
+      margin: 0 var(--lighting-item-right) var(--spacing-10) 0;
+      font-size: var(--font-size-10);
+      padding-top: var(--spacing-10);
       font-family: 'CN Heavy';
       color: #fff;
       display: flex;
@@ -131,13 +131,13 @@ const onChange = (color) => {
       background-repeat: no-repeat;
 
       img {
-        width: 30px;
-        height: 30px;
+        width: var(--size-30);
+        height: var(--size-30);
         object-fit: fill;
       }
 
       span {
-        margin-top: 5px;
+        margin-top: var(--spacing-5);
       }
     }
 

@@ -95,7 +95,6 @@ const useKeyboardStore = defineStore('keyboard', {
             }
           }),
         ).catch(console.error);
-
         // 5. 立即返回数据，axis 会在后续异步更新
         return data;
       } catch (error) {

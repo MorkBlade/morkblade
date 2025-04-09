@@ -78,7 +78,7 @@ const progress = ref(0);
 const handleDeviceStoreClick = async () => {
   const result = await deviceStore.connectDevice();
   await appStore.getBaseInfo();
-  console.log('keyboardRunMode', appStore.baseInfo?.KeyboardRunMode, result);
+  // console.log('keyboardRunMode', appStore.baseInfo?.KeyboardRunMode, result);
   if (appStore.baseInfo?.KeyboardRunMode === 255) {
     isUpdate.value = true;
     getFirmWarePack('/api/update_esports.bin');

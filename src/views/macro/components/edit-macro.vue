@@ -33,7 +33,7 @@
       <div
         class="height-placeholder"
         key="placeholder"
-        :style="{ top: internalMacroData.length * 65 + 'px', position: 'absolute' }"
+        :style="{ top: internalMacroData.length * scaleValue(65) + 'px', position: 'absolute' }"
       ></div>
     </TransitionGroup>
     <div class="button-group">
@@ -71,6 +71,8 @@
   </div>
 </template>
 <script setup>
+import { scaleValue } from '@/utils/responsive.js';
+
 import macroEvents from './macro-events.vue';
 import macroType from './macro-type.vue';
 import keyupIcon from '@/assets/images/keyup_icon.svg';
@@ -272,8 +274,8 @@ watch(
 );
 
 const calcPosition = () => {
-  positions.value = internalMacroData.value.map((_, index) => index * 65) || [];
-  savePositionInfo.value = internalMacroData.value.map((_, index) => index * 65) || [];
+  positions.value = internalMacroData.value.map((_, index) => index * scaleValue(65)) || [];
+  savePositionInfo.value = internalMacroData.value.map((_, index) => index * scaleValue(65)) || [];
 };
 
 const switchClass = (idx) => {
@@ -524,17 +526,17 @@ const onDrag = (event) => {
   positions.value[draggingIndex.value] = savePositionInfo.value[draggingIndex.value] + deltaY;
 
   // 获取拖动元素的中心位置
-  const dragItemCenter = positions.value[draggingIndex.value] + 25; // 假设元素高度为50px，取中心点
+  const dragItemCenter = positions.value[draggingIndex.value] + scaleValue(25); // 假设元素高度为50px，取中心点
 
   // 向上交换检测：检查是否应该与上一个元素交换位置
   if (draggingIndex.value > 0) {
     // 获取上一个元素的位置
     const prevItemTop = savePositionInfo.value[draggingIndex.value - 1];
-    const prevItemCenter = prevItemTop + 25;
+    const prevItemCenter = prevItemTop + scaleValue(25);
 
     // 使用更小的阈值，让交换更早触发
     // 当拖动项的顶部接近上一项的1/3处时触发交换
-    const swapThreshold = 15; // 可调整此值改变灵敏度
+    const swapThreshold = scaleValue(15); // 可调整此值改变灵敏度
 
     if (positions.value[draggingIndex.value] < prevItemTop + swapThreshold) {
       // 保存当前拖动元素的视觉位置
@@ -546,7 +548,7 @@ const onDrag = (event) => {
       ];
 
       // 重置所有元素的正确位置
-      savePositionInfo.value = internalMacroData.value.map((_, index) => index * 65);
+      savePositionInfo.value = internalMacroData.value.map((_, index) => index * scaleValue(65));
 
       // 使用Vue的过渡系统，保持动画效果
       // 对于被交换的元素，设置新的目标位置，Vue 的transition会处理过渡动画
@@ -577,13 +579,13 @@ const onDrag = (event) => {
   if (draggingIndex.value < internalMacroData.value.length - 1) {
     // 获取下一个元素的位置
     const nextItemTop = savePositionInfo.value[draggingIndex.value + 1];
-    const nextItemCenter = nextItemTop + 25;
+    const nextItemCenter = nextItemTop + scaleValue(25);
 
     // 使用更小的阈值，让交换更早触发
     // 当拖动项的底部接近下一项的2/3处时触发交换
-    const swapThreshold = 35; // 可调整此值改变灵敏度
+    const swapThreshold = scaleValue(35); // 可调整此值改变灵敏度
 
-    if (positions.value[draggingIndex.value] + 50 > nextItemTop + swapThreshold) {
+    if (positions.value[draggingIndex.value] + scaleValue(50) > nextItemTop + swapThreshold) {
       // 保存当前拖动元素的视觉位置
       const currentVisualPosition = positions.value[draggingIndex.value];
 
@@ -594,7 +596,7 @@ const onDrag = (event) => {
       ];
 
       // 更新所有元素的"正确"位置
-      savePositionInfo.value = internalMacroData.value.map((_, index) => index * 65);
+      savePositionInfo.value = internalMacroData.value.map((_, index) => index * scaleValue(65));
 
       // 使用Vue的过渡系统，保持动画效果
       // 对于被交换的元素，设置新的目标位置，Vue 的transition会处理过渡动画
@@ -631,7 +633,7 @@ const endDrag = () => {
   draggingIndex.value = null;
 
   // 计算最终应该放置的位置
-  const finalPositions = internalMacroData.value.map((_, index) => index * 65);
+  const finalPositions = internalMacroData.value.map((_, index) => index * scaleValue(65));
 
   // 允许过渡动画生效的延迟
   setTimeout(() => {
@@ -747,39 +749,39 @@ const updateMacroTypeSettings = (newSettings) => {
 
 <style lang="scss" scoped>
 .edit-macro-container {
-  width: 960px;
-  height: 756px;
+  width: var(--size-960);
+  height: var(--macro-height);
   box-sizing: border-box;
   background-color: #000;
-  border: 3px solid #202020;
-  border-radius: 15px;
-  margin: 0 20px;
+  border: var(--spacing-3) solid #202020;
+  border-radius: var(--spacing-15);
+  margin: 0 var(--spacing-20);
   position: relative;
 
   h3 {
-    margin: 25px 0 34px 30px;
+    margin: var(--spacing-25) 0 calc(var(--spacing-35) - var(--spacing-1)) var(--spacing-30);
     line-height: 1;
     color: #fff;
-    font-size: 16px;
+    font-size: var(--font-size-16);
     font-family: 'CN Heavy';
   }
 
   .container {
-    height: 510px;
+    height: var(--size-510);
     box-sizing: border-box;
-    padding-right: 5px;
+    padding-right: var(--spacing-5);
     position: relative;
     overflow-y: scroll;
     .height-placeholder {
       width: 100%;
-      min-height: 65px;
+      min-height: var(--spacing-65);
       position: static; /* 不使用绝对定位 */
       pointer-events: none; /* 不阻挡点击事件 */
     }
 
     &::-webkit-scrollbar {
-      height: 10px;
-      width: 5px;
+      height: var(--spacing-10);
+      width: var(--spacing-5);
     }
 
     /* 滚动条轨道 */
@@ -803,8 +805,8 @@ const updateMacroTypeSettings = (newSettings) => {
     }
 
     .item {
-      width: 940px;
-      height: 50px;
+      width: var(--macro-edit-page-width);
+      height: var(--size-50);
       display: flex;
       justify-content: center;
       align-items: center;
@@ -815,8 +817,8 @@ const updateMacroTypeSettings = (newSettings) => {
     .delay {
       display: flex;
       box-sizing: border-box;
-      border-radius: 30px;
-      border: 3px solid #202020;
+      border-radius: var(--spacing-30);
+      border: var(--spacing-3) solid #202020;
       background-color: #000;
       cursor: pointer;
 
@@ -826,14 +828,14 @@ const updateMacroTypeSettings = (newSettings) => {
 
       &.selected-item {
         border-color: #91bc00 !important;
-        box-shadow: 0 0 10px rgba(145, 188, 0, 0.5);
+        box-shadow: 0 0 var(--spacing-10) rgba(145, 188, 0, 0.5);
       }
 
       & .handle {
-        width: 54px;
-        height: 48px;
+        width: var(--size-54);
+        height: var(--size-48);
         object-fit: fill;
-        margin: -2px 0 0 -2px;
+        margin: calc(var(--spacing-2) * -1) 0 0 calc(var(--spacing-2) * -1);
         background-image: url('@/assets/images/header_icon.svg');
         background-size: cover;
         background-repeat: no-repeat;
@@ -845,70 +847,70 @@ const updateMacroTypeSettings = (newSettings) => {
       }
 
       .content {
-        width: calc(100% - 54px);
+        width: calc(100% - var(--size-54));
         height: 100%;
         color: #fff;
-        font-size: 20px;
+        font-size: var(--font-size-20);
         font-family: 'CN Heavy';
         display: flex;
         align-items: center;
         justify-content: center;
 
         & img {
-          width: 16px;
-          height: 16px;
+          width: var(--size-16);
+          height: var(--size-16);
           object-fit: fill;
         }
 
         .keyVal {
           width: auto;
-          min-width: 30px;
-          height: 30px;
+          min-width: var(--size-30);
+          height: var(--size-30);
           box-sizing: border-box;
-          padding: 0 2px;
-          border: 2px solid #fff;
-          border-radius: 5px;
-          margin-left: 10px;
+          padding: 0 var(--spacing-2);
+          border: var(--spacing-2) solid #fff;
+          border-radius: var(--spacing-5);
+          margin-left: var(--spacing-10);
           display: flex;
           align-items: center;
           justify-content: center;
         }
         .time-diff {
-          font-size: 14px;
+          font-size: var(--font-size-14);
           position: absolute;
-          right: 130px;
+          right: var(--spacing-130);
         }
         .copy-icon {
-          width: 20px;
-          height: 20px;
+          width: var(--size-20);
+          height: var(--size-20);
           position: absolute;
-          right: 70px;
+          right: var(--spacing-70);
         }
         .del-icon {
-          width: 20px;
-          height: 20px;
+          width: var(--size-20);
+          height: var(--size-20);
           position: absolute;
-          right: 30px;
+          right: var(--spacing-30);
         }
       }
     }
     .key {
-      width: 860px;
-      height: 50px;
-      margin-left: 50px;
+      width: var(--macro-key-width);
+      height: var(--size-50);
+      margin-left: var(--spacing-50);
     }
 
     .delay {
-      width: 430px;
-      height: 50px;
-      margin-left: 265px;
+      width: var(--macro-delay-width);
+      height: var(--size-50);
+      margin-left: var(--spacing-265);
     }
 
     /* 拖动中的元素不应用过渡 */
     .dragging {
       opacity: 0.9;
       transform: scale(1.02);
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 var(--spacing-5) var(--spacing-15) rgba(0, 0, 0, 0.3);
       transition: none !important; /* 启用此覆盖 */
     }
   }
@@ -916,13 +918,13 @@ const updateMacroTypeSettings = (newSettings) => {
   .button-group {
     display: flex;
     position: absolute;
-    left: 110px;
-    bottom: 20px;
+    left: var(--spacing-110);
+    bottom: var(--spacing-20);
 
     .operation-btn {
-      width: 170px;
-      height: 40px;
-      margin-right: 20px;
+      width: var(--size-170);
+      height: var(--size-40);
+      margin-right: var(--spacing-20);
       font-family: 'CN Heavy';
       background-image: url('/src/assets/images/save_bg.svg');
       background-size: cover;
@@ -931,20 +933,20 @@ const updateMacroTypeSettings = (newSettings) => {
       cursor: pointer;
 
       img {
-        width: 20px;
-        height: 20px;
+        width: var(--size-20);
+        height: var(--size-20);
         object-fit: fill;
         position: absolute;
-        top: 10px;
-        left: 10px;
+        top: var(--spacing-10);
+        left: var(--spacing-10);
       }
 
       span {
-        font-size: 18px;
+        font-size: var(--font-size-18);
         color: #fff;
         position: absolute;
-        top: 6px;
-        left: 65px;
+        top: var(--spacing-6);
+        left: var(--spacing-65);
       }
     }
     .is-active {
@@ -976,6 +978,6 @@ const updateMacroTypeSettings = (newSettings) => {
 .list-enter-from,
 .list-leave-to {
   opacity: 0;
-  transform: translateY(30px);
+  transform: translateY(var(--spacing-30));
 }
 </style>

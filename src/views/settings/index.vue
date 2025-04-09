@@ -34,7 +34,11 @@
           >
             <img class="change-icon" :src="selectedRateItem ? changedIcon : changeIcon" alt="" />
             <span>{{ selectedRateItem || '请选择' }}</span>
-            <img class="down-icon" :src="selectedRateItem ? downIcon : downIcon2" />
+            <img
+              class="down-icon"
+              :src="selectedRateItem ? downIcon : downIcon2"
+              :style="{ transform: `rotate(${rotate1}deg)` }"
+            />
             <div class="drop-list" :style="{ height: `${RateDefHeight}px` }">
               <ul>
                 <li
@@ -78,7 +82,11 @@
           >
             <img class="change-icon" :src="selectedFirItem !== null ? changedIcon : changeIcon" alt="" />
             <span>{{ firmwareList[selectedFirItem] || '请选择' }}</span>
-            <img class="down-icon" :src="selectedFirItem !== null ? downIcon : downIcon2" />
+            <img
+              class="down-icon"
+              :src="selectedFirItem !== null ? downIcon : downIcon2"
+              :style="{ transform: `rotate(${rotate2}deg)` }"
+            />
             <div class="drop-list" :style="{ height: `${firmwareDefHeight}px` }">
               <ul>
                 <li
@@ -176,6 +184,8 @@ const isUpdate = ref(false);
 const curClickBtn = ref(null);
 const textContent = ref(''); // 弹窗提示内容
 const updateTitle = ref('');
+const rotate1 = ref(0); // 下拉箭头旋转角度
+const rotate2 = ref(0); // 下拉箭头旋转角度
 
 // 按钮状态
 const restBtnStatus = ref(false);
@@ -212,9 +222,11 @@ const toggleDropdown = (keyCode) => {
   switch (keyCode) {
     case 'firmware':
       firmwareDefHeight.value = firmwareDefHeight.value ? 0 : scaleValue(135);
+      rotate2.value = rotate2.value ? 0 : 180;
       break;
     default:
       RateDefHeight.value = RateDefHeight.value ? 0 : scaleValue(320);
+      rotate1.value = rotate1.value ? 0 : 180;
       break;
   }
 };
@@ -491,6 +503,7 @@ const getFirmWarePack = async (url) => {
       width: var(--size-13);
       height: var(--size-8);
       object-fit: fill;
+      transition: transform 0.3s ease-in-out;
     }
 
     span {

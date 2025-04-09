@@ -20,7 +20,6 @@
 </template>
 
 <script setup>
-// 导入所有图标文件 - 这是最可靠的方法
 import performanceW from '@/assets/images/performance-w.svg';
 import performanceB from '@/assets/images/performance-b.svg';
 import keyAssignmentW from '@/assets/images/key-assignment-w.svg';
@@ -36,30 +35,30 @@ import settingsB from '@/assets/images/settings-b.svg';
 
 // 创建图标映射对象
 const iconMap = {
-  'performance': {
-    'w': performanceW,
-    'b': performanceB
+  performance: {
+    w: performanceW,
+    b: performanceB,
   },
   'key-assignment': {
-    'w': keyAssignmentW,
-    'b': keyAssignmentB
+    w: keyAssignmentW,
+    b: keyAssignmentB,
   },
-  'macro': {
-    'w': macroW,
-    'b': macroB
+  macro: {
+    w: macroW,
+    b: macroB,
   },
-  'lighting': {
-    'w': lightingW,
-    'b': lightingB
+  lighting: {
+    w: lightingW,
+    b: lightingB,
   },
   'key-calibration': {
-    'w': keyCalibrationW,
-    'b': keyCalibrationB
+    w: keyCalibrationW,
+    b: keyCalibrationB,
   },
-  'settings': {
-    'w': settingsW,
-    'b': settingsB
-  }
+  settings: {
+    w: settingsW,
+    b: settingsB,
+  },
 };
 
 const routesInfo = [
@@ -125,15 +124,15 @@ const getIconSrc = (ite) => {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 1380px;
-  height: 50px;
+  width: var(--nav-container-width);
+  height: var(--size-50);
   // margin-left: 270px;
-  margin-top: 25px;
+  margin-top: var(--spacing-25);
   background-color: transparent;
 
   .el-menu {
     background-color: transparent;
-    height: 50px;
+    height: var(--size-50);
   }
 
   .el-menu--horizontal.el-menu {
@@ -141,11 +140,11 @@ const getIconSrc = (ite) => {
   }
 
   .el-menu-item {
-    border-radius: 10px;
-    margin: 0 0 0 12px;
-    width: 220px;
-    height: 50px;
-    font-size: 22px;
+    border-radius: var(--spacing-10);
+    margin-left: var(--spacing-12);
+    width: var(--nav-item-width);
+    height: var(--size-50);
+    font-size: var(--font-size-22);
     // font-weight: 600;
     font-family: 'CN oblique';
     background-color: transparent;
@@ -162,13 +161,13 @@ const getIconSrc = (ite) => {
   }
 
   img {
-    width: 20px;
-    height: 15px;
-    margin-left: 10px;
+    width: var(--size-20);
+    height: var(--size-15);
+    margin-left: var(--spacing-10);
   }
 
   .lighting {
-    height: 18px;
+    height: var(--size-18);
   }
 
   .el-menu--horizontal > .el-menu-item.is-active {

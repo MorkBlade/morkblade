@@ -8,6 +8,8 @@
 </template>
 
 <script setup>
+import { scaleValue } from '@/utils/responsive.js';
+
 const { sliderValue } = defineProps({
   sliderValue: { type: Number },
 });
@@ -29,12 +31,20 @@ let startX = 0;
 let min = 0;
 let max = 4;
 
+const sliderWidth = computed(() => {
+  return Number(getComputedStyle(document.documentElement).getPropertyValue('--slider-width').trim());
+});
+
+const sliderBtnOffset = computed(() => {
+  return Number(getComputedStyle(document.documentElement).getPropertyValue('--slider-btn-offset').trim());
+});
+
 // 修改计算滑块样式
 const handleStyle = computed(() => {
   const percentage = (sliderVal.value - min) / (max - min);
   // 计算基础left值后减去滑块宽度的一半(22px / 2 = 11px)
-  let left = percentage * 190 - 11 + 'px';
-  if (percentage * 190 - 11 < 0) left = 0;
+  let left = percentage * sliderWidth.value - sliderBtnOffset.value + 'px';
+  if (percentage * sliderWidth.value - sliderBtnOffset.value < 0) left = 0;
   return {
     left, // 使用 left 代替 top
   };
@@ -80,7 +90,7 @@ const endDrag = () => {
 const updateValue = (clientX) => {
   const rect = sliderContainer.value.getBoundingClientRect();
   // 在计算百分比时加上滑块宽度的一半，使点击位置对应滑块中心
-  let percentage = (clientX - rect.left + 11) / rect.width;
+  let percentage = (clientX - rect.left + sliderBtnOffset.value) / rect.width;
   percentage = Math.max(0, Math.min(1, percentage));
   let newValue = min + percentage * (max - min);
   newValue = Math.round(newValue);
@@ -91,9 +101,9 @@ const updateValue = (clientX) => {
 
 <style scoped lang="scss">
 .progress-bar {
-  width: 200px;
-  height: 20px;
-  margin: 0 9px;
+  width: var(--size-200);
+  height: var(--size-20);
+  margin: 0 var(--spacing-9);
   position: relative;
   background-image: url('@/assets/images/luminance.svg');
   background-size: cover;
@@ -101,18 +111,19 @@ const updateValue = (clientX) => {
 
   .el-slider {
     // transform: rotate(180deg);
-    height: 18px;
-    width: 190px;
-    --el-slider-height: 12px;
+    height: var(--size-18);
+    width: var(--size-190);
+    --el-slider-height: var(--size-12);
     background-color: transparent;
     position: absolute;
-    left: 5px;
-    top: 1px;
+    left: var(--spacing-5);
+    top: var(--spacing-1);
+    transition: all 0.1s ease-in-out;
   }
 
   .slider-btn {
-    width: 22px;
-    height: 22px;
+    width: var(--size-22);
+    height: var(--size-22);
     cursor: grab;
     position: absolute;
     top: 0;

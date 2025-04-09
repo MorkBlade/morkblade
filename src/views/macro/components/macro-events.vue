@@ -9,7 +9,7 @@
         <input
           type="number"
           :value="itemData?.timeDifference.toFixed(2)"
-          :style="{ margin: '10px 0 20px 0' }"
+          :style="{ margin: `${scaleValue(10)}px 0 ${scaleValue(20)}px 0` }"
           @input="changeDelayVal"
         />
         <p>更改按键状态:</p>
@@ -31,7 +31,7 @@
     </template>
     <template v-else>
       <div class="outer-box">
-        <p :style="{ marginTop: '50px' }">更改延迟数值 单位(ms)</p>
+        <p :style="{ marginTop: `${scaleValue(50)}px` }">更改延迟数值 单位(ms)</p>
         <input type="number" :value="itemData?.timeDifference.toFixed(2)" @input="changeDelayVal" />
       </div>
     </template>
@@ -81,6 +81,7 @@
 </template>
 
 <script setup>
+import { scaleValue } from '@/utils/responsive.js';
 import { useKeyboardStore, usePerformanceStore } from '@/stores';
 
 import saveConfigBtn from '@/components/save-config-btn.vue';
@@ -137,7 +138,8 @@ watch(
   (newValue) => {
     if (newValue && newValue.keyType === 'key') {
       // 根据传入的按键状态设置 isActive
-      isActive.value = newValue.status || 'up';
+      isActive.value = newValue.status ? 'down' : 'up';
+      console.log('watch itemData.value', newValue);
     } else {
       // 非按键项重置 isActive
       isActive.value = '';
@@ -215,24 +217,24 @@ const saveConfig = async (action) => {
 
 <style scoped lang="scss">
 .macro-events-container {
-  width: 300px;
-  height: 366px;
+  width: var(--size-300);
+  height: var(--macro-card-height);
   box-sizing: border-box;
   background-color: #000;
-  border: 3px solid #202020;
-  border-radius: 15px;
-  margin-bottom: 25px;
+  border: var(--spacing-3) solid #202020;
+  border-radius: var(--spacing-15);
+  margin-bottom: var(--spacing-25);
 
   h3 {
-    margin: 25px 0 34px 30px;
+    margin: var(--spacing-25) 0 var(--spacing-34) var(--spacing-30);
     line-height: 1;
     color: #fff;
-    font-size: 16px;
+    font-size: var(--font-size-16);
     font-family: 'CN Heavy';
   }
 
   p {
-    font-size: 14px;
+    font-size: var(--font-size-14);
     font-family: 'CN Heavy';
     color: #fff;
   }
@@ -250,21 +252,21 @@ const saveConfig = async (action) => {
     }
 
     .key {
-      width: 50px;
-      height: 50px;
+      width: var(--size-50);
+      height: var(--size-50);
       // margin: 22px 0 50px 20px;
-      margin: 10px 0;
+      margin: var(--spacing-10) 0;
       line-height: 1;
       text-align: center;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 14px;
+      font-size: var(--font-size-14);
       color: #fff;
       font-family: 'CN Heavy';
       box-sizing: border-box;
-      border: 2px solid #232323;
-      border-radius: 10px;
+      border: var(--spacing-2) solid #232323;
+      border-radius: var(--spacing-10);
       background-color: #181818;
       cursor: pointer;
 
@@ -274,19 +276,19 @@ const saveConfig = async (action) => {
     }
 
     .btn-group {
-      width: 240px;
-      height: 40px;
-      margin-top: 30px;
+      width: var(--size-240);
+      height: var(--size-40);
+      margin-top: var(--spacing-30);
       display: flex;
       justify-content: space-between;
 
       .change-status__btn {
-        width: 100px;
+        width: var(--size-100);
         height: 100%;
-        font-size: 16px;
+        font-size: var(--font-size-16);
         font-family: 'CN Heavy';
         color: #505050;
-        border-radius: 5px;
+        border-radius: var(--spacing-5);
         background: #181818;
         display: flex;
         align-items: center;
@@ -298,21 +300,21 @@ const saveConfig = async (action) => {
         }
 
         span {
-          margin-left: 5px;
+          margin-left: var(--spacing-5);
         }
       }
     }
 
     input {
-      width: 100px;
-      height: 40px;
-      margin: 40px 0 0 12px;
+      width: var(--size-100);
+      height: var(--size-40);
+      margin: var(--spacing-40) 0 0 var(--spacing-12);
       text-align: center;
       color: #fff;
-      font-size: 14px;
+      font-size: var(--font-size-14);
       font-family: 'CN Heavy';
       background-color: #181818;
-      border-radius: 5px;
+      border-radius: var(--spacing-5);
       border: none;
       outline: none;
     }
@@ -342,38 +344,38 @@ const saveConfig = async (action) => {
   background: rgba(0, 0, 0, 0.5);
 
   .content {
-    width: 1300px;
-    height: 600px;
+    width: var(--size-1300);
+    height: var(--size-600);
     display: flex;
     flex-direction: column;
     align-items: center;
     box-sizing: border-box;
-    border: 3px solid #202020;
-    border-radius: 15px;
+    border: var(--spacing-3) solid #202020;
+    border-radius: var(--spacing-15);
     background: #000;
     position: relative;
 
     h3 {
-      margin: 54px 0 20px 0;
+      margin: var(--spacing-54) 0 var(--spacing-20) 0;
       color: #fff;
-      font-size: 16px;
+      font-size: var(--font-size-16);
       font-family: 'CN Heavy';
     }
 
     .key {
-      width: 50px;
-      height: 50px;
-      margin-bottom: 90px;
+      width: var(--size-50);
+      height: var(--size-50);
+      margin-bottom: var(--spacing-90);
       line-height: 1;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 14px;
+      font-size: var(--font-size-14);
       color: #fff;
       font-family: 'CN Heavy';
       box-sizing: border-box;
-      border: 2px solid #232323;
-      border-radius: 10px;
+      border: var(--spacing-2) solid #232323;
+      border-radius: var(--spacing-10);
       background-color: #181818;
       cursor: pointer;
 
@@ -384,13 +386,13 @@ const saveConfig = async (action) => {
 
     .tabs {
       display: flex;
-      margin: 30px 0 20px 30px;
+      margin: var(--spacing-30) 0 var(--spacing-20) var(--spacing-30);
 
       .tab-item {
-        width: 150px;
-        height: 30px;
-        font-size: 15px;
-        margin-left: 50px;
+        width: var(--size-150);
+        height: var(--size-30);
+        font-size: var(--font-size-15);
+        margin-left: var(--spacing-50);
         box-sizing: border-box;
         font-family: 'CN Heavy';
         color: #242424;
@@ -403,11 +405,11 @@ const saveConfig = async (action) => {
         cursor: pointer;
 
         img {
-          width: 20px;
-          height: 20px;
+          width: var(--size-20);
+          height: var(--size-20);
           object-fit: fill;
           vertical-align: middle;
-          margin-right: 5px;
+          margin-right: var(--spacing-5);
         }
       }
 
@@ -418,8 +420,8 @@ const saveConfig = async (action) => {
     }
 
     .keys-box {
-      width: 1190px;
-      margin-left: 60px;
+      width: var(--macro-change-key-width);
+      margin-left: var(--spacing-60);
       display: flex;
       flex-wrap: wrap;
 
@@ -431,7 +433,7 @@ const saveConfig = async (action) => {
     .operation-btn {
       display: flex;
       position: absolute;
-      bottom: 50px;
+      bottom: var(--spacing-50);
     }
   }
 }

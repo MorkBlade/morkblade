@@ -44,7 +44,14 @@
               <!-- 手柄的svg内容开始 -->
               <!-- <rect x="0" y="0" width="6" height="6" r="2" fill="none" stroke-width="2" stroke="#fff"></rect> -->
               <!-- <rect x="0" y="0" width="6" height="6" r="2" fill="none" stroke-width="2" stroke="#fff"></rect> -->
-              <circle cx="6" cy="6" r="6" fill="none" stroke-width="1.5" stroke="#fff"></circle>
+              <circle
+                :cx="scaleValue(6)"
+                :cy="scaleValue(6)"
+                :r="scaleValue(6)"
+                fill="none"
+                :stroke-width="scaleValue(1.5)"
+                stroke="#fff"
+              ></circle>
               <!-- <circle cx="6" cy="6" r="4" fill="none" stroke-width="2" stroke="#fff"></circle> -->
               <!-- 手柄的svg内容结束 -->
               <!-- <image href="@/assets/images/luminance_btn.svg" x="0" y="0" width="20" height="20" /> -->
@@ -67,6 +74,7 @@
 <script setup>
 import iro from '@jaames/iro';
 import services from '@/services/index';
+import { scaleValue } from '@/utils/responsive.js';
 import { useKeyboardStore, useLightSettingStore } from '@/stores';
 import preInstallColorList from '@/configs/customColor/index.js';
 
@@ -88,8 +96,14 @@ let colorPicker = ref(null);
 // 初始化色轮
 onMounted(() => {
   if (colorWheelRef.value) {
+    // 获取容器宽度，确保颜色选择器不会太大
+    const containerWidth = parseInt(
+      getComputedStyle(document.documentElement).getPropertyValue('--lighting-dynamic-width'),
+    );
+    const optimalWidth = Math.min(containerWidth * 0.4, scaleValue(165));
+
     colorPicker = new iro.ColorPicker(colorWheelRef.value, {
-      width: 165,
+      width: optimalWidth,
       color: selectedColor.value,
       handleRadius: 8, // 手柄大小
       // 设置手柄属性
@@ -107,6 +121,7 @@ onMounted(() => {
     colorPicker.on('color:change', (color) => {
       selectedColor.value = color.hexString;
       rgb.value = color.rgb;
+      emit('changeCustomLight', color.rgb);
     });
   }
 });
@@ -240,23 +255,24 @@ onBeforeUnmount(() => {
 <style scoped lang="scss">
 .custom-light {
   display: flex;
+  height: var(--size-290);
 
   .preinstall-light {
-    width: 270px;
-    height: 290px;
+    width: var(--lighting-static-width);
+    height: var(--size-290);
     box-sizing: border-box;
-    padding: 0 10px 0 20px;
+    padding: 0 var(--spacing-10) 0 var(--spacing-20);
     background-image: url('@/assets/images/static_light_bg.svg');
     background-size: cover;
     background-repeat: no-repeat;
     overflow: hidden;
 
     p {
-      font-size: 15px;
+      font-size: var(--font-size-15);
       font-family: 'CN Heavy';
       color: #ccc;
       text-align: center;
-      margin: 15px 0 10px 0;
+      margin: var(--spacing-15) 0 var(--spacing-10) 0;
     }
 
     .custom-box {
@@ -264,12 +280,12 @@ onBeforeUnmount(() => {
       flex-wrap: wrap;
 
       .custom {
-        width: 70px;
-        height: 70px;
-        margin: 0 10px 10px 0;
-        font-size: 10px;
-        padding-top: 10px;
-        margin-bottom: 10px;
+        width: var(--size-70);
+        height: var(--size-70);
+        margin: 0 var(--lighting-item-right) var(--spacing-10) 0;
+        font-size: var(--font-size-10);
+        padding-top: var(--spacing-10);
+        margin-bottom: var(--spacing-10);
         font-family: 'CN Heavy';
         color: #fff;
         display: flex;
@@ -282,13 +298,13 @@ onBeforeUnmount(() => {
         background-repeat: no-repeat;
 
         img {
-          width: 30px;
-          height: 30px;
+          width: var(--size-30);
+          height: var(--size-30);
           object-fit: fill;
         }
 
         span {
-          margin-top: 5px;
+          margin-top: var(--spacing-5);
         }
       }
 
@@ -299,40 +315,48 @@ onBeforeUnmount(() => {
   }
 
   .color-picker-box {
-    width: 590px;
-    height: 290px;
-    margin: 0 30px;
-    padding: 0px 10px 0 20px;
+    width: var(--lighting-dynamic-width);
+    height: var(--size-290);
+    margin: 0 var(--spacing-30);
+    padding: 0 var(--spacing-10) 0 var(--spacing-15);
     display: flex;
+    flex-wrap: wrap;
     box-sizing: border-box;
     font-family: 'CN Heavy';
     background-image: url('@/assets/images/dynamic_bg.svg');
     background-size: cover;
     background-repeat: no-repeat;
+    overflow: hidden;
+
+    .color-info {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
 
     .rgb-values {
-      margin: 60px 0 0 70px;
+      margin: var(--spacing-60) 0 0 var(--spacing-70);
 
       .rgb-input {
-        width: 100px;
-        height: 36px;
+        width: var(--size-100);
+        height: var(--size-36);
         display: flex;
-        margin-bottom: 10px;
+        margin-bottom: var(--spacing-10);
         align-items: center;
         background-image: url('@/assets/images/rgb.svg');
         background-size: cover;
         background-repeat: no-repeat;
 
         span {
-          margin: 0 18px;
-          font-size: 13px;
+          margin: 0 var(--spacing-18);
+          font-size: var(--font-size-13);
           color: #ffffff;
           font-family: 'CN Heavy';
         }
         input {
-          width: 25px;
-          font-size: 10px;
-          margin-left: 12px;
+          width: var(--size-25);
+          font-size: var(--font-size-10);
+          margin-left: var(--spacing-12);
           color: #cccccc;
           text-align: center;
           font-family: 'CN Heavy';
@@ -355,9 +379,9 @@ onBeforeUnmount(() => {
     }
 
     .scale-values {
-      width: 120px;
-      height: 36px;
-      margin-left: 50px;
+      width: var(--size-120);
+      height: var(--size-36);
+      margin-left: var(--spacing-50);
       display: flex;
       align-items: center;
       background-image: url('@/assets/images/scale_values.svg');
@@ -365,15 +389,15 @@ onBeforeUnmount(() => {
       background-repeat: no-repeat;
 
       .color-preview {
-        width: 15px;
-        height: 15px;
-        margin: 0 15px;
+        width: var(--size-15);
+        height: var(--size-15);
+        margin: 0 var(--spacing-15);
         border-radius: 50%;
       }
       input {
-        width: 50px;
-        font-size: 10px;
-        margin-left: 10px;
+        width: var(--size-50);
+        font-size: var(--font-size-10);
+        margin-left: var(--spacing-10);
         color: #ffffff;
         text-align: center;
         font-family: 'CN Heavy';
@@ -384,13 +408,13 @@ onBeforeUnmount(() => {
     }
 
     .color-wheel-container {
-      width: 152px;
-      margin: 38px 50px 0 50px;
+      width: calc(var(--spacing-150) + var(--spacing-2));
+      margin: var(--spacing-38) var(--spacing-50) 0 var(--spacing-50);
     }
 
     .color-blocks {
-      width: 160px;
-      margin-top: 90px;
+      width: var(--size-120);
+      margin-top: var(--spacing-50);
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
@@ -398,10 +422,10 @@ onBeforeUnmount(() => {
       align-content: flex-start;
 
       div {
-        width: 20px;
-        height: 20px;
-        margin-right: 20px;
-        margin-bottom: 20px;
+        width: var(--size-20);
+        height: var(--size-20);
+        margin-right: var(--spacing-20);
+        margin-bottom: var(--spacing-20);
         border-radius: 50%;
         cursor: pointer;
       }

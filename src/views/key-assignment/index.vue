@@ -168,7 +168,7 @@ const delConfig = async (keyId) => {
   position: relative;
   box-sizing: border-box;
   padding-top: var(--spacing-30);
-  overflow: hidden;
+  // overflow: hidden;
 
   .left-menu {
     width: var(--assignment-menu-width);

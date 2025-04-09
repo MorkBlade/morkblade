@@ -22,6 +22,8 @@
 </template>
 
 <script setup>
+import { useAppStore } from '@/stores';
+
 import mode from './mode/index.vue';
 import quickTrigger from './quick-trigger/index.vue';
 import deadZone from './dead-zone/index.vue';
@@ -29,6 +31,7 @@ import preinstall from './preinstall/index.vue';
 import axisSetting from './axis-setting/index.vue';
 import emitter from '@/utils/app-emitter';
 
+const appStore = useAppStore();
 const clickItem = ref(0);
 const performanceItem = ['机械模式', '快速触发', '死区', '性能预设', '轴体切换'];
 const modulesName = ['mechanicalMode', 'quickTrigger', 'deadZone', 'preinstall', 'axis'];
@@ -41,7 +44,26 @@ const changeMenu = (idx) => {
     emitter.emit('rt-enabled', { value: false });
   }
   emitter.emit('in-the-where', { value: modulesName[idx] });
+  setTimeout(() => {
+    console.log(appStore.changeConfig);
+    // emitter.emit('in-the-where', { value: modulesName[4] });
+  }, 10000);
 };
+
+watch(
+  () => appStore.changeConfig,
+  (newVal) => {
+    if (newVal) {
+      console.log('changeConfig', newVal);
+      appStore.changeConfig = false;
+      if (clickItem.value == 4) {
+        clickItem.value = 4;
+        emitter.emit('rt-enabled', { value: false });
+        emitter.emit('in-the-where', { value: modulesName[clickItem.value] });
+      }
+    }
+  },
+);
 
 onMounted(() => {
   emitter.emit('rt-enabled', { value: false });
