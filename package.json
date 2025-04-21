@@ -36,7 +36,7 @@
   },
   "pnpm": {
     "overrides": {
-      "@sparklinkplayjoy/sdk-keyboard": "link:..\\xsyd\\SDK\\sdk\\keyboard"
+      "@sparklinkplayjoy/sdk-keyboard": "link:../../SDK/sdk/keyboard"
     }
   }
 }

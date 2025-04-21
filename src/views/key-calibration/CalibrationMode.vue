@@ -124,7 +124,7 @@ watch(keyPressTestCount, async () => {
   // console.log('keyPressTestCountkeyPressTestCountkeyPressTestCount', isStart);
   if (isStart) {
     let mmBuff = 0;
-    const { max } = await performanceStore.getRm6X21Calibration(keyboardStore.keyboard);
+    const { max } = await performanceStore.getRm6X21Calibration(keyboardStore.keyboards);
     mmBuff = max;
     option.series[0].data.push([count.value, mmBuff]);
 

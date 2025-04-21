@@ -31,15 +31,15 @@
     </div>
     <div class="keyboard-container">
       <div class="keyboard">
-        <div class="row" v-for="(item, rowIndex) in currentLayoutData" :key="item">
+        <div class="row" v-for="(row, rowIndex) in keyboards" :key="rowIndex">
           <key
-            v-for="(ite, colIndex) in item"
+            v-for="(col, colIndex) in row"
             :key="colIndex"
             :row="rowIndex"
             :column="colIndex"
-            :keyItem="ite"
-            :active="activeKeys.includes(`${colIndex}-${rowIndex}`)"
-            @click="onclick(colIndex, rowIndex)"
+            :keyItem="col"
+            :active="activeKeys.includes(`${rowIndex}-${colIndex}`)"
+            @click="onclick(rowIndex, colIndex)"
             @emits="handleCancelSelect"
           />
         </div>
@@ -97,7 +97,7 @@ const appStore = useAppStore();
 const keyboardStore = useKeyboardStore();
 const performanceStore = usePerformanceStore();
 const lightSettingStore = useLightSettingStore();
-const { currentLayoutData } = storeToRefs(keyboardStore);
+const { keyboards } = storeToRefs(keyboardStore);
 
 const selectedKey = ref('');
 const rtEnabled = ref(false);
@@ -136,7 +136,7 @@ onMounted(async () => {
 
   // 获取所有按键颜色并初始化 store
   const colorUpdates = {};
-  for (const [row, rowData] of currentLayoutData.value.entries()) {
+  for (const [row, rowData] of keyboards.value.entries()) {
     for (const [col, item] of rowData.entries()) {
       const res = await services.getCustomLighting(item.key);
       const { key, R, G, B } = res;
@@ -201,16 +201,16 @@ const onMouseLe = () => {
   selectedKey.value = '';
 };
 
-const onclick = (colIndex, rowIndex) => {
+const onclick = (rowIndex, colIndex) => {
   // 当前类型
   if (route.path === '/key-assignment') {
     // 单选
-    keyboardStore.handleSelectKeyClick({ colIndex, rowIndex }, 'single');
+    keyboardStore.handleSelectKeyClick({ rowIndex, colIndex }, 'single');
   } else {
     // 多选
-    keyboardStore.handleSelectKeyClick({ colIndex, rowIndex });
+    keyboardStore.handleSelectKeyClick({ rowIndex, colIndex });
   }
-  emitter.emit('key-click', { colIndex, rowIndex });
+  emitter.emit('key-click', { rowIndex, colIndex });
 };
 
 const handleFnChange = (event) => {
@@ -232,8 +232,8 @@ const handleOperationKey = (value) => {
         const [key1, key2] = keyLocation.split('-');
         const x = Number(key1);
         const y = Number(key2);
-        const { touchMode, rt } = performanceValue[y][x];
-        if (touchMode === 'rt' && !enabled) {
+        const { isRt } = keyboards.value[y][x].performance;
+        if (isRt && !enabled) {
           enabled = true;
           rtEnabled.value = true;
           // rtPressTravel.value = rt.pressTravel;
@@ -242,6 +242,8 @@ const handleOperationKey = (value) => {
         }
       });
     }
+    const [rowIndex, colIndex] = selectedKeyValues[selectedKeyValues.length - 1].split('-');
+    emitter.emit('key-click', { rowIndex, colIndex });
   }
   if (value === 'cancelSelect') {
     rtEnabled.value = false;

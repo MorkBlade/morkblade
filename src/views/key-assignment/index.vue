@@ -152,7 +152,7 @@ const {
 const delConfig = async (keyId) => {
   console.log('delConfigdelConfigdelConfig');
   await highLevelKeyStore.deleteHighLevelKey(keyId);
-  await performanceStore.getKeyPerformance(keyboardStore.keyboard);
+  await performanceStore.getKeyPerformance(keyboardStore.keyboards);
 };
 </script>
 

@@ -126,11 +126,11 @@ const useSetAdvanced = () => {
 
   const handleDelete = async (keyId) => {
     await highLevelKeyStore.deleteHighLevelKey(keyId);
-    await performanceStore.getKeyPerformance(keyboardStore.keyboard);
+    await performanceStore.getKeyPerformance(keyboardStore.keyboards);
   };
 
   const resetKeys = async () => {
-    await performanceStore.getKeyPerformance(keyboardStore.keyboard);
+    await performanceStore.getKeyPerformance(keyboardStore.keyboards);
     const { value } = performanceStore;
     await highLevelKeyStore.getHighLevelKeys(value);
   };

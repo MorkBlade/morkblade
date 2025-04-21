@@ -84,8 +84,8 @@ const iconMap = {
 
 const checkedIdx = ref(0);
 
-const currentKeyX = ref(null);
-const currentKeyY = ref(null);
+const rowIdx = ref(null);
+const colIdx = ref(null);
 const keyboardStore = useKeyboardStore();
 const performanceStore = usePerformanceStore();
 
@@ -114,7 +114,7 @@ const performanceValue = computed(() => {
 });
 
 const hasCurrentKey = computed(() => {
-  return activeKeys.value.includes(`${currentKeyX.value}-${currentKeyY.value}`);
+  return activeKeys.value.includes(`${rowIdx.value}-${colIdx.value}`);
 });
 
 const activeKeys = computed(() => {
@@ -132,12 +132,12 @@ const onCheck = (idx) => {
 const selectItem = async (keyVal) => {
   console.log('selectItem is', keyVal);
   await keyboardStore.updateSelectKey(keyVal);
-  // keyboardStore.updateKey({ colIndex: currentKeyX.value, rowIndex: currentKeyY.value });
+  // keyboardStore.updateKey({ colIndex: rowIdx.value, rowIndex: colIdx.value });
 };
 
-emitter.on('key-click', ({ colIndex, rowIndex }) => {
-  currentKeyX.value = colIndex;
-  currentKeyY.value = rowIndex;
+emitter.on('key-click', ({ rowIndex, colIndex }) => {
+  rowIdx.value = rowIndex;
+  colIdx.value = colIndex;
   if (hasCurrentKey.value) {
     console.log('hasCurrentKey', activeKeys.value);
     const { touchMode, single } = performanceValue.value[rowIndex][colIndex];

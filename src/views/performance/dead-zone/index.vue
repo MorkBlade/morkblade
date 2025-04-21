@@ -56,6 +56,7 @@ import sureIcon from '@/assets/images/sure.svg';
 const keyboardStore = useKeyboardStore();
 const performanceStore = usePerformanceStore();
 
+const { keyboards } = storeToRefs(keyboardStore);
 const min = 0; // 最小值
 const max = 1; // 最大值
 const pressDeadHeight = ref(10);
@@ -74,10 +75,10 @@ watchEffect(() => {
   if (activeKeys.value.length > 0) {
     // 获取最后一个
     const lastKey = activeKeys.value[activeKeys.value.length - 1];
-    const [x, y] = lastKey.split('-');
-    const result = performanceStore.deadZoneValue[y][x];
-    pressDead.value = result.pressDead;
-    releaseDead.value = result.releaseDead;
+    const [rowIndx, colIndx] = lastKey.split('-');
+    const { deadBandPressValue, deadBandReleaseValue } = keyboards.value[rowIndx][colIndx].performance;
+    pressDead.value = deadBandPressValue;
+    releaseDead.value = deadBandReleaseValue;
   }
 });
 
@@ -87,22 +88,22 @@ const disabled = computed(() => {
   return false;
 });
 
-const currentKeyX = ref(null);
-const currentKeyY = ref(null);
+const rowIdx = ref(null);
+const colIdx = ref(null);
 const hasCurrentKey = computed(() => {
-  return activeKeys.value.includes(`${currentKeyX.value}-${currentKeyY.value}`);
+  return activeKeys.value.includes(`${rowIdx.value}-${colIdx.value}`);
 });
 const perdeadZoneValue = computed(() => {
   return performanceStore.deadZoneValue;
 });
-emitter.on('key-click', ({ colIndex, rowIndex }) => {
-  currentKeyX.value = colIndex;
-  currentKeyY.value = rowIndex;
+emitter.on('key-click', ({ rowIndex, colIndex }) => {
+  rowIdx.value = rowIndex;
+  colIdx.value = colIndex;
   if (hasCurrentKey.value) {
-    const { pressDead, releaseDead } = perdeadZoneValue.value[rowIndex][colIndex];
-    const releaseHeight = (releaseDead / max) * maxKeyDeadHeight.value;
+    const { deadBandPressValue, deadBandReleaseValue } = keyboards.value[rowIndex][colIndex].performance;
+    const releaseHeight = (deadBandPressValue / max) * maxKeyDeadHeight.value;
     releaseDeadHeight.value = Math.round(releaseHeight);
-    const pressHeight = (pressDead / max) * maxKeyDeadHeight.value;
+    const pressHeight = (deadBandReleaseValue / max) * maxKeyDeadHeight.value;
     pressDeadHeight.value = Math.round(pressHeight);
   }
 });
@@ -111,15 +112,15 @@ const handlePressDeadChange = async (value) => {
   pressDead.value = value;
   const selectedKeyValues = keyboardStore.activeKeys;
   // const { currentLayoutData } = keyboardStore;
-  const performanceValue = performanceStore.deadZoneValue;
   const promises = selectedKeyValues.map(async (keyLocation) => {
     const [key1, key2] = keyLocation.split('-');
-    const x = Number(key1);
-    const y = Number(key2);
+    const rowIndex = Number(key1);
+    const colIndex = Number(key2);
     // const keyValue = currentLayoutData[y][x];
-    const height = (value || performanceValue[y][x].pressDead / max) * maxKeyDeadHeight.value;
+    const { deadBandPressValue } = keyboards.value[rowIndex][colIndex].performance;
+    const height = (value || deadBandPressValue / max) * maxKeyDeadHeight.value;
     pressDeadHeight.value = Math.round(height);
-    performanceValue[y][x].pressDead = value;
+    keyboards.value[rowIndex][colIndex].performance.deadBandPressValue = value;
     // performanceStore.setDp(keyValue.value, value);
   });
   // await Promise.all(promises);
@@ -132,12 +133,13 @@ const handleReleaseDeadChange = async (value) => {
   const performanceValue = performanceStore.deadZoneValue;
   const promises = selectedKeyValues.map(async (keyLocation) => {
     const [key1, key2] = keyLocation.split('-');
-    const x = Number(key1);
-    const y = Number(key2);
+    const rowIndex = Number(key1);
+    const colIndex = Number(key2);
     // const keyValue = currentLayoutData[y][x];
-    const height = (value || performanceValue[y][x].pressDead / max) * maxKeyDeadHeight.value;
+    const { deadBandReleaseValue } = keyboards.value[rowIndex][colIndex].performance;
+    const height = (value || deadBandReleaseValue / max) * maxKeyDeadHeight.value;
     releaseDeadHeight.value = Math.round(height);
-    performanceValue[y][x].releaseDead = value;
+    keyboards.value[rowIndex][colIndex].performance.deadBandReleaseValue = value;
     // performanceStore.setDr(keyValue.value, value);
   });
   // await Promise.all(promises);
@@ -145,14 +147,13 @@ const handleReleaseDeadChange = async (value) => {
 
 const saveDeadZoneTravel = async () => {
   const selectedKeyValues = keyboardStore.activeKeys;
-  const { currentLayoutData } = keyboardStore;
   const promises = selectedKeyValues.map(async (keyLocation) => {
     const [key1, key2] = keyLocation.split('-');
-    const x = Number(key1);
-    const y = Number(key2);
-    const keyValue = currentLayoutData[y][x];
-    performanceStore.setDp(keyValue.value, pressDead.value);
-    performanceStore.setDr(keyValue.value, releaseDead.value);
+    const rowIndex = Number(key1);
+    const colIndex = Number(key2);
+    const keyItem = keyboards.value[rowIndex][colIndex];
+    performanceStore.setDp(keyItem.keyValue, pressDead.value);
+    performanceStore.setDr(keyItem.keyValue, releaseDead.value);
   });
   const res = await Promise.all(promises);
   if (res) {

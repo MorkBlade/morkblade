@@ -34,20 +34,12 @@ const usePerformanceStore = defineStore('performance', {
 
   actions: {
     // 获取所有键值的模式行程等
-    async getKeyPerformance(keyboard) {
+    async getKeyPerformance(keyboards) {
       const performance = [];
-      for (let y = 0; y < keyboard.length; y++) {
-        if (!this.value[y]) this.value[y] = [];
-        for (let x = 0; x < keyboard[y].length; x++) {
-          const { keyValue } = keyboard[y][x];
-          this.value[y][x] = {
-            touchMode: '',
-            advancedKeyMode: '',
-            single: { singleTravel: 0 },
-            rt: { releaseTravel: 0, pressTravel: 0 },
-            keyValue,
-          };
-          performance.push(this.getPerformanceValue(keyValue, this.value[y][x]));
+      for (let row = 0; row < keyboards.length; row++) {
+        for (let col = 0; col < keyboards[row].length; col++) {
+          const keyboardItem = keyboards[row][col];
+          performance.push(this.getPerformanceValue(keyboardItem));
         }
       }
       const result = await Promise.all(performance);
@@ -55,24 +47,78 @@ const usePerformanceStore = defineStore('performance', {
     },
 
     // update key performance
-    async getPerformanceValue(keyValue, performance) {
+    async getPerformanceValue(keyboardItem) {
+      const { keyValue } = keyboardItem;
       const performanceMode = await this.getPerformanceMode(keyValue);
       if (performanceMode) {
         const { touchMode, advancedKeyMode } = performanceMode;
-        // 设置当前键盘的性能模式
-        performance.touchMode = touchMode;
-        performance.advancedKeyMode = advancedKeyMode;
+        if (touchMode === 'global') {
+          keyboardItem.performance.isGlobalTriggering = true;
+          keyboardItem.performance.isSingle = false;
+          keyboardItem.performance.isRt = false;
+        } else if (touchMode === 'single') {
+          keyboardItem.performance.isSingle = true;
+          keyboardItem.performance.isGlobalTriggering = false;
+          keyboardItem.performance.isRt = false;
+        } else if (touchMode === 'rt') {
+          keyboardItem.performance.isRt = true;
+          keyboardItem.performance.isGlobalTriggering = false;
+          keyboardItem.performance.isSingle = false;
+        }
         // 根据当前模式获取对应数据
         if (touchMode === 'single' || touchMode === 'rt') {
           const singleTravel = await this.getSingleTravel(keyValue, 2);
-          performance.single = { singleTravel };
+          keyboardItem.performance.singleTriggeringValue =
+            typeof parseFloat('1.23' - 0) === 'number' ? parseFloat(singleTravel) : 0;
         }
 
         if (touchMode === 'rt') {
           const { releaseTravel, pressTravel } = await this.getRtTravel(keyValue);
-          performance.rt = { releaseTravel, pressTravel };
+          keyboardItem.performance.rtPressValue = pressTravel;
+          keyboardItem.performance.rtReleaseValue = releaseTravel;
         }
+        // if (performanceMode) {
+        //   const { touchMode, advancedKeyMode } = performanceMode;
+        //   // 设置当前键盘的性能模式
+        //   performance.touchMode = touchMode;
+        //   performance.advancedKeyMode = advancedKeyMode;
+        //   // 根据当前模式获取对应数据
+        //   if (touchMode === 'single' || touchMode === 'rt') {
+        //     const singleTravel = await this.getSingleTravel(keyValue, 2);
+        //     performance.single = { singleTravel };
+        //   }
+
+        //   if (touchMode === 'rt') {
+        //     const { releaseTravel, pressTravel } = await this.getRtTravel(keyValue);
+        //     performance.rt = { releaseTravel, pressTravel };
+        //   }
+        // }
+        // return performance;
+
+        // 设置当前键盘的性能模式
+        let advancedType = 0;
+        if (advancedKeyMode === 1) {
+          advancedType = 'DKS';
+        } else if (advancedKeyMode === 2) {
+          advancedType = 'MPT';
+        } else if (advancedKeyMode === 3) {
+          advancedType = 'MT';
+        } else if (advancedKeyMode === 4) {
+          advancedType = 'TGL';
+        } else if (advancedKeyMode === 5) {
+          advancedType = 'END';
+        } else if (advancedKeyMode === 6) {
+          advancedType = 'MCR';
+        } else if (advancedKeyMode === 8) {
+          advancedType = 'SOCD';
+        } else if (advancedKeyMode === 9) {
+          advancedType = 'RS';
+        }
+        keyboardItem.performance.advancedKeyMode = advancedKeyMode;
+        keyboardItem.advancedKeys.advancedType = advancedType;
       }
+      // 获取死区和轴相关
+      await this.getDpDrValue(keyboardItem);
       return performance;
     },
 
@@ -152,13 +198,14 @@ const usePerformanceStore = defineStore('performance', {
       }
     },
 
-    async getDpDrValue(keyValue, dpDr) {
+    async getDpDrValue(keyboardItem) {
+      const { keyValue } = keyboardItem;
       const getDpDr = await this.getDpDr(keyValue);
       if (getDpDr) {
-        const { releaseDead, pressDead } = getDpDr;
-        dpDr.pressDead = pressDead;
-        dpDr.releaseDead = releaseDead;
+        keyboardItem.performance.deadBandPressValue = getDpDr.pressDead;
+        keyboardItem.performance.deadBandReleaseValue = getDpDr.releaseDead;
       }
+      return getDpDr;
     },
 
     // 获取死区
@@ -192,9 +239,9 @@ const usePerformanceStore = defineStore('performance', {
       for (let y = 0; y < keyboard.length; y++) {
         if (!this.calibrations[y]) this.calibrations[y] = [];
         for (let x = 0; x < keyboard[y].length; x++) {
-          const { location } = keyboard[y][x];
+          const { row, col } = keyboard[y][x];
           if (!this.calibrations[y][x]) this.calibrations[y][x] = 0;
-          this.calibrations[y][x] = result.calibrations[location.row][location.col];
+          this.calibrations[y][x] = result.calibrations[row][col];
         }
       }
       const { max } = this.getMaxPressTravel([], result.travels);
@@ -224,7 +271,7 @@ const usePerformanceStore = defineStore('performance', {
             const curRowKeys = keyboard[i];
             let keyItem = null;
             for (let k = 0; k < curRowKeys.length; k++) {
-              if (curRowKeys[k].location.col === j) {
+              if (curRowKeys[k].col === j) {
                 keyItem = curRowKeys[k];
               }
             }

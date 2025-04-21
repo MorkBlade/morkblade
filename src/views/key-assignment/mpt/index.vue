@@ -168,7 +168,7 @@ const save = async () => {
     // 获取当前键盘的keycode
     const location = keyboardStore.activeKeys[0].split('-');
     const [x, y] = location;
-    const { value } = keyboardStore.currentLayoutData[y][x];
+    const { value } = keyboardStore.keyboards[y][x];
     key = value;
   }
   const res = await highLevelKeyStore.setMpt({ key, ...mptInfo.value });

@@ -45,7 +45,7 @@ const changeMenu = (idx) => {
   }
   emitter.emit('in-the-where', { value: modulesName[idx] });
   setTimeout(() => {
-    console.log(appStore.changeConfig);
+    // console.log(appStore.changeConfig);
     // emitter.emit('in-the-where', { value: modulesName[4] });
   }, 10000);
 };

@@ -25,6 +25,7 @@ import travelTestCard from '@/components/travel-test-card.vue';
 import setTravelCard from '@/components/set-travel-card.vue';
 import saveConfig from './components/save-config.vue';
 import sureIcon from '@/assets/images/sure.svg';
+import { storeToRefs } from 'pinia';
 
 const min = 0.005; // 最小值
 const max = 3.3; // 最大值
@@ -32,34 +33,37 @@ const title = '按键行程设置';
 
 const keyboardStore = useKeyboardStore();
 const performanceStore = usePerformanceStore();
+
+const { keyboards } = storeToRefs(keyboardStore);
 const singleTravel = ref(performanceStore.singleTouchTravel);
 
 const activeKeys = computed(() => {
   return keyboardStore.activeKeys;
 });
 
-const performanceValue = computed(() => {
-  return performanceStore.value;
-});
+// const performanceValue = computed(() => {
+//   return performanceStore.value;
+// });
 
 const disabled = computed(() => {
   return activeKeys.value.length === 0;
 });
 
 const hasCurrentKey = computed(() => {
-  return activeKeys.value.includes(`${currentKeyX.value}-${currentKeyY.value}`);
+  return activeKeys.value.includes(`${rowIdx.value}-${colIdx.value}`);
 });
 
-const currentKeyX = ref(null);
-const currentKeyY = ref(null);
+const rowIdx = ref(null);
+const colIdx = ref(null);
 
-emitter.on('key-click', ({ colIndex, rowIndex }) => {
-  currentKeyX.value = colIndex;
-  currentKeyY.value = rowIndex;
+emitter.on('key-click', ({ rowIndex, colIndex }) => {
+  rowIdx.value = rowIndex;
+  colIdx.value = colIndex;
   if (hasCurrentKey.value) {
-    const { touchMode, single } = performanceValue.value[rowIndex][colIndex];
-    if (touchMode === 'single' || touchMode === 'rt') {
-      singleTravel.value = typeof single.singleTravel === 'number' ? single.singleTravel : Number(single.singleTravel);
+    const { isRt, isSingle, singleTriggeringValue } = keyboards.value[rowIndex][colIndex].performance;
+    if (isRt || isSingle) {
+      singleTravel.value =
+        typeof singleTriggeringValue === 'number' ? singleTriggeringValue : parseFloat(singleTriggeringValue);
     }
   }
 });
@@ -74,30 +78,30 @@ const handleTriggerPointChange = async (value) => {
   // 拿到选中的键值
   singleTravel.value = value;
   // const selectedKeyValues = keyboardStore.activeKeys;
-  const performanceValue = performanceStore.value;
-  const touchMode = rtEnabled.value ? 'rt' : 'single';
+  // const performanceValue = performanceStore.value;
+  // const touchMode = rtEnabled.value ? 'rt' : 'single';
   const promises = activeKeys.value.map(async (keyLocation) => {
     const [key1, key2] = keyLocation.split('-');
-    const x = Number(key1);
-    const y = Number(key2);
-    performanceValue[y][x].touchMode = touchMode;
-    performanceValue[y][x].single.singleTravel = value;
+    const rowIndex = Number(key1);
+    const colIndex = Number(key2);
+    keyboards.value[rowIndex][colIndex].performance.isRt = false;
+    keyboards.value[rowIndex][colIndex].performance.isSingle = true;
+    keyboards.value[rowIndex][colIndex].performance.singleTriggeringValue = value;
   });
   await Promise.all(promises);
 };
 
 const saveSingleConfig = async () => {
-  const { currentLayoutData } = keyboardStore;
-  const performanceValue = performanceStore.value;
+  // const performanceValue = performanceStore.value;
   const touchMode = rtEnabled.value ? 'rt' : 'single';
   const promises = activeKeys.value.map(async (keyLocation) => {
     const [key1, key2] = keyLocation.split('-');
-    const x = Number(key1);
-    const y = Number(key2);
-    const keyValue = currentLayoutData[y][x];
-    const { advancedKeyMode } = performanceValue[y][x];
-    performanceStore.setPerformanceMode(keyValue.value, touchMode, advancedKeyMode);
-    performanceStore.setSingleTravel(keyValue.value, singleTravel.value);
+    const rowIndex = Number(key1);
+    const colIndex = Number(key2);
+    const keyItem = keyboards.value[rowIndex][colIndex];
+    const { advancedKeyMode } = keyItem.performance;
+    performanceStore.setPerformanceMode(keyItem.keyValue, touchMode, advancedKeyMode);
+    performanceStore.setSingleTravel(keyItem.keyValue, singleTravel.value);
   });
   const res = await Promise.all(promises);
   if (res) {

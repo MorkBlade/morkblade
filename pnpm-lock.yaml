@@ -5,7 +5,7 @@ settings:
   excludeLinksFromLockfile: false
 
 overrides:
-  '@sparklinkplayjoy/sdk-keyboard': link:..\xsyd\SDK\sdk\keyboard
+  '@sparklinkplayjoy/sdk-keyboard': link:../../SDK/sdk/keyboard
 
 importers:
 
@@ -15,8 +15,8 @@ importers:
         specifier: ^5.5.2
         version: 5.5.2
       '@sparklinkplayjoy/sdk-keyboard':
-        specifier: link:../xsyd/SDK/sdk/keyboard
-        version: link:../xsyd/SDK/sdk/keyboard
+        specifier: link:../../SDK/sdk/keyboard
+        version: link:../../SDK/sdk/keyboard
       echarts:
         specifier: ^5.5.1
         version: 5.6.0

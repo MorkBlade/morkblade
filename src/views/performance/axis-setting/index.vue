@@ -2,11 +2,12 @@
   <div class="axis-container">
     <div class="axis-container__setting">
       <mCarousel
+        showText
         :carouselData="KEY_SHAFT"
         :btnText="'应用轴体'"
         :offset="scaleValue(25)"
         :width="scaleValue(920)"
-        showText
+        :selected-id="axisID"
         @changeAxis="changeAxis"
       />
     </div>
@@ -17,7 +18,8 @@
       </div>
       <div class="axis-travel">
         <span>轴体名称:</span>
-        <span>{{ travelRange }}</span>
+        <!-- <span>{{ travelRange }}</span> -->
+        {{ axisID }}
       </div>
       <saveConfigBtn btnText="应用轴体" @saveConfig="handleSaveAxis" />
     </div>
@@ -34,12 +36,26 @@ import { KEY_SHAFT } from '@/configs/constant/index.js';
 import mCarousel from '@/components/carousel.vue';
 import saveConfigBtn from '@/components/save-config-btn.vue';
 import sureIcon from '@/assets/images/sure.svg';
+import { storeToRefs } from 'pinia';
 
 const keyboardStore = useKeyboardStore();
+const { keyboards } = storeToRefs(keyboardStore);
 const checkAixsId = ref(3);
 
 const activeKeys = computed(() => {
   return keyboardStore.activeKeys;
+});
+
+const axisID = computed(() => {
+  if (activeKeys.value.length > 0) {
+    const lastcheckedKey = String(activeKeys.value[activeKeys.value.length - 1]);
+    const [key1, key2] = lastcheckedKey.split('-');
+    const rowIndex = Number(key1);
+    const colIndex = Number(key2);
+    console.log(keyboards.value[rowIndex][colIndex].performance.axisID);
+    return keyboards.value[rowIndex][colIndex].performance.axisID;
+  }
+  return 0;
 });
 
 const travelRange = computed(() => {
@@ -50,17 +66,15 @@ const travelRange = computed(() => {
 });
 
 const handleSaveAxis = async () => {
-  // console.log('handleSaveAxis', axis, activeKeys.value);
-  // checkAixsId.value = axis - 1;
-  const { currentLayoutData } = keyboardStore;
   if (activeKeys.value.length !== 0) {
     const promises = activeKeys.value.map(async (keyLocation) => {
       const [key1, key2] = keyLocation.split('-');
-      const x = Number(key1);
-      const y = Number(key2);
-      currentLayoutData[y][x].axis = checkAixsId.value;
-      const keyValue = currentLayoutData[y][x];
-      services.setAxis(keyValue.value, checkAixsId.value);
+      const rowIndex = Number(key1);
+      const colIndex = Number(key2);
+      console.log(rowIndex, colIndex);
+      keyboards.value[rowIndex][colIndex].performance.axisID = checkAixsId.value;
+      const keyItem = keyboards.value[rowIndex][colIndex];
+      services.setAxis(keyItem.keyValue, checkAixsId.value);
     });
     const res = await Promise.all(promises);
     if (res) {

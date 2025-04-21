@@ -34,27 +34,13 @@
 import saveConfigBtn from './save-config-btn.vue';
 import { scaleValue } from '@/utils/responsive.js';
 
-const { carouselData, btnText, offset } = defineProps({
-  carouselData: {
-    type: Array,
-    default: [],
-  },
-  btnText: {
-    type: String,
-    default: '',
-  },
-  width: {
-    type: Number,
-    default: scaleValue(1030),
-  },
-  offset: {
-    type: Number,
-    default: scaleValue(160),
-  },
-  showText: {
-    type: Boolean,
-    default: false,
-  },
+const { carouselData, btnText, offset, selectedId } = defineProps({
+  carouselData: { type: Array, default: () => [] },
+  btnText: { type: String, default: '' },
+  width: { type: Number, default: scaleValue(1030) },
+  offset: { type: Number, default: scaleValue(160) },
+  showText: { type: Boolean, default: false },
+  selectedId: { type: Number, default: 0 },
 });
 const emits = defineEmits(['handleSave', 'changeAxis']);
 
@@ -125,14 +111,14 @@ onMounted(() => {
   // 设置初始位置
   currentIdx.value = 6;
   offsetVal.value = -(SLIDE_WIDTH.value * 3);
-  // offsetVal.value = -525;
-  // console.log('初始化：', {
-  //   总长度: carouselData.value.length,
-  //   原数组长度: originalLength.value,
-  //   当前索引: currentIdx.value,
-  //   偏移量: offsetVal.value,
-  // });
 });
+
+watch(
+  () => selectedId,
+  (newVal) => {
+    console.log('new selcet axis id', newVal);
+  },
+);
 
 const isDragging = ref(false);
 const startX = ref(0);

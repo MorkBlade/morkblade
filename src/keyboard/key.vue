@@ -8,7 +8,7 @@
     @dragover.prevent
     @mouseup="(e) => Keydrop(e, rowIndex, colIndex, keyItem.key)"
   >
-    <p class="top-key">{{ byteToKey[keyItem.value] }}</p>
+    <p class="top-key">{{ showKeyCode }}</p>
     <!-- <p class="center-key" v-if="!singleTravel && !rtReleaseTravel && !rtPressTravel">{{ byteToKey[keyItem.key] }}</p> -->
     <div class="show-val-box" v-if="route.path === '/performance'">
       <p class="single-travel" v-if="singleTravel !== null">{{ singleTravel }}</p>
@@ -33,7 +33,7 @@
       @mouseleave="onMouseLeave"
       @mouseup.stop="startMouseUp"
     >
-      <p class="top-key" v-if="singleTravel || rtReleaseTravel || rtPressTravel">{{ byteToKey[keyItem.value] }}</p>
+      <p class="top-key" v-if="singleTravel || rtReleaseTravel || rtPressTravel">{{ showKeyCode }}</p>
     </div>
     <img :src="VeriftIcon" class="verify_icon" v-if="route.path === '/key-calibration' && verifySuc" />
     <div v-if="route.path === '/performance' && axisVal !== null" class="axis">
@@ -72,7 +72,7 @@ const macroStore = useMacroStore();
 const keyboardStore = useKeyboardStore();
 const performanceStore = usePerformanceStore();
 const lightSettingStore = useLightSettingStore();
-const currentLayoutData = computed(() => keyboardStore.currentLayoutData);
+const { keyboards, layout } = storeToRefs(keyboardStore);
 const currentModel = ref('mechanicalMode');
 const currentPerformanceData = computed(() => performanceStore.value);
 
@@ -112,13 +112,24 @@ const currentKeyColor = computed(() => {
   return lightSettingStore.getKeyColor(keyItem.key) || 'rgba(255, 255, 255,0)';
 });
 
+const showKeyCode = computed(() => {
+  if (keyboards.value.length > 0) {
+    const keyCap = keyboards.value[rowIndex][colIndex];
+    const customKeysKeyName = `fn${layout.value}`;
+    const { bindKeyValue } = keyCap.customKeys[customKeysKeyName];
+    return keyboard[bindKeyValue];
+  }
+
+  return keyboard[0];
+});
+
 const verifySuc = computed(() => {
   return performanceStore.veifyKey[keyItem.key];
 });
 
 const PerformanceData = computed(() => {
-  if (currentPerformanceData.value[rowIndex]?.[colIndex]) {
-    return currentPerformanceData.value[rowIndex][colIndex];
+  if (keyboards.value[rowIndex]?.[colIndex]) {
+    return keyboards.value[rowIndex][colIndex].performance;
   }
   return null;
 });
@@ -154,7 +165,7 @@ const advancedTag = computed(() => {
 // 显示rtPressTravel
 const rtPressTravel = computed(() => {
   if (currentModel.value === 'mechanicalMode' || currentModel.value === 'quickTrigger') {
-    return PerformanceData.value?.rt.pressTravel;
+    return PerformanceData.value?.rtPressValue;
   }
   return null;
 });
@@ -162,39 +173,36 @@ const rtPressTravel = computed(() => {
 // 显示rtReleaseTravel
 const rtReleaseTravel = computed(() => {
   if (currentModel.value === 'mechanicalMode' || currentModel.value === 'quickTrigger') {
-    return PerformanceData.value?.rt.releaseTravel;
+    return PerformanceData.value?.rtReleaseValue;
   }
   return null;
 });
 
 // 显示singleTravel
 const singleTravel = computed(() => {
-  if (
-    typeof parseFloat(PerformanceData.value?.single.singleTravel) === 'number' ||
-    typeof parseInt(PerformanceData.value?.single.singleTravel) === 'number'
-  ) {
-    return PerformanceData.value?.single.singleTravel;
+  if (PerformanceData.value?.singleTriggeringValue) {
+    return PerformanceData.value?.singleTriggeringValue;
   }
   return null;
 });
 
 const pressDeadTravel = computed(() => {
   if (currentModel.value === 'deadZone') {
-    return performanceStore.deadZoneValue[rowIndex][colIndex].pressDead;
+    return PerformanceData.value?.deadBandPressValue;
   }
   return null;
 });
 
 const releaseDead = computed(() => {
   if (currentModel.value === 'deadZone') {
-    return performanceStore.deadZoneValue[rowIndex][colIndex].releaseDead;
+    return PerformanceData.value?.deadBandReleaseValue;
   }
   return null;
 });
 
 const axisVal = computed(() => {
   if (currentModel.value === 'axis') {
-    return keyboardStore.currentLayoutData[rowIndex][colIndex].axis;
+    return keyboards.value[rowIndex][colIndex].axis;
   }
   return null;
 });
@@ -245,7 +253,7 @@ const Keydrop = async (e, rowIndex, colIndex, key) => {
       await macroStore.setMacro();
     }
   } else {
-    keyboardStore.updateKey({ colIndex: colIndex, rowIndex: rowIndex });
+    keyboardStore.updateKey({ rowIndex, colIndex });
   }
 };
 </script>

@@ -59,14 +59,16 @@ import linkedIcon from '@/assets/images/link2.svg';
 const keyboardStore = useKeyboardStore();
 const performanceStore = usePerformanceStore();
 
+const { keyboards } = storeToRefs(keyboardStore);
+
 const min = 0.005; // 最小值
 const max = 3.3; // 最大值
 const travelVal = ref(0);
 const RTKeyDown = ref(0);
 const RTKeyUp = ref(0);
 
-const currentKeyX = ref(null);
-const currentKeyY = ref(null);
+const rowIdx = ref(null);
+const colIdx = ref(null);
 const rtEnabled = ref(true);
 const rtPressTravel = ref(performanceStore.rtPressTravel);
 const rtReleaseTravel = ref(performanceStore.rtReleaseTravel);
@@ -90,19 +92,21 @@ const disabled = computed(() => {
 });
 
 const hasCurrentKey = computed(() => {
-  return activeKeys.value.includes(`${currentKeyX.value}-${currentKeyY.value}`);
+  return activeKeys.value.includes(`${rowIdx.value}-${colIdx.value}`);
 });
 
-emitter.on('key-click', async ({ colIndex, rowIndex }) => {
-  currentKeyX.value = colIndex;
-  currentKeyY.value = rowIndex;
+emitter.on('key-click', async ({ rowIndex, colIndex }) => {
+  rowIdx.value = rowIndex;
+  colIdx.value = colIndex;
   if (hasCurrentKey.value) {
-    const { touchMode, single, rt } = performanceValue.value[rowIndex][colIndex];
+    // const { touchMode, single, rt } = performanceValue.value[rowIndex][colIndex];
+    const { singleTriggeringValue, rtPressValue, rtReleaseValue } = keyboards.value[rowIndex][colIndex].performance;
     rtEnabled.value = true;
     await handleRtEnabledChange();
-    singleTravel.value = typeof single.singleTravel === 'number' ? single.singleTravel : Number(single.singleTravel);
-    rtPressTravel.value = typeof rt.pressTravel === 'number' ? rt.pressTravel : Number(rt.pressTravel);
-    rtReleaseTravel.value = typeof rt.releaseTravel === 'number' ? rt.releaseTravel : Number(rt.releaseTravel);
+    singleTravel.value =
+      typeof singleTriggeringValue === 'number' ? singleTriggeringValue : Number(singleTriggeringValue);
+    rtPressTravel.value = typeof rtPressValue === 'number' ? rtPressValue : Number(rtPressValue);
+    rtReleaseTravel.value = typeof rtReleaseValue === 'number' ? rtReleaseValue : Number(rtReleaseValue);
   } else {
     rtEnabled.value = false;
   }
@@ -116,14 +120,15 @@ const handleRtEnabledChange = async (value) => {
   const selectedKeyValues = keyboardStore.activeKeys;
   const performanceValue = performanceStore.value;
   if (rtEnabled.value && selectedKeyValues.length > 0) {
-    const promises = selectedKeyValues.map(async (keyLocation) => {
+    selectedKeyValues.map(async (keyLocation) => {
       const [key1, key2] = keyLocation.split('-');
-      const x = Number(key1);
-      const y = Number(key2);
-      const { rt } = performanceValue[y][x];
-      performanceValue[y][x].touchMode = 'rt';
-      performanceValue[y][x].rt.pressTravel = rt.pressTravel || 0.3;
-      performanceValue[y][x].rt.releaseTravel = rt.releaseTravel || 0.3;
+      const rowIndex = Number(key1);
+      const colIndex = Number(key2);
+      const { rtPressValue, rtReleaseValue } = keyboards.value[rowIndex][colIndex].performance;
+      keyboards.value[rowIndex][colIndex].performance.isRt = true;
+      keyboards.value[rowIndex][colIndex].performance.isSingle = false;
+      keyboards.value[rowIndex][colIndex].performance.rtPressValue = rtPressValue || 0.3;
+      keyboards.value[rowIndex][colIndex].performance.rtReleaseValue = rtReleaseValue || 0.3;
     });
   }
 
@@ -138,10 +143,10 @@ const handleTriggerPointChange = async (value) => {
   const touchMode = rtEnabled.value ? 'rt' : 'single';
   const promises = activeKeys.value.map(async (keyLocation) => {
     const [key1, key2] = keyLocation.split('-');
-    const x = Number(key1);
-    const y = Number(key2);
-    performanceValue[y][x].touchMode = touchMode;
-    performanceValue[y][x].single.singleTravel = value;
+    const rowIndex = Number(key1);
+    const colIndex = Number(key2);
+    // performanceValue[rowIndex][colIndex].touchMode = touchMode;
+    keyboards.value[rowIndex][colIndex].performance.singleTriggeringValue = value;
   });
 };
 
@@ -155,11 +160,15 @@ const setRtPressTravel = async (value) => {
   if (rtEnabled.value) {
     const promises = selectedKeyValues.map(async (keyLocation) => {
       const [key1, key2] = keyLocation.split('-');
-      const x = Number(key1);
-      const y = Number(key2);
-      performanceValue[y][x].touchMode = 'rt';
-      performanceValue[y][x].rt.pressTravel = rtPressTravel.value;
-      performanceValue[y][x].rt.releaseTravel = rtReleaseTravel.value;
+      const rowIndex = Number(key1);
+      const colIndex = Number(key2);
+      // performanceValue[rowIndex][colIndex].touchMode = 'rt';
+      // performanceValue[rowIndex][colIndex].rt.pressTravel = rtPressTravel.value;
+      // performanceValue[rowIndex][colIndex].rt.releaseTravel = rtReleaseTravel.value;
+      keyboards.value[rowIndex][colIndex].performance.isRt = true;
+      keyboards.value[rowIndex][colIndex].performance.isSingle = false;
+      keyboards.value[rowIndex][colIndex].performance.rtPressValue = rtPressTravel.value;
+      keyboards.value[rowIndex][colIndex].performance.rtReleaseValue = rtReleaseTravel.value;
     });
   }
 };
@@ -174,11 +183,12 @@ const setRtReleaseTravel = async (value) => {
   if (rtEnabled.value) {
     const promises = selectedKeyValues.map(async (keyLocation) => {
       const [key1, key2] = keyLocation.split('-');
-      const x = Number(key1);
-      const y = Number(key2);
-      performanceValue[y][x].touchMode = 'rt';
-      performanceValue[y][x].rt.pressTravel = rtPressTravel.value;
-      performanceValue[y][x].rt.releaseTravel = rtReleaseTravel.value;
+      const rowIndex = Number(key1);
+      const colIndex = Number(key2);
+      keyboards.value[rowIndex][colIndex].performance.isRt = true;
+      keyboards.value[rowIndex][colIndex].performance.isSingle = false;
+      keyboards.value[rowIndex][colIndex].performance.rtPressValue = rtPressTravel.value;
+      keyboards.value[rowIndex][colIndex].performance.rtReleaseValue = rtReleaseTravel.value;
     });
   }
 };
@@ -194,19 +204,21 @@ const onLink = async () => {
 
 const saveRtConfig = async () => {
   const selectedKeyValues = keyboardStore.activeKeys;
-  const { currentLayoutData } = keyboardStore;
   const performanceValue = performanceStore.value;
   const promises = selectedKeyValues.map(async (keyLocation) => {
     const [key1, key2] = keyLocation.split('-');
     const x = Number(key1);
     const y = Number(key2);
-    const keyValue = currentLayoutData[y][x];
-    const { advancedKeyMode } = performanceValue[y][x];
+    const keyItem = keyboards.value[rowIndex][colIndex];
+    const { advancedKeyMode } = keyItem.performance;
     return Promise.all([
-      performanceStore.setPerformanceMode(keyValue.value, 'rt', advancedKeyMode),
-      performanceStore.setRtPressTravel(keyValue.value, rtPressTravel.value),
-      performanceStore.setRtReleaseTravel(keyValue.value, rtReleaseTravel.value),
-      performanceStore.setSingleTravel(keyValue.value, performanceValue[y][x].single.singleTravel),
+      performanceStore.setPerformanceMode(keyItem.keyValue, 'rt', advancedKeyMode),
+      performanceStore.setRtPressTravel(keyItem.keyValue, rtPressTravel.value),
+      performanceStore.setRtReleaseTravel(keyItem.keyValue, rtReleaseTravel.value),
+      performanceStore.setSingleTravel(
+        keyItem.keyValue,
+        keyboards.value[rowIndex][colIndex].performance.singleTriggeringValue,
+      ),
     ]);
   });
   const res = await Promise.all(promises);

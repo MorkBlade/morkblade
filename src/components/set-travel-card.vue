@@ -11,7 +11,7 @@
             !disabled
               ? {
                   mousedown: startDrag,
-                  touchstart: startDrag,
+                  // touchstart: startDrag,
                 }
               : {}
           "
@@ -55,7 +55,7 @@
 </template>
 
 <script setup>
-const { title, keyVal, sliderVal, min, max, offsetX, deadZone } = defineProps({
+const { title, keyVal, sliderVal, min, max, offsetX, deadZone, disabled } = defineProps({
   title: { type: String, default: '' },
   keyVal: { type: [String, Number], default: 0 },
   sliderVal: { type: Number, default: 0 },
@@ -105,7 +105,7 @@ const startDrag = (e) => {
   }
   document.addEventListener('mousemove', onDrag);
   document.addEventListener('mouseup', endDrag);
-  document.addEventListener('touchmove', onDrag);
+  document.addEventListener('touchmove', onDrag, { passive: true });
   document.addEventListener('touchend', endDrag);
 };
 
@@ -153,11 +153,19 @@ const updateValueFromInput = () => {
 onMounted(() => {
   document.addEventListener('mouseup', endDrag);
   document.addEventListener('touchend', endDrag);
+  const sliderBtn = sliderContainer.value?.querySelector('.slider-btn');
+  if (sliderBtn && !disabled) {
+    sliderBtn.addEventListener('touchstart', startDrag, { passive: true });
+  }
 });
 
 onUnmounted(() => {
   document.removeEventListener('mouseup', endDrag);
   document.removeEventListener('touchend', endDrag);
+  const sliderBtn = sliderContainer.value?.querySelector('.slider-btn');
+  if (sliderBtn) {
+    sliderBtn.removeEventListener('touchstart', startDrag);
+  }
 });
 </script>
 
