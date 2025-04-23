@@ -7,7 +7,7 @@
           <img
             class="progress"
             src="@/assets/images/progress.png"
-            :style="{ transform: `translateY(${dynamicHeight}px)` }"
+            :style="{ transform: `translateY(${testEnabled?dynamicHeight:-400}px)` }"
           />
         </div>
       </div>
@@ -42,27 +42,44 @@
 </template>
 
 <script setup>
-import { usePerformanceStore } from '@/stores';
+import { usePerformanceStore, useKeyboardStore } from '@/stores';
 
+const keyboardStore = useKeyboardStore();
 const performanceStore = usePerformanceStore();
 
 const testEnabled = ref(false);
 const maxMM = ref(0);
-const pressStatus = ref(0);
 const keyPressTestCount = ref(0);
+const version = localStorage.getItem('keyboardVer');
 
-const handleSwitchChange = (value) => {
-  if (!value) {
-    maxMM.value = 0;
+const handleSwitchChange = async (value) => {
+  if(version === 'v2') {
+    if (value) {
+    await performanceStore.calibrationStartV2();
+  } else {
+    setTimeout(async () => {
+      await performanceStore.calibrationEndV2();
+    }, 50);
+  }
+  } else {
+    if (!value) {
+      maxMM.value = 0;
+    }
   }
   keyPressTestCount.value++;
+
 };
 
 watch(keyPressTestCount, async () => {
   if (testEnabled.value) {
-    const result = await performanceStore.getRm6X21Travel();
-    maxMM.value = result.max;
-    pressStatus.value = result.press;
+    if(version === 'v2') {
+      const { max } = await performanceStore.getRm6X21CalibrationV2(keyboardStore.keyboards);
+      maxMM.value = max;
+
+    } else {
+      const { max } = await performanceStore.getRm6X21Travel();
+      maxMM.value = max;
+    }
     keyPressTestCount.value++;
   }
 });
@@ -71,9 +88,6 @@ const dynamicHeight = computed(() => {
   // 使用 CSS 变量获取基准值
   const baseValue = getComputedStyle(document.documentElement).getPropertyValue('--size-260');
   const baseHeight = parseInt(baseValue) || 190;
-
-  // 计算高度比例
-  const heightRatio = baseHeight / 190; // 使用原始值 190 作为基准
 
   // 计算动态高度
   const height = -baseHeight + (maxMM.value / 4.0) * ((baseHeight * baseHeight) / 190);
@@ -152,7 +166,7 @@ const getSwitchWidth = () => {
         height: 100%;
         object-fit: fill;
         transform: translateX(var(--translate-x-value));
-        transition: all 0.2s ease-in-out;
+        transition: transform 0.1s ease-in-out;
         // background-image: url('@/assets/images/progress.png');
         // background-size: cover;
         // background-repeat: no-repeat;

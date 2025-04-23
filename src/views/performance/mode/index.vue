@@ -26,6 +26,7 @@ import setTravelCard from '@/components/set-travel-card.vue';
 import saveConfig from './components/save-config.vue';
 import sureIcon from '@/assets/images/sure.svg';
 import { storeToRefs } from 'pinia';
+import { usePerformanceHook } from '@/hooks/usePerformanceHook';
 
 const min = 0.005; // 最小值
 const max = 3.3; // 最大值
@@ -40,10 +41,6 @@ const singleTravel = ref(performanceStore.singleTouchTravel);
 const activeKeys = computed(() => {
   return keyboardStore.activeKeys;
 });
-
-// const performanceValue = computed(() => {
-//   return performanceStore.value;
-// });
 
 const disabled = computed(() => {
   return activeKeys.value.length === 0;
@@ -61,10 +58,10 @@ emitter.on('key-click', ({ rowIndex, colIndex }) => {
   colIdx.value = colIndex;
   if (hasCurrentKey.value) {
     const { isRt, isSingle, singleTriggeringValue } = keyboards.value[rowIndex][colIndex].performance;
-    if (isRt || isSingle) {
+    // if (isRt || isSingle) {
       singleTravel.value =
         typeof singleTriggeringValue === 'number' ? singleTriggeringValue : parseFloat(singleTriggeringValue);
-    }
+    // }
   }
 });
 
@@ -77,10 +74,7 @@ emitter.on('rt-enabled', ({ value }) => {
 const handleTriggerPointChange = async (value) => {
   // 拿到选中的键值
   singleTravel.value = value;
-  // const selectedKeyValues = keyboardStore.activeKeys;
-  // const performanceValue = performanceStore.value;
-  // const touchMode = rtEnabled.value ? 'rt' : 'single';
-  const promises = activeKeys.value.map(async (keyLocation) => {
+  activeKeys.value.map(async (keyLocation) => {
     const [key1, key2] = keyLocation.split('-');
     const rowIndex = Number(key1);
     const colIndex = Number(key2);
@@ -88,22 +82,11 @@ const handleTriggerPointChange = async (value) => {
     keyboards.value[rowIndex][colIndex].performance.isSingle = true;
     keyboards.value[rowIndex][colIndex].performance.singleTriggeringValue = value;
   });
-  await Promise.all(promises);
 };
 
 const saveSingleConfig = async () => {
-  // const performanceValue = performanceStore.value;
-  const touchMode = rtEnabled.value ? 'rt' : 'single';
-  const promises = activeKeys.value.map(async (keyLocation) => {
-    const [key1, key2] = keyLocation.split('-');
-    const rowIndex = Number(key1);
-    const colIndex = Number(key2);
-    const keyItem = keyboards.value[rowIndex][colIndex];
-    const { advancedKeyMode } = keyItem.performance;
-    performanceStore.setPerformanceMode(keyItem.keyValue, touchMode, advancedKeyMode);
-    performanceStore.setSingleTravel(keyItem.keyValue, singleTravel.value);
-  });
-  const res = await Promise.all(promises);
+  const { setSingleTravel } = usePerformanceHook();
+  const res = setSingleTravel(keyboards.value,activeKeys.value)
   if (res) {
     ElMessage({
       grouping: true,

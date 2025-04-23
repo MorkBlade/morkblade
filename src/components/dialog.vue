@@ -85,7 +85,7 @@ watch(
 watch(
   () => updateRes,
   (newVal) => {
-    console.log('update res is:>>>>>>>>', updateRes);
+    // console.log('update res is:>>>>>>>>', updateRes);
     if (newVal) {
       updateSuc.value = true;
     }

@@ -48,7 +48,7 @@ const isStart = ref(false);
 
 const keys = ref([]);
 const keyID = ref(0);
-
+const version = localStorage.getItem('keyboardVer');
 const inputText = ref('');
 const startTime = ref(null);
 const endTime = ref(null);
@@ -56,7 +56,7 @@ const endTime = ref(null);
 const onStart = () => {
   isStart.value = !isStart.value;
   if (!isStart.value) {
-    performanceStore.calibrationEnd();
+    version === 'v2' ? performanceStore.calibrationEndV2() : performanceStore.calibrationEnd();
   }
   isAct.value = false;
 };
@@ -122,9 +122,10 @@ const delay = (ms) => {
 
 onMounted(async () => {
   if (deviceStore.updateSuc) {
+    console.log('asdasdasdwas onmounted');
     await deviceStore.connectDevice();
     delay(100);
-    await keyboardStore.defKey();
+    await keyboardStore.initKeyboard();
     setTimeout(async () => {
       deviceStore.updateSuc = false;
       try {

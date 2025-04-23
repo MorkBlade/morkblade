@@ -71,7 +71,7 @@ const prevClickSlide = () => {
       currentIdx.value = originalLength.value + 2;
       // 计算对应的偏移量
       offsetVal.value = -(SLIDE_WIDTH.value * (originalLength.value - 1));
-      console.log('prev click', currentIdx.value, offsetVal.value, SLIDE_WIDTH.value, originalLength.value - 1);
+      // console.log('prev click', currentIdx.value, offsetVal.value, SLIDE_WIDTH.value, originalLength.value - 1);
     }, 500);
   }
   emits('changeAxis', localCarouselData.value[currentIdx.value].id);

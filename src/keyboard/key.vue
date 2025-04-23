@@ -36,8 +36,8 @@
       <p class="top-key" v-if="singleTravel || rtReleaseTravel || rtPressTravel">{{ showKeyCode }}</p>
     </div>
     <img :src="VeriftIcon" class="verify_icon" v-if="route.path === '/key-calibration' && verifySuc" />
-    <div v-if="route.path === '/performance' && axisVal !== null" class="axis">
-      <span :style="{ backgroundColor: KEY_SHAFT[axisVal]?.color }"></span>
+    <div v-if="route.path === '/performance' && currentModel == 'axis' && axisVal !== null" class="axis">
+      <span :style="{ backgroundColor: KEY_SHAFT?.[axisVal]?.color ?? 'transparent' }"></span>
     </div>
   </div>
 </template>
@@ -51,6 +51,7 @@ import byteToKey from '@/configs/byte-to-key/keyboard.js';
 import emitter from '@/utils/app-emitter';
 import { usePerformanceStore, useAppStore, useMacroStore, useKeyboardStore, useLightSettingStore } from '@/stores';
 import keyboard from '@/configs/byte-to-key/keyboard.js';
+import { onBeforeMount } from 'vue';
 
 const {
   row: rowIndex,
@@ -202,7 +203,7 @@ const releaseDead = computed(() => {
 
 const axisVal = computed(() => {
   if (currentModel.value === 'axis') {
-    return keyboards.value[rowIndex][colIndex].axis;
+    return keyboards.value?.[rowIndex]?.[colIndex]?.performance?.axisID ?? null;
   }
   return null;
 });

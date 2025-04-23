@@ -78,7 +78,7 @@ watch(
 
 const selectItem = (item) => {
   if (!item) {
-    console.log('current is add');
+    // console.log('current is add');
   }
   defaultHeight.value = 0;
   // console.log(defaultHeight.value);

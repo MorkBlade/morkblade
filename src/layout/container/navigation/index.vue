@@ -20,6 +20,8 @@
 </template>
 
 <script setup>
+import emitter from '@/utils/app-emitter';
+
 import performanceW from '@/assets/images/performance-w.svg';
 import performanceB from '@/assets/images/performance-b.svg';
 import keyAssignmentW from '@/assets/images/key-assignment-w.svg';
@@ -75,6 +77,10 @@ const handleClick = async (ite) => {
   if (defaultActive.value !== ite.path) {
     // 确保只有当路径改变时才进行更新
     defaultActive.value = ite.path; // 更新默认激活的菜单项
+    if(ite.path !== '/performance'){
+      console.log("sdasdasd");
+      emitter.emit('in-the-where', { value: 'mechanicalMode' });
+    }
     try {
       await nextTick();
       await router.push({

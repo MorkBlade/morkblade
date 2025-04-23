@@ -32,16 +32,18 @@
     <div class="keyboard-container">
       <div class="keyboard">
         <div class="row" v-for="(row, rowIndex) in keyboards" :key="rowIndex">
-          <key
-            v-for="(col, colIndex) in row"
-            :key="colIndex"
-            :row="rowIndex"
-            :column="colIndex"
-            :keyItem="col"
-            :active="activeKeys.includes(`${rowIndex}-${colIndex}`)"
-            @click="onclick(rowIndex, colIndex)"
-            @emits="handleCancelSelect"
-          />
+          <template v-for="(col, colIndex) in row" :key="colIndex">
+            <template v-if="col.keyValue">
+              <key
+              :row="rowIndex"
+              :column="colIndex"
+              :keyItem="col"
+              :active="activeKeys.includes(`${rowIndex}-${colIndex}`)"
+              @click="onclick(rowIndex, colIndex)"
+              @emits="handleCancelSelect"
+            />
+            </template>
+          </template>
         </div>
       </div>
       <div class="logo-light-bar">
@@ -116,7 +118,7 @@ watch(
       checkedFn.value = Number(fnVal);
       formData.fn = fnVal;
       const { fn } = formData;
-      keyboardStore.getLayoutKeyInfo(fn);
+      keyboardStore.getLayoutKeyInfo(fn, keyboardStore.keyboards);
     }
   },
 );
@@ -125,7 +127,7 @@ onMounted(async () => {
   // console.log('keyboard onMounted');
   try {
     // 您的mounted逻辑
-    await keyboardStore.defKey();
+    await keyboardStore.initKeyboard();
   } catch (error) {
     console.error('Mounted error:', error);
     // 处理错误，比如显示错误提示
@@ -219,7 +221,7 @@ const handleFnChange = (event) => {
   checkedFn.value = Number(fnVal);
   formData.fn = fnVal;
   const { fn } = formData;
-  keyboardStore.getLayoutKeyInfo(fn);
+  keyboardStore.getLayoutKeyInfo(fn, keyboardStore.keyboards);
 };
 
 const handleOperationKey = (value) => {
@@ -230,16 +232,16 @@ const handleOperationKey = (value) => {
     if (selectedKeyValues.length > 0) {
       selectedKeyValues.map(async (keyLocation) => {
         const [key1, key2] = keyLocation.split('-');
-        const x = Number(key1);
-        const y = Number(key2);
-        const { isRt } = keyboards.value[y][x].performance;
-        if (isRt && !enabled) {
-          enabled = true;
-          rtEnabled.value = true;
+        // const x = Number(key1);
+        // const y = Number(key2);
+        // const { isRt } = keyboards.value[y][x].performance;
+        // if (isRt && !enabled) {
+        //   enabled = true;
+        //   rtEnabled.value = true;
           // rtPressTravel.value = rt.pressTravel;
           // rtReleaseTravel.value = rt.releaseTravel;
           // emitter.emit('rt-enabled', { value: true });
-        }
+        // }
       });
     }
     const [rowIndex, colIndex] = selectedKeyValues[selectedKeyValues.length - 1].split('-');

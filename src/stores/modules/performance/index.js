@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 
 import services from '@/services/index';
+import { useKeyboardStore } from '@/stores'
 
 const state = {
   precision: 0.1, // 键盘行程精度
@@ -33,23 +34,22 @@ const usePerformanceStore = defineStore('performance', {
   getters: {},
 
   actions: {
-    // 获取所有键值的模式行程等
-    async getKeyPerformance(keyboards) {
+    /* 初始化所有key的性能 */
+    async getKeyPerformanceV1(keyboards) {
       const performance = [];
       for (let row = 0; row < keyboards.length; row++) {
         for (let col = 0; col < keyboards[row].length; col++) {
           const keyboardItem = keyboards[row][col];
-          performance.push(this.getPerformanceValue(keyboardItem));
+          performance.push(this.getPerformanceValueV1(keyboardItem));
         }
       }
       const result = await Promise.all(performance);
       return result;
     },
 
-    // update key performance
-    async getPerformanceValue(keyboardItem) {
+    async getPerformanceValueV1 (keyboardItem) {
       const { keyValue } = keyboardItem;
-      const performanceMode = await this.getPerformanceMode(keyValue);
+      const performanceMode = await services.getPerformanceMode(keyValue);
       if (performanceMode) {
         const { touchMode, advancedKeyMode } = performanceMode;
         if (touchMode === 'global') {
@@ -77,23 +77,6 @@ const usePerformanceStore = defineStore('performance', {
           keyboardItem.performance.rtPressValue = pressTravel;
           keyboardItem.performance.rtReleaseValue = releaseTravel;
         }
-        // if (performanceMode) {
-        //   const { touchMode, advancedKeyMode } = performanceMode;
-        //   // 设置当前键盘的性能模式
-        //   performance.touchMode = touchMode;
-        //   performance.advancedKeyMode = advancedKeyMode;
-        //   // 根据当前模式获取对应数据
-        //   if (touchMode === 'single' || touchMode === 'rt') {
-        //     const singleTravel = await this.getSingleTravel(keyValue, 2);
-        //     performance.single = { singleTravel };
-        //   }
-
-        //   if (touchMode === 'rt') {
-        //     const { releaseTravel, pressTravel } = await this.getRtTravel(keyValue);
-        //     performance.rt = { releaseTravel, pressTravel };
-        //   }
-        // }
-        // return performance;
 
         // 设置当前键盘的性能模式
         let advancedType = 0;
@@ -118,11 +101,112 @@ const usePerformanceStore = defineStore('performance', {
         keyboardItem.advancedKeys.advancedType = advancedType;
       }
       // 获取死区和轴相关
-      await this.getDpDrValue(keyboardItem);
+      await this.getDeadZoneVal(keyboardItem);
       return performance;
     },
 
-    // 获取全局触发行程和死区
+    // v2
+    async getKeyPerformanceV2(keyboard) {
+      const performance = [];
+      // const keyboardStore = useKeyboardStore();
+      // console.log(keyboard);
+      for (let colIdx = 0; colIdx < keyboard.length; colIdx++) {
+        // if (!this.performanceData[row]) this.performanceData[row] = [];
+        // console.log('xxxxxxxxxx',row, col, keyValue);
+        const { row, col, keyValue } = keyboard[colIdx];
+        // for (let col = 0; col < keyboard[row].length; col++) {
+          const KeyPerformance = {
+            row,
+            col,
+            mode: 0,
+            keyValue,
+            singleTriggeringValue: 0,
+            // normalRelease: 0,
+            rtFirstTouch: 0,
+            rtPressValue: 0,
+            rtReleaseValue: 0,
+            deadBandPressValue: 0,
+            deadBandReleaseValue: 0,
+            axisID: 0,
+            calibrations: 0,
+            travels: 0,
+          };
+          // console.log(keyValue,keyValue===0,keyboard[row][col]);
+          if (keyValue === 0) continue;
+          performance.push(this.getPerformanceValueV2({ row, col }, KeyPerformance));
+          // keyboardStore.keyboard.keyboardLayout[row][col].performance = performance;
+        // }
+      }
+      const result = await Promise.all(performance);
+      // console.log('getPerformance result',result);
+      this.initGetPerformance = true;
+      return result;
+    },
+
+    async getPerformanceValueV2(params, performance) {
+      // console.log('getPerformanceValueV2');
+      const [performanceResult] = await services.getPerformanceV2(params);
+      // const performanceResult = Array.isArray(result) && result.length > 0 ? result[0] : null;
+      if (performanceResult) {
+        const {
+          mode,
+          normalPress,
+          // normalRelease,
+          rtFirstTouch,
+          rtPress,
+          rtRelease,
+          pressDeadStroke,
+          releaseDeadStroke,
+          axis,
+          calibrate,
+        } = performanceResult;
+        // 设置当前键盘的性能模式
+        performance.mode = mode;
+        performance.singleTriggeringValue = normalPress;
+        // performance.normalRelease = normalRelease;
+        performance.rtFirstTouch = rtFirstTouch;
+        performance.rtPressValue = rtPress;
+        performance.rtReleaseValue = rtRelease;
+        performance.deadBandPressValue = pressDeadStroke;
+        performance.deadBandReleaseValue = releaseDeadStroke;
+        performance.axisID = axis;
+        performance.calibrate = calibrate;
+      }
+      // console.log("xxxxxxx",performance);
+      return performance;
+    },
+
+    // 获取单键触发行程
+    async getSingleTravel (key, decimalPlace) {
+      const result = await services.getSingleTravel(key, decimalPlace);
+
+      return result;
+    },
+
+    // 获取RT模式行程值
+    async getRtTravel (key) {
+      const result = await services.getRtTravel(key);
+      return result;
+    },
+
+    // 获取按键死区值
+    async getDeadZoneVal (keyboardItem) {
+      const { keyValue } = keyboardItem;
+      const getDpDr = await this.getKeyDeadZone(keyValue);
+      if (getDpDr) {
+        keyboardItem.performance.deadBandPressValue = getDpDr.pressDead;
+        keyboardItem.performance.deadBandReleaseValue = getDpDr.releaseDead;
+      }
+      return getDpDr;
+    },
+
+    // 获取死区
+    async getKeyDeadZone (key) {
+      const result = await services.getDpDr(key);
+      return result;
+    },
+
+    // 获取全局触发行程和死区(没有调用)
     async getGlobalTouchTravel() {
       const result = await services.getGlobalTouchTravel();
       if (result) {
@@ -153,22 +237,10 @@ const usePerformanceStore = defineStore('performance', {
       return result;
     },
 
-    // 获取单键触发行程
-    async getSingleTravel(key, decimalPlace) {
-      const result = await services.getSingleTravel(key, decimalPlace);
-
-      return result;
-    },
 
     // 设置单键触发行程
     async setSingleTravel(key, value, decimalPlace) {
       const result = await services.setSingleTravel(key, value, decimalPlace);
-      return result;
-    },
-
-    // 获取T模式行程值
-    async getRtTravel(key) {
-      const result = await services.getRtTravel(key);
       return result;
     },
 
@@ -217,13 +289,13 @@ const usePerformanceStore = defineStore('performance', {
     // 设置按下的死区
     async setDp(key, value) {
       const result = await services.setDp(key, value);
-      return result;
+    return result;
     },
 
     // 设置释放死区
     async setDr(key, value) {
       const result = await services.setDr(key, value);
-      return result;
+    return result;
     },
 
     async getRm6X21Travel() {
@@ -235,7 +307,6 @@ const usePerformanceStore = defineStore('performance', {
     // 获取行程校准的数据
     async getRm6X21Calibration(keyboard) {
       const result = await services.getRm6X21Calibration();
-      // console.log('getRm6X21Calibration log res', result);
       for (let y = 0; y < keyboard.length; y++) {
         if (!this.calibrations[y]) this.calibrations[y] = [];
         for (let x = 0; x < keyboard[y].length; x++) {
@@ -247,6 +318,113 @@ const usePerformanceStore = defineStore('performance', {
       const { max } = this.getMaxPressTravel([], result.travels);
       this.updateVerifyKeys(result.travels, keyboard);
       return { max };
+    },
+
+    // v2校准行程测试
+    async calibrationStartV2() {
+      this.isCalibrating = true;
+      const result = await services.calibrationStartV2();
+      console.log('calibrationStart ',result);
+    },
+
+    async calibrationEndV2() {
+      console.log('calibrationEnd');
+      const keyboardStore = useKeyboardStore();
+      this.isCalibrating = false;
+      this.clearVerifyKeys();
+      const result = await services.calibrationEndV2();
+      for (let row = 0; row < keyboardStore.keyboards.length; row++) {
+        for (let col = 0; col < keyboardStore.keyboards[row].length; col++) {
+          if (keyboardStore.keyboards[row][col].performance.calibrate === 2) {
+            keyboardStore.keyboards[row][col].performance.calibrate = 1;
+          }
+        }
+      }
+      return result;
+    },
+
+    async getRm6X21CalibrationV2(keyboard) {
+      // if (!this.isCalibrating) return { max: 0 }; // 如果不在校准状态，直接返回
+
+      const sample = [];
+      const travels = [];
+      const calibrationStatus = [];
+      // const keyboardStore = useKeyboardStore();
+      for (let i = 0; i < keyboard.length; i++) {
+        // eslint-disable-next-line no-await-in-loop
+        const result = await services.getADCSampleV2({ row: i });
+        // eslint-disable-next-line no-await-in-loop
+        const route = await services.getRouteV2({ row: i });
+        // eslint-disable-next-line no-await-in-loop
+        const status = await services.getCalibrationStatusV2({ row: i });
+        sample.push(result[0].data);
+        travels.push(route[0].data);
+        calibrationStatus.push(status[0].data);
+      }
+      // console.log('getRm6X21Calibration log', sample, travels, calibrationStatus);
+      for (let row = 0; row < keyboard.length; row++) {
+        if (!this.calibrations[row]) this.calibrations[row] = [];
+        for (let col = 0; col < keyboard[row].length; col++) {
+          if (!this.calibrations[row][col]) this.calibrations[row][col] = 0;
+          this.calibrations[row][col] = sample[row][col];
+          keyboard[row][col].performance.calibrate = calibrationStatus[row][col];
+          keyboard[row][col].performance.travels = travels[row][col];
+        }
+      }
+
+      const { max } = this.getMaxPressTravel([], travels);
+      console.log('getRm6X21CalibrationV2',max);
+      if (this.isTravelTest) this.updateVerifyKeysV2(travels, keyboard);
+      return { max: max / 1000 };
+    },
+
+    updateVerifyKeysV2(travels, keyboard) {
+      const newVerifyKey = {};
+      for (let i = 0; i < travels.length; i++) {
+        for (let j = 0; j < travels[i].length; j++) {
+          if (travels[i][j] > 0) {
+            // 在 keyboard 中找到对应位置的按键
+            const curRowKeys = keyboard.length === 5 ? keyboard[i - 1] : keyboard[i];
+            let keyItem = null;
+            for (let k = 0; k < curRowKeys.length; k++) {
+              if (!curRowKeys[k] || typeof curRowKeys[k] !== 'object') {
+                continue;
+              }
+              if (curRowKeys[k].col === j) {
+                keyItem = curRowKeys[k];
+                break;
+              }
+            }
+            if (keyItem) {
+              const { maxTravel, minTravel } = KEY_SHAFT.find((shaft) => shaft.id === keyItem.performance.axisID + 1);
+              // 使用 keyValue 作为属性名，设置为 true
+              newVerifyKey[keyItem.keyValue] = {
+                res: true,
+                travel: travels[i][j] / 1000,
+                axisID: keyItem.performance.axisID,
+                maxTravel: maxTravel / 1000,
+                minTravel: minTravel / 1000,
+              };
+            }
+          }
+          for (const key in this.veifyKey) {
+            if (!newVerifyKey[key]) {
+              const { maxTravel, minTravel } = KEY_SHAFT.find((shaft) => shaft.id === this.veifyKey[key].axisID + 1);
+              // 如果新对象中没有这个键，则保留键但重置travel为0
+              newVerifyKey[key] = {
+                res: this.veifyKey[key].res,
+                travel: 0,
+                axisID: this.veifyKey[key].axisID,
+                maxTravel: maxTravel / 1000,
+                minTravel: minTravel / 1000,
+              };
+            }
+          }
+
+          // 更新veifyKey对象
+          this.veifyKey = newVerifyKey;
+        }
+      }
     },
 
     // 查询回报率
@@ -315,6 +493,7 @@ const usePerformanceStore = defineStore('performance', {
     async calibrationStart() {
       this.clearVerifyKeys();
       const result = await services.calibrationStart();
+      console.log('calibrationStart v1 v1',result);
       return result;
     },
 
@@ -347,7 +526,7 @@ const usePerformanceStore = defineStore('performance', {
       return result;
     },
 
-    // 重置
+    // 重置(没有调用)
     async resetTravel(keyValue, advancedKey, globalTouchTravel, location) {
       const mode = await this.setPerformanceMode(keyValue, 'global', advancedKey);
       const dbTravel = await this.setDbTravel(keyValue, globalTouchTravel);

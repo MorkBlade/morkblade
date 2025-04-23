@@ -46,6 +46,7 @@
 import { ElMessage } from 'element-plus';
 import { scaleValue } from '@/utils/responsive.js';
 import { useKeyboardStore, usePerformanceStore } from '@/stores';
+import { usePerformanceHook } from '@/hooks/usePerformanceHook';
 import emitter from '@/utils/app-emitter';
 
 import travelTestCard from '@/components/travel-test-card.vue';
@@ -93,9 +94,7 @@ const colIdx = ref(null);
 const hasCurrentKey = computed(() => {
   return activeKeys.value.includes(`${rowIdx.value}-${colIdx.value}`);
 });
-const perdeadZoneValue = computed(() => {
-  return performanceStore.deadZoneValue;
-});
+
 emitter.on('key-click', ({ rowIndex, colIndex }) => {
   rowIdx.value = rowIndex;
   colIdx.value = colIndex;
@@ -110,28 +109,20 @@ emitter.on('key-click', ({ rowIndex, colIndex }) => {
 
 const handlePressDeadChange = async (value) => {
   pressDead.value = value;
-  const selectedKeyValues = keyboardStore.activeKeys;
-  // const { currentLayoutData } = keyboardStore;
-  const promises = selectedKeyValues.map(async (keyLocation) => {
+  activeKeys.value.map(async (keyLocation) => {
     const [key1, key2] = keyLocation.split('-');
     const rowIndex = Number(key1);
     const colIndex = Number(key2);
-    // const keyValue = currentLayoutData[y][x];
     const { deadBandPressValue } = keyboards.value[rowIndex][colIndex].performance;
     const height = (value || deadBandPressValue / max) * maxKeyDeadHeight.value;
     pressDeadHeight.value = Math.round(height);
     keyboards.value[rowIndex][colIndex].performance.deadBandPressValue = value;
-    // performanceStore.setDp(keyValue.value, value);
   });
-  // await Promise.all(promises);
 };
 
 const handleReleaseDeadChange = async (value) => {
   releaseDead.value = value;
-  const selectedKeyValues = keyboardStore.activeKeys;
-  // const { currentLayoutData } = keyboardStore;
-  const performanceValue = performanceStore.deadZoneValue;
-  const promises = selectedKeyValues.map(async (keyLocation) => {
+  activeKeys.value.map(async (keyLocation) => {
     const [key1, key2] = keyLocation.split('-');
     const rowIndex = Number(key1);
     const colIndex = Number(key2);
@@ -140,22 +131,12 @@ const handleReleaseDeadChange = async (value) => {
     const height = (value || deadBandReleaseValue / max) * maxKeyDeadHeight.value;
     releaseDeadHeight.value = Math.round(height);
     keyboards.value[rowIndex][colIndex].performance.deadBandReleaseValue = value;
-    // performanceStore.setDr(keyValue.value, value);
   });
-  // await Promise.all(promises);
 };
 
 const saveDeadZoneTravel = async () => {
-  const selectedKeyValues = keyboardStore.activeKeys;
-  const promises = selectedKeyValues.map(async (keyLocation) => {
-    const [key1, key2] = keyLocation.split('-');
-    const rowIndex = Number(key1);
-    const colIndex = Number(key2);
-    const keyItem = keyboards.value[rowIndex][colIndex];
-    performanceStore.setDp(keyItem.keyValue, pressDead.value);
-    performanceStore.setDr(keyItem.keyValue, releaseDead.value);
-  });
-  const res = await Promise.all(promises);
+  const { setSingleTravel } = usePerformanceHook();
+  const res = setSingleTravel(keyboards.value, activeKeys.value, 'dz')
   if (res) {
     ElMessage({
       grouping: true,

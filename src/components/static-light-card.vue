@@ -81,7 +81,7 @@ const onClick = (idx) => {
 };
 
 const onChange = (color) => {
-  console.log('color picker change:>>>>>>', color, checkedLight.value);
+  // console.log('color picker change:>>>>>>', color, checkedLight.value);
   if (staticType === 'keyLight') {
     emits('checkStaticLight', color, checkedLight.value);
   } else {

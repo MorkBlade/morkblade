@@ -1,116 +1,51 @@
 import { defineStore } from 'pinia';
 
 import services from '@/services/index';
-import { usePerformanceStore, useMacroStore } from '@/stores';
-
-const keyboardItemInfo = {
-  col: -1,
-  row: -1,
-  keyValue: -1,
-
-  light: {
-    custom: { B: 114, G: 153, R: 168 },
-  },
-
-  performance: {
-    isGlobalTriggering: true,
-    globalTriggeringValue: 0,
-    isRt: false,
-    isSingle: false,
-    singleTriggeringValue: 0,
-    rtPressValue: 0,
-    rtReleaseValue: 0,
-    axisID: 0,
-    deadBandPressValue: 0,
-    deadBandReleaseValue: 0,
-    advancedKeyMode: 0,
-    calibrationData: 0,
-    calibrations: 0,
-  },
-
-  advancedKeys: {
-    advancedType: '',
-    value: 0,
-    dks: null,
-    mpt: null,
-    mt: null,
-    tgl: null,
-    end: null,
-    socd: null,
-    macro: null,
-  },
-
-  customKeys: {
-    fn0: { keyValue: -1, bindKeyValue: -1 },
-    fn1: { keyValue: -1, bindKeyValue: -1 },
-    fn2: { keyValue: -1, bindKeyValue: -1 },
-    fn3: { keyValue: -1, bindKeyValue: -1 },
-  },
-};
+import { useMacroStore } from '@/stores';
+import { useKeyboardHook } from '@/hooks/useKeyboardHook';
 
 const state = {
   keyboards: [],
   layout: 0,
-  currentLayoutData: [],
-  selectKey: { x: 0, y: 0, value: 0 },
+  fnLayer: 0,
+  system: 0,
+  keyLayoutConfig: {
+    row: 6,
+    col: 21,
+  },
+  selectKey: { row: 0, col: 0, keycode: 0 },
   activeKeys: [], // 存储当前选中的键帽值
   isDraging: false,
   inChangLight: false,
+  api: null,
 };
 
 const useKeyboardStore = defineStore('keyboard', {
   state: () => state,
 
-  getters: {},
-
   actions: {
     // 初始化键盘布局
-    async defKey() {
+    async initKeyboard() {
       // console.log('defKey render===================================>>>');
-      const result = await services.defKey();
-      // console.log('defKey log res:>>>>>', result);
-      if (result) {
-        // console.log('------------------------------------ defkey has data ------------------------------------');
-        const keyboardData = result.filter((item) => item.length > 0);
-        const keyboardItems = [];
-        keyboardData.forEach((row, rowIndex) => {
-          if (!keyboardItems[rowIndex]) keyboardItems[rowIndex] = [];
-          row.forEach((column) => {
-            const { keyValue, location } = column;
-            const { col, row } = location;
-            const keyboardItem = JSON.parse(JSON.stringify(keyboardItemInfo));
-            keyboardItem.col = col;
-            keyboardItem.row = row;
-            keyboardItem.keyValue = keyValue;
-            keyboardItem.customKeys.fn0.keyValue = keyValue;
-            keyboardItem.customKeys.fn1.keyValue = keyValue;
-            keyboardItem.customKeys.fn2.keyValue = keyValue;
-            keyboardItem.customKeys.fn3.keyValue = keyValue;
-            keyboardItems[rowIndex].push(keyboardItem);
-          });
-        });
-        this.keyboards = keyboardItems;
-        const performance = usePerformanceStore();
-        await this.getLayoutKeyInfo();
-        await performance.getKeyPerformance(this.keyboards);
-        // await performance.getAllDpDr(this.keyboards);
-      }
+      const { initKeyboard } = useKeyboardHook();
+      this.keyboards = await initKeyboard();
     },
 
     // 获取每一层的值
-    async getLayoutKeyInfo(layout = 0) {
-      this.layout = layout;
+    async getLayoutKeyInfo (layout = 0, keyboardsData) {
+      // keyboardStore.layout = layout;
+      // console.log('getLayoutKeyInfo',keyboardsData);
       const result = [];
       // 每一行的数据
-      for (let i = 0; i < this.keyboards.length; i++) {
-        result.push(this.splitRowArray(this.keyboards[i], layout, i));
+      for (let i = 0; i < keyboardsData.length; i++) {
+        result.push(this.splitRowArray(keyboardsData[i], layout, i));
       }
-      await Promise.all(result);
-      return this.keyboards;
+      const res = await Promise.all(result);
+      return res;
     },
 
     // 写一个方法数组长度大于14拆成两包
-    async splitRowArray(params, layout, row) {
+    async splitRowArray (params, layout, row) {
       // 将数据分成每组14个
       const batchSize = 14;
       const batches = [];
@@ -150,7 +85,7 @@ const useKeyboardStore = defineStore('keyboard', {
           rowData.map(async (col, colIdx) => {
             try {
               const { axis } = await services.getAxis(col.key);
-              params[colIdx].axis = axis;
+              params[colIdx].axisID = axis;
               // const col = colNum + rowNum * 14;
               const { key, layout, value } = col;
               const customKeysKeyName = `fn${layout}`;
@@ -159,12 +94,12 @@ const useKeyboardStore = defineStore('keyboard', {
               customKeys[customKeysKeyName].bindKeyValue = value;
             } catch (error) {
               console.error(`Failed to get axis for key ${col.key}:`, error);
-              params[colIdx].axis = null;
+              params[colIdx].axisID = 0;
             }
           }),
         ).catch(console.error);
         // 5. 立即返回数据，axis 会在后续异步更新
-        return this.keyboards;
+        return params;
       } catch (error) {
         console.error('splitRowArray error:', error);
         return params.map(({ keyValue }) => ({
@@ -294,3 +229,4 @@ const useKeyboardStore = defineStore('keyboard', {
 });
 
 export default useKeyboardStore;
+

@@ -24,7 +24,7 @@ const { isStart } = defineProps({
   isStart: { type: Boolean, default: false },
 });
 const enabled = ref(false);
-
+const version = localStorage.getItem('keyboardVer');
 const chartRef = ref(null);
 const chartInstance = ref(null);
 const keyPressTestCount = ref(0);
@@ -96,14 +96,10 @@ onMounted(() => {
 });
 
 const handleEnabledChange = async (value) => {
-  // console.log('handleEnabledChange log start status:>>>>>>>>>>>', value);
-  // 和键盘说我要开始校准了
-  if (notification.value) {
-  }
   if (value) {
-    performanceStore.calibrationStart();
+    version === 'v2' ? performanceStore.calibrationStartV2() : performanceStore.calibrationStart();
   } else {
-    performanceStore.calibrationEnd();
+    version === 'v2' ? performanceStore.calibrationEndV2() : performanceStore.calibrationEnd();
   }
   // emitter.emit('calibration-mode', { value });
   keyPressTestCount.value++;
@@ -121,11 +117,16 @@ watch(
 
 // TODO 偶现无法进入校准模式/卡死
 watch(keyPressTestCount, async () => {
-  // console.log('keyPressTestCountkeyPressTestCountkeyPressTestCount', isStart);
   if (isStart) {
     let mmBuff = 0;
-    const { max } = await performanceStore.getRm6X21Calibration(keyboardStore.keyboards);
-    mmBuff = max;
+    if(version === 'v2' ){
+      const { max } = await performanceStore.getRm6X21CalibrationV2(keyboardStore.keyboards);
+      mmBuff = max;
+    } else {
+      const { max } = await performanceStore.getRm6X21Calibration(keyboardStore.keyboards);
+      mmBuff = max;
+
+    }
     option.series[0].data.push([count.value, mmBuff]);
 
     if (count.value > 200) {

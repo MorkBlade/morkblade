@@ -47,6 +47,7 @@ import emitter from '@/utils/app-emitter';
 import { ElMessage } from 'element-plus';
 import { useKeyboardStore, usePerformanceStore } from '@/stores';
 import { scaleValue } from '@/utils/responsive.js';
+import { usePerformanceHook } from '@/hooks/usePerformanceHook';
 
 import travelTestCard from '@/components/travel-test-card.vue';
 import setTravelCard from '@/components/set-travel-card.vue';
@@ -83,10 +84,6 @@ const activeKeys = computed(() => {
   return keyboardStore.activeKeys;
 });
 
-const performanceValue = computed(() => {
-  return performanceStore.value;
-});
-
 const disabled = computed(() => {
   return activeKeys.value.length === 0;
 });
@@ -119,8 +116,8 @@ emitter.on('rt-enabled', ({ value }) => {
 const handleRtEnabledChange = async (value) => {
   const selectedKeyValues = keyboardStore.activeKeys;
   const performanceValue = performanceStore.value;
-  if (rtEnabled.value && selectedKeyValues.length > 0) {
-    selectedKeyValues.map(async (keyLocation) => {
+  if (rtEnabled.value && activeKeys.value.length > 0) {
+    activeKeys.value.map(async (keyLocation) => {
       const [key1, key2] = keyLocation.split('-');
       const rowIndex = Number(key1);
       const colIndex = Number(key2);
@@ -138,10 +135,7 @@ const handleRtEnabledChange = async (value) => {
 const handleTriggerPointChange = async (value) => {
   singleTravel.value = value;
   // 拿到选中的键值
-  // const selectedKeyValues = keyboardStore.activeKeys;
-  const performanceValue = performanceStore.value;
-  const touchMode = rtEnabled.value ? 'rt' : 'single';
-  const promises = activeKeys.value.map(async (keyLocation) => {
+  activeKeys.value.map(async (keyLocation) => {
     const [key1, key2] = keyLocation.split('-');
     const rowIndex = Number(key1);
     const colIndex = Number(key2);
@@ -155,16 +149,11 @@ const setRtPressTravel = async (value) => {
   if (!rtEnabled.value) handleRtEnabledChange();
   rtPressTravel.value = value;
   rtPressLinkRelease.value ? (rtReleaseTravel.value = value) : '';
-  const selectedKeyValues = keyboardStore.activeKeys;
-  const performanceValue = performanceStore.value;
   if (rtEnabled.value) {
-    const promises = selectedKeyValues.map(async (keyLocation) => {
+    activeKeys.value.map(async (keyLocation) => {
       const [key1, key2] = keyLocation.split('-');
       const rowIndex = Number(key1);
       const colIndex = Number(key2);
-      // performanceValue[rowIndex][colIndex].touchMode = 'rt';
-      // performanceValue[rowIndex][colIndex].rt.pressTravel = rtPressTravel.value;
-      // performanceValue[rowIndex][colIndex].rt.releaseTravel = rtReleaseTravel.value;
       keyboards.value[rowIndex][colIndex].performance.isRt = true;
       keyboards.value[rowIndex][colIndex].performance.isSingle = false;
       keyboards.value[rowIndex][colIndex].performance.rtPressValue = rtPressTravel.value;
@@ -178,10 +167,9 @@ const setRtReleaseTravel = async (value) => {
   if (!rtEnabled.value) handleRtEnabledChange();
   rtReleaseTravel.value = value;
   rtPressLinkRelease.value ? (rtPressTravel.value = value) : '';
-  const selectedKeyValues = keyboardStore.activeKeys;
-  const performanceValue = performanceStore.value;
+
   if (rtEnabled.value) {
-    const promises = selectedKeyValues.map(async (keyLocation) => {
+    activeKeys.value.map(async (keyLocation) => {
       const [key1, key2] = keyLocation.split('-');
       const rowIndex = Number(key1);
       const colIndex = Number(key2);
@@ -203,25 +191,8 @@ const onLink = async () => {
 };
 
 const saveRtConfig = async () => {
-  const selectedKeyValues = keyboardStore.activeKeys;
-  const performanceValue = performanceStore.value;
-  const promises = selectedKeyValues.map(async (keyLocation) => {
-    const [key1, key2] = keyLocation.split('-');
-    const x = Number(key1);
-    const y = Number(key2);
-    const keyItem = keyboards.value[rowIndex][colIndex];
-    const { advancedKeyMode } = keyItem.performance;
-    return Promise.all([
-      performanceStore.setPerformanceMode(keyItem.keyValue, 'rt', advancedKeyMode),
-      performanceStore.setRtPressTravel(keyItem.keyValue, rtPressTravel.value),
-      performanceStore.setRtReleaseTravel(keyItem.keyValue, rtReleaseTravel.value),
-      performanceStore.setSingleTravel(
-        keyItem.keyValue,
-        keyboards.value[rowIndex][colIndex].performance.singleTriggeringValue,
-      ),
-    ]);
-  });
-  const res = await Promise.all(promises);
+  const { setSingleTravel } = usePerformanceHook();
+  const res = setSingleTravel(keyboards.value, activeKeys.value, 'rt');
   if (res) {
     ElMessage({
       grouping: true,

@@ -17,9 +17,9 @@
         <span>{{ KEY_SHAFT[checkAixsId]?.name }}</span>
       </div>
       <div class="axis-travel">
-        <span>轴体名称:</span>
-        <!-- <span>{{ travelRange }}</span> -->
-        {{ axisID }}
+        <span>轴体行程:</span>
+        <span>{{ travelRange }}</span>
+        <!-- {{ axisID }} -->
       </div>
       <saveConfigBtn btnText="应用轴体" @saveConfig="handleSaveAxis" />
     </div>
@@ -27,18 +27,19 @@
 </template>
 
 <script setup>
-import services from '@/services/index';
+import { storeToRefs } from 'pinia';
 import { ElMessage } from 'element-plus';
 import { scaleValue } from '@/utils/responsive.js';
-import { useKeyboardStore } from '@/stores';
+import { useKeyboardStore,usePerformanceStore } from '@/stores';
 import { KEY_SHAFT } from '@/configs/constant/index.js';
+import { usePerformanceHook } from '@/hooks/usePerformanceHook';
 
 import mCarousel from '@/components/carousel.vue';
 import saveConfigBtn from '@/components/save-config-btn.vue';
 import sureIcon from '@/assets/images/sure.svg';
-import { storeToRefs } from 'pinia';
 
 const keyboardStore = useKeyboardStore();
+const performanceStore = usePerformanceStore();
 const { keyboards } = storeToRefs(keyboardStore);
 const checkAixsId = ref(3);
 
@@ -67,16 +68,8 @@ const travelRange = computed(() => {
 
 const handleSaveAxis = async () => {
   if (activeKeys.value.length !== 0) {
-    const promises = activeKeys.value.map(async (keyLocation) => {
-      const [key1, key2] = keyLocation.split('-');
-      const rowIndex = Number(key1);
-      const colIndex = Number(key2);
-      console.log(rowIndex, colIndex);
-      keyboards.value[rowIndex][colIndex].performance.axisID = checkAixsId.value;
-      const keyItem = keyboards.value[rowIndex][colIndex];
-      services.setAxis(keyItem.keyValue, checkAixsId.value);
-    });
-    const res = await Promise.all(promises);
+    const { setAxis } = usePerformanceHook();
+    const res = setAxis(keyboards.value, activeKeys.value, checkAixsId.value)
     if (res) {
       ElMessage({
         grouping: true,

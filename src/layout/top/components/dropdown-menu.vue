@@ -59,9 +59,9 @@ const rotate = ref(0);
 const customItems = reactive([]);
 
 onMounted(async () => {
-  await appStore.configID();
-  await appStore.getBaseInfo();
-  await appStore.keyboardName();
+  // await appStore.configID();
+  // await appStore.getBaseInfo();
+  // await appStore.keyboardName();
 });
 
 const toggleDropdown = () => {
@@ -78,8 +78,8 @@ const selectItem = async (index) => {
 
   const res = await appStore.setActiveConfig(index);
   const timer = setTimeout(async () => {
-    await keyboardStore.getLayoutKeyInfo();
-    await performanceStore.getKeyPerformance(keyboardStore.keyboard);
+    await keyboardStore.getLayoutKeyInfo(keyboardStore.layout,keyboardStore.keyboards);
+    await performanceStore.getKeyPerformance(keyboardStore.keyboards);
     if (res) {
       appStore.changeConfig = true;
       appStore.activeConfigIndex = index;

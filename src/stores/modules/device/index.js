@@ -13,6 +13,7 @@ const state = {
   requestDeviceStatus: null,
   updateSuc: false,
   isDeviceConnected: false, // 添加设备连接状态
+  curVersion: 'v1', // 当前键盘版本
 };
 const useDeviceStore = defineStore('device', {
   state: () => state,
