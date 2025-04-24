@@ -46,7 +46,7 @@
 import { ElMessage } from 'element-plus';
 import { scaleValue } from '@/utils/responsive.js';
 import { useKeyboardStore, usePerformanceStore } from '@/stores';
-import { usePerformanceHook } from '@/hooks/usePerformanceHook';
+import { usePerformanceHook } from '@/hooks';
 import emitter from '@/utils/app-emitter';
 
 import travelTestCard from '@/components/travel-test-card.vue';
@@ -136,7 +136,7 @@ const handleReleaseDeadChange = async (value) => {
 
 const saveDeadZoneTravel = async () => {
   const { setSingleTravel } = usePerformanceHook();
-  const res = setSingleTravel(keyboards.value, activeKeys.value, 'dz')
+  const res = setSingleTravel(keyboards.value, activeKeys.value, 'dz');
   if (res) {
     ElMessage({
       grouping: true,

@@ -26,7 +26,7 @@ import setTravelCard from '@/components/set-travel-card.vue';
 import saveConfig from './components/save-config.vue';
 import sureIcon from '@/assets/images/sure.svg';
 import { storeToRefs } from 'pinia';
-import { usePerformanceHook } from '@/hooks/usePerformanceHook';
+import { usePerformanceHook } from '@/hooks';
 
 const min = 0.005; // 最小值
 const max = 3.3; // 最大值
@@ -59,8 +59,8 @@ emitter.on('key-click', ({ rowIndex, colIndex }) => {
   if (hasCurrentKey.value) {
     const { isRt, isSingle, singleTriggeringValue } = keyboards.value[rowIndex][colIndex].performance;
     // if (isRt || isSingle) {
-      singleTravel.value =
-        typeof singleTriggeringValue === 'number' ? singleTriggeringValue : parseFloat(singleTriggeringValue);
+    singleTravel.value =
+      typeof singleTriggeringValue === 'number' ? singleTriggeringValue : parseFloat(singleTriggeringValue);
     // }
   }
 });
@@ -86,7 +86,7 @@ const handleTriggerPointChange = async (value) => {
 
 const saveSingleConfig = async () => {
   const { setSingleTravel } = usePerformanceHook();
-  const res = setSingleTravel(keyboards.value,activeKeys.value)
+  const res = setSingleTravel(keyboards.value, activeKeys.value);
   if (res) {
     ElMessage({
       grouping: true,

@@ -4,8 +4,8 @@
     <div class="light-box">
       <div
         class="light"
-        v-for="(ite, idx) in localStaticColorList"
-        :key="ite"
+        v-for="(ite, idx) in staticLightColorList"
+        :key="idx"
         :class="{ 'is-checked': currentChecked(idx) }"
         @click="onClick(idx)"
       >
@@ -37,33 +37,18 @@ const { staticLightColorList, staticType, lightType } = defineProps({
 const lightSettingStore = useLightSettingStore();
 const checkedLight = ref(0);
 const checkedColor = ref(null);
-const localStaticColorList = ref([]);
 const emits = defineEmits(['checkStaticLight', 'checkLogoStaticLight']);
-
-// watch(
-//   () => lightType,
-//   (newVal) => {
-//     console.log('lightType', lightType);
-//   },
-// );
 
 const currentChecked = computed(() => {
   return (idx) => {
     if (staticType === 'keyLight') {
-      return lightType === 'static' && lightSettingStore.staticLightColorChecked[idx];
+      return lightType === 'static' && lightSettingStore.newState.light.selectStaticColor === idx;
     } else {
-      return lightType === 'static' && lightSettingStore.LogoStaticLightColorChecked[idx];
+      return lightType === 'static' && lightSettingStore.newState.logo.selectStaticColor === idx;
     }
   };
 });
 
-watch(
-  () => staticLightColorList,
-  (newVal) => {
-    // localStaticColorList.value = [...staticLightColorList, { color: '#ffffff', id: 7 }];
-    localStaticColorList.value = [...staticLightColorList];
-  },
-);
 // TODO 灯光初始化
 const onClick = (idx) => {
   if (staticType === 'keyLight') {
@@ -73,6 +58,7 @@ const onClick = (idx) => {
   }
   checkedLight.value = idx;
   checkedColor.value = staticLightColorList[idx].color;
+  console.log('checkedColor.value', checkedColor.value);
   if (staticType === 'keyLight') {
     emits('checkStaticLight', checkedColor.value, idx);
   } else {
@@ -81,7 +67,7 @@ const onClick = (idx) => {
 };
 
 const onChange = (color) => {
-  // console.log('color picker change:>>>>>>', color, checkedLight.value);
+  console.log('color picker change:>>>>>>', color, checkedLight.value);
   if (staticType === 'keyLight') {
     emits('checkStaticLight', color, checkedLight.value);
   } else {

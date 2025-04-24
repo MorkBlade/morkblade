@@ -94,9 +94,9 @@ const dynamicLightModeList = computed(() => {
 const currentChecked = computed(() => {
   return (idx) => {
     if (dynamicType === 'keyLight') {
-      return lightType === 'dynamic' && lightSettingStore.dynamicLightBtnChecked[idx];
+      return lightType === 'dynamic' && lightSettingStore.newState.light.mode === idx + 1;
     } else {
-      return lightType === 'dynamic' && lightSettingStore.LogoDynamicLightBtnChecked[idx];
+      return lightType === 'dynamic' && lightSettingStore.newState.logo.mode === idx + 1;
     }
   };
 });

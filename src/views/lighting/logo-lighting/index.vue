@@ -1,16 +1,16 @@
 <template>
   <div class="logo-light">
     <staticLightCard
-      :staticColor="formLogoData.staticColor"
-      :staticLightColorList="formLogoData.colors"
-      :lightType="formLogoData.type"
+      :staticLightColorList="logoLighting.staticColors"
+      :lightType="logoLighting.type"
       @checkLogoStaticLight="checkLogoStaticLight"
     />
     <dynamicLightCard
-      :dynamicLightMode="formLogoData.mode"
-      :lightType="formLogoData.type"
+      :dynamicLightMode="logoLighting.mode - 0"
+      :lightType="logoLighting.type"
       @checkDynamicLight="checkLogoDynamicLight"
     />
+    <!-- :dynamicLightMode="typeof logoLighting.mode === 'string' ? 0 : logoLighting.mode" -->
   </div>
 </template>
 
@@ -19,23 +19,24 @@ import staticLightCard from '@/components/static-light-card.vue';
 import dynamicLightCard from '@/components/dynamic-light-card.vue';
 import { useLightSettingStore } from '@/stores';
 
-const formLogoData = defineModel();
+const logoLighting = defineModel();
 const emit = defineEmits(['changeLogoLight']);
 
 const lightSettingStore = useLightSettingStore();
-const { LogoDynamicLightBtnChecked } = storeToRefs(lightSettingStore);
 
 const checkLogoDynamicLight = (idx) => {
-  formLogoData.value.type = 'dynamic';
-  formLogoData.value.mode = idx;
-  emit('changeLogoLight', { formLogoData });
+  logoLighting.value.type = 'dynamic';
+  logoLighting.value.mode = idx;
+
+  emit('changeLogoLight');
 };
 
 const checkLogoStaticLight = (color, idx) => {
-  formLogoData.value.staticColor = Number(idx);
-  formLogoData.value.colors[idx].color = color;
-  formLogoData.value.type = 'static';
-  emit('changeLogoLight', { formLogoData });
+  logoLighting.value.selectStaticColor = Number(idx);
+  logoLighting.value.staticColors[idx].color = color;
+  logoLighting.value.type = 'static';
+
+  emit('changeLogoLight');
 };
 </script>
 

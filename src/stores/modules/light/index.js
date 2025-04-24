@@ -1,3 +1,64 @@
+const state = {
+  area: 'Keyboard',
+  base: 'Base',
+  palette: 'Palette',
+  colorCorrection: 'ColorCorrection',
+  light: {
+    open: true,
+    mode: 0, // 0-19动态 20静态
+    staticColors: ['#fff', '#fff', '#fff', '#fff', '#fff', '#fff'],
+    selectStaticColor: 0,
+    luminance: 50,
+    speed: 1,
+    sleepTime: -1,
+    direction: false,
+    dynamic: 1, // 动态灯效index 用于匹配选中项
+  },
+  logo: {
+    open: true,
+    mode: 'static', // 'static' | 'custom' | 'dynamic'
+    staticColors: ['#fff', '#fff', '#fff', '#fff', '#fff', '#fff'],
+    selectStaticColor: 0,
+    luminance: 1,
+    speed: 1,
+    sleepTime: -1,
+    direction: false,
+    dynamic: 0,
+  },
+  other: {
+    open: true,
+    mode: 'static', // 'static' | 'custom' | 'dynamic'
+    staticColors: ['#fff', '#fff', '#fff', '#fff', '#fff', '#fff'],
+    selectStaticColor: 0,
+    luminance: 1,
+    speed: 1,
+    sleepTime: -1,
+    direction: false,
+    dynamic: 0,
+  },
+
+  // 项目特定state
+  inKeyLighting: true,
+  inLogoLighting: false,
+  logoLightingSite: 'side',
+  logoLightingData: {
+    side: {
+      speed: 0,
+      luminance: 0,
+      style: 0,
+      mode: 'static',
+      color: '#727272',
+    },
+    top: {
+      speed: 0,
+      luminance: 0,
+      style: 0,
+      mode: 'static',
+      color: '#727272',
+    },
+  },
+};
+
 export const useLightSettingStore = defineStore('lightSetting', {
   state: () => ({
     // 灯光设置页面参数
@@ -50,6 +111,7 @@ export const useLightSettingStore = defineStore('lightSetting', {
     enterCustom: false, // 是否在自定义灯光页面
     keyColors: {},
     currentPreset: -1, // -1 表示没有使用预设方案，0-8 分别对应九种预设方案
+    newState: state,
   }),
 
   actions: {

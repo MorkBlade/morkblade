@@ -2,16 +2,17 @@
   <div class="key-light">
     <staticLightCard
       staticType="keyLight"
-      :staticLightColorList="formData.colors"
-      :lightType="formData.type"
+      :staticLightColorList="keyLighting.staticColors"
+      :lightType="keyLighting.type"
       @checkStaticLight="checkStaticLight"
     />
     <dynamicLightCard
       dynamicType="keyLight"
-      :dynamicLightMode="formData.mode"
-      :lightType="formData.type"
+      :dynamicLightMode="keyLighting.mode - 0"
+      :lightType="keyLighting.type"
       @checkDynamicLight="changeDynamicLight"
     />
+    <!-- :dynamicLightMode="typeof keyLighting.mode === 'string' ? 0 : keyLighting.mode" -->
   </div>
 </template>
 
@@ -19,26 +20,24 @@
 import staticLightCard from '@/components/static-light-card.vue';
 import dynamicLightCard from '@/components/dynamic-light-card.vue';
 
-import { useLightSettingStore } from '@/stores';
-
-const formData = defineModel();
+const keyLighting = defineModel();
+console.log('keylighting info: ', keyLighting.value);
 const emit = defineEmits(['changeKeyLight']);
 
-const lightSettingStore = useLightSettingStore();
-
 const changeDynamicLight = (idx) => {
-  // handleTypeChange('dynamic');
-  formData.value.type = 'dynamic';
-  formData.value.mode = idx;
-  emit('changeKeyLight', { formData });
+  keyLighting.value.type = 'dynamic';
+  keyLighting.value.mode = idx;
+
+  emit('changeKeyLight');
 };
 
-const checkStaticLight = (color, idx) => {
-  // console.log(color, idx);
-  formData.value.staticColor = Number(idx);
-  formData.value.colors[idx].color = color;
-  formData.value.type = 'static';
-  emit('changeKeyLight', { formData });
+const checkStaticLight = async (color, idx) => {
+  console.log(color, idx);
+  keyLighting.value.selectStaticColor = Number(idx);
+  keyLighting.value.staticColors[idx].color = color;
+  keyLighting.value.type = 'static';
+
+  emit('changeKeyLight');
 };
 </script>
 

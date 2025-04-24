@@ -30,9 +30,9 @@
 import { storeToRefs } from 'pinia';
 import { ElMessage } from 'element-plus';
 import { scaleValue } from '@/utils/responsive.js';
-import { useKeyboardStore,usePerformanceStore } from '@/stores';
+import { useKeyboardStore, usePerformanceStore } from '@/stores';
 import { KEY_SHAFT } from '@/configs/constant/index.js';
-import { usePerformanceHook } from '@/hooks/usePerformanceHook';
+import { usePerformanceHook } from '@/hooks';
 
 import mCarousel from '@/components/carousel.vue';
 import saveConfigBtn from '@/components/save-config-btn.vue';
@@ -69,7 +69,7 @@ const travelRange = computed(() => {
 const handleSaveAxis = async () => {
   if (activeKeys.value.length !== 0) {
     const { setAxis } = usePerformanceHook();
-    const res = setAxis(keyboards.value, activeKeys.value, checkAixsId.value)
+    const res = setAxis(keyboards.value, activeKeys.value, checkAixsId.value);
     if (res) {
       ElMessage({
         grouping: true,

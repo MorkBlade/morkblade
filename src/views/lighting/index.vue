@@ -12,22 +12,26 @@
       </div>
     </div>
     <div class="display-area">
-      <keyLighting v-show="!clickItem" v-model="formData" @changeKeyLight="changeKeyLight" />
-      <logoLighting v-show="clickItem === 1" v-model="formLogoData" @changeLogoLight="changeLogoLight" />
-      <customLighting v-show="clickItem === 2" v-model="formData" @changeCustomLight="changeCustomLight" />
+      <keyLighting v-show="!clickItem" v-model="lightSettingStore.newState.light" @changeKeyLight="changeKeyLight" />
+      <logoLighting
+        v-show="clickItem === 1"
+        v-model="lightSettingStore.newState.logo"
+        @changeLogoLight="changeLogoLight"
+      />
+      <customLighting v-show="clickItem === 2" @changeCustomLight="changeCustomLight" />
     </div>
     <lightLuminance
       @changeSleepDelay="changeSleepDelay"
       @changeLuminance="changeLuminance"
       @changeSpeed="changeSpeed"
-      v-model="formData"
+      v-model="lightSettingStore.newState.light"
     />
   </div>
 </template>
-
 <script setup>
 import services from '@/services/index';
 import { useLightSettingStore } from '@/stores';
+import { useLightingHook } from '@/hooks';
 
 import keyLighting from './key-lighting/index.vue';
 import logoLighting from './logo-lighting/index.vue';
@@ -35,6 +39,8 @@ import customLighting from './custom-lighting/index.vue';
 import lightLuminance from '@/components/light-luminance.vue';
 
 const lightSettingStore = useLightSettingStore();
+const { initLighting, setLighting } = useLightingHook();
+
 const clickItem = ref(0);
 const lightingItem = ['按键灯效', 'LOGO灯效', '自定义灯效'];
 
@@ -79,32 +85,7 @@ const formLogoData = reactive({
 });
 
 onMounted(async () => {
-  try {
-    const result = await services.getLighting();
-    if (result) {
-      const colors = result.colors.map((color, index) => {
-        return { color, id: index };
-      });
-      Object.assign(formData, result, { colors });
-      lightSettingStore.updateStaticLightColorChecked(formData.staticColor, true);
-    }
-
-    // await new Promise((resolve) => setTimeout(resolve, 100)); // 添加小延迟防止报错
-    const result2 = await services.getLogoLighting();
-    if (result2) {
-      const colors = result2.colors.map((color, index) => {
-        return { color, id: index };
-      });
-      Object.assign(formLogoData, result2, { colors });
-      lightSettingStore.updateLogoStaticLightColorChecked(formLogoData.staticColor, true);
-    }
-    // console.log('onMouted log keyboard light config', formData);
-    // console.log('onMouted log logo light config', formLogoData);
-  } catch (error) {
-    console.log(error);
-  }
-
-  // console.log('result', result);
+  await initLighting();
 });
 
 const changeMenu = (idx) => {
@@ -115,12 +96,16 @@ const changeMenu = (idx) => {
       lightSettingStore.updateEnterCustom(false);
       break;
     case 2:
-      formData.type = 'custom';
-      formData.mode = 1;
+      lightSettingStore.newState.light.type = 'custom';
+      // lightSettingStore.newState.light.mode = 1
       lightSettingStore.updateEnterCustom(true);
       break;
     default:
-      formData.type = 'static';
+      if (lightSettingStore.newState.light.mode) {
+        lightSettingStore.newState.light.type = 'dynamic';
+      } else {
+        lightSettingStore.newState.light.type = 'static';
+      }
       lightSettingStore.updateEnterCustom(false);
       break;
   }
@@ -128,24 +113,35 @@ const changeMenu = (idx) => {
 };
 
 const changeKeyLight = async () => {
-  formData.open = true;
-  const colors = formData.colors.map(({ color }) => color);
-  const value = { ...formData, colors };
-  // console.log('changeKeyLight log', value);
-  await services.setLighting(value);
+  setLighting();
 };
 
-const changeLuminance = (luminance) => {
-  formData.luminance = luminance;
-  changeKeyLight();
+const changeLuminance = async (luminance) => {
+  console.log('changeLuminance: ', luminance);
+  // if (!clickItem.value) {
+  //   console.log('change keyborad luminance');
+  //   lightSettingStore.newState.light.luminance = luminance;
+  //   setLighting();
+  // } else if (clickItem.value === 1) {
+  //   console.log('change logo luminance');
+  // }
+  // TODO 根据条件判断设置keyboard logo亮度会不生效
+  lightSettingStore.newState.light.luminance = luminance;
+  lightSettingStore.newState.logo.luminance = luminance;
+  await setLighting();
+  await setLighting('logo');
 };
-const changeSpeed = (speed) => {
-  formData.speed = speed;
-  changeKeyLight();
+const changeSpeed = async (speed) => {
+  lightSettingStore.newState.light.speed = speed;
+  lightSettingStore.newState.logo.speed = speed;
+  await setLighting();
+  await setLighting('logo');
 };
-const changeSleepDelay = (delay) => {
-  formData.sleepDelay = delay;
-  changeKeyLight();
+const changeSleepDelay = async (delay) => {
+  lightSettingStore.newState.light.sleepTime = delay;
+  lightSettingStore.newState.logo.sleepTime = delay;
+  await setLighting();
+  await setLighting('logo');
 };
 
 const changeCustomLight = (color) => {
@@ -153,10 +149,7 @@ const changeCustomLight = (color) => {
 };
 
 const changeLogoLight = async () => {
-  const colors = formLogoData.colors.map(({ color }) => color);
-  const value = { ...formLogoData, colors };
-  // console.log('changeLogoLight log', value);
-  await services.setLogoLighting(value);
+  setLighting('logo');
 };
 </script>
 

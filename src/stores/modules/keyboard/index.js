@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 
 import services from '@/services/index';
 import { useMacroStore } from '@/stores';
-import { useKeyboardHook } from '@/hooks/useKeyboardHook';
+import { useKeyboardHook } from '@/hooks';
 
 const state = {
   keyboards: [],
@@ -32,7 +32,7 @@ const useKeyboardStore = defineStore('keyboard', {
     },
 
     // 获取每一层的值
-    async getLayoutKeyInfo (layout = 0, keyboardsData) {
+    async getLayoutKeyInfo(layout = 0, keyboardsData) {
       // keyboardStore.layout = layout;
       // console.log('getLayoutKeyInfo',keyboardsData);
       const result = [];
@@ -45,7 +45,7 @@ const useKeyboardStore = defineStore('keyboard', {
     },
 
     // 写一个方法数组长度大于14拆成两包
-    async splitRowArray (params, layout, row) {
+    async splitRowArray(params, layout, row) {
       // 将数据分成每组14个
       const batchSize = 14;
       const batches = [];
@@ -229,4 +229,3 @@ const useKeyboardStore = defineStore('keyboard', {
 });
 
 export default useKeyboardStore;
-

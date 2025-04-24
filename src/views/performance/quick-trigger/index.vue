@@ -47,7 +47,7 @@ import emitter from '@/utils/app-emitter';
 import { ElMessage } from 'element-plus';
 import { useKeyboardStore, usePerformanceStore } from '@/stores';
 import { scaleValue } from '@/utils/responsive.js';
-import { usePerformanceHook } from '@/hooks/usePerformanceHook';
+import { usePerformanceHook } from '@/hooks';
 
 import travelTestCard from '@/components/travel-test-card.vue';
 import setTravelCard from '@/components/set-travel-card.vue';

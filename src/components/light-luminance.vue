@@ -2,16 +2,20 @@
   <div class="light-luminance">
     <div class="sleep-time-box">
       <span class="title">休眠时间:</span>
-      <div class="cover-list" :class="selectedId === formData.sleepDelay ? 'is-selected' : ''" @click="toggleDropdown">
+      <div
+        class="cover-list"
+        :class="selectedId === lingtingData.sleepTime ? 'is-selected' : ''"
+        @click="toggleDropdown"
+      >
         <img
           class="change-icon"
-          :src="selectedId === formData.sleepDelay ? changedSleepIcon : changeSleepIcon"
+          :src="selectedId === lingtingData.sleepTime ? changedSleepIcon : changeSleepIcon"
           alt=""
         />
-        <span>{{ getSleepDelayLabel(formData?.sleepDelay) }}</span>
+        <span>{{ getSleepDelayLabel(lingtingData?.sleepTime) }}</span>
         <img
           class="down-icon"
-          :src="selectedId === formData.sleepDelay ? downArrowed : downArrow"
+          :src="selectedId === lingtingData.sleepTime ? downArrowed : downArrow"
           :style="{ transform: `rotate(${rotate}deg)` }"
         />
         <div class="drop-list" :style="{ height: `${defaultHeight}px` }">
@@ -19,11 +23,11 @@
             <li
               v-for="ite in LIGHT_SLEEP_DELAY"
               :key="ite.id"
-              :class="{ 'checked-item': ite.id === formData.sleepDelay }"
+              :class="{ 'checked-item': ite.id === lingtingData.sleepTime }"
               @click.stop="changeLightSleepDelay(ite.id)"
             >
               {{ ite.label }}
-              <!-- {{ Number(ite.label.replace(' min', '')) === formData.sleepDelay }} -->
+              <!-- {{ Number(ite.label.replace(' min', '')) === lingtingData.sleepTime }} -->
             </li>
           </ul>
         </div>
@@ -31,13 +35,13 @@
     </div>
     <div class="lumminance-box">
       <span class="title">亮度:</span>
-      <horizontalSlider :sliderValue="formData.luminance" @sendSliderVal="getLuminance" />
-      <span>{{ formData.luminance || 0 }}</span>
+      <horizontalSlider :sliderValue="lingtingData.luminance" @sendSliderVal="getLuminance" />
+      <span>{{ lingtingData.luminance || 0 }}</span>
     </div>
     <div class="speed-box">
       <span class="title">速度:</span>
-      <horizontalSlider :sliderValue="formData.speed" @sendSliderVal="getSpeed" />
-      <span>{{ formData.speed || 0 }}</span>
+      <horizontalSlider :sliderValue="lingtingData.speed" @sendSliderVal="getSpeed" />
+      <span>{{ lingtingData.speed || 0 }}</span>
     </div>
   </div>
 </template>
@@ -53,23 +57,23 @@ import downArrow from '@/assets/images/down_icon2.svg';
 
 import horizontalSlider from './horizontal-slider.vue';
 
-const formData = defineModel();
+const lingtingData = defineModel();
 const emits = defineEmits(['changeSleepDelay', 'changeLuminance', 'changeSpeed']);
 const defaultHeight = ref(0);
 const rotate = ref(180);
-// console.log('asdfasdas', formData.value.sleepDelay);
-const selectedId = ref(formData.value.sleepDelay);
+// console.log('asdfasdas', lingtingData.value.sleepTime);
+const selectedId = ref(lingtingData.value.sleepTime);
 // const luminanceVal = ref(0);
 // const speedVal = ref(0);
 
-// const LightSleepDelaySelect = ref(formData.value.sleepDelay);
+// const LightSleepDelaySelect = ref(lingtingData.value.sleepTime);
 
 const toggleDropdown = () => {
   defaultHeight.value = defaultHeight.value ? 0 : scaleValue(590);
   rotate.value = rotate.value ? 0 : 180;
 };
 watch(
-  () => formData.value.sleepDelay,
+  () => lingtingData.value.sleepTime,
   (newVal) => {
     selectedId.value = newVal;
   },
@@ -98,15 +102,16 @@ const getSleepDelayLabel = (delay) => {
   return LIGHT_SLEEP_DELAY[index]?.label || '未设置';
 };
 
-// TODO 灯光速度&亮度是否独立
+// TODO logo keyboard灯光速度&亮度是否独立
 const getLuminance = (val) => {
-  if (formData.value.luminance === val) return;
-  formData.value.luminance = val;
+  if (lingtingData.value.luminance === val) return;
+  lingtingData.value.luminance = val;
   emits('changeLuminance', val);
 };
+
 const getSpeed = (val) => {
-  if (formData.value.speed === val) return;
-  formData.value.speed = val;
+  if (lingtingData.value.speed === val) return;
+  lingtingData.value.speed = val;
   emits('changeSpeed', val);
 };
 </script>

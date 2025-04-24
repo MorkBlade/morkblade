@@ -6,9 +6,8 @@ const service = new XDKeyboard({
   //   { vendorId: 0x1c4f, productId: 0xee88, usagePage: 0xffa0, usage: 0x01 },
   // ],
   configs: [],
-  usage: 1,
-  usagePage: 65440,
-  // usagePage: 0xffb0,
+  usage: [0x01],
+  usagePage: [65440, 65456],
 });
 
 export default service;

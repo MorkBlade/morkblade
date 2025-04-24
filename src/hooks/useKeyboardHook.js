@@ -46,17 +46,17 @@ const keyboardItemInfo = {
   },
 };
 
-export function useKeyboardHook(){
+export function useKeyboardHook() {
   const version = localStorage.getItem('keyboardVer');
   const keyboardStore = useKeyboardStore();
   const performanceStore = usePerformanceStore();
   const initKeyboard = async () => {
-    if(version === 'v2'){
+    if (version === 'v2') {
       const { row } = keyboardStore.keyLayoutConfig;
       const keyboardLayout = [];
       for (let i = 0; i < row; i++) {
         // eslint-disable-next-line no-await-in-loop
-        const result = await services.getKeyLayoutV2({fnLayer: keyboardStore.fnLayer, row: i});
+        const result = await services.getKeyLayoutV2({ fnLayer: keyboardStore.fnLayer, row: i });
         const { keyboardLayout: data } = result[0];
         keyboardLayout.push(data);
       }
@@ -76,7 +76,7 @@ export function useKeyboardHook(){
             fn1: { keyValue: -1, bindKeyValue: row[colIndex] },
             fn2: { keyValue: -1, bindKeyValue: row[colIndex] },
             fn3: { keyValue: -1, bindKeyValue: row[colIndex] },
-          }
+          };
           layoutData[rowIndex].push({
             ...keyboardItemInfo,
             keyValue: row[colIndex],
@@ -97,7 +97,7 @@ export function useKeyboardHook(){
               if (layoutData[rowIndex][i].keyValue > 0) {
                 layoutData[rowIndex][i].performance = {
                   ...layoutData[rowIndex][i].performance,
-                  ...performanceDataArray[performanceIndex]
+                  ...performanceDataArray[performanceIndex],
                 };
                 performanceIndex++;
               }
@@ -108,7 +108,7 @@ export function useKeyboardHook(){
         // 将处理后的行数据添加到keyboardsWithPerformance
         keyboardsWithPerformance.push(layoutData[rowIndex]);
       }
-      return keyboardsWithPerformance
+      return keyboardsWithPerformance;
     } else {
       const result = await services.defKey();
       if (result) {
@@ -132,71 +132,69 @@ export function useKeyboardHook(){
           });
         });
         // 获取每一层的值
-        await keyboardStore.getLayoutKeyInfo(keyboardStore.layout,keyboardItems);
+        await keyboardStore.getLayoutKeyInfo(keyboardStore.layout, keyboardItems);
         await performanceStore.getKeyPerformanceV1(keyboardItems);
         return keyboardItems;
       }
       return null;
     }
-  }
-
+  };
 
   return {
     initKeyboard,
-  }
+  };
 }
 
-const  initKeyboardLayout = async (keyboards) => {
- const filteredKeyboards = [];
- // 检查keyboards是否为空
- if (!keyboards || !Array.isArray(keyboards) || keyboards.length === 0) {
-   return [];
- }
+function initKeyboardLayout(keyboards) {
+  const filteredKeyboards = [];
+  // 检查keyboards是否为空
+  if (!keyboards || !Array.isArray(keyboards) || keyboards.length === 0) {
+    return [];
+  }
 
- // 遍历keyboards数组
- for (let rowIndex = 0; rowIndex < keyboards.length; rowIndex++) {
-   // 如果当前行不存在于keyboardLayout中，跳过
-   console.log('rowIndex',rowIndex);
-   if (rowIndex >= keyboardStore.keyboardLayoutV2.length) {
-     continue;
-   }
+  // 遍历keyboards数组
+  for (let rowIndex = 0; rowIndex < keyboards.length; rowIndex++) {
+    // 如果当前行不存在于keyboardLayout中，跳过
+    console.log('rowIndex', rowIndex);
+    if (rowIndex >= keyboardStore.keyboardLayoutV2.length) {
+      continue;
+    }
 
-   filteredKeyboards[rowIndex] = [];
-   console.log('filteredKeyboards',filteredKeyboards);
-   // 检查当前行是否为数组
-   if (!Array.isArray(keyboards[rowIndex])) {
-     continue;
-   }
+    filteredKeyboards[rowIndex] = [];
+    console.log('filteredKeyboards', filteredKeyboards);
+    // 检查当前行是否为数组
+    if (!Array.isArray(keyboards[rowIndex])) {
+      continue;
+    }
 
-   // 遍历当前行的键
-   for (let colIndex = 0; colIndex < keyboards[rowIndex].length; colIndex++) {
-     // 当row等于5且keyValue不存在或为0时，跳过该键
-     const colData = keyboards[rowIndex][colIndex];
-     // console.log('colData',colData);
-     const currentKey = JSON.parse(JSON.stringify(colData));
-     if (!currentKey.keyValue || currentKey.keyValue === 0 || currentKey.keyValue === -1) {
-       continue;
-     }
-     // 如果当前列不存在于keyboardLayout的当前行中，跳过
-     if (filteredKeyboards[rowIndex].length >= keyboardStore.keyboardLayoutV2[rowIndex].length) {
-       continue;
-     }
+    // 遍历当前行的键
+    for (let colIndex = 0; colIndex < keyboards[rowIndex].length; colIndex++) {
+      // 当row等于5且keyValue不存在或为0时，跳过该键
+      const colData = keyboards[rowIndex][colIndex];
+      // console.log('colData',colData);
+      const currentKey = JSON.parse(JSON.stringify(colData));
+      if (!currentKey.keyValue || currentKey.keyValue === 0 || currentKey.keyValue === -1) {
+        continue;
+      }
+      // 如果当前列不存在于keyboardLayout的当前行中，跳过
+      if (filteredKeyboards[rowIndex].length >= keyboardStore.keyboardLayoutV2[rowIndex].length) {
+        continue;
+      }
 
-     // if(!colData.keyValue) continue;
+      // if(!colData.keyValue) continue;
 
-     // 创建深拷贝，避免引用同一个对象
+      // 创建深拷贝，避免引用同一个对象
 
+      // 设置自定义键值
+      currentKey.customKeys.fn0.keyValue = currentKey.keyValue;
+      currentKey.customKeys.fn0.bindKeyValue = currentKey.keyValue;
+      currentKey.customKeys.fn1.keyValue = currentKey.keyValue;
+      currentKey.customKeys.fn2.keyValue = currentKey.keyValue;
+      currentKey.customKeys.fn3.keyValue = currentKey.keyValue;
 
-     // 设置自定义键值
-     currentKey.customKeys.fn0.keyValue = currentKey.keyValue;
-     currentKey.customKeys.fn0.bindKeyValue = currentKey.keyValue;
-     currentKey.customKeys.fn1.keyValue = currentKey.keyValue;
-     currentKey.customKeys.fn2.keyValue = currentKey.keyValue;
-     currentKey.customKeys.fn3.keyValue = currentKey.keyValue;
-
-     // 添加键
-     filteredKeyboards[rowIndex].push(currentKey);
-   }
- }
- return filteredKeyboards;
+      // 添加键
+      filteredKeyboards[rowIndex].push(currentKey);
+    }
+  }
+  return filteredKeyboards;
 }

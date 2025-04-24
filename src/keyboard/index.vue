@@ -30,25 +30,37 @@
       </div>
     </div>
     <div class="keyboard-container">
-      <div class="keyboard">
-        <div class="row" v-for="(row, rowIndex) in keyboards" :key="rowIndex">
-          <template v-for="(col, colIndex) in row" :key="colIndex">
-            <template v-if="col.keyValue">
+      <div
+        class="keyboard"
+        :style="{
+          width: `${containerDimensions.width}px`,
+          height: `${containerDimensions.height}px`,
+        }"
+      >
+        <template v-for="(row, rowIndex) in layout">
+          <div class="row" :class="`row_${rowIndex + 1}`" :key="rowIndex" v-if="row[0].shapeScale?.w">
+            <template v-for="(col, colIndex) in row">
               <key
-              :row="rowIndex"
-              :column="colIndex"
-              :keyItem="col"
-              :active="activeKeys.includes(`${rowIndex}-${colIndex}`)"
-              @click="onclick(rowIndex, colIndex)"
-              @emits="handleCancelSelect"
-            />
+                v-if="col.shapeScale.w != 0 && col && col.keyItem && col.keyItem.keyValue"
+                :key="`key-${rowIndex}-${colIndex}`"
+                :row="rowIndex"
+                :column="colIndex"
+                :keyItem="col.keyItem"
+                :shapeScale="col.shapeScale"
+                :location="col.location"
+                :active="activeKeys.includes(`${rowIndex}-${colIndex}`)"
+                @click="onclick(rowIndex, colIndex)"
+                @emits="handleCancelSelect"
+              />
             </template>
-          </template>
+          </div>
+        </template>
+      </div>
+      <template v-if="vId === 7331 && pId === 257">
+        <div class="logo-light-bar">
+          <span></span>
         </div>
-      </div>
-      <div class="logo-light-bar">
-        <span></span>
-      </div>
+      </template>
     </div>
     <div class="side-right-container" v-if="route.path === '/performance'">
       <div
@@ -89,17 +101,23 @@
 
 <script setup>
 import services from '@/services/index';
-import { useAppStore, useKeyboardStore, usePerformanceStore, useLightSettingStore } from '@/stores';
+import { useAppStore, useKeyboardStore, usePerformanceStore, useLightSettingStore, useDeviceStore } from '@/stores';
+import { layoutConfig } from '@/configs/constant/layout';
 import emitter from '@/utils/app-emitter';
+import { scaleValue } from '@/utils/responsive.js';
 
+import layouts from '@/configs/layout/index.js';
 import key from './key.vue';
 
 const route = useRoute();
 const appStore = useAppStore();
 const keyboardStore = useKeyboardStore();
+const deviceStore = useDeviceStore();
 const performanceStore = usePerformanceStore();
 const lightSettingStore = useLightSettingStore();
 const { keyboards } = storeToRefs(keyboardStore);
+const vId = computed(() => deviceStore.devices[0]?.vendorId || undefined);
+const pId = computed(() => deviceStore.devices[0]?.productId || undefined);
 
 const selectedKey = ref('');
 const rtEnabled = ref(false);
@@ -128,6 +146,7 @@ onMounted(async () => {
   try {
     // 您的mounted逻辑
     await keyboardStore.initKeyboard();
+    console.log('layout: ', layout.value);
   } catch (error) {
     console.error('Mounted error:', error);
     // 处理错误，比如显示错误提示
@@ -227,23 +246,23 @@ const handleFnChange = (event) => {
 const handleOperationKey = (value) => {
   if (value === 'wasdSelect' || value === 'numSelect' || value === 'letterSelect' || value === 'allSelect') {
     const selectedKeyValues = keyboardStore.activeKeys;
-    const performanceValue = performanceStore.value;
-    let enabled = false;
-    if (selectedKeyValues.length > 0) {
-      selectedKeyValues.map(async (keyLocation) => {
-        const [key1, key2] = keyLocation.split('-');
-        // const x = Number(key1);
-        // const y = Number(key2);
-        // const { isRt } = keyboards.value[y][x].performance;
-        // if (isRt && !enabled) {
-        //   enabled = true;
-        //   rtEnabled.value = true;
-          // rtPressTravel.value = rt.pressTravel;
-          // rtReleaseTravel.value = rt.releaseTravel;
-          // emitter.emit('rt-enabled', { value: true });
-        // }
-      });
-    }
+    // const performanceValue = performanceStore.value;
+    // let enabled = false;
+    // if (selectedKeyValues.length > 0) {
+    //   selectedKeyValues.map(async (keyLocation) => {
+    //     const [key1, key2] = keyLocation.split('-');
+    // const x = Number(key1);
+    // const y = Number(key2);
+    // const { isRt } = keyboards.value[y][x].performance;
+    // if (isRt && !enabled) {
+    //   enabled = true;
+    //   rtEnabled.value = true;
+    // rtPressTravel.value = rt.pressTravel;
+    // rtReleaseTravel.value = rt.releaseTravel;
+    // emitter.emit('rt-enabled', { value: true });
+    // }
+    // });
+    // }
     const [rowIndex, colIndex] = selectedKeyValues[selectedKeyValues.length - 1].split('-');
     emitter.emit('key-click', { rowIndex, colIndex });
   }
@@ -252,6 +271,104 @@ const handleOperationKey = (value) => {
     // emitter.emit('rt-enabled', { value: false });
   }
 };
+
+const matchLayout = () => {
+  if (vId.value === 7331 && pId.value === 257) {
+    return layouts.keyboardLayoutV1;
+  }
+  return layouts.keyboardLayoutV2;
+};
+
+const layout = computed(() => {
+  const originalLayout = matchLayout();
+  // 如果没有数据，直接返回原始布局
+  if (!keyboards.value || keyboards.value.length === 0) {
+    return originalLayout;
+  }
+
+  // 创建一个副本，避免直接修改原始布局
+  const result = JSON.parse(JSON.stringify(originalLayout));
+
+  keyboards.value.forEach((row, rowIndex) => {
+    // 跳过不存在的行
+    if (!result[rowIndex]) {
+      return;
+    }
+
+    // 对于存在数据的行，更新键位值
+    if (row.length > 0) {
+      row.forEach((col, colIndex) => {
+        // 跳过不存在的列
+        if (!result[rowIndex][colIndex]) {
+          return;
+        }
+
+        // 设置键位值
+        result[rowIndex][colIndex].keyItem = col || '';
+      });
+    }
+  });
+
+  return result;
+});
+
+// 容器尺寸计算逻辑
+const containerDimensions = computed(() => {
+  // 默认尺寸
+  const defaultDimensions = { width: scaleValue(1040), height: scaleValue(380) };
+
+  if (!layout.value || layout.value.length === 0) {
+    return defaultDimensions;
+  }
+
+  let maxX = 0;
+  let maxY = 0;
+  let validKeysCount = 0;
+
+  // 遍历所有键位
+  layout.value.forEach((row) => {
+    if (!row) return;
+
+    row.forEach((column) => {
+      // 基本检查
+      if (!column || !column.location) return;
+
+      // 跳过 shapeScale.w === 0 的情况
+      if (column.shapeScale?.w === 0) return;
+
+      // 键位值检查 - 与模板中的v-if条件相同
+      const hasValue = column.keyItem?.keyValue;
+      if (!hasValue) return;
+
+      validKeysCount++;
+
+      const x = column.location.x || 0;
+      const y = column.location.y || 0;
+      const w = column.shapeScale?.w || 1;
+      const h = column.shapeScale?.h || 1;
+
+      // 计算键帽的右下角坐标（考虑基础按键大小50px）
+      const rightEdge = scaleValue((x + w) * 50);
+      const bottomEdge = scaleValue((y + h) * 50);
+
+      maxX = Math.max(maxX, rightEdge);
+      maxY = Math.max(maxY, bottomEdge);
+    });
+  });
+
+  // 如果没有有效键位，返回默认尺寸
+  if (validKeysCount === 0 || (maxX === 0 && maxY === 0)) {
+    return defaultDimensions;
+  }
+
+  // 计算最终尺寸并添加内边距
+  return {
+    // width: maxX + scaleValue(13),
+    // height: maxY + scaleValue(31),
+    width: maxX + scaleValue(52),
+    height: maxY + scaleValue(65),
+  };
+});
 </script>
 
 <style scoped lang="scss">
@@ -269,38 +386,62 @@ const handleOperationKey = (value) => {
   .keyboard-container {
     width: var(--size-1040);
     height: var(--size-380);
+    box-sizing: border-box;
     margin: var(--spacing-25) var(--spacing-20) 0 var(--spacing-20);
-    background-image: url('@/assets/images/keyboard-bg.svg');
-    background-size: cover;
-    background-repeat: no-repeat;
+    // border-radius: var(--spacing-15);
+    // border: var(--spacing-3) solid rgb(37, 37, 37);
     position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
     .keyboard {
       width: 100%;
       height: 100%;
-      background-image: url('@/assets/images/keyboard_layout.svg');
-      background-size: cover;
-      background-repeat: no-repeat;
+      border-radius: var(--spacing-15);
+      border: var(--spacing-3) solid rgb(37, 37, 37);
       position: relative;
       box-sizing: border-box;
       padding: var(--spacing-21) var(--spacing-24);
+      background-color: #000;
+      &::after {
+        content: '';
+        width: 99.2%;
+        height: 97.9%;
+        box-sizing: border-box;
+        position: absolute;
+        border-radius: var(--spacing-10);
+        border: var(--spacing-3) solid rgb(37, 37, 37);
+        position: absolute;
+        top: var(--spacing-4);
+        left: var(--spacing-4);
+      }
 
       .row {
         display: flex;
         height: var(--size-50);
-        margin-bottom: var(--key-row-bottom);
-        overflow: hidden;
-      }
-      .row:first-child {
-        margin-bottom: var(--key-first-row-bottom);
+        position: relative;
+        margin-bottom: 5px;
+        z-index: 2;
+        // left: var(--spacing-20);
+        // background: rgba(255, 255, 255, 0.5);
+        // overflow: hidden;
 
-        .key:first-child,
-        .key:nth-child(5),
-        .key:nth-child(9) {
-          margin-right: var(--key-first-row-right);
+        &.row_1 {
+          margin-bottom: 15px;
+          // top: var(--keyboard-row2-top);
         }
-        .key:nth-child(14) {
-          margin-left: var(--spacing-13);
+        &.row_3 {
+          // top: var(--keyboard-row3-top);
+        }
+        &.row_4 {
+          // top: var(--keyboard-row4-top);
+        }
+        &.row_5 {
+          // top: var(--keyboard-row5-top);
+        }
+        &.row_6 {
+          // top: var(--keyboard-row6-top);
         }
       }
     }

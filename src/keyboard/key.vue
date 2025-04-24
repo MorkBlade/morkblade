@@ -1,15 +1,15 @@
+<!-- :class="keyItem !== 1 ? 'key' + String(keyboardLayout[rowIndex][colIndex]).replace('.', '_') : ''" -->
 <template>
   <div
     class="key"
-    :class="keyItem !== 1 ? 'key' + String(keyboardLayout[rowIndex][colIndex]).replace('.', '_') : ''"
-    :style="active ? { border: '2px solid #91bc00' } : ''"
-    @click.stop="onChecked(keyItem.key, rowIndex, colIndex)"
+    :style="[active ? { border: '2px solid #91bc00' } : '', keyStyle]"
+    @click.stop="onChecked(keyItem.keyValue, rowIndex, colIndex)"
     @dragenter.prevent
     @dragover.prevent
-    @mouseup="(e) => Keydrop(e, rowIndex, colIndex, keyItem.key)"
+    @mouseup="(e) => Keydrop(e, rowIndex, colIndex, keyItem.keyValue)"
   >
     <p class="top-key">{{ showKeyCode }}</p>
-    <!-- <p class="center-key" v-if="!singleTravel && !rtReleaseTravel && !rtPressTravel">{{ byteToKey[keyItem.key] }}</p> -->
+    <!-- <p class="center-key" v-if="!singleTravel && !rtReleaseTravel && !rtPressTravel">{{ byteToKey[keyItem.keyValue] }}</p> -->
     <div class="show-val-box" v-if="route.path === '/performance'">
       <p class="single-travel" v-if="singleTravel !== null">{{ singleTravel }}</p>
       <template v-if="currentModel == 'mechanicalMode' || currentModel == 'quickTrigger'">
@@ -28,12 +28,12 @@
       class="color-key"
       v-if="lightSettingStore.enterCustom"
       :style="{ backgroundColor: currentKeyColor }"
-      @mousedown.stop="(e) => startMouseDown(e, keyItem.key)"
-      @mouseenter="handleMouseOver(keyItem.key)"
+      @mousedown.stop="(e) => startMouseDown(e, keyItem.keyValue)"
+      @mouseenter="handleMouseOver(keyItem.keyValue)"
       @mouseleave="onMouseLeave"
       @mouseup.stop="startMouseUp"
     >
-      <p class="top-key" v-if="singleTravel || rtReleaseTravel || rtPressTravel">{{ showKeyCode }}</p>
+      <p class="top-key">{{ showKeyCode }}</p>
     </div>
     <img :src="VeriftIcon" class="verify_icon" v-if="route.path === '/key-calibration' && verifySuc" />
     <div v-if="route.path === '/performance' && currentModel == 'axis' && axisVal !== null" class="axis">
@@ -52,6 +52,7 @@ import emitter from '@/utils/app-emitter';
 import { usePerformanceStore, useAppStore, useMacroStore, useKeyboardStore, useLightSettingStore } from '@/stores';
 import keyboard from '@/configs/byte-to-key/keyboard.js';
 import { onBeforeMount } from 'vue';
+import { scaleValue } from '@/utils/responsive.js';
 
 const {
   row: rowIndex,
@@ -59,12 +60,16 @@ const {
   keyItem,
   active,
   selectAll,
+  shapeScale,
+  location,
 } = defineProps({
   row: { type: Number, default: 0 },
   column: { type: Number, default: 0 },
   keyItem: { type: Object },
   active: { type: Boolean, default: false },
   selectAll: { type: Boolean, default: false },
+  shapeScale: { type: Object, default: () => ({ w: 1, h: 1 }) },
+  location: { type: Object, default: () => ({ x: 0, y: 0 }) },
 });
 const emit = defineEmits(['click']);
 
@@ -81,7 +86,7 @@ const selectedKey = reactive([]);
 const route = useRoute();
 const isShow = ref(false);
 const inChangLight = ref(false);
-
+const shape = { height: scaleValue(50), width: scaleValue(50) };
 const keyboardLayout = reactive([
   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1],
@@ -109,15 +114,59 @@ watch(
   { immediate: true },
 );
 
+const shapeComputed = computed(() => {
+  const { w, h } = shapeScale;
+  const shapeWidth = w * shape.width;
+  const shapeHeight = h * shape.height;
+  const contentWidth = shapeWidth;
+  const contentHeight = shapeHeight - 12;
+  const labelHeight = shapeHeight - 18;
+  const labelWidth = shapeWidth - 18;
+  return { shapeWidth, shapeHeight, contentWidth, contentHeight, labelHeight, labelWidth };
+});
+
+const locationComputed = computed(() => {
+  const { y, x } = location;
+  const { width, height } = shape;
+  const keyBorderTop = y * width;
+  const keyBorderLeft = x * height;
+  const top = keyBorderTop + 5;
+  const left = keyBorderLeft;
+  return { x, y, top, left, keyBorderTop, keyBorderLeft };
+});
+
+const keyStyle = computed(() => {
+  const { top, left } = locationComputed.value;
+  const { contentWidth, contentHeight } = shapeComputed.value;
+  return {
+    // top: `${top}px`,
+    left: `${left}px`,
+    width: `${contentWidth}px`,
+    // height: `${contentHeight}px`,
+  };
+});
+
 const currentKeyColor = computed(() => {
-  return lightSettingStore.getKeyColor(keyItem.key) || 'rgba(255, 255, 255,0)';
+  return lightSettingStore.getKeyColor(keyItem.keyValue) || 'rgba(255, 255, 255,0)';
+});
+
+const currentKey = computed(() => {
+  const rowData = keyboards.value[keyItem.row];
+  let colData = {};
+  for (let colIdx = 0; colIdx < rowData.length; colIdx++) {
+    if (rowData[colIdx].row === keyItem.row && rowData[colIdx].col === keyItem.col) {
+      // console.log('currentKey: ', rowData[colIdx]);
+      colData = rowData[colIdx];
+    }
+  }
+  return colData;
 });
 
 const showKeyCode = computed(() => {
   if (keyboards.value.length > 0) {
-    const keyCap = keyboards.value[rowIndex][colIndex];
+    // const keyCap = keyboards.value[keyItem.row][keyItem.col];
     const customKeysKeyName = `fn${layout.value}`;
-    const { bindKeyValue } = keyCap.customKeys[customKeysKeyName];
+    const { bindKeyValue } = currentKey.value.customKeys[customKeysKeyName];
     return keyboard[bindKeyValue];
   }
 
@@ -125,12 +174,12 @@ const showKeyCode = computed(() => {
 });
 
 const verifySuc = computed(() => {
-  return performanceStore.veifyKey[keyItem.key];
+  return performanceStore.veifyKey[keyItem.keyValue];
 });
 
 const PerformanceData = computed(() => {
-  if (keyboards.value[rowIndex]?.[colIndex]) {
-    return keyboards.value[rowIndex][colIndex].performance;
+  if (currentKey.value) {
+    return currentKey.value.performance;
   }
   return null;
 });
@@ -203,7 +252,7 @@ const releaseDead = computed(() => {
 
 const axisVal = computed(() => {
   if (currentModel.value === 'axis') {
-    return keyboards.value?.[rowIndex]?.[colIndex]?.performance?.axisID ?? null;
+    return PerformanceData.value?.axisID ?? null;
   }
   return null;
 });
@@ -215,16 +264,15 @@ const changeKeyLightColor = async (key) => {
   await services.setCustomLighting({ key, ...lightSettingStore.currentColor });
 };
 
-const onChecked = async () => {
-  // console.log('onCheckedonCheckedonChecked');
+const onChecked = async (key) => {
   if (route.path !== '/lighting' || (route.path == '/lighting' && !lightSettingStore.enterCustom)) {
     emit('click');
   }
 };
 
 const startMouseDown = (e, key) => {
-  // console.log('xxxxxx');
   if (e.button === 0) {
+    console.log('startMouseDown', key);
     // console.log('asda');
     keyboardStore.inChangLight = true;
     changeKeyLightColor(key);
@@ -265,19 +313,26 @@ const Keydrop = async (e, rowIndex, colIndex, key) => {
   height: var(--size-50);
   flex-shrink: 1;
   line-height: 1;
-  border-radius: var(--size-10);
+  border-radius: var(--size-8);
   display: flex;
   flex-direction: column;
   align-items: center;
-  // background-color: rgba(255, 255, 255, 0.2);
-  margin-right: var(--key-default-right);
-  position: relative;
+  box-sizing: border-box;
+  background-color: rgba(24, 24, 24);
+  border: var(--spacing-2) solid rgb(37, 37, 37);
+  // margin-right: var(--key-default-right);
+  position: absolute;
+  top: 0;
   box-sizing: border-box;
   padding-top: var(--spacing-2);
   cursor: pointer;
-  border: var(--spacing-3) solid transparent;
+  // border: var(--spacing-3) solid transparent;
   transition: border-color 0.2s ease;
   // border: 3px solid #91bc00;
+  &:hover {
+    background-color: rgb(36, 36, 36);
+  }
+
   p {
     text-align: center;
     color: #fff;
@@ -334,10 +389,12 @@ const Keydrop = async (e, rowIndex, colIndex, key) => {
 .color-key {
   width: 100%;
   height: 100%;
+  box-sizing: border-box;
+  padding-top: var(--spacing-2);
   border-radius: var(--spacing-6);
   position: absolute;
-  top: 0;
-  left: 0;
+  top: -0.0313rem;
+  left: -0.0323rem;
   z-index: 5;
   transition: all 0.2s ease-in-out;
 }
@@ -370,62 +427,6 @@ const Keydrop = async (e, rowIndex, colIndex, key) => {
     color: #000;
     font-size: var(--font-size-10);
     font-family: 'CN Heavy';
-  }
-}
-
-.key1_25 {
-  width: var(--key-width1);
-}
-.key1_5 {
-  width: var(--key-width2);
-}
-.key1_75 {
-  width: var(--key-width3);
-}
-.key2 {
-  width: var(--key-width4);
-}
-.key2_25 {
-  width: var(--key-width5);
-}
-.key2_75 {
-  width: var(--key-width6);
-}
-.key6_25 {
-  width: var(--key-width7);
-}
-
-.key:hover {
-  background-color: rgb(36, 36, 36);
-}
-.key:nth-child(15) {
-  position: absolute;
-  right: var(--key-nth15-right);
-}
-.key:nth-child(16) {
-  position: absolute;
-  right: var(--key-fifth-row-right);
-}
-.key:nth-child(17) {
-  position: absolute;
-  right: var(--spacing-20);
-}
-.row:nth-child(5) .key:last-child {
-  position: absolute;
-  right: var(--key-fifth-row-right);
-}
-.row:last-child {
-  .key:nth-child(9) {
-    position: absolute;
-    right: var(--key-nth15-right);
-  }
-  .key:nth-child(10) {
-    position: absolute;
-    right: calc(var(--spacing-75) - var(--spacing-1));
-  }
-  .key:last-child {
-    position: absolute;
-    right: var(--spacing-20);
   }
 }
 </style>

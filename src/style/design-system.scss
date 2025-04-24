@@ -233,6 +233,11 @@
   --lighting-custom-width: 590px;
   --iro-handle-top: -13px;
   --iro-handle-left: -15px;
+  --keyboard-row2-top: 89px;
+  --keyboard-row3-top: 143px;
+  --keyboard-row4-top: 198px;
+  --keyboard-row5-top: 253px;
+  --keyboard-row6-top: 307px;
 }
 
 /* 2K 分辨率 (1440p) 2560*1440 
@@ -480,6 +485,11 @@
     --slider-btn-offset: 5;
     --iro-handle-top: -13.5px;
     --iro-handle-left: -16px;
+    --keyboard-row2-top: 102px;
+    --keyboard-row3-top: 164px;
+    --keyboard-row4-top: 228px;
+    --keyboard-row5-top: 291px;
+    --keyboard-row6-top: 353px;
   }
 }
 
@@ -723,5 +733,10 @@
     --slider-btn-offset: 22;
     --iro-handle-top: -12px;
     --iro-handle-left: -25px;
+    --keyboard-row2-top: 178px;
+    --keyboard-row3-top: 286px;
+    --keyboard-row4-top: 396px;
+    --keyboard-row5-top: 506px;
+    --keyboard-row6-top: 614px;
   }
 }
