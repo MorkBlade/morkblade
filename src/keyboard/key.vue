@@ -35,7 +35,12 @@
     >
       <p class="top-key">{{ showKeyCode }}</p>
     </div>
-    <img :src="VeriftIcon" class="verify_icon" v-if="route.path === '/key-calibration' && verifySuc" />
+    <template v-if="route.path === '/lighting' && isVersion2 && lightSettingStore.light.mode !== 0">
+      <div class="color-key" v-if="!lightSettingStore.enterCustom" :style="keyColorStyle">
+        <p class="top-key">{{ showKeyCode }}</p>
+      </div>
+    </template>
+    <img :src="verifyIcon" class="verify_icon" v-if="route.path === '/key-calibration' && verifySuc" />
     <div v-if="route.path === '/performance' && currentModel == 'axis' && axisVal !== null" class="axis">
       <span :style="{ backgroundColor: KEY_SHAFT?.[axisVal]?.color ?? 'transparent' }"></span>
     </div>
@@ -43,16 +48,15 @@
 </template>
 
 <script setup>
-import VeriftIcon from '@/assets/images/sure_icon.svg';
+import verifyIcon from '@/assets/images/sure_icon.svg';
 import { KEY_SHAFT } from '@/configs/constant/index.js';
 
 import services from '@/services/index';
-import byteToKey from '@/configs/byte-to-key/keyboard.js';
 import emitter from '@/utils/app-emitter';
-import { usePerformanceStore, useAppStore, useMacroStore, useKeyboardStore, useLightSettingStore } from '@/stores';
+import { usePerformanceStore, useMacroStore, useKeyboardStore, useLightSettingStore } from '@/stores';
 import keyboard from '@/configs/byte-to-key/keyboard.js';
-import { onBeforeMount } from 'vue';
 import { scaleValue } from '@/utils/responsive.js';
+import { useLightingHook } from '@/hooks/useLightingHook';
 
 const {
   row: rowIndex,
@@ -71,30 +75,21 @@ const {
   shapeScale: { type: Object, default: () => ({ w: 1, h: 1 }) },
   location: { type: Object, default: () => ({ x: 0, y: 0 }) },
 });
+
 const emit = defineEmits(['click']);
 
-const appStore = useAppStore();
 const macroStore = useMacroStore();
 const keyboardStore = useKeyboardStore();
 const performanceStore = usePerformanceStore();
 const lightSettingStore = useLightSettingStore();
 const { keyboards, layout } = storeToRefs(keyboardStore);
+const { setCustomLighting } = useLightingHook();
 const currentModel = ref('mechanicalMode');
-const currentPerformanceData = computed(() => performanceStore.value);
 
-const selectedKey = reactive([]);
 const route = useRoute();
 const isShow = ref(false);
-const inChangLight = ref(false);
+const isVersion2 = localStorage.getItem('keyboardVer') === 'v2';
 const shape = { height: scaleValue(50), width: scaleValue(50) };
-const keyboardLayout = reactive([
-  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1],
-  [1.5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1.5, 1, 1, 1],
-  [1.75, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2.25],
-  [2.25, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2.75, 1],
-  [1.25, 1.25, 1.25, 6.25, 1.25, 1.25, 1.25, 1.25, 1, 1, 1],
-]);
 
 emitter.on('in-the-where', ({ value }) => {
   currentModel.value = value;
@@ -147,7 +142,20 @@ const keyStyle = computed(() => {
 });
 
 const currentKeyColor = computed(() => {
-  return lightSettingStore.getKeyColor(keyItem.keyValue) || 'rgba(255, 255, 255,0)';
+  const { R, G, B } = currentKey.value.customLight || { R: 100, G: 100, B: 255 };
+  if (!R && !G && !B) {
+    return 'rgba(255, 255, 255,0)';
+  }
+  return `rgb(${R}, ${G}, ${B})`;
+});
+
+const dynamicKeyColor = computed(() => {
+  console.log(keyboardStore.customLighting, keyItem.row, keyItem.col);
+  const { R, G, B } = keyboardStore.customLighting[keyItem.row][keyItem.col] || { R: 100, G: 100, B: 255 };
+  if (!R && !G && !B) {
+    return 'rgba(255, 255, 255,0)';
+  }
+  return `rgb(${R}, ${G}, ${B})`;
 });
 
 const currentKey = computed(() => {
@@ -155,7 +163,6 @@ const currentKey = computed(() => {
   let colData = {};
   for (let colIdx = 0; colIdx < rowData.length; colIdx++) {
     if (rowData[colIdx].row === keyItem.row && rowData[colIdx].col === keyItem.col) {
-      // console.log('currentKey: ', rowData[colIdx]);
       colData = rowData[colIdx];
     }
   }
@@ -164,7 +171,6 @@ const currentKey = computed(() => {
 
 const showKeyCode = computed(() => {
   if (keyboards.value.length > 0) {
-    // const keyCap = keyboards.value[keyItem.row][keyItem.col];
     const customKeysKeyName = `fn${layout.value}`;
     const { bindKeyValue } = currentKey.value.customKeys[customKeysKeyName];
     return keyboard[bindKeyValue];
@@ -259,9 +265,9 @@ const axisVal = computed(() => {
 
 const changeKeyLightColor = async (key) => {
   const { r, g, b } = lightSettingStore.currentColor;
-  const color = `rgb(${r}, ${g}, ${b})`;
-  lightSettingStore.setKeyColor(key, color);
-  await services.setCustomLighting({ key, ...lightSettingStore.currentColor });
+  currentKey.value.customLight = { R: r, G: g, B: b, isCustom: true };
+  setCustomLighting(key);
+  // await services.setCustomLighting({ key, ...lightSettingStore.currentColor });
 };
 
 const onChecked = async (key) => {
@@ -272,8 +278,6 @@ const onChecked = async (key) => {
 
 const startMouseDown = (e, key) => {
   if (e.button === 0) {
-    console.log('startMouseDown', key);
-    // console.log('asda');
     keyboardStore.inChangLight = true;
     changeKeyLightColor(key);
   }
@@ -302,8 +306,25 @@ const Keydrop = async (e, rowIndex, colIndex, key) => {
       await macroStore.setMacro();
     }
   } else {
-    keyboardStore.updateKey({ rowIndex, colIndex });
+    const version = localStorage.getItem('keyboardVer');
+    version === 'v2'
+      ? keyboardStore.updateKeyV2({ rowIndex, colIndex })
+      : keyboardStore.updateKey({ rowIndex, colIndex });
   }
+};
+
+const keyColorStyle = computed(() => {
+  if (route.path === '/lighting' && !lightSettingStore.enterCustom) {
+    // 使用 CSS 变量
+    return {
+      backgroundColor: `var(--key-color-${keyItem.row}-${keyItem.col}, rgba(0, 0, 0,0))`,
+    };
+  }
+  return { backgroundColor: currentKeyColor.value };
+});
+
+const onMouseLeave = () => {
+  // Implementation of onMouseLeave
 };
 </script>
 
@@ -396,7 +417,10 @@ const Keydrop = async (e, rowIndex, colIndex, key) => {
   top: -0.0313rem;
   left: -0.0323rem;
   z-index: 5;
-  transition: all 0.2s ease-in-out;
+  transform: translateZ(0);
+  will-change: background-color;
+  transition: background-color 0.1s linear;
+  contain: strict;
 }
 
 .verify_icon {

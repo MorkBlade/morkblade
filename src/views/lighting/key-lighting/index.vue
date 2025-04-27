@@ -3,14 +3,14 @@
     <staticLightCard
       staticType="keyLight"
       :staticLightColorList="keyLighting.staticColors"
-      :lightType="keyLighting.type"
       @checkStaticLight="checkStaticLight"
+      @changeColorPicker="changeColorPicker"
     />
     <dynamicLightCard
       dynamicType="keyLight"
       :dynamicLightMode="keyLighting.mode - 0"
-      :lightType="keyLighting.type"
       @checkDynamicLight="changeDynamicLight"
+      @changelightingMode="changelightingMode"
     />
     <!-- :dynamicLightMode="typeof keyLighting.mode === 'string' ? 0 : keyLighting.mode" -->
   </div>
@@ -21,9 +21,9 @@ import staticLightCard from '@/components/static-light-card.vue';
 import dynamicLightCard from '@/components/dynamic-light-card.vue';
 
 const keyLighting = defineModel();
-console.log('keylighting info: ', keyLighting.value);
-const emit = defineEmits(['changeKeyLight']);
+const emit = defineEmits(['changeKeyLight', 'changeColorPicker']);
 
+// v1动态灯效
 const changeDynamicLight = (idx) => {
   keyLighting.value.type = 'dynamic';
   keyLighting.value.mode = idx;
@@ -31,6 +31,14 @@ const changeDynamicLight = (idx) => {
   emit('changeKeyLight');
 };
 
+// v2灯效模式
+const changelightingMode = async (idx) => {
+  keyLighting.value.mode = idx;
+
+  emit('changeKeyLight');
+};
+
+// v1 v2静态灯效
 const checkStaticLight = async (color, idx) => {
   console.log(color, idx);
   keyLighting.value.selectStaticColor = Number(idx);
@@ -38,6 +46,16 @@ const checkStaticLight = async (color, idx) => {
   keyLighting.value.type = 'static';
 
   emit('changeKeyLight');
+};
+
+// v2调色板
+const changeColorPicker = async (color, idx, isVersion2) => {
+  // console.log('changeColorPicker: ', color, idx, isVersion2);
+  keyLighting.value.staticColors[idx].color = color;
+  keyLighting.value.selectStaticColor = Number(idx);
+  keyLighting.value.type = 'static'; // v1特有属性
+
+  emit('changeColorPicker', isVersion2);
 };
 </script>
 

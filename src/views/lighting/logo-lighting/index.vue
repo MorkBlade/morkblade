@@ -1,15 +1,7 @@
 <template>
   <div class="logo-light">
-    <staticLightCard
-      :staticLightColorList="logoLighting.staticColors"
-      :lightType="logoLighting.type"
-      @checkLogoStaticLight="checkLogoStaticLight"
-    />
-    <dynamicLightCard
-      :dynamicLightMode="logoLighting.mode - 0"
-      :lightType="logoLighting.type"
-      @checkDynamicLight="checkLogoDynamicLight"
-    />
+    <staticLightCard :staticLightColorList="logoLighting.staticColors" @checkLogoStaticLight="checkLogoStaticLight" />
+    <dynamicLightCard :dynamicLightMode="logoLighting.mode - 0" @checkDynamicLight="checkLogoDynamicLight" />
     <!-- :dynamicLightMode="typeof logoLighting.mode === 'string' ? 0 : logoLighting.mode" -->
   </div>
 </template>

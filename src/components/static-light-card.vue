@@ -9,13 +9,19 @@
         :class="{ 'is-checked': currentChecked(idx) }"
         @click="onClick(idx)"
       >
-        <!-- <template v-if="idx === 7"> -->
-        <!-- <img src="@/assets/images/colorful.png" alt="" /> -->
-        <!-- </template> -->
-        <!-- <template v-else> -->
-        <el-color-picker v-model="ite.color" @change="onChange" />
-        <!-- </template> -->
-        <span class="color-text">{{ idx === 7 ? '彩色' : `灯光${idx + 1}` }}</span>
+        <template v-if="isVersion2">
+          <template v-if="!idx">
+            <img src="@/assets/images/colorful.png" alt="" />
+          </template>
+          <template v-else>
+            <el-color-picker v-model="ite.color" @change="onChange" />
+          </template>
+          <span class="color-text">{{ !idx ? '彩色' : `灯光${idx}` }}</span>
+        </template>
+        <template v-else>
+          <el-color-picker v-model="ite.color" @change="onChange" />
+          <span class="color-text">{{ idx === 7 ? '彩色' : `灯光${idx + 1}` }}</span>
+        </template>
       </div>
     </div>
   </div>
@@ -24,41 +30,36 @@
 <script setup>
 import { useLightSettingStore } from '@/stores';
 
-const { staticLightColorList, staticType, lightType } = defineProps({
+const { staticLightColorList, staticType } = defineProps({
   staticLightColorList: {
     type: Array,
   },
   staticType: {
     type: String,
   },
-  lightType: { type: String, default: 'static' },
 });
 
 const lightSettingStore = useLightSettingStore();
 const checkedLight = ref(0);
 const checkedColor = ref(null);
-const emits = defineEmits(['checkStaticLight', 'checkLogoStaticLight']);
+const emits = defineEmits(['checkStaticLight', 'checkLogoStaticLight', 'changeColorPicker', 'changeLogoColorPicker']);
+const isVersion2 = localStorage.getItem('keyboardVer') === 'v2';
 
 const currentChecked = computed(() => {
   return (idx) => {
     if (staticType === 'keyLight') {
-      return lightType === 'static' && lightSettingStore.newState.light.selectStaticColor === idx;
+      return !lightSettingStore.light.mode && lightSettingStore.light.selectStaticColor === idx;
     } else {
-      return lightType === 'static' && lightSettingStore.newState.logo.selectStaticColor === idx;
+      return !lightSettingStore.logo.mode && lightSettingStore.logo.selectStaticColor === idx;
     }
   };
 });
 
 // TODO 灯光初始化
 const onClick = (idx) => {
-  if (staticType === 'keyLight') {
-    lightSettingStore.updateStaticLightColorChecked(idx, true);
-  } else {
-    lightSettingStore.updateLogoStaticLightColorChecked(idx, true);
-  }
   checkedLight.value = idx;
   checkedColor.value = staticLightColorList[idx].color;
-  console.log('checkedColor.value', checkedColor.value);
+  // console.log('checkedColor.value', checkedColor.value);
   if (staticType === 'keyLight') {
     emits('checkStaticLight', checkedColor.value, idx);
   } else {
@@ -69,9 +70,10 @@ const onClick = (idx) => {
 const onChange = (color) => {
   console.log('color picker change:>>>>>>', color, checkedLight.value);
   if (staticType === 'keyLight') {
-    emits('checkStaticLight', color, checkedLight.value);
+    emits('changeColorPicker', color, checkedLight.value, isVersion2);
   } else {
-    emits('checkLogoStaticLight', color, checkedLight.value);
+    // TODO v2暂无logo灯
+    emits('changeLogoColorPicker', color, checkedLight.value, isVersion2);
   }
 };
 </script>

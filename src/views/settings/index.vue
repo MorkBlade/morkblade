@@ -5,22 +5,22 @@
         <p>设备信息</p>
         <div class="content-box">
           <span>设备名称:</span>
-          <span>{{ '--' }}</span>
+          <span>{{ keyboardName }}</span>
         </div>
         <div class="content-box">
           <span>序列号:</span>
-          <span>{{ KeyboardSN || '--' }}</span>
+          <span>{{ KeyboardSN }}</span>
         </div>
       </div>
       <div class="firmware-version">
         <p>固件信息</p>
         <div class="content-box">
           <span>固件版本:</span>
-          <span>{{ appVersion || '--' }}</span>
+          <span>{{ appVersion }}</span>
         </div>
         <div class="content-box">
           <span>固件日期:</span>
-          <span>{{ '--' }}</span>
+          <span>{{ appVersionTime }}</span>
         </div>
       </div>
       <div class="device-set">
@@ -195,9 +195,11 @@ const updateRes = ref(null);
 
 const urlList = ['/api/update_esports.bin', '/api/update_highlight.bin', '/api/update_beta.bin'];
 
-const KeyboardSN = computed(() => appStore.baseInfo?.KeyboardSN);
-const appVersion = computed(() => appStore.baseInfo?.appVersion);
+const keyboardName = computed(() => deviceStore.devices[0]?.productName || '--');
+const KeyboardSN = computed(() => appStore.baseInfo?.KeyboardSN || appStore.baseInfo?.sn || '--');
+const appVersion = computed(() => appStore.baseInfo?.appVersion || '--');
 const keyboardRunMode = computed(() => appStore.baseInfo?.KeyboardRunMode);
+const appVersionTime = computed(() => appStore.baseInfo?.appBuildDate || appStore.baseInfo?.timestamp || '--');
 
 onMounted(async () => {
   const rate = await performanceStore.getRateOfReturn();

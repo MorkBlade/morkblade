@@ -1,13 +1,37 @@
 import services from '@/services/index';
-import { useLightSettingStore } from '@/stores';
+import { useLightSettingStore, useKeyboardStore } from '@/stores';
 import { storeToRefs } from 'pinia';
+import { paletteToHexArray, hexArrayToPalette } from '@/utils/colorConvert';
 
-export function useLightingHook() {
+export const useLightingHook = () => {
   const version = localStorage.getItem('keyboardVer');
+  const keyboardStore = useKeyboardStore();
+  const lightSettingStore = useLightSettingStore();
+  const { light } = storeToRefs(lightSettingStore);
+  const { area, base, palette } = lightSettingStore;
+  const lightData = light.value;
 
   const initLighting = async () => {
     if (version === 'v2') {
+      const lightingBase = await services.getLightingBaseV2({ area: area, config: base });
+      const { open, mode, luminance, speed, direction, selectStaticColor } = lightingBase[0];
+      // lightSettingStore.light.open = open === 'OpenUp';
+      lightData.open = true;
+      lightData.mode = mode;
+      lightData.luminance = luminance;
+      lightData.speed = speed;
+      lightData.direction = direction === 'Forward';
+      lightData.selectStaticColor = selectStaticColor;
+
+      const lightingPalette = await services.getLightingPaletteV2({ area: area, config: palette });
+
+      const colors = paletteToHexArray(lightingPalette[0]?.staticColors).map((color, index) => ({ color, id: index }));
+      lightData.staticColors = colors;
+      // console.log('custom lighting data: ', await services.getLightingCustomV2());
+
+      modifyCustomLightingData();
     } else {
+      // v1初始化灯光数据
       const keyboardLighting = await services.getLighting();
       const logoLighting = await services.getLogoLighting();
       modifyLightingData(keyboardLighting, logoLighting);
@@ -16,65 +40,133 @@ export function useLightingHook() {
 
   const setLighting = async (lightingType = 'keyboard') => {
     if (version === 'v2') {
+      const res = await services.setLightingBaseV2({
+        area: area,
+        config: base,
+        data: {
+          open: lightData.open ? 'OpenUp' : 'Close',
+          mode: lightData.mode,
+          luminance: lightData.luminance,
+          speed: lightData.speed,
+          direction: lightData.direction ? 'Forward' : 'Backward',
+          selectStaticColor: lightData.selectStaticColor,
+        },
+      });
+      return res;
     } else {
+      // v1设置灯光
       const lightingInfo = conversionData(lightingType);
+      // 发送灯光数据
       lightingType == 'keyboard'
         ? await services.setLighting(lightingInfo)
         : await services.setLogoLighting(lightingInfo);
     }
   };
 
-  return { initLighting, setLighting };
-}
+  // 设置灯光调色板颜色 v2特有
+  const setLightingPalette = async () => {
+    const colors = hexArrayToPalette(
+      lightData.staticColors.map((item) => (typeof item === 'string' ? item : item.color)),
+    );
 
-function modifyLightingData(keyboardLighting, logoLighting) {
-  const lightSettingStore = useLightSettingStore();
-  const { newState } = storeToRefs(lightSettingStore);
-  if (keyboardLighting) {
-    const colors = keyboardLighting.colors.map((color, index) => {
-      return { color, id: index };
+    const res = await services.setLightingPaletteV2({
+      area: area,
+      config: palette,
+      data: { staticColors: colors },
     });
-    lightSettingStore.updateStaticLightColorChecked(keyboardLighting.staticColor, true);
+    return res;
+  };
 
-    newState.value.light.mode = keyboardLighting.mode;
-    newState.value.light.open = keyboardLighting.open;
-    newState.value.light.type = keyboardLighting.type;
-    newState.value.light.speed = keyboardLighting.speed;
-    newState.value.light.luminance = keyboardLighting.luminance;
-    newState.value.light.sleepTime = keyboardLighting.sleepDelay;
-    newState.value.light.direction = keyboardLighting.direction;
-    newState.value.light.staticColors = colors;
-    newState.value.light.selectStaticColor = keyboardLighting.staticColor;
-  }
-
-  if (logoLighting) {
-    const colors = logoLighting.colors.map((color, index) => {
-      return { color, id: index };
+  // v2自定义灯光初始化状态
+  const initCustomLighting = async (inCustomLighting = false) => {
+    keyboardStore.keyboards.forEach((row, rowIndex) => {
+      row.forEach((col, colIndex) => {
+        col.customLight.isCustom = inCustomLighting;
+      });
     });
-    lightSettingStore.updateLogoStaticLightColorChecked(logoLighting.staticColor, true);
+    await setCustomLighting();
+  };
 
-    newState.value.logo.mode = logoLighting.mode;
-    newState.value.logo.open = logoLighting.open;
-    newState.value.logo.type = logoLighting.type;
-    newState.value.logo.speed = logoLighting.speed;
-    newState.value.logo.luminance = logoLighting.luminance;
-    newState.value.logo.sleepTime = logoLighting.sleepDelay;
-    newState.value.logo.direction = logoLighting.direction;
-    newState.value.logo.staticColors = colors;
-    newState.value.logo.selectStaticColor = logoLighting.staticColor;
-  }
-}
+  const modifyCustomLightingData = async () => {
+    const customLighting = await services.getLightingCustomV2();
+    const keyboardStore = useKeyboardStore();
+    // customLighting.forEach((row, rowIndex) => {
+    //   row.forEach((col, colIndex) => {
+    //     keyboardStore.keyboards[rowIndex][colIndex].customLight = col;
+    //   });
+    // });
+    for (let row = 0; row < keyboardStore.keyboards.length; row++) {
+      for (let col = 0; col < keyboardStore.keyboards[row].length; col++) {
+        keyboardStore.keyboards[row][col].customLight = customLighting[row][col];
+      }
+    }
+  };
 
-function conversionData(lightingType) {
+  const setCustomLighting = async (key) => {
+    if (version === 'v2') {
+      const customLightData = [];
+      keyboardStore.keyboards.forEach((row, rowIndex) => {
+        if (!customLightData[rowIndex]) customLightData[rowIndex] = [];
+        row.forEach((col, colIndex) => {
+          customLightData[rowIndex].push(col.customLight);
+        });
+      });
+      await services.setLightingCustomV2({
+        area: 'Keyboard',
+        protocol: 'Custom',
+        data: customLightData,
+      });
+    } else {
+      await services.setCustomLighting({ key, ...lightSettingStore.currentColor });
+    }
+  };
+
+  return {
+    initLighting,
+    setLighting,
+    setLightingPalette,
+    setCustomLighting,
+    initCustomLighting,
+    modifyCustomLightingData,
+  };
+};
+
+const modifyLightingData = (keyboardLighting, logoLighting) => {
   const lightSettingStore = useLightSettingStore();
 
-  const lightingData = lightingType === 'keyboard' ? lightSettingStore.newState.light : lightSettingStore.newState.logo;
+  const processLightingData = (data, type) => {
+    if (!data) return;
 
-  const colors = lightingData.staticColors.map((item) => {
-    return typeof item === 'string' ? item : item.color;
-  });
+    const target = type === 'keyboard' ? lightSettingStore.light : lightSettingStore.logo;
+    console.log('data', data);
+    const colors = data.colors.map((color, index) => ({ color, id: index }));
 
-  console.log('setKeyLighting log light: ', lightingType, lightingData);
+    Object.assign(target, {
+      mode: data.mode,
+      open: data.open,
+      type: data.type,
+      speed: data.speed,
+      luminance: data.luminance,
+      sleepTime: data.sleepDelay,
+      direction: data.direction,
+      staticColors: colors,
+      selectStaticColor: data.staticColor,
+    });
+  };
+
+  processLightingData(keyboardLighting, 'keyboard');
+  processLightingData(logoLighting, 'logo');
+};
+
+const conversionData = (lightingType) => {
+  const lightSettingStore = useLightSettingStore();
+
+  const lightingData = lightingType === 'keyboard' ? lightSettingStore.light : lightSettingStore.logo;
+
+  const colors = lightingData.staticColors.map((item) => (typeof item === 'string' ? item : item.color));
+
+  // v1 灯光数据转换(因v1灯光所需属性与新定数据结构不一致，所以需要转换)
+  lightingData.type === 'static' ? (lightingData.mode = 0) : '';
   return {
     type: lightingData.type,
     colors, // 颜色组
@@ -86,4 +178,4 @@ function conversionData(lightingType) {
     sleepDelay: lightingData.sleepTime, // 灯光休眠时间
     staticColor: lightingData.selectStaticColor, // 静态颜色
   };
-}
+};

@@ -45,6 +45,7 @@
 
 <script setup>
 import { useAppStore, useKeyboardStore, usePerformanceStore } from '@/stores';
+import services from '@/services';
 
 import changedIcon from '@/assets/images/changed.svg';
 import changeIcon from '@/assets/images/change.svg';
@@ -54,14 +55,15 @@ import downArrow from '@/assets/images/down_icon2.svg';
 const appStore = useAppStore();
 const keyboardStore = useKeyboardStore();
 const performanceStore = usePerformanceStore();
+
 const defaultHeight = ref(0);
 const rotate = ref(0);
 const customItems = reactive([]);
+const isVersion2 = localStorage.getItem('keyboardVer') === 'v2';
 
 onMounted(async () => {
-  // await appStore.configID();
-  // await appStore.getBaseInfo();
-  // await appStore.keyboardName();
+  await appStore.configID(isVersion2);
+  await appStore.getBaseInfo(isVersion2);
 });
 
 const toggleDropdown = () => {
@@ -70,6 +72,7 @@ const toggleDropdown = () => {
   defaultHeight.value = defaultHeight.value ? 0 : 400;
 };
 const selectItem = async (index) => {
+  // v1 配置切换
   if (index === appStore.activeConfigIndex) {
     return;
   }
@@ -78,8 +81,8 @@ const selectItem = async (index) => {
 
   const res = await appStore.setActiveConfig(index);
   const timer = setTimeout(async () => {
-    await keyboardStore.getLayoutKeyInfo(keyboardStore.layout,keyboardStore.keyboards);
-    await performanceStore.getKeyPerformance(keyboardStore.keyboards);
+    await keyboardStore.getLayoutKeyInfo(keyboardStore.layout, keyboardStore.keyboards);
+    await performanceStore.getKeyPerformanceV1(keyboardStore.keyboards);
     if (res) {
       appStore.changeConfig = true;
       appStore.activeConfigIndex = index;

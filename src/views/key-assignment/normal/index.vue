@@ -131,7 +131,7 @@ const onCheck = (idx) => {
 
 const selectItem = async (keyVal) => {
   console.log('selectItem is', keyVal);
-  await keyboardStore.updateSelectKey(keyVal);
+  keyboardStore.updateSelectKeyCode(keyVal);
   // keyboardStore.updateKey({ colIndex: rowIdx.value, rowIndex: colIdx.value });
 };
 

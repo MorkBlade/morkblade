@@ -1,22 +1,30 @@
 <template>
-  <div class="background">
-    <div class="bg-layer"></div>
-    <div class="bg-layer second-layer"></div>
-  </div>
-  <img src="@/assets/images/bg_shadow.png" alt="" />
-  <div class="app-content" :class="{ 'content-ready': isContentReady }">
-    <Transition name="fade" mode="out-in">
-      <component :is="route.path === '/connect' ? connectPage : layoutPage" />
-    </Transition>
+  <div class="app-wrapper">
+    <div class="background">
+      <div class="bg-layer"></div>
+      <div class="bg-layer second-layer"></div>
+    </div>
+    <img src="@/assets/images/bg_shadow.png" alt="" />
+    <div class="app-content" :class="{ 'content-ready': isContentReady }">
+      <Transition name="fade" mode="out-in">
+        <component :is="currentPage" />
+      </Transition>
+    </div>
   </div>
 </template>
 
 <script setup>
-import layoutPage from '@/layout/index.vue';
-import connectPage from '@/views/connect/index.vue';
+import { computed, ref, defineAsyncComponent } from 'vue';
+import { useRoute } from 'vue-router';
 
 const route = useRoute();
 const isContentReady = ref(false);
+
+const currentPage = computed(() => {
+  return route.path === '/connect'
+    ? defineAsyncComponent(() => import('@/views/connect/index.vue'))
+    : defineAsyncComponent(() => import('@/layout/index.vue'));
+});
 
 onMounted(() => {
   // 页面加载后显示内容
@@ -27,6 +35,11 @@ onMounted(() => {
 </script>
 
 <style scoped lang="scss">
+.app-wrapper {
+  width: 100%;
+  height: 100%;
+}
+
 .background {
   background-image: url('@/assets/images/newbg.png');
   background-size: cover;

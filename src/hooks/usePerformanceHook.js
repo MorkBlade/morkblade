@@ -1,83 +1,50 @@
 import services from '@/services/index';
-import { useKeyboardStore, usePerformanceStore } from '@/stores';
+import { usePerformanceStore } from '@/stores';
 
-export function usePerformanceHook() {
+export const usePerformanceHook = () => {
   const version = localStorage.getItem('keyboardVer');
   const performanceStore = usePerformanceStore();
+
   const setSingleTravel = async (keyboards, activeKeys, type = 'single') => {
-    if (version === 'v2') {
-      const promises = activeKeys.map(async (keyLocation) => {
+    if (version === 'v2') { // v2设置single rt deadZone
+      return await processKeysV2(keyboards, activeKeys);
+    } else { // v1设置single rt deadZone
+      let promises = [];
+
+      promises = activeKeys.map(async (keyLocation) => {
         const [key1, key2] = keyLocation.split('-');
         const rowIndex = Number(key1);
         const colIndex = Number(key2);
-        const { performance } = keyboards[rowIndex][colIndex];
-        const params = changeParams(performance);
-        return await services.setPerformanceV2({ ...params, calibrate: 0 });
-      });
-      const result = await Promise.all(promises);
-      return result;
-    } else {
-      let promises = [];
-      switch (type) {
-        case 'single':
-          promises = activeKeys.map(async (keyLocation) => {
-            const [key1, key2] = keyLocation.split('-');
-            const rowIndex = Number(key1);
-            const colIndex = Number(key2);
-            const keyItem = keyboards[rowIndex][colIndex];
-            const { advancedKeyMode, singleTriggeringValue } = keyItem.performance;
+        const keyItem = keyboards[rowIndex][colIndex];
+        const { advancedKeyMode, singleTriggeringValue, rtPressValue, rtReleaseValue, deadBandPressValue, deadBandReleaseValue } = keyItem.performance;
+        switch (type) {
+          case 'single':
             performanceStore.setPerformanceMode(keyItem.keyValue, 'single', advancedKeyMode);
             performanceStore.setSingleTravel(keyItem.keyValue, singleTriggeringValue);
-          });
-          break;
-        case 'rt':
-          promises = activeKeys.map(async (keyLocation) => {
-            const [key1, key2] = keyLocation.split('-');
-            const rowIndex = Number(key1);
-            const colIndex = Number(key2);
-            const keyItem = keyboards[rowIndex][colIndex];
-            const { advancedKeyMode, rtPressValue, rtReleaseValue, singleTriggeringValue } = keyItem.performance;
-            return Promise.all([
-              performanceStore.setPerformanceMode(keyItem.keyValue, 'rt', advancedKeyMode),
-              performanceStore.setRtPressTravel(keyItem.keyValue, rtPressValue),
-              performanceStore.setRtReleaseTravel(keyItem.keyValue, rtReleaseValue),
-              performanceStore.setSingleTravel(keyItem.keyValue, singleTriggeringValue),
-            ]);
-          });
-          break;
-        case 'dz':
-          promises = activeKeys.map(async (keyLocation) => {
-            const [key1, key2] = keyLocation.split('-');
-            const rowIndex = Number(key1);
-            const colIndex = Number(key2);
-            const keyItem = keyboards[rowIndex][colIndex];
-            const { deadBandPressValue, deadBandReleaseValue } = keyItem.performance;
-            return Promise.all([
-              performanceStore.setDp(keyItem.keyValue, deadBandPressValue),
-              performanceStore.setDr(keyItem.keyValue, deadBandReleaseValue),
-            ]);
-          });
-          break;
-      }
-
+            break;
+          case 'rt':
+            performanceStore.setPerformanceMode(keyItem.keyValue, 'rt', advancedKeyMode);
+            performanceStore.setRtPressTravel(keyItem.keyValue, rtPressValue);
+            performanceStore.setRtReleaseTravel(keyItem.keyValue, rtReleaseValue);
+            break;
+          case 'dz':
+            performanceStore.setPerformanceMode(keyItem.keyValue, 'dz', advancedKeyMode);
+            performanceStore.setDp(keyItem.keyValue, deadBandPressValue);
+            performanceStore.setDr(keyItem.keyValue, deadBandReleaseValue);
+            break;
+        }
+      });
       return await Promise.all(promises);
     }
   };
 
   const setAxis = async (keyboards, activeKeys, axisID) => {
-    if (version === 'v2') {
-      const promises = activeKeys.map(async (keyLocation) => {
-        const [key1, key2] = keyLocation.split('-');
-        const rowIndex = Number(key1);
-        const colIndex = Number(key2);
-        const { performance } = keyboards[rowIndex][colIndex];
+    if (version === 'v2') { // v2设置轴
+      // 使用工具函数，并传入修改performance的回调
+      return await processKeysV2(keyboards, activeKeys, (performance) => {
         performance.axisID = axisID;
-        const params = changeParams(performance);
-        return await services.setPerformanceV2({ ...params, calibrate: 0 });
       });
-      const result = await Promise.all(promises);
-      return result;
-    } else {
+    } else { // v1设置轴
       const promises = activeKeys.map(async (keyLocation) => {
         const [key1, key2] = keyLocation.split('-');
         const rowIndex = Number(key1);
@@ -90,13 +57,14 @@ export function usePerformanceHook() {
     }
   };
 
+
   return {
     setSingleTravel,
     setAxis,
   };
 }
 
-function changeParams(params) {
+const changeParams = (params) => {
   const res = {
     mode: params.mode,
     normalPress: params.singleTriggeringValue,
@@ -109,6 +77,26 @@ function changeParams(params) {
     row: params.row,
     col: params.col,
   };
-  console.log('change params after: ', res);
+
   return res;
 }
+
+// 处理v2模式下的公共逻辑
+const processKeysV2 = async (keyboards, activeKeys, modifyPerformance = null) => {
+  const promises = activeKeys.map(async (keyLocation) => {
+    const [key1, key2] = keyLocation.split('-');
+    const rowIndex = Number(key1);
+    const colIndex = Number(key2);
+    const { performance } = keyboards[rowIndex][colIndex];
+
+    // 如果有需要修改performance的回调，执行它
+    if (modifyPerformance) {
+      modifyPerformance(performance);
+    }
+
+    const params = changeParams(performance);
+    return await services.setPerformanceV2({ ...params, calibrate: 0 });
+  });
+
+  return await Promise.all(promises);
+};

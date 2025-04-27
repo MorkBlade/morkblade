@@ -2,17 +2,32 @@
   <div class="dynamic-light">
     <p>动态灯光</p>
     <div class="dynamic-light-style">
-      <div
-        class="style-box"
-        v-for="(ite, idx) in dynamicLightModeList"
-        :key="idx"
-        :class="{ 'is-dychecked': currentChecked(idx) }"
-        @click="checkDynamicLight(idx)"
-      >
-        <img :src="getImagePath(idx, 'keyLight')" alt="" v-if="dynamicType === 'keyLight'" />
-        <img :src="getImagePath(idx, 'logoLight')" alt="" v-if="dynamicType !== 'keyLight'" />
-        <span>{{ ite }}</span>
-      </div>
+      <!-- v2 -->
+      <template v-if="isVersion2">
+        <div
+          class="style-box"
+          v-for="(ite, idx) in dynamicLightModeList"
+          :key="idx"
+          :class="{ 'is-dychecked': currentChecked(idx) }"
+          @click="changelightingMode(idx)"
+        >
+          <span>{{ ite }}</span>
+        </div>
+      </template>
+      <!-- v1 -->
+      <template v-else>
+        <div
+          class="style-box"
+          v-for="(ite, idx) in dynamicLightModeList"
+          :key="idx"
+          :class="{ 'is-dychecked': currentChecked(idx) }"
+          @click="checkDynamicLight(idx)"
+        >
+          <img :src="getImagePath(idx, 'keyLight')" alt="" v-if="dynamicType === 'keyLight'" />
+          <img :src="getImagePath(idx, 'logoLight')" alt="" v-if="dynamicType !== 'keyLight'" />
+          <span>{{ ite }}</span>
+        </div>
+      </template>
     </div>
   </div>
 </template>
@@ -25,78 +40,88 @@ const keyLightImages = import.meta.glob('@/assets/images/dynamic*.svg', { eager:
 // 预加载 logo 灯光图片
 const logoLightImages = import.meta.glob('@/assets/images/logo_dynamic_*.svg', { eager: true });
 
-const { dynamicLightMode, dynamicType, lightType } = defineProps({
+const { dynamicLightMode, dynamicType } = defineProps({
   dynamicLightMode: {
     type: Number,
   },
   dynamicType: {
     type: String,
   },
-  lightType: { type: String, default: 'static' },
 });
 
-const emits = defineEmits(['checkDynamicLight']);
+const emits = defineEmits(['checkDynamicLight', 'changelightingMode']);
 const lightSettingStore = useLightSettingStore();
+const isVersion2 = localStorage.getItem('keyboardVer') === 'v2';
+const dynamicLightStyleV1 = [
+  '波纹荡漾',
+  '潮起潮落',
+  '涟漪轻漾',
+  '旋转风暴',
+  '幸运彩虹',
+  '闪耀彩虹',
+  '熠熠生辉',
+  '移动窗格',
+  '波形变换',
+  '移形换影',
+  '正弦曲线',
+  '行云流水',
+  '百花争艳',
+  '斑斓镶嵌',
+  '雨落如注',
+  '跃动不息',
+  '踏雪无痕',
+  '踏雪寻梅',
+  '镭射穿云',
+  '水波荡漾',
+];
+const dynamicLightStyleV2 = [
+  '样式一',
+  '样式二',
+  '样式三',
+  '样式四',
+  '样式五',
+  '样式六',
+  '样式七',
+  '样式八',
+  '样式九',
+  '样式十',
+  '样式十一',
+  '样式十二',
+  '样式十三',
+  '样式十四',
+  '样式十五',
+  '样式十六',
+  '样式十七',
+  '样式十八',
+  '样式十九',
+  '样式二十',
+];
 
 const dynamicLightModeList = computed(() => {
-  // if (locale.value === 'zh') {
   if (dynamicType === 'keyLight') {
-    return [
-      '波纹荡漾',
-      '潮起潮落',
-      '涟漪轻漾',
-      '旋转风暴',
-      '幸运彩虹',
-      '闪耀彩虹',
-      '熠熠生辉',
-      '移动窗格',
-      '波形变换',
-      '移形换影',
-      '正弦曲线',
-      '行云流水',
-      '百花争艳',
-      '斑斓镶嵌',
-      '雨落如注',
-      '跃动不息',
-      '踏雪无痕',
-      '踏雪寻梅',
-      '镭射穿云',
-      '水波荡漾',
-    ];
+    if (isVersion2) {
+      return dynamicLightStyleV2;
+    }
+    return dynamicLightStyleV1;
   } else {
     return ['样式一', '样式二', '样式三', '样式四'];
   }
-  // }
-  // return [
-  //   'M1',
-  //   'M2',
-  //   'M3',
-  //   'M4',
-  //   'M5',
-  //   'M6',
-  //   'M7',
-  //   'M8',
-  //   'M9',
-  //   'M10',
-  //   'M11',
-  //   'M12',
-  //   'M13',
-  //   'M14',
-  //   'M15',
-  //   'M16',
-  //   'M17',
-  //   'M18',
-  //   'M19',
-  //   'M20',
-  // ];
 });
 
 const currentChecked = computed(() => {
   return (idx) => {
-    if (dynamicType === 'keyLight') {
-      return lightType === 'dynamic' && lightSettingStore.newState.light.mode === idx + 1;
+    if (isVersion2) {
+      if (dynamicType === 'keyLight') {
+        return lightSettingStore.light.mode === idx;
+      } else {
+        return lightSettingStore.logo.mode === idx;
+      }
     } else {
-      return lightType === 'dynamic' && lightSettingStore.newState.logo.mode === idx + 1;
+      if (dynamicType === 'keyLight') {
+        return lightSettingStore.light.mode === idx + 1;
+      } else {
+        return lightSettingStore.logo.mode === idx + 1;
+      }
     }
   };
 });
@@ -112,12 +137,11 @@ const getImagePath = (idx, type) => {
 };
 
 const checkDynamicLight = (idx) => {
-  if (dynamicType === 'keyLight') {
-    lightSettingStore.updateDynamicLightBtnChecked(idx, true);
-  } else {
-    lightSettingStore.updateLogoDynamicLightBtnChecked(idx, true);
-  }
   emits('checkDynamicLight', idx + 1);
+};
+
+const changelightingMode = (idx) => {
+  emits('changelightingMode', idx);
 };
 </script>
 

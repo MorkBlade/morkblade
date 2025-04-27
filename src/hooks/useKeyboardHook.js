@@ -6,9 +6,7 @@ const keyboardItemInfo = {
   row: -1,
   keyValue: -1,
 
-  light: {
-    custom: { B: 114, G: 153, R: 168 },
-  },
+  customLight: { B: 0, G: 0, R: 0 },
 
   performance: {
     isGlobalTriggering: true,
@@ -46,26 +44,32 @@ const keyboardItemInfo = {
   },
 };
 
-export function useKeyboardHook() {
+export const useKeyboardHook = () => {
   const version = localStorage.getItem('keyboardVer');
   const keyboardStore = useKeyboardStore();
   const performanceStore = usePerformanceStore();
+
   const initKeyboard = async () => {
     if (version === 'v2') {
+      // v2 keyboard初始化
       const { row } = keyboardStore.keyLayoutConfig;
       const keyboardLayout = [];
+
       for (let i = 0; i < row; i++) {
         // eslint-disable-next-line no-await-in-loop
         const result = await services.getKeyLayoutV2({ fnLayer: keyboardStore.fnLayer, row: i });
         const { keyboardLayout: data } = result[0];
         keyboardLayout.push(data);
       }
+
       if (keyboardLayout.length === 0) {
         console.error('初始化键盘数据失败: 返回值无效');
         return null;
       }
+
       const layoutData = [];
       const keyboardsWithPerformance = [];
+
       for (let rowIndex = 0; rowIndex < keyboardLayout.length; rowIndex++) {
         const row = keyboardLayout[rowIndex];
         if (layoutData[rowIndex] === undefined) layoutData[rowIndex] = [];
@@ -108,8 +112,10 @@ export function useKeyboardHook() {
         // 将处理后的行数据添加到keyboardsWithPerformance
         keyboardsWithPerformance.push(layoutData[rowIndex]);
       }
+
       return keyboardsWithPerformance;
     } else {
+      // v1 keyboard初始化
       const result = await services.defKey();
       if (result) {
         let keyboards;
@@ -143,10 +149,12 @@ export function useKeyboardHook() {
   return {
     initKeyboard,
   };
-}
+};
 
-function initKeyboardLayout(keyboards) {
+const initKeyboardLayout = (keyboards) => {
+  const keyboardStore = useKeyboardStore();
   const filteredKeyboards = [];
+
   // 检查keyboards是否为空
   if (!keyboards || !Array.isArray(keyboards) || keyboards.length === 0) {
     return [];
@@ -155,13 +163,12 @@ function initKeyboardLayout(keyboards) {
   // 遍历keyboards数组
   for (let rowIndex = 0; rowIndex < keyboards.length; rowIndex++) {
     // 如果当前行不存在于keyboardLayout中，跳过
-    console.log('rowIndex', rowIndex);
     if (rowIndex >= keyboardStore.keyboardLayoutV2.length) {
       continue;
     }
 
     filteredKeyboards[rowIndex] = [];
-    console.log('filteredKeyboards', filteredKeyboards);
+
     // 检查当前行是否为数组
     if (!Array.isArray(keyboards[rowIndex])) {
       continue;
@@ -172,18 +179,17 @@ function initKeyboardLayout(keyboards) {
       // 当row等于5且keyValue不存在或为0时，跳过该键
       const colData = keyboards[rowIndex][colIndex];
       // console.log('colData',colData);
+      // 创建深拷贝，避免引用同一个对象
       const currentKey = JSON.parse(JSON.stringify(colData));
+
       if (!currentKey.keyValue || currentKey.keyValue === 0 || currentKey.keyValue === -1) {
         continue;
       }
+
       // 如果当前列不存在于keyboardLayout的当前行中，跳过
       if (filteredKeyboards[rowIndex].length >= keyboardStore.keyboardLayoutV2[rowIndex].length) {
         continue;
       }
-
-      // if(!colData.keyValue) continue;
-
-      // 创建深拷贝，避免引用同一个对象
 
       // 设置自定义键值
       currentKey.customKeys.fn0.keyValue = currentKey.keyValue;
@@ -197,4 +203,4 @@ function initKeyboardLayout(keyboards) {
     }
   }
   return filteredKeyboards;
-}
+};

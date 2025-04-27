@@ -13,11 +13,10 @@ const state = {
     row: 6,
     col: 21,
   },
-  selectKey: { row: 0, col: 0, keycode: 0 },
+  selectKey: { row: 0, col: 0, keyCode: 0 },
   activeKeys: [], // 存储当前选中的键帽值
   isDraging: false,
   inChangLight: false,
-  api: null,
 };
 
 const useKeyboardStore = defineStore('keyboard', {
@@ -26,15 +25,14 @@ const useKeyboardStore = defineStore('keyboard', {
   actions: {
     // 初始化键盘布局
     async initKeyboard() {
-      // console.log('defKey render===================================>>>');
+      // 将v1 v2初始化逻辑移到hook
       const { initKeyboard } = useKeyboardHook();
       this.keyboards = await initKeyboard();
     },
 
+    // getLayoutKeyInfo  splitRowArray 只有v1需要调用
     // 获取每一层的值
     async getLayoutKeyInfo(layout = 0, keyboardsData) {
-      // keyboardStore.layout = layout;
-      // console.log('getLayoutKeyInfo',keyboardsData);
       const result = [];
       // 每一行的数据
       for (let i = 0; i < keyboardsData.length; i++) {
@@ -111,17 +109,17 @@ const useKeyboardStore = defineStore('keyboard', {
       }
     },
 
-    // 拖拽的按键
-    updateSelectKey(data) {
+    // 拖拽的按键键值
+    updateSelectKeyCode(data) {
       if (typeof data === 'number') {
-        this.selectKey.value = data;
+        this.selectKey.keyCode = data;
       } else {
         const macroStore = useMacroStore();
         macroStore.selectMacro = data;
       }
     },
 
-    // 更新按键
+    // 改键
     async updateKey({ rowIndex, colIndex }) {
       // 调用updateKey接口返回需要更新的数据
       this.selectKey.row = rowIndex;
@@ -129,9 +127,9 @@ const useKeyboardStore = defineStore('keyboard', {
       const { layout, keyboards, selectKey } = this;
       const keyboardData = keyboards.filter((item) => item.length > 0);
       const { keyValue: key, customKeys } = keyboardData[rowIndex][colIndex];
-      const { value } = selectKey;
+      const { keyCode } = selectKey;
       try {
-        const result = await services.setKey([{ key, layout, value }]);
+        const result = await services.setKey([{ key, layout, value: keyCode }]);
         const data = result[0];
         const customKeysKeyName = `fn${layout}`;
         customKeys[customKeysKeyName].bindKeyValue = data.value;
@@ -140,10 +138,21 @@ const useKeyboardStore = defineStore('keyboard', {
       }
     },
 
-    async selectKey(key) {
-      this.selectKey = key;
+    // 改键
+    async updateKeyV2({ rowIndex, colIndex }) {
+      this.selectKey.row = rowIndex;
+      this.selectKey.col = colIndex;
+      const { row, col, keyCode } = this.selectKey;
+      const { customKeys } = this.keyboards[rowIndex][colIndex];
+      if (row !== null && col !== null && keyCode !== null) {
+        const res = await services.setKeyCodeV2({ layer: this.fnLayer, row, col, keycode: keyCode });
+        const customKeysKeyName = `fn${this.layout}`;
+        customKeys[customKeysKeyName].bindKeyValue = keyCode;
+        return res;
+      }
     },
 
+    // 多选
     handleSelectKeyClick({ rowIndex, colIndex }, type = 'multiple') {
       const keyId = `${rowIndex}-${colIndex}`;
       const isKeySelected = this.activeKeys.includes(keyId);
@@ -183,6 +192,7 @@ const useKeyboardStore = defineStore('keyboard', {
       });
       this.activeKeys = activeKeys;
     },
+
     // 选中数字键
     selectNumKey() {
       const activeKeys = [];
@@ -195,6 +205,7 @@ const useKeyboardStore = defineStore('keyboard', {
       });
       this.activeKeys = activeKeys;
     },
+
     // 选中字母键
     selectLetterKey() {
       const activeKeys = [];
@@ -207,6 +218,7 @@ const useKeyboardStore = defineStore('keyboard', {
       });
       this.activeKeys = activeKeys;
     },
+
     // 取消选中
     cancelSelectKey() {
       this.activeKeys = [];
@@ -222,7 +234,6 @@ const useKeyboardStore = defineStore('keyboard', {
         });
       });
 
-      // 反选：选中之前未选中的，取消之前选中的
       this.activeKeys = allKeys.filter((key) => !this.activeKeys.includes(key));
     },
   },

@@ -53,9 +53,14 @@ const useAppStore = defineStore('app', {
       return result;
     },
     // 查询当前的配置文件id
-    async configID() {
-      const { configID } = await services.getApi({ type: 'ORDER_TYPE_CONFIG' });
-      this.activeConfigIndex = configID || 0;
+    async configID(isVersion2 = false) {
+      if (isVersion2) {
+        const result = await services.getConfigV2();
+        this.activeConfigIndex = (result && result[0]?.value) || 0;
+      } else {
+        const { configID } = await services.getApi({ type: 'ORDER_TYPE_CONFIG' });
+        this.activeConfigIndex = configID || 0;
+      }
     },
     // 模式查询
     async systemMode() {
@@ -73,10 +78,17 @@ const useAppStore = defineStore('app', {
       return keyboardName;
     },
     // 获取基础信息
-    async getBaseInfo() {
-      const baseInfo = await services.getBaseInfo();
-      this.baseInfo = baseInfo;
-      return baseInfo;
+    async getBaseInfo(isVersion2 = false) {
+      if (isVersion2) {
+        const result = await services.getDevicesInfoV2();
+        console.log('getBaseInfo', result[0]);
+        this.baseInfo = (result && result[0]) || {};
+        return result;
+      } else {
+        const baseInfo = await services.getBaseInfo();
+        this.baseInfo = baseInfo;
+        return baseInfo;
+      }
     },
 
     // 获取协议版本

@@ -5,8 +5,8 @@
         class="select-box"
         :class="{ 'is-checked': selectedKey == 'all-key' }"
         @click="handleAllSelect"
-        @mouseenter="onMouseEn('all-key')"
-        @mouseleave="onMouseLe"
+        @mouseenter="selectedKey = 'all-key'"
+        @mouseleave="selectedKey = ''"
       >
         全选
       </div>
@@ -14,8 +14,8 @@
         class="select-box"
         :class="{ 'is-checked': selectedKey == 'cancel-all' }"
         @click="handleCancelSelect"
-        @mouseenter="onMouseEn('cancel-all')"
-        @mouseleave="onMouseLe"
+        @mouseenter="selectedKey = 'cancel-all'"
+        @mouseleave="selectedKey = ''"
       >
         全不选
       </div>
@@ -23,8 +23,8 @@
         class="select-box"
         :class="{ 'is-checked': selectedKey == 'reverse-key' }"
         @click="handleReverseSelect"
-        @mouseenter="onMouseEn('reverse-key')"
-        @mouseleave="onMouseLe"
+        @mouseenter="selectedKey = 'reverse-key'"
+        @mouseleave="selectedKey = ''"
       >
         反选
       </div>
@@ -67,8 +67,8 @@
         class="select-box"
         :class="{ 'is-checked': selectedKey == 'wasd' }"
         @click="handleWasdSelect"
-        @mouseenter="onMouseEn('wasd')"
-        @mouseleave="onMouseLe"
+        @mouseenter="selectedKey = 'wasd'"
+        @mouseleave="selectedKey = ''"
       >
         WASD
       </div>
@@ -76,8 +76,8 @@
         class="select-box"
         :class="{ 'is-checked': selectedKey == 'num-key' }"
         @click="handleNumSelect"
-        @mouseenter="onMouseEn('num-key')"
-        @mouseleave="onMouseLe"
+        @mouseenter="selectedKey = 'num-key'"
+        @mouseleave="selectedKey = ''"
       >
         仅数字
       </div>
@@ -85,8 +85,8 @@
         class="select-box"
         :class="{ 'is-checked': selectedKey == 'letter-key' }"
         @click="handleLetterSelect"
-        @mouseenter="onMouseEn('letter-key')"
-        @mouseleave="onMouseLe"
+        @mouseenter="selectedKey = 'letter-key'"
+        @mouseleave="selectedKey = ''"
       >
         仅字母
       </div>
@@ -101,26 +101,26 @@
 
 <script setup>
 import services from '@/services/index';
-import { useAppStore, useKeyboardStore, usePerformanceStore, useLightSettingStore, useDeviceStore } from '@/stores';
-import { layoutConfig } from '@/configs/constant/layout';
-import emitter from '@/utils/app-emitter';
+import { useAppStore, useKeyboardStore, useLightSettingStore, useDeviceStore } from '@/stores';
 import { scaleValue } from '@/utils/responsive.js';
+import emitter from '@/utils/app-emitter';
+import { useLightingHook } from '@/hooks';
 
 import layouts from '@/configs/layout/index.js';
 import key from './key.vue';
 
 const route = useRoute();
 const appStore = useAppStore();
-const keyboardStore = useKeyboardStore();
 const deviceStore = useDeviceStore();
-const performanceStore = usePerformanceStore();
+const keyboardStore = useKeyboardStore();
 const lightSettingStore = useLightSettingStore();
+const { initCustomLighting } = useLightingHook();
 const { keyboards } = storeToRefs(keyboardStore);
+
 const vId = computed(() => deviceStore.devices[0]?.vendorId || undefined);
 const pId = computed(() => deviceStore.devices[0]?.productId || undefined);
 
 const selectedKey = ref('');
-const rtEnabled = ref(false);
 const checkedFn = ref(0);
 const formData = reactive({ type: 'win', fn: 0 });
 
@@ -142,19 +142,19 @@ watch(
 );
 
 onMounted(async () => {
-  // console.log('keyboard onMounted');
   try {
     // 您的mounted逻辑
     await keyboardStore.initKeyboard();
-    console.log('layout: ', layout.value);
+    await initCustomLighting();
   } catch (error) {
-    console.error('Mounted error:', error);
     // 处理错误，比如显示错误提示
+    console.error('Mounted error:', error);
   }
 
   const data = await appStore.systemMode();
   formData.type = data.currentSystem;
 
+  // TODO: lighting数据结构变化，需要重写(v1没有自定义灯光回读)
   // 获取所有按键颜色并初始化 store
   const colorUpdates = {};
   for (const [row, rowData] of keyboards.value.entries()) {
@@ -214,14 +214,6 @@ const handleLetterSelect = () => {
   handleOperationKey('letterSelect');
 };
 
-const onMouseEn = (keyCode) => {
-  // selectedKey.value = keyCode;
-};
-
-const onMouseLe = () => {
-  selectedKey.value = '';
-};
-
 const onclick = (rowIndex, colIndex) => {
   // 当前类型
   if (route.path === '/key-assignment') {
@@ -234,8 +226,8 @@ const onclick = (rowIndex, colIndex) => {
   emitter.emit('key-click', { rowIndex, colIndex });
 };
 
+// 换层
 const handleFnChange = (event) => {
-  console.log('event.target', event.target.dataset.idx);
   const fnVal = event.target.dataset.idx;
   checkedFn.value = Number(fnVal);
   formData.fn = fnVal;
@@ -245,33 +237,12 @@ const handleFnChange = (event) => {
 
 const handleOperationKey = (value) => {
   if (value === 'wasdSelect' || value === 'numSelect' || value === 'letterSelect' || value === 'allSelect') {
-    const selectedKeyValues = keyboardStore.activeKeys;
-    // const performanceValue = performanceStore.value;
-    // let enabled = false;
-    // if (selectedKeyValues.length > 0) {
-    //   selectedKeyValues.map(async (keyLocation) => {
-    //     const [key1, key2] = keyLocation.split('-');
-    // const x = Number(key1);
-    // const y = Number(key2);
-    // const { isRt } = keyboards.value[y][x].performance;
-    // if (isRt && !enabled) {
-    //   enabled = true;
-    //   rtEnabled.value = true;
-    // rtPressTravel.value = rt.pressTravel;
-    // rtReleaseTravel.value = rt.releaseTravel;
-    // emitter.emit('rt-enabled', { value: true });
-    // }
-    // });
-    // }
-    const [rowIndex, colIndex] = selectedKeyValues[selectedKeyValues.length - 1].split('-');
+    const [rowIndex, colIndex] = activeKeys.value[activeKeys.value.length - 1].split('-');
     emitter.emit('key-click', { rowIndex, colIndex });
-  }
-  if (value === 'cancelSelect') {
-    rtEnabled.value = false;
-    // emitter.emit('rt-enabled', { value: false });
   }
 };
 
+// 匹配布局，暂时用json文件来做
 const matchLayout = () => {
   if (vId.value === 7331 && pId.value === 257) {
     return layouts.keyboardLayoutV1;

@@ -50,7 +50,7 @@ const startDrag = (e) => {
 
 const updatePosition = async (e) => {
   if (dragElement.value) {
-    if (keyboardStore.selectKey.value !== keyValue) keyboardStore.updateSelectKey(keyValue);
+    if (keyboardStore.selectKey.value !== keyValue) keyboardStore.updateSelectKeyCode(keyValue);
     dragElement.value.style.left = `${e.pageX - 10}px`;
     dragElement.value.style.top = `${e.pageY - 10}px`;
   } else {

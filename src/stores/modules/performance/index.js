@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 
 import services from '@/services/index';
-import { useKeyboardStore } from '@/stores'
+import { useKeyboardStore } from '@/stores';
 
 const state = {
   precision: 0.1, // 键盘行程精度
@@ -47,7 +47,7 @@ const usePerformanceStore = defineStore('performance', {
       return result;
     },
 
-    async getPerformanceValueV1 (keyboardItem) {
+    async getPerformanceValueV1(keyboardItem) {
       const { keyValue } = keyboardItem;
       const performanceMode = await services.getPerformanceMode(keyValue);
       if (performanceMode) {
@@ -115,26 +115,26 @@ const usePerformanceStore = defineStore('performance', {
         // console.log('xxxxxxxxxx',row, col, keyValue);
         const { row, col, keyValue } = keyboard[colIdx];
         // for (let col = 0; col < keyboard[row].length; col++) {
-          const KeyPerformance = {
-            row,
-            col,
-            mode: 0,
-            keyValue,
-            singleTriggeringValue: 0,
-            // normalRelease: 0,
-            rtFirstTouch: 0,
-            rtPressValue: 0,
-            rtReleaseValue: 0,
-            deadBandPressValue: 0,
-            deadBandReleaseValue: 0,
-            axisID: 0,
-            calibrations: 0,
-            travels: 0,
-          };
-          // console.log(keyValue,keyValue===0,keyboard[row][col]);
-          if (keyValue === 0) continue;
-          performance.push(this.getPerformanceValueV2({ row, col }, KeyPerformance));
-          // keyboardStore.keyboard.keyboardLayout[row][col].performance = performance;
+        const KeyPerformance = {
+          row,
+          col,
+          mode: 0,
+          keyValue,
+          singleTriggeringValue: 0,
+          // normalRelease: 0,
+          rtFirstTouch: 0,
+          rtPressValue: 0,
+          rtReleaseValue: 0,
+          deadBandPressValue: 0,
+          deadBandReleaseValue: 0,
+          axisID: 0,
+          calibrations: 0,
+          travels: 0,
+        };
+        // console.log(keyValue,keyValue===0,keyboard[row][col]);
+        if (keyValue === 0) continue;
+        performance.push(this.getPerformanceValueV2({ row, col }, KeyPerformance));
+        // keyboardStore.keyboard.keyboardLayout[row][col].performance = performance;
         // }
       }
       const result = await Promise.all(performance);
@@ -146,6 +146,7 @@ const usePerformanceStore = defineStore('performance', {
     async getPerformanceValueV2(params, performance) {
       // console.log('getPerformanceValueV2');
       const [performanceResult] = await services.getPerformanceV2(params);
+      // console.log('getPerformanceValueV2', performanceResult);
       // const performanceResult = Array.isArray(result) && result.length > 0 ? result[0] : null;
       if (performanceResult) {
         const {
@@ -177,20 +178,20 @@ const usePerformanceStore = defineStore('performance', {
     },
 
     // 获取单键触发行程
-    async getSingleTravel (key, decimalPlace) {
+    async getSingleTravel(key, decimalPlace) {
       const result = await services.getSingleTravel(key, decimalPlace);
 
       return result;
     },
 
     // 获取RT模式行程值
-    async getRtTravel (key) {
+    async getRtTravel(key) {
       const result = await services.getRtTravel(key);
       return result;
     },
 
     // 获取按键死区值
-    async getDeadZoneVal (keyboardItem) {
+    async getDeadZoneVal(keyboardItem) {
       const { keyValue } = keyboardItem;
       const getDpDr = await this.getKeyDeadZone(keyValue);
       if (getDpDr) {
@@ -201,7 +202,7 @@ const usePerformanceStore = defineStore('performance', {
     },
 
     // 获取死区
-    async getKeyDeadZone (key) {
+    async getKeyDeadZone(key) {
       const result = await services.getDpDr(key);
       return result;
     },
@@ -236,7 +237,6 @@ const usePerformanceStore = defineStore('performance', {
       const result = await services.setPerformanceMode(key, mode, advancedKeyMode);
       return result;
     },
-
 
     // 设置单键触发行程
     async setSingleTravel(key, value, decimalPlace) {
@@ -289,13 +289,13 @@ const usePerformanceStore = defineStore('performance', {
     // 设置按下的死区
     async setDp(key, value) {
       const result = await services.setDp(key, value);
-    return result;
+      return result;
     },
 
     // 设置释放死区
     async setDr(key, value) {
       const result = await services.setDr(key, value);
-    return result;
+      return result;
     },
 
     async getRm6X21Travel() {
@@ -307,6 +307,7 @@ const usePerformanceStore = defineStore('performance', {
     // 获取行程校准的数据
     async getRm6X21Calibration(keyboard) {
       const result = await services.getRm6X21Calibration();
+      console.log('getRm6X21Calibration log', result || '没有数据');
       for (let y = 0; y < keyboard.length; y++) {
         if (!this.calibrations[y]) this.calibrations[y] = [];
         for (let x = 0; x < keyboard[y].length; x++) {
@@ -324,7 +325,7 @@ const usePerformanceStore = defineStore('performance', {
     async calibrationStartV2() {
       this.isCalibrating = true;
       const result = await services.calibrationStartV2();
-      console.log('calibrationStart ',result);
+      console.log('calibrationStart ', result);
     },
 
     async calibrationEndV2() {
@@ -373,7 +374,7 @@ const usePerformanceStore = defineStore('performance', {
       }
 
       const { max } = this.getMaxPressTravel([], travels);
-      console.log('getRm6X21CalibrationV2',max);
+      console.log('getRm6X21CalibrationV2', max);
       if (this.isTravelTest) this.updateVerifyKeysV2(travels, keyboard);
       return { max: max / 1000 };
     },
@@ -493,7 +494,7 @@ const usePerformanceStore = defineStore('performance', {
     async calibrationStart() {
       this.clearVerifyKeys();
       const result = await services.calibrationStart();
-      console.log('calibrationStart v1 v1',result);
+      console.log('calibrationStart v1 v1', result);
       return result;
     },
 
@@ -505,7 +506,7 @@ const usePerformanceStore = defineStore('performance', {
     },
     // 获取键盘的最大行程和最小行程
     async getMaxMinTravel() {
-      const result = await services.getApi({ type: 'ORDER_TYPE_PRECISION_STROKE' });
+      const result = (await services.getApi({ type: 'ORDER_TYPE_PRECISION_STROKE' })) || null;
       return result;
     },
 

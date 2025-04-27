@@ -12,7 +12,7 @@
           :src="selectedId === lingtingData.sleepTime ? changedSleepIcon : changeSleepIcon"
           alt=""
         />
-        <span>{{ getSleepDelayLabel(lingtingData?.sleepTime) }}</span>
+        <span>{{ getSleepDelayLabel(lingtingData?.sleepTime === -1 ? 0 : lingtingData?.sleepTime) }}</span>
         <img
           class="down-icon"
           :src="selectedId === lingtingData.sleepTime ? downArrowed : downArrow"
@@ -35,12 +35,12 @@
     </div>
     <div class="lumminance-box">
       <span class="title">亮度:</span>
-      <horizontalSlider :sliderValue="lingtingData.luminance" @sendSliderVal="getLuminance" />
+      <horizontalSlider :sliderValue="lingtingData.luminance" :min="0" :max="max" @sendSliderVal="getLuminance" />
       <span>{{ lingtingData.luminance || 0 }}</span>
     </div>
     <div class="speed-box">
       <span class="title">速度:</span>
-      <horizontalSlider :sliderValue="lingtingData.speed" @sendSliderVal="getSpeed" />
+      <horizontalSlider :sliderValue="lingtingData.speed" :min="0" :max="max" @sendSliderVal="getSpeed" />
       <span>{{ lingtingData.speed || 0 }}</span>
     </div>
   </div>
@@ -59,9 +59,11 @@ import horizontalSlider from './horizontal-slider.vue';
 
 const lingtingData = defineModel();
 const emits = defineEmits(['changeSleepDelay', 'changeLuminance', 'changeSpeed']);
+
 const defaultHeight = ref(0);
 const rotate = ref(180);
-// console.log('asdfasdas', lingtingData.value.sleepTime);
+const isVersion2 = localStorage.getItem('keyboardVer') === 'v2';
+const max = isVersion2 ? 100 : 4;
 const selectedId = ref(lingtingData.value.sleepTime);
 // const luminanceVal = ref(0);
 // const speedVal = ref(0);
@@ -111,8 +113,12 @@ const getLuminance = (val) => {
 
 const getSpeed = (val) => {
   if (lingtingData.value.speed === val) return;
-  lingtingData.value.speed = val;
-  emits('changeSpeed', val);
+  if (isVersion2) {
+    // v2 暂时没有休眠时间设置
+  } else {
+    lingtingData.value.speed = val;
+    emits('changeSpeed', val);
+  }
 };
 </script>
 

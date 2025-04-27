@@ -76,18 +76,17 @@ import iro from '@jaames/iro';
 import services from '@/services/index';
 import { scaleValue } from '@/utils/responsive.js';
 import { useKeyboardStore, useLightSettingStore } from '@/stores';
+import { useLightingHook } from '@/hooks/useLightingHook';
 import preInstallColorList from '@/configs/customColor/index.js';
-
-const emit = defineEmits(['changeCustomLight']);
 
 const keyboardStore = useKeyboardStore();
 const lightSettingStore = useLightSettingStore();
-const { currentLayoutData } = storeToRefs(keyboardStore);
 const { currentPreset } = storeToRefs(lightSettingStore);
+const { setCustomLighting } = useLightingHook();
 // const checked = ref(null);
 const customList = ['彩虹', '海浪', '炼狱', '迈阿密', '夏日微风', '交流发电机', '粘土', 'Lekker', 'Love'];
 const colorList = ['#080cfe', '#ff0000', '#ffff00', '#fe00e9', '#00fe2f', '#fe3602', '#ffffff', '#1481fe', '#00ffd8'];
-
+const isVersion2 = localStorage.getItem('keyboardVer') === 'v2';
 const colorWheelRef = ref(null);
 const selectedColor = ref('#ffffa8');
 const rgb = ref({ r: 255, g: 255, b: 168 });
@@ -121,7 +120,7 @@ onMounted(() => {
     colorPicker.on('color:change', (color) => {
       selectedColor.value = color.hexString;
       rgb.value = color.rgb;
-      emit('changeCustomLight', color.rgb);
+      lightSettingStore.updateCurrentColor(rgb.value);
     });
   }
 });
@@ -138,7 +137,6 @@ const updateFromRgb = () => {
     colorPicker.color.set(newColor);
     selectedColor.value = colorPicker.color.hexString;
   }
-  emit('changeCustomLight', rgb.value);
 };
 
 // 验证颜色值是否有效
@@ -171,7 +169,6 @@ const updateColor = (event) => {
       g: Math.round(color.rgb.g),
       b: Math.round(color.rgb.b),
     };
-    emit('changeCustomLight', rgb.value);
   }
 };
 
@@ -192,42 +189,46 @@ const changeColor = (clickColor) => {
     g: Math.round(color.rgb.g),
     b: Math.round(color.rgb.b),
   };
-  emit('changeCustomLight', rgb.value);
 };
 
 const changePreinstall = async (idx) => {
   lightSettingStore.setCurrentPreset(idx);
 
-  const colorUpdates = {};
   const apiCalls = [];
 
-  // 先收集所有颜色更新
-  Object.entries(preInstallColorList[idx]).forEach(([key, color]) => {
-    const rgbMatch = color.match(/rgb\((\d+),(\d+),(\d+)\)/);
-    if (rgbMatch) {
-      const [_, r, g, b] = rgbMatch;
-      // 存储颜色更新
-      colorUpdates[key] = `rgb(${r}, ${g}, ${b})`;
-      // 收集 API 调用
-      apiCalls.push({
-        key: Number(key),
-        r: Number(r),
-        g: Number(g),
-        b: Number(b),
-      });
-    }
+  // 遍历键盘布局
+  keyboardStore.keyboards.forEach((row, rowIndex) => {
+    row.forEach((key, colIndex) => {
+      // 检查key是否存在且有效
+      if (key && key.keyValue > 0) {
+        const color = preInstallColorList[idx][key.keyValue];
+        if (color) {
+          const rgbMatch = color.match(/rgb\((\d+),(\d+),(\d+)\)/);
+          if (rgbMatch) {
+            const [_, r, g, b] = rgbMatch;
+            // 更新键盘按键的customLight值
+            key.customLight = {
+              R: Number(r),
+              G: Number(g),
+              B: Number(b),
+              isCustom: true,
+            };
+
+            // 收集API调用
+            apiCalls.push({
+              key: key.keyValue,
+              r: Number(r),
+              g: Number(g),
+              b: Number(b),
+            });
+          }
+        }
+      }
+    });
   });
 
-  // 先一次性更新 store，立即更新 UI
-  lightSettingStore.$patch((state) => {
-    state.keyColors = {
-      ...state.keyColors,
-      ...colorUpdates,
-    };
-  });
-
-  // 然后并行执行所有 API 调用
-  debounceApiCalls(apiCalls);
+  // 并行执行所有API调用
+  isVersion2 ? setCustomLighting() : debounceApiCalls(apiCalls);
 };
 
 let debounceTimer = null;
@@ -431,5 +432,18 @@ onBeforeUnmount(() => {
       }
     }
   }
+}
+
+.color-key {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  padding-top: var(--spacing-2);
+  border-radius: var(--spacing-6);
+  position: absolute;
+  top: -0.0313rem;
+  left: -0.0323rem;
+  z-index: 5;
+  transition: background-color 0.3s ease;
 }
 </style>

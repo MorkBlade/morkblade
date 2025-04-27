@@ -40,7 +40,7 @@ const useDeviceStore = defineStore('device', {
           if (type === 'disconnect') {
             this.connectDeviceStatus = false;
             // 使用浏览器默认跳转方式
-            window.location.href = '/';
+            // window.location.href = '/';
           } else {
             this.connectDeviceStatus = true;
           }

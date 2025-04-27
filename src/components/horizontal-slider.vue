@@ -2,16 +2,20 @@
   <div class="slider_box">
     <div class="progress-bar" ref="sliderContainer">
       <div class="slider-btn" :style="handleStyle" @mousedown.self="startDrag" @touchstart="startDrag"></div>
-      <el-slider ref="slider" disabled :step="1" :min="0" :max="4" v-model="sliderVal" />
+      <el-slider ref="slider" disabled :step="1" :min="minVal" :max="maxVal" v-model="sliderVal" />
     </div>
   </div>
 </template>
 
 <script setup>
-import { scaleValue } from '@/utils/responsive.js';
-
-const { sliderValue } = defineProps({
+const {
+  sliderValue,
+  min: minVal,
+  max: maxVal,
+} = defineProps({
   sliderValue: { type: Number },
+  min: { type: Number, default: 0 },
+  max: { type: Number, default: 4 },
 });
 
 const emits = defineEmits(['sendSliderVal']);
@@ -28,8 +32,8 @@ watch(
 );
 let dragging = false;
 let startX = 0;
-let min = 0;
-let max = 4;
+let min = minVal;
+let max = maxVal;
 
 const sliderWidth = computed(() => {
   return Number(getComputedStyle(document.documentElement).getPropertyValue('--slider-width').trim());
