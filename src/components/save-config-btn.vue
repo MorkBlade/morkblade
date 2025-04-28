@@ -13,14 +13,13 @@
 </template>
 
 <script setup>
-import { ElMessage } from 'element-plus';
+import { showMessage } from '@/utils/message';
 import { useKeyboardStore } from '@/stores';
 
 import mDialog from '@/components/dialog.vue';
 import defaultIcon from '@/assets/images/save_icon.svg';
-import warnIcon from '@/assets/images/warn_icon.svg';
 
-const { btnText, tag, disabled } = defineProps({
+const { btnText, tag, disabled, needKeys } = defineProps({
   btnText: {
     type: String,
     default: '保存更改',
@@ -37,6 +36,10 @@ const { btnText, tag, disabled } = defineProps({
     type: Boolean,
     default: false,
   },
+  needKeys: {
+    type: Boolean,
+    default: true,
+  },
 });
 const emits = defineEmits(['saveConfig']);
 
@@ -50,14 +53,8 @@ const activeKeys = computed(() => {
 
 const saveConfig = () => {
   if (disabled) return;
-  if (activeKeys.value.length === 0) {
-    ElMessage({
-      grouping: true,
-      duration: 1000,
-      dangerouslyUseHTMLString: true,
-      message: `<span class="custom-message"><img src="${warnIcon}" class="warn-icon"/>请先选择需要修改的按键</span>`,
-      customClass: 'custom-message-container',
-    });
+  if (activeKeys.value.length === 0 && needKeys) {
+    showMessage('请先选择需要修改的按键', 'warning');
     return;
   }
   isAct.value = false;

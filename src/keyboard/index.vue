@@ -49,7 +49,7 @@
                 :shapeScale="col.shapeScale"
                 :location="col.location"
                 :active="activeKeys.includes(`${rowIndex}-${colIndex}`)"
-                @click="onclick(rowIndex, colIndex)"
+                @click="handleKeyClick(rowIndex, colIndex)"
                 @emits="handleCancelSelect"
               />
             </template>
@@ -100,28 +100,38 @@
 </template>
 
 <script setup>
-import services from '@/services/index';
-import { useAppStore, useKeyboardStore, useLightSettingStore, useDeviceStore } from '@/stores';
-import { scaleValue } from '@/utils/responsive.js';
-import emitter from '@/utils/app-emitter';
 import { useLightingHook } from '@/hooks';
-
 import layouts from '@/configs/layout/index.js';
+import emitter from '@/utils/app-emitter';
+import { scaleValue } from '@/utils/responsive.js';
+import { useKeyboardPageHook } from './useKeyboardPageHook.js';
+import { useAppStore, useKeyboardStore, useDeviceStore } from '@/stores';
+
 import key from './key.vue';
 
 const route = useRoute();
 const appStore = useAppStore();
 const deviceStore = useDeviceStore();
 const keyboardStore = useKeyboardStore();
-const lightSettingStore = useLightSettingStore();
 const { initCustomLighting } = useLightingHook();
 const { keyboards } = storeToRefs(keyboardStore);
+const {
+  selectedKey,
+  checkedFn,
+  activeKeys,
+  handleAllSelect,
+  handleCancelSelect,
+  handleReverseSelect,
+  handleWasdSelect,
+  handleNumSelect,
+  handleLetterSelect,
+  handleOperationKey,
+  handleFnChange,
+} = useKeyboardPageHook();
 
 const vId = computed(() => deviceStore.devices[0]?.vendorId || undefined);
 const pId = computed(() => deviceStore.devices[0]?.productId || undefined);
 
-const selectedKey = ref('');
-const checkedFn = ref(0);
 const formData = reactive({ type: 'win', fn: 0 });
 
 watch(
@@ -146,75 +156,15 @@ onMounted(async () => {
     // 您的mounted逻辑
     await keyboardStore.initKeyboard();
     await initCustomLighting();
+    const data = await appStore.systemMode();
+    formData.type = data.currentSystem;
   } catch (error) {
     // 处理错误，比如显示错误提示
     console.error('Mounted error:', error);
   }
-
-  const data = await appStore.systemMode();
-  formData.type = data.currentSystem;
-
-  // TODO: lighting数据结构变化，需要重写(v1没有自定义灯光回读)
-  // 获取所有按键颜色并初始化 store
-  const colorUpdates = {};
-  for (const [row, rowData] of keyboards.value.entries()) {
-    for (const [col, item] of rowData.entries()) {
-      const res = await services.getCustomLighting(item.key);
-      const { key, R, G, B } = res;
-      const color = `rgb(${R},${G},${B})`;
-      colorUpdates[key] = color;
-    }
-  }
-
-  // 一次性更新 store 中的所有颜色
-  lightSettingStore.$patch((state) => {
-    state.keyColors = colorUpdates;
-  });
-
-  // console.log('初始化键盘颜色完成:', lightSettingStore.keyColors);
 });
 
-const activeKeys = computed(() => {
-  return keyboardStore.activeKeys;
-});
-
-const handleAllSelect = () => {
-  selectedKey.value = 'all-key';
-  keyboardStore.selectAllKey();
-  handleOperationKey('allSelect');
-};
-
-const handleCancelSelect = () => {
-  selectedKey.value = 'cancel-all';
-  keyboardStore.cancelSelectKey();
-  handleOperationKey('cancelSelect');
-};
-
-const handleReverseSelect = () => {
-  selectedKey.value = 'reverse-key';
-  keyboardStore.reverseSelectKey();
-  handleOperationKey('reverseSelect');
-};
-
-const handleWasdSelect = () => {
-  selectedKey.value = 'wasd';
-  keyboardStore.selectWasdKey();
-  handleOperationKey('wasdSelect');
-};
-
-const handleNumSelect = () => {
-  selectedKey.value = 'num-key';
-  keyboardStore.selectNumKey();
-  handleOperationKey('numSelect');
-};
-
-const handleLetterSelect = () => {
-  selectedKey.value = 'letter-key';
-  keyboardStore.selectLetterKey();
-  handleOperationKey('letterSelect');
-};
-
-const onclick = (rowIndex, colIndex) => {
+const handleKeyClick = (rowIndex, colIndex) => {
   // 当前类型
   if (route.path === '/key-assignment') {
     // 单选
@@ -224,22 +174,6 @@ const onclick = (rowIndex, colIndex) => {
     keyboardStore.handleSelectKeyClick({ rowIndex, colIndex });
   }
   emitter.emit('key-click', { rowIndex, colIndex });
-};
-
-// 换层
-const handleFnChange = (event) => {
-  const fnVal = event.target.dataset.idx;
-  checkedFn.value = Number(fnVal);
-  formData.fn = fnVal;
-  const { fn } = formData;
-  keyboardStore.getLayoutKeyInfo(fn, keyboardStore.keyboards);
-};
-
-const handleOperationKey = (value) => {
-  if (value === 'wasdSelect' || value === 'numSelect' || value === 'letterSelect' || value === 'allSelect') {
-    const [rowIndex, colIndex] = activeKeys.value[activeKeys.value.length - 1].split('-');
-    emitter.emit('key-click', { rowIndex, colIndex });
-  }
 };
 
 // 匹配布局，暂时用json文件来做

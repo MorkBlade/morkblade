@@ -19,30 +19,20 @@
       </div>
     </div>
     <div class="right-arrow" @click="nextClick"></div>
-    <div class="bottom-taskbar">
-      <saveConfigBtn :btnText="btnText" @saveConfig="saveConfig" v-if="!showText" />
-      <div class="bottom-taskbar__text" v-if="showText">
-        <span :style="{ backgroundColor: localCarouselData[currentIdx]?.color }">
-          {{ localCarouselData[currentIdx]?.name }}
-        </span>
-      </div>
-    </div>
   </div>
 </template>
 
 <script setup>
-import saveConfigBtn from './save-config-btn.vue';
 import { scaleValue } from '@/utils/responsive.js';
 
-const { carouselData, btnText, offset, selectedId } = defineProps({
+const { carouselData, offset, selectedId } = defineProps({
   carouselData: { type: Array, default: () => [] },
-  btnText: { type: String, default: '' },
   width: { type: Number, default: scaleValue(1030) },
   offset: { type: Number, default: scaleValue(160) },
   showText: { type: Boolean, default: false },
   selectedId: { type: Number, default: 0 },
 });
-const emits = defineEmits(['handleSave', 'changeAxis']);
+const emits = defineEmits(['handleSave', 'handleChangeItem']);
 
 const SLIDE_WIDTH = computed(() => {
   const value = getComputedStyle(document.documentElement).getPropertyValue('--carousel-offset-x').trim();
@@ -74,7 +64,7 @@ const prevClickSlide = () => {
       // console.log('prev click', currentIdx.value, offsetVal.value, SLIDE_WIDTH.value, originalLength.value - 1);
     }, 500);
   }
-  emits('changeAxis', localCarouselData.value[currentIdx.value].id);
+  emits('handleChangeItem', localCarouselData.value[currentIdx.value].id);
   setTimeout(() => {
     flag = false;
   }, 300);
@@ -99,7 +89,8 @@ const nextClick = () => {
       offsetVal.value = 0;
     }, 500);
   }
-  emits('changeAxis', localCarouselData.value[currentIdx.value].id);
+  console.log('handleChangeItem', localCarouselData.value, currentIdx.value, localCarouselData.value[currentIdx.value]);
+  emits('handleChangeItem', localCarouselData.value[currentIdx.value].id);
   setTimeout(() => {
     flag = false;
   }, 300);
@@ -240,30 +231,6 @@ const saveConfig = () => {
 
     .no-transition {
       transition: none;
-    }
-  }
-
-  .bottom-taskbar {
-    position: absolute;
-    top: var(--size-230);
-    left: calc(var(--size-350) - var(--spacing-5));
-    &__text {
-      width: var(--size-150);
-      margin-left: var(--spacing-38);
-      margin-top: var(--spacing-10);
-      display: flex;
-      justify-content: center;
-      span {
-        display: inline-block;
-        height: var(--size-20);
-        line-height: var(--size-20);
-        text-align: center;
-        padding: 0 var(--spacing-15);
-        border-radius: var(--spacing-10);
-        color: #000;
-        font-size: var(--font-size-12);
-        font-family: 'CN Heavy';
-      }
     }
   }
 }

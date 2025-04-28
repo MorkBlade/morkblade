@@ -5,8 +5,8 @@
       <setTravelCard
         :sliderVal="singleTravel"
         :offsetX="scaleValue(40)"
-        :min="min"
-        :max="max"
+        :min="option.min"
+        :max="option.max"
         :disabled="disabled"
         title="首次触发行程"
         @sendKeyVal="handleTriggerPointChange"
@@ -14,8 +14,8 @@
       <setTravelCard
         :sliderVal="rtPressTravel"
         :offsetX="scaleValue(40)"
-        :min="min"
-        :max="max"
+        :min="option.min"
+        :max="option.max"
         :disabled="disabled"
         title="RT按下行程"
         @sendKeyVal="setRtPressTravel"
@@ -23,8 +23,8 @@
       <setTravelCard
         :sliderVal="rtReleaseTravel"
         :offsetX="scaleValue(40)"
-        :min="min"
-        :max="max"
+        :min="option.min"
+        :max="option.max"
         :disabled="disabled"
         title="RT抬起行程"
         @sendKeyVal="setRtReleaseTravel"
@@ -44,16 +44,16 @@
 
 <script setup>
 import emitter from '@/utils/app-emitter';
-import { ElMessage } from 'element-plus';
+import { showMessage } from '@/utils/message';
 import { useKeyboardStore, usePerformanceStore } from '@/stores';
 import { scaleValue } from '@/utils/responsive.js';
 import { usePerformanceHook } from '@/hooks';
+import { usePerformancePageHook } from '../usePerformancePageHook';
 
 import travelTestCard from '@/components/travel-test-card.vue';
 import setTravelCard from '@/components/set-travel-card.vue';
 import saveConfig from './components/save-config.vue';
 import sureIcon from '@/assets/images/sure.svg';
-
 import linkIcon from '@/assets/images/link1.svg';
 import linkedIcon from '@/assets/images/link2.svg';
 
@@ -62,42 +62,21 @@ const performanceStore = usePerformanceStore();
 
 const { keyboards } = storeToRefs(keyboardStore);
 
-const min = 0.005; // 最小值
-const max = 3.3; // 最大值
-const travelVal = ref(0);
-const RTKeyDown = ref(0);
-const RTKeyUp = ref(0);
+const { rowIdx, colIdx, option, activeKeys, disabled, debounce, hasCurrentKey } = usePerformancePageHook();
 
-const rowIdx = ref(null);
-const colIdx = ref(null);
+const travelVal = ref(0);
 const rtEnabled = ref(true);
 const rtPressTravel = ref(performanceStore.rtPressTravel);
 const rtReleaseTravel = ref(performanceStore.rtReleaseTravel);
 const singleTravel = ref(performanceStore.singleTouchTravel);
 const rtPressLinkRelease = ref(true);
 
-// onMounted(async () => {
-//   emitter.emit('rt-enabled', { value: rtEnabled.value });
-// });
-
-const activeKeys = computed(() => {
-  return keyboardStore.activeKeys;
-});
-
-const disabled = computed(() => {
-  return activeKeys.value.length === 0;
-});
-
-const hasCurrentKey = computed(() => {
-  return activeKeys.value.includes(`${rowIdx.value}-${colIdx.value}`);
-});
-
 emitter.on('key-click', async ({ rowIndex, colIndex }) => {
   rowIdx.value = rowIndex;
   colIdx.value = colIndex;
   if (hasCurrentKey.value) {
-    // const { touchMode, single, rt } = performanceValue.value[rowIndex][colIndex];
     const { singleTriggeringValue, rtPressValue, rtReleaseValue } = keyboards.value[rowIndex][colIndex].performance;
+    console.log('rtPressValue, rtReleaseValue', rtPressValue, rtReleaseValue);
     rtEnabled.value = true;
     await handleRtEnabledChange();
     singleTravel.value =
@@ -114,8 +93,6 @@ emitter.on('rt-enabled', ({ value }) => {
 });
 
 const handleRtEnabledChange = async (value) => {
-  const selectedKeyValues = keyboardStore.activeKeys;
-  const performanceValue = performanceStore.value;
   if (rtEnabled.value && activeKeys.value.length > 0) {
     activeKeys.value.map(async (keyLocation) => {
       const [key1, key2] = keyLocation.split('-');
@@ -124,24 +101,38 @@ const handleRtEnabledChange = async (value) => {
       const { rtPressValue, rtReleaseValue } = keyboards.value[rowIndex][colIndex].performance;
       keyboards.value[rowIndex][colIndex].performance.isRt = true;
       keyboards.value[rowIndex][colIndex].performance.isSingle = false;
-      keyboards.value[rowIndex][colIndex].performance.rtPressValue = rtPressValue || 0.3;
-      keyboards.value[rowIndex][colIndex].performance.rtReleaseValue = rtReleaseValue || 0.3;
+      keyboards.value[rowIndex][colIndex].performance.rtPressValue = rtPressValue || 0;
+      keyboards.value[rowIndex][colIndex].performance.rtReleaseValue = rtReleaseValue || 0;
     });
   }
-
-  // emitter.emit('rt-enabled', { value });
 };
 
-const handleTriggerPointChange = async (value) => {
-  singleTravel.value = value;
-  // 拿到选中的键值
+// 更新键盘配置的防抖函数
+const debouncedUpdateRtTreavel = debounce((value) => {
   activeKeys.value.map(async (keyLocation) => {
     const [key1, key2] = keyLocation.split('-');
     const rowIndex = Number(key1);
     const colIndex = Number(key2);
-    // performanceValue[rowIndex][colIndex].touchMode = touchMode;
+    keyboards.value[rowIndex][colIndex].performance.isRt = true;
+    keyboards.value[rowIndex][colIndex].performance.isSingle = false;
+    keyboards.value[rowIndex][colIndex].performance.rtPressValue = rtPressTravel.value;
+    keyboards.value[rowIndex][colIndex].performance.rtReleaseValue = rtReleaseTravel.value;
+  });
+}, 200);
+
+// 更新单触发行程的防抖函数
+const debouncedUpdateSingleTravel = debounce((value) => {
+  activeKeys.value.map(async (keyLocation) => {
+    const [key1, key2] = keyLocation.split('-');
+    const rowIndex = Number(key1);
+    const colIndex = Number(key2);
     keyboards.value[rowIndex][colIndex].performance.singleTriggeringValue = value;
   });
+}, 200);
+
+const handleTriggerPointChange = async (value) => {
+  singleTravel.value = value;
+  debouncedUpdateSingleTravel(value);
 };
 
 // 设置RT按下的行程
@@ -150,15 +141,7 @@ const setRtPressTravel = async (value) => {
   rtPressTravel.value = value;
   rtPressLinkRelease.value ? (rtReleaseTravel.value = value) : '';
   if (rtEnabled.value) {
-    activeKeys.value.map(async (keyLocation) => {
-      const [key1, key2] = keyLocation.split('-');
-      const rowIndex = Number(key1);
-      const colIndex = Number(key2);
-      keyboards.value[rowIndex][colIndex].performance.isRt = true;
-      keyboards.value[rowIndex][colIndex].performance.isSingle = false;
-      keyboards.value[rowIndex][colIndex].performance.rtPressValue = rtPressTravel.value;
-      keyboards.value[rowIndex][colIndex].performance.rtReleaseValue = rtReleaseTravel.value;
-    });
+    debouncedUpdateRtTreavel(value);
   }
 };
 
@@ -169,15 +152,7 @@ const setRtReleaseTravel = async (value) => {
   rtPressLinkRelease.value ? (rtPressTravel.value = value) : '';
 
   if (rtEnabled.value) {
-    activeKeys.value.map(async (keyLocation) => {
-      const [key1, key2] = keyLocation.split('-');
-      const rowIndex = Number(key1);
-      const colIndex = Number(key2);
-      keyboards.value[rowIndex][colIndex].performance.isRt = true;
-      keyboards.value[rowIndex][colIndex].performance.isSingle = false;
-      keyboards.value[rowIndex][colIndex].performance.rtPressValue = rtPressTravel.value;
-      keyboards.value[rowIndex][colIndex].performance.rtReleaseValue = rtReleaseTravel.value;
-    });
+    debouncedUpdateRtTreavel(value);
   }
 };
 
@@ -194,13 +169,7 @@ const saveRtConfig = async () => {
   const { setSingleTravel } = usePerformanceHook();
   const res = setSingleTravel(keyboards.value, activeKeys.value, 'rt');
   if (res) {
-    ElMessage({
-      grouping: true,
-      duration: 1000,
-      dangerouslyUseHTMLString: true,
-      message: `<span class="custom-message"><img src="${sureIcon}" class="warn-icon"/>修改成功</span>`,
-      customClass: 'custom-message-container',
-    });
+    showMessage('修改成功');
   }
 };
 </script>

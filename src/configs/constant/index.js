@@ -1,10 +1,16 @@
-// export const APP_MENU = [
-//   { key: 'performance', icon: 'adjustment', text: '性能设置' },
-//   { key: 'lighting', icon: 'lightbulb', text: '灯光RGB设置' },
-//   { key: 'customKey', icon: 'keyboard', text: '键盘键值修改' },
-//   { key: 'highLevelKey', icon: 'grid-view', text: '高级键功能' },
-//   { key: 'macro', icon: 'git-pull-request', text: '宏录制' },
-// ];
+import axisIcon1 from '@/assets/images/wanciwang.webp';
+import axisIcon2 from '@/assets/images/ciyu.webp';
+import axisIcon3 from '@/assets/images/wanciwang.webp';
+import axisIcon4 from '@/assets/images/ciyu.webp';
+import axisIcon5 from '@/assets/images/wanciwang.webp';
+import axisIcon6 from '@/assets/images/ciyu.webp';
+import axisIcon7 from '@/assets/images/wanciwang.webp';
+import axisIcon8 from '@/assets/images/ciyu.webp';
+import cs from '@/assets/images/cs.svg';
+import office from '@/assets/images/key.svg';
+import lol from '@/assets/images/lol.svg';
+import osu from '@/assets/images/osu.svg';
+import valorant from '@/assets/images/valorant.png';
 
 export const APP_MENU = {
   keyboard: [
@@ -98,14 +104,6 @@ export const LIGHT_DYNAMIC_MODES = [
   { label: '水波荡漾', id: 20 },
 ];
 
-import axisIcon1 from '@/assets/images/wanciwang.webp';
-import axisIcon2 from '@/assets/images/ciyu.webp';
-import axisIcon3 from '@/assets/images/wanciwang.webp';
-import axisIcon4 from '@/assets/images/ciyu.webp';
-import axisIcon5 from '@/assets/images/wanciwang.webp';
-import axisIcon6 from '@/assets/images/ciyu.webp';
-import axisIcon7 from '@/assets/images/wanciwang.webp';
-import axisIcon8 from '@/assets/images/ciyu.webp';
 export const KEY_SHAFT = [
   {
     id: 1,
@@ -181,4 +179,58 @@ export const DKS_MODES = [
   '红框中的按键优先',
   '橘框中的按键优先',
   '中性（两个按键都按下都不生效）',
+];
+
+export const PRESET_SETTINGS = [
+  {
+    id: 1,
+    name: '瓦洛兰特',
+    color: 'rgb(255,0,0)',
+    src: valorant,
+    keys: [
+      { key: 26, trigger: 0.2, rt: 0.4 },
+      { key: 4, trigger: 0.2, rt: 0.4 },
+      { key: 22, trigger: 0.2, rt: 0.4 },
+      { key: 7, trigger: 0.2, rt: 0.4 },
+      { key: 225, trigger: 0.5, rt: 0.2 },
+      { key: 44, trigger: 0.5, rt: 0.2 },
+      { key: 33, trigger: 1, rt: 0.3 },
+    ],
+    other: { trigger: 1, rt: 0 },
+  },
+  {
+    id: 2,
+    name: '英雄联盟',
+    color: 'rgb(165,214,63)',
+    src: lol,
+    keys: [],
+    other: { trigger: 0.3, rt: 0 },
+  },
+  {
+    id: 3,
+    name: 'CS:GO',
+    color: 'rgb(42,130,228)',
+    src: cs,
+    keys: [],
+    other: { trigger: 1, rt: 0 },
+  },
+  {
+    id: 4,
+    name: 'osu',
+    color: 'rgb(172,51,193)',
+    src: osu,
+    keys: [
+      { key: 29, trigger: 0.4, rt: 0.1 },
+      { key: 27, trigger: 0.4, rt: 0.1 },
+    ],
+    other: { trigger: 1, rt: 0 },
+  },
+  {
+    id: 5,
+    name: '办公',
+    color: 'rgb(172,51,193)',
+    src: office,
+    keys: [],
+    other: { trigger: 2, rt: 0 },
+  },
 ];

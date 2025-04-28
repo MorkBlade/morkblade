@@ -24,7 +24,7 @@
           :height="sliderHeight"
           :min="min"
           :max="max"
-          v-model="psliderVal"
+          v-model="travelVal"
         />
       </div>
       <img class="slider-img isreverse" src="/src/assets/images/keystroke_scale_bg.svg" alt="" />
@@ -38,12 +38,12 @@
     </div>
     <div class="text-box">
       <span>{{ title }}</span>
-      <!-- <span>{{ psliderVal.toFixed(2) }}mm</span> -->
+      <!-- <span>{{ travelVal.toFixed(2) }}mm</span> -->
       <div class="travel-input">
         <input
           type="number"
           :disabled="disabled"
-          v-model.number="psliderVal"
+          v-model.number="travelVal"
           min="0"
           max="4"
           @input="updateValueFromInput"
@@ -74,21 +74,21 @@ const step = 0.001; // 步进值
 const sliderHeight = computed(() => {
   return getComputedStyle(document.documentElement).getPropertyValue('--slider-height').trim();
 }); // 滑块高度
-const psliderVal = ref(null);
+const travelVal = ref(null);
 let dragging = false;
 let startY = 0;
 
 watch(
   () => sliderVal,
   (newVal) => {
-    psliderVal.value = newVal;
+    travelVal.value = newVal;
   },
   { immediate: true },
 );
 
 // 计算滑块样式
 const handleStyle = computed(() => {
-  const percentage = (psliderVal.value - min) / (max - min);
+  const percentage = (travelVal.value - min) / (max - min);
   let top = percentage * sliderHeight.value.replace('px', '') - 10 + 'px';
   return {
     top, // 根据进度计算底部位置
@@ -124,6 +124,7 @@ const onDrag = (e) => {
 
 // 结束拖拽或鼠标离开
 const endDrag = () => {
+  // emits('sendKeyVal', travelVal.value);
   dragging = false;
   document.removeEventListener('mousemove', onDrag);
   document.removeEventListener('mouseup', endDrag);
@@ -138,15 +139,15 @@ const updateValue = (clientY) => {
   percentage = Math.max(0, Math.min(1, percentage)); // 确保百分比在0到1之间
   let newValue = max - percentage * (max - min);
   newValue = Math.round(newValue / step) * step; // 根据步进值四舍五入
-  psliderVal.value = parseFloat(newValue.toFixed(3)); // 保留一位小数
-  emits('sendKeyVal', psliderVal.value);
+  travelVal.value = parseFloat(newValue.toFixed(3)); // 保留一位小数
+  emits('sendKeyVal', travelVal.value);
 };
 
 const updateValueFromInput = () => {
-  if (psliderVal.value === '') {
-    psliderVal.value = 0;
+  if (travelVal.value === '') {
+    travelVal.value = 0;
   }
-  emits('sendKeyVal', psliderVal.value);
+  emits('sendKeyVal', travelVal.value);
 };
 
 // 添加全局事件监听器以处理触摸设备上的拖动

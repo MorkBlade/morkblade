@@ -1,27 +1,30 @@
 <template>
   <div class="preinstall-box">
-    <mCarousel :carouselData="carouselData" :btnText="'应用预设'" />
+    <mCarousel :carouselData="PRESET_SETTINGS" @handleChangeItem="handleChangePreset" @handleSave="handleSavePreset" />
+    <div class="bottom-taskbar">
+      <saveConfigBtn btnText="应用预设" :needKeys="false" @saveConfig="handleSavePreset" />
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ElMessage } from 'element-plus';
+import { PRESET_SETTINGS } from '@/configs/constant/index.js';
+import { useKeyboardStore } from '@/stores';
+import { usePerformanceHook } from '@/hooks/usePerformanceHook';
 
 import mCarousel from '@/components/carousel.vue';
-import preInstallIcon1 from '@/assets/images/cs.svg';
-import preInstallIcon2 from '@/assets/images/key.svg';
-import preInstallIcon3 from '@/assets/images/lol.svg';
-import preInstallIcon4 from '@/assets/images/osu.svg';
-import preInstallIcon5 from '@/assets/images/woman.png';
-import sureIcon from '@/assets/images/sure.svg';
 
-const carouselData = [
-  { src: preInstallIcon1 },
-  { src: preInstallIcon2 },
-  { src: preInstallIcon3 },
-  { src: preInstallIcon4 },
-  { src: preInstallIcon5 },
-];
+const keyboardStore = useKeyboardStore();
+const { setPreset } = usePerformanceHook();
+const checkedPreset = ref(PRESET_SETTINGS[3]);
+
+const handleChangePreset = (id) => {
+  checkedPreset.value = PRESET_SETTINGS[id - 1];
+};
+
+const handleSavePreset = async () => {
+  setPreset(keyboardStore.keyboards, checkedPreset.value);
+};
 </script>
 
 <style scoped lang="scss">
@@ -32,5 +35,30 @@ const carouselData = [
   background-size: cover;
   background-repeat: no-repeat;
   overflow: hidden;
+  position: relative;
+
+  & .bottom-taskbar {
+    position: absolute;
+    top: var(--size-230);
+    left: calc(var(--size-510) - var(--spacing-5));
+    &__text {
+      width: var(--size-150);
+      margin-left: var(--spacing-38);
+      margin-top: var(--spacing-10);
+      display: flex;
+      justify-content: center;
+      span {
+        display: inline-block;
+        height: var(--size-20);
+        line-height: var(--size-20);
+        text-align: center;
+        padding: 0 var(--spacing-15);
+        border-radius: var(--spacing-10);
+        color: #000;
+        font-size: var(--font-size-12);
+        font-family: 'CN Heavy';
+      }
+    }
+  }
 }
 </style>

@@ -17,8 +17,8 @@
         <p class="rt-release-travel" v-if="rtReleaseTravel !== null">{{ rtReleaseTravel }}</p>
       </template>
       <template v-if="currentModel == 'deadZone'">
-        <span class="rt-release-travel">{{ pressDeadTravel + ' / ' }}</span>
-        <span class="rt-release-travel">{{ releaseDead }}</span>
+        <p class="rt-release-travel">{{ pressDeadTravel }}</p>
+        <p class="rt-release-travel">{{ releaseDead }}</p>
       </template>
     </div>
     <div class="advanced-key-box" v-if="route.path === '/key-assignment'">
@@ -220,7 +220,7 @@ const advancedTag = computed(() => {
 
 // 显示rtPressTravel
 const rtPressTravel = computed(() => {
-  if (currentModel.value === 'mechanicalMode' || currentModel.value === 'quickTrigger') {
+  if ((currentModel.value === 'mechanicalMode' || currentModel.value === 'quickTrigger') && PerformanceData.value?.rtPressValue) {
     return PerformanceData.value?.rtPressValue;
   }
   return null;
@@ -228,7 +228,7 @@ const rtPressTravel = computed(() => {
 
 // 显示rtReleaseTravel
 const rtReleaseTravel = computed(() => {
-  if (currentModel.value === 'mechanicalMode' || currentModel.value === 'quickTrigger') {
+  if ((currentModel.value === 'mechanicalMode' || currentModel.value === 'quickTrigger') && PerformanceData.value?.rtReleaseValue) {
     return PerformanceData.value?.rtReleaseValue;
   }
   return null;
@@ -243,14 +243,14 @@ const singleTravel = computed(() => {
 });
 
 const pressDeadTravel = computed(() => {
-  if (currentModel.value === 'deadZone') {
+  if (currentModel.value === 'deadZone' && PerformanceData.value?.deadBandPressValue) {
     return PerformanceData.value?.deadBandPressValue;
   }
   return null;
 });
 
 const releaseDead = computed(() => {
-  if (currentModel.value === 'deadZone') {
+  if (currentModel.value === 'deadZone' && PerformanceData.value?.deadBandReleaseValue) {
     return PerformanceData.value?.deadBandReleaseValue;
   }
   return null;

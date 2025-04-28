@@ -47,10 +47,16 @@ const useAppStore = defineStore('app', {
     //   }
     // },
 
-    async setActiveConfig(index) {
+    async setActiveConfig(index, isVersion2 = false) {
       this.activeConfigIndex = index;
-      const result = await services.switchConfig(index);
-      return result;
+      if (isVersion2) {
+        const result = await services.setConfigV2(`Config${index + 1}`);
+        // console.log('v2 set config', result, await services.getConfigV2());
+        return result;
+      } else {
+        const result = await services.switchConfig(index);
+        return result;
+      }
     },
     // 查询当前的配置文件id
     async configID(isVersion2 = false) {
@@ -81,7 +87,6 @@ const useAppStore = defineStore('app', {
     async getBaseInfo(isVersion2 = false) {
       if (isVersion2) {
         const result = await services.getDevicesInfoV2();
-        console.log('getBaseInfo', result[0]);
         this.baseInfo = (result && result[0]) || {};
         return result;
       } else {

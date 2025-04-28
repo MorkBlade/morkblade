@@ -43,21 +43,23 @@
 </template>
 
 <script setup>
-import { ElMessage } from 'element-plus';
+import { showMessage } from '@/utils/message';
+import emitter from '@/utils/app-emitter';
+import { usePerformanceHook } from '@/hooks';
 import { scaleValue } from '@/utils/responsive.js';
 import { useKeyboardStore, usePerformanceStore } from '@/stores';
-import { usePerformanceHook } from '@/hooks';
-import emitter from '@/utils/app-emitter';
+import { usePerformancePageHook } from '../usePerformancePageHook';
 
-import travelTestCard from '@/components/travel-test-card.vue';
-import setTravelCard from '@/components/set-travel-card.vue';
-import saveConfig from './components/save-config.vue';
 import sureIcon from '@/assets/images/sure.svg';
+import saveConfig from './components/save-config.vue';
+import setTravelCard from '@/components/set-travel-card.vue';
+import travelTestCard from '@/components/travel-test-card.vue';
+
+const { rowIdx, colIdx, activeKeys, disabled, debounce, hasCurrentKey } = usePerformancePageHook();
 
 const keyboardStore = useKeyboardStore();
-const performanceStore = usePerformanceStore();
-
 const { keyboards } = storeToRefs(keyboardStore);
+
 const min = 0; // 最小值
 const max = 1; // 最大值
 const pressDeadHeight = ref(10);
@@ -68,10 +70,6 @@ const maxKeyDeadHeight = computed(() => {
   return Number(getComputedStyle(document.documentElement).getPropertyValue('--dead-zone-height').trim());
 }); // 使用CSS变量
 
-const activeKeys = computed(() => {
-  return keyboardStore.activeKeys;
-});
-
 watchEffect(() => {
   if (activeKeys.value.length > 0) {
     // 获取最后一个
@@ -81,18 +79,6 @@ watchEffect(() => {
     pressDead.value = deadBandPressValue;
     releaseDead.value = deadBandReleaseValue;
   }
-});
-
-const disabled = computed(() => {
-  const selectedKeyValues = keyboardStore.activeKeys;
-  if (selectedKeyValues.length === 0) return true;
-  return false;
-});
-
-const rowIdx = ref(null);
-const colIdx = ref(null);
-const hasCurrentKey = computed(() => {
-  return activeKeys.value.includes(`${rowIdx.value}-${colIdx.value}`);
 });
 
 emitter.on('key-click', ({ rowIndex, colIndex }) => {
@@ -109,42 +95,49 @@ emitter.on('key-click', ({ rowIndex, colIndex }) => {
 
 const handlePressDeadChange = async (value) => {
   pressDead.value = value;
-  activeKeys.value.map(async (keyLocation) => {
-    const [key1, key2] = keyLocation.split('-');
-    const rowIndex = Number(key1);
-    const colIndex = Number(key2);
-    const { deadBandPressValue } = keyboards.value[rowIndex][colIndex].performance;
-    const height = (value || deadBandPressValue / max) * maxKeyDeadHeight.value;
-    pressDeadHeight.value = Math.round(height);
-    keyboards.value[rowIndex][colIndex].performance.deadBandPressValue = value;
-  });
+  const lastActiveKey = activeKeys.value[activeKeys.value.length - 1];
+  const [rowIndx, colIndx] = lastActiveKey.split('-');
+  const { deadBandReleaseValue } = keyboards.value[rowIndx][colIndx].performance;
+  const height = (value || deadBandReleaseValue / max) * maxKeyDeadHeight.value;
+  pressDeadHeight.value = Math.round(height);
+  debouncedUpdateDZPress(value);
 };
 
 const handleReleaseDeadChange = async (value) => {
   releaseDead.value = value;
+  const lastActiveKey = activeKeys.value[activeKeys.value.length - 1];
+  const [rowIndx, colIndx] = lastActiveKey.split('-');
+  const { deadBandPressValue } = keyboards.value[rowIndx][colIndx].performance;
+  const height = (value || deadBandPressValue / max) * maxKeyDeadHeight.value;
+  releaseDeadHeight.value = Math.round(height);
+  debouncedUpdateDZRelease(value);
+};
+
+// 防抖
+const debouncedUpdateDZPress = debounce((value) => {
   activeKeys.value.map(async (keyLocation) => {
     const [key1, key2] = keyLocation.split('-');
     const rowIndex = Number(key1);
     const colIndex = Number(key2);
-    // const keyValue = currentLayoutData[y][x];
-    const { deadBandReleaseValue } = keyboards.value[rowIndex][colIndex].performance;
-    const height = (value || deadBandReleaseValue / max) * maxKeyDeadHeight.value;
-    releaseDeadHeight.value = Math.round(height);
+    keyboards.value[rowIndex][colIndex].performance.deadBandPressValue = value;
+  });
+}, 200);
+
+// 防抖
+const debouncedUpdateDZRelease = debounce((value) => {
+  activeKeys.value.map(async (keyLocation) => {
+    const [key1, key2] = keyLocation.split('-');
+    const rowIndex = Number(key1);
+    const colIndex = Number(key2);
     keyboards.value[rowIndex][colIndex].performance.deadBandReleaseValue = value;
   });
-};
+}, 200);
 
 const saveDeadZoneTravel = async () => {
   const { setSingleTravel } = usePerformanceHook();
   const res = setSingleTravel(keyboards.value, activeKeys.value, 'dz');
   if (res) {
-    ElMessage({
-      grouping: true,
-      duration: 1000,
-      dangerouslyUseHTMLString: true,
-      message: `<span class="custom-message"><img src="${sureIcon}" class="warn-icon"/>修改成功</span>`,
-      customClass: 'custom-message-container',
-    });
+    showMessage('修改成功');
   }
 };
 </script>
@@ -157,7 +150,7 @@ const saveDeadZoneTravel = async () => {
     display: flex;
     height: var(--size-290);
     width: var(--performance-center-box-width);
-    margin: 0 var(--spacing-30);
+    margin: 0 var(--spacing-25);
     background-image: url('@/assets/images/keystroke_bg.svg');
     background-size: cover;
     background-repeat: no-repeat;

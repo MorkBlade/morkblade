@@ -113,6 +113,7 @@ export const useKeyboardHook = () => {
         keyboardsWithPerformance.push(layoutData[rowIndex]);
       }
 
+      console.log('keyboardsWithPerformance', keyboardsWithPerformance);
       return keyboardsWithPerformance;
     } else {
       // v1 keyboard初始化

@@ -8,7 +8,7 @@
         :offset="scaleValue(25)"
         :width="scaleValue(920)"
         :selected-id="axisID"
-        @changeAxis="changeAxis"
+        @handleChangeItem="changeAxis"
       />
     </div>
     <div class="axis-container__info">

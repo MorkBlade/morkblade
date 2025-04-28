@@ -62,6 +62,7 @@ const customItems = reactive([]);
 const isVersion2 = localStorage.getItem('keyboardVer') === 'v2';
 
 onMounted(async () => {
+  // console.log('mounted log config v2:', await services.getConfigListV2(), await services.getConfigV2());
   await appStore.configID(isVersion2);
   await appStore.getBaseInfo(isVersion2);
 });
@@ -79,10 +80,12 @@ const selectItem = async (index) => {
   rotate.value = rotate.value ? 0 : 180;
   defaultHeight.value = defaultHeight.value ? 0 : 400;
 
-  const res = await appStore.setActiveConfig(index);
+  const res = await appStore.setActiveConfig(index, isVersion2);
   const timer = setTimeout(async () => {
-    await keyboardStore.getLayoutKeyInfo(keyboardStore.layout, keyboardStore.keyboards);
-    await performanceStore.getKeyPerformanceV1(keyboardStore.keyboards);
+    // TODO v2 配置切换之后获取的数据是一样的
+    await keyboardStore.initKeyboard();
+    // await keyboardStore.getLayoutKeyInfo(keyboardStore.layout, keyboardStore.keyboards);
+    // await performanceStore.getKeyPerformanceV1(keyboardStore.keyboards);
     if (res) {
       appStore.changeConfig = true;
       appStore.activeConfigIndex = index;

@@ -42,8 +42,7 @@ import { onBeforeUnmount } from 'vue';
 
 const keyboardStore = useKeyboardStore();
 const lightSettingStore = useLightSettingStore();
-const { initLighting, setLighting, setLightingPalette, initCustomLighting, modifyCustomLightingData } =
-  useLightingHook();
+const { initLighting, setLighting, setLightingPalette, initCustomLighting } = useLightingHook();
 
 const clickItem = ref(0);
 const isVersion2 = localStorage.getItem('keyboardVer') === 'v2';
@@ -122,10 +121,9 @@ const changeMenu = (idx) => {
       lightSettingStore.updateEnterCustom(false);
       break;
   }
-  initCustomLighting(inCustomLighting);
-  setTimeout(() => {
-    changeKeyLight();
-  }, 200);
+  // 先取消自定义灯光
+  isVersion2 ? initCustomLighting(inCustomLighting) : '';
+  changeKeyLight();
 };
 
 // 切换灯光
