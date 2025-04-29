@@ -24,7 +24,7 @@ const { isStart } = defineProps({
   isStart: { type: Boolean, default: false },
 });
 const enabled = ref(false);
-const version = localStorage.getItem('keyboardVer');
+const isVersion2 = localStorage.getItem('keyboardVer') === 'v2';
 const chartRef = ref(null);
 const chartInstance = ref(null);
 const keyPressTestCount = ref(0);
@@ -97,9 +97,9 @@ onMounted(() => {
 
 const handleEnabledChange = async (value) => {
   if (value) {
-    version === 'v2' ? performanceStore.calibrationStartV2() : performanceStore.calibrationStart();
+    isVersion2 ? performanceStore.calibrationStartV2() : performanceStore.calibrationStart();
   } else {
-    version === 'v2' ? performanceStore.calibrationEndV2() : performanceStore.calibrationEnd();
+    isVersion2 ? performanceStore.calibrationEndV2() : performanceStore.calibrationEnd();
   }
   // emitter.emit('calibration-mode', { value });
   keyPressTestCount.value++;
@@ -119,13 +119,12 @@ watch(
 watch(keyPressTestCount, async () => {
   if (isStart) {
     let mmBuff = 0;
-    if(version === 'v2' ){
+    if (isVersion2) {
       const { max } = await performanceStore.getRm6X21CalibrationV2(keyboardStore.keyboards);
       mmBuff = max;
     } else {
       const { max } = await performanceStore.getRm6X21Calibration(keyboardStore.keyboards);
       mmBuff = max;
-
     }
     option.series[0].data.push([count.value, mmBuff]);
 

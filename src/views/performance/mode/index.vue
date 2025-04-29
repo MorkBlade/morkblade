@@ -41,6 +41,7 @@ const singleTravel = ref(performanceStore.singleTouchTravel);
 emitter.on('key-click', ({ rowIndex, colIndex }) => {
   rowIdx.value = rowIndex;
   colIdx.value = colIndex;
+  console.log('single listen click: ', rowIndex, colIndex);
   if (hasCurrentKey.value) {
     const { singleTriggeringValue } = keyboards.value[rowIndex][colIndex].performance;
     singleTravel.value =

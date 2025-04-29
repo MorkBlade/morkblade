@@ -4,15 +4,15 @@ import { storeToRefs } from 'pinia';
 import { paletteToHexArray, hexArrayToPalette } from '@/utils/colorConvert';
 
 export const useLightingHook = () => {
-  const version = localStorage.getItem('keyboardVer');
+  const isVersion2 = localStorage.getItem('keyboardVer') === 'v2';
   const keyboardStore = useKeyboardStore();
   const lightSettingStore = useLightSettingStore();
   const { light } = storeToRefs(lightSettingStore);
-  const { area, base, palette } = lightSettingStore;
+  const { area, base, palette, colorCorrection } = lightSettingStore;
   const lightData = light.value;
 
   const initLighting = async () => {
-    if (version === 'v2') {
+    if (isVersion2) {
       const lightingBase = await services.getLightingBaseV2({ area: area, config: base });
       const { open, mode, luminance, speed, direction, selectStaticColor } = lightingBase[0];
       // lightSettingStore.light.open = open === 'OpenUp';
@@ -39,7 +39,7 @@ export const useLightingHook = () => {
   };
 
   const setLighting = async (lightingType = 'keyboard') => {
-    if (version === 'v2') {
+    if (isVersion2) {
       const res = await services.setLightingBaseV2({
         area: area,
         config: base,
@@ -70,7 +70,7 @@ export const useLightingHook = () => {
     );
 
     const res = await services.setLightingPaletteV2({
-      area: area,
+      area,
       config: palette,
       data: { staticColors: colors },
     });
@@ -103,7 +103,7 @@ export const useLightingHook = () => {
   };
 
   const setCustomLighting = async (key) => {
-    if (version === 'v2') {
+    if (isVersion2) {
       const customLightData = [];
       keyboardStore.keyboards.forEach((row, rowIndex) => {
         if (!customLightData[rowIndex]) customLightData[rowIndex] = [];
@@ -113,12 +113,29 @@ export const useLightingHook = () => {
       });
       await services.setLightingCustomV2({
         area: 'Keyboard',
-        protocol: 'Custom',
         data: customLightData,
+        protocol: 'Custom',
       });
     } else {
       await services.setCustomLighting({ key, ...lightSettingStore.currentColor });
     }
+  };
+
+  // v2 灯光饱和度
+  const getLightingSaturation = async () => {
+    const res = await services.getLightingColorCorrectionV2({ area, config: colorCorrection });
+    const { R, G, B } = res[0];
+    lightSettingStore.saturation = { R, G, B };
+    return res;
+  };
+
+  const setLightingSaturation = async () => {
+    const res = await services.setLightingColorCorrectionV2({
+      area,
+      config: colorCorrection,
+      data: lightSettingStore.saturation,
+    });
+    return res;
   };
 
   return {
@@ -128,6 +145,8 @@ export const useLightingHook = () => {
     setCustomLighting,
     initCustomLighting,
     modifyCustomLightingData,
+    getLightingSaturation,
+    setLightingSaturation,
   };
 };
 

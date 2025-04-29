@@ -172,6 +172,7 @@ const currentKey = computed(() => {
 const showKeyCode = computed(() => {
   if (keyboards.value.length > 0) {
     const customKeysKeyName = `fn${layout.value}`;
+    console.log('currentKey.value', currentKey.value, customKeysKeyName);
     const { bindKeyValue } = currentKey.value.customKeys[customKeysKeyName];
     return keyboard[bindKeyValue];
   }
@@ -220,7 +221,10 @@ const advancedTag = computed(() => {
 
 // 显示rtPressTravel
 const rtPressTravel = computed(() => {
-  if ((currentModel.value === 'mechanicalMode' || currentModel.value === 'quickTrigger') && PerformanceData.value?.rtPressValue) {
+  if (
+    (currentModel.value === 'mechanicalMode' || currentModel.value === 'quickTrigger') &&
+    PerformanceData.value?.rtPressValue
+  ) {
     return PerformanceData.value?.rtPressValue;
   }
   return null;
@@ -228,7 +232,10 @@ const rtPressTravel = computed(() => {
 
 // 显示rtReleaseTravel
 const rtReleaseTravel = computed(() => {
-  if ((currentModel.value === 'mechanicalMode' || currentModel.value === 'quickTrigger') && PerformanceData.value?.rtReleaseValue) {
+  if (
+    (currentModel.value === 'mechanicalMode' || currentModel.value === 'quickTrigger') &&
+    PerformanceData.value?.rtReleaseValue
+  ) {
     return PerformanceData.value?.rtReleaseValue;
   }
   return null;
@@ -306,10 +313,8 @@ const Keydrop = async (e, rowIndex, colIndex, key) => {
       await macroStore.setMacro();
     }
   } else {
-    const version = localStorage.getItem('keyboardVer');
-    version === 'v2'
-      ? keyboardStore.updateKeyV2({ rowIndex, colIndex })
-      : keyboardStore.updateKey({ rowIndex, colIndex });
+    const isVersion2 = localStorage.getItem('keyboardVer') === 'v2';
+    isVersion2 ? keyboardStore.updateKeyV2({ rowIndex, colIndex }) : keyboardStore.updateKey({ rowIndex, colIndex });
   }
 };
 

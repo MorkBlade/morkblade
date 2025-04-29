@@ -17,8 +17,8 @@
 </template>
 
 <script setup>
-import staticLightCard from '@/components/static-light-card.vue';
-import dynamicLightCard from '@/components/dynamic-light-card.vue';
+import staticLightCard from '../components/static-light-card.vue';
+import dynamicLightCard from '../components/dynamic-light-card.vue';
 
 const keyLighting = defineModel();
 const emit = defineEmits(['changeKeyLight', 'changeColorPicker']);

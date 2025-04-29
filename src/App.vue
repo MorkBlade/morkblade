@@ -14,16 +14,16 @@
 </template>
 
 <script setup>
-import { computed, ref, defineAsyncComponent } from 'vue';
+import { computed, ref } from 'vue';
 import { useRoute } from 'vue-router';
+import Layout from '@/layout/index.vue';
+import Connect from '@/views/connect/index.vue';
 
 const route = useRoute();
 const isContentReady = ref(false);
 
 const currentPage = computed(() => {
-  return route.path === '/connect'
-    ? defineAsyncComponent(() => import('@/views/connect/index.vue'))
-    : defineAsyncComponent(() => import('@/layout/index.vue'));
+  return route.path === '/connect' ? Connect : Layout;
 });
 
 onMounted(() => {
@@ -63,19 +63,22 @@ onMounted(() => {
   left: 0;
   width: 100%;
   height: 100%;
-  animation: slideLeft 10s linear infinite;
+  animation: slideBackAndForth 20s linear infinite;
 }
 
 .second-layer {
-  left: 100%; /* 第二层从画面右侧开始 */
+  left: 100%;
 }
 
-@keyframes slideLeft {
+@keyframes slideBackAndForth {
   0% {
     transform: translateX(0);
   }
+  50% {
+    transform: translateX(-100%);
+  }
   100% {
-    transform: translateX(-100%); /* 向左移动一个屏幕宽度 */
+    transform: translateX(0);
   }
 }
 

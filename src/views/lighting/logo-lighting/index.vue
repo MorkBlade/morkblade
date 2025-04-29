@@ -7,8 +7,8 @@
 </template>
 
 <script setup>
-import staticLightCard from '@/components/static-light-card.vue';
-import dynamicLightCard from '@/components/dynamic-light-card.vue';
+import staticLightCard from '../components/static-light-card.vue';
+import dynamicLightCard from '../components/dynamic-light-card.vue';
 import { useLightSettingStore } from '@/stores';
 
 const logoLighting = defineModel();

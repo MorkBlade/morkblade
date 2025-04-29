@@ -3,6 +3,7 @@ const state = {
   base: 'Base',
   palette: 'Palette',
   colorCorrection: 'ColorCorrection',
+  saturation: { R: 0, G: 0, B: 0 },
   light: {
     open: true,
     mode: 0, // 0-19动态 20静态

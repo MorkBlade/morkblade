@@ -1,5 +1,10 @@
 <template>
-  <div class="key-page">
+  <div
+    class="key-page"
+    :style="{
+      width: `${containerDimensions.width}px`,
+    }"
+  >
     <div class="side-left-container" v-if="route.path === '/performance'">
       <div
         class="select-box"
@@ -29,39 +34,74 @@
         反选
       </div>
     </div>
-    <div class="keyboard-container">
-      <div
-        class="keyboard"
-        :style="{
-          width: `${containerDimensions.width}px`,
-          height: `${containerDimensions.height}px`,
-        }"
-      >
-        <template v-for="(row, rowIndex) in layout">
-          <div class="row" :class="`row_${rowIndex + 1}`" :key="rowIndex" v-if="row[0].shapeScale?.w">
-            <template v-for="(col, colIndex) in row">
-              <key
-                v-if="col.shapeScale.w != 0 && col && col.keyItem && col.keyItem.keyValue"
-                :key="`key-${rowIndex}-${colIndex}`"
-                :row="rowIndex"
-                :column="colIndex"
-                :keyItem="col.keyItem"
-                :shapeScale="col.shapeScale"
-                :location="col.location"
-                :active="activeKeys.includes(`${rowIndex}-${colIndex}`)"
-                @click="handleKeyClick(rowIndex, colIndex)"
-                @emits="handleCancelSelect"
-              />
-            </template>
-          </div>
-        </template>
-      </div>
-      <template v-if="vId === 7331 && pId === 257">
+    <!-- v1 keyboard -->
+    <template v-if="vId === 7331 && pId === 257">
+      <div class="keyboard-container v1">
+        <div
+          class="keyboard"
+          :style="{
+            width: `${containerDimensions.width}px`,
+            height: `${containerDimensions.height}px`,
+          }"
+        >
+          <template v-for="(row, rowIndex) in layout">
+            <div class="row" :class="`row_${rowIndex + 1}`" :key="rowIndex" v-if="row[0].shapeScale?.w">
+              <template v-for="(col, colIndex) in row">
+                <key
+                  v-if="col.shapeScale.w != 0 && col && col.keyItem && col.keyItem.keyValue"
+                  :key="`key-${rowIndex}-${colIndex}`"
+                  :row="rowIndex"
+                  :column="colIndex"
+                  :keyItem="col.keyItem"
+                  :shapeScale="col.shapeScale"
+                  :location="col.location"
+                  :active="activeKeys.includes(`${rowIndex}-${colIndex}`)"
+                  @click="handleKeyClick(rowIndex, colIndex)"
+                  @emits="handleCancelSelect"
+                />
+              </template>
+            </div>
+          </template>
+        </div>
         <div class="logo-light-bar">
           <span></span>
         </div>
-      </template>
-    </div>
+      </div>
+    </template>
+    <!-- v2 keyboard -->
+    <template v-else>
+      <div class="keyboard-container v2">
+        <div
+          class="keyboard"
+          :style="{
+            width: `${containerDimensions.width}px`,
+            height: `${containerDimensions.height}px`,
+          }"
+        >
+          <template v-for="(row, rowIndex) in layout">
+            <div class="row" :class="`row_${rowIndex + 1}`" :key="rowIndex" v-if="row[0].shapeScale?.w">
+              <template v-for="(col, colIndex) in row">
+                <key
+                  v-if="col.shapeScale.w != 0 && col && col.keyItem && col.keyItem.keyValue"
+                  :key="`key-${rowIndex}-${colIndex}`"
+                  :row="rowIndex"
+                  :column="colIndex"
+                  :keyItem="col.keyItem"
+                  :shapeScale="col.shapeScale"
+                  :location="col.location"
+                  :active="activeKeys.includes(`${rowIndex}-${colIndex}`)"
+                  @click="handleKeyClick(rowIndex, colIndex)"
+                  @emits="handleCancelSelect"
+                />
+              </template>
+            </div>
+          </template>
+          <div class="logo-light-bar__left">
+            <span></span>
+          </div>
+        </div>
+      </div>
+    </template>
     <div class="side-right-container" v-if="route.path === '/performance'">
       <div
         class="select-box"
@@ -118,6 +158,7 @@ const { keyboards } = storeToRefs(keyboardStore);
 const {
   selectedKey,
   checkedFn,
+  formData,
   activeKeys,
   handleAllSelect,
   handleCancelSelect,
@@ -128,15 +169,13 @@ const {
   handleOperationKey,
   handleFnChange,
 } = useKeyboardPageHook();
-
+const isVersion2 = localStorage.getItem('keyboardVer') === 'v2';
 const vId = computed(() => deviceStore.devices[0]?.vendorId || undefined);
 const pId = computed(() => deviceStore.devices[0]?.productId || undefined);
 
-const formData = reactive({ type: 'win', fn: 0 });
-
 watch(
   () => route.path,
-  (newPath) => {
+  async (newPath) => {
     if (newPath !== '/performance') {
       keyboardStore.cancelSelectKey();
       handleOperationKey('cancelSelect');
@@ -146,7 +185,8 @@ watch(
       checkedFn.value = Number(fnVal);
       formData.fn = fnVal;
       const { fn } = formData;
-      keyboardStore.getLayoutKeyInfo(fn, keyboardStore.keyboards);
+      // 切换到其他页面时还原到层1(v2暂未做)
+      isVersion2 ? '' : await keyboardStore.getLayoutKeyInfo(fn, keyboardStore.keyboards);
     }
   },
 );
@@ -158,6 +198,7 @@ onMounted(async () => {
     await initCustomLighting();
     const data = await appStore.systemMode();
     formData.type = data.currentSystem;
+    // console.log('keyboard onmounted---------------------------------------------------------------------->');
   } catch (error) {
     // 处理错误，比如显示错误提示
     console.error('Mounted error:', error);
@@ -299,10 +340,29 @@ const containerDimensions = computed(() => {
     display: flex;
     justify-content: center;
     align-items: center;
+    &.v2 .keyboard {
+      // 特殊背景图 故需要写死宽高
+      width: var(--keyboard-v2-width) !important;
+      height: var(--keyboard-v2-height) !important;
+      background-image: url('@/assets/images/mk60_bg.svg');
+      background-size: cover;
+      background-repeat: no-repeat;
+      border: none;
+      padding: var(--keyboard-v2-padding);
+      &::after {
+        content: '';
+        width: var(--keyboard-pseudo-element-width);
+        height: var(--keyboard-pseudo-element-height);
+        box-sizing: border-box;
+        border-radius: var(--spacing-15);
+        position: absolute;
+        top: var(--keyboard-pseudo-element-top);
+        left: var(--keyboard-pseudo-element-left);
+        border: var(--spacing-3) solid rgb(37, 37, 37);
+      }
+    }
 
     .keyboard {
-      width: 100%;
-      height: 100%;
       border-radius: var(--spacing-15);
       border: var(--spacing-3) solid rgb(37, 37, 37);
       position: relative;
@@ -371,6 +431,28 @@ const containerDimensions = computed(() => {
         right: var(--spacing-5);
       }
     }
+
+    .logo-light-bar__left {
+      width: var(--size-22);
+      height: var(--size-100);
+      background-image: url('@/assets/images/left_logo.svg');
+      background-size: cover;
+      background-repeat: no-repeat;
+      position: absolute;
+      left: calc(var(--spacing-3) * -1);
+      top: var(--size-70);
+      z-index: 5;
+
+      & span {
+        width: calc(var(--spacing-70) - var(--spacing-1));
+        height: var(--spacing-4);
+        border-radius: var(--spacing-4);
+        // background-color: rgba(135, 206, 235, 0.3);
+        position: absolute;
+        top: var(--spacing-8);
+        left: var(--spacing-5);
+      }
+    }
   }
 
   .side-left-container div,
@@ -388,7 +470,7 @@ const containerDimensions = computed(() => {
   .layer-container {
     width: var(--keyboard-side-width2);
     position: absolute;
-    right: 0;
+    right: calc(var(--size-160) * -1);
     bottom: 0;
     display: flex;
     flex-wrap: wrap;

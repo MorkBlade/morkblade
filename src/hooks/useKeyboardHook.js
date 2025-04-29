@@ -45,12 +45,12 @@ const keyboardItemInfo = {
 };
 
 export const useKeyboardHook = () => {
-  const version = localStorage.getItem('keyboardVer');
+  const isVersion2 = localStorage.getItem('keyboardVer') === 'v2';
   const keyboardStore = useKeyboardStore();
   const performanceStore = usePerformanceStore();
 
   const initKeyboard = async () => {
-    if (version === 'v2') {
+    if (isVersion2) {
       // v2 keyboard初始化
       const { row } = keyboardStore.keyLayoutConfig;
       const keyboardLayout = [];
@@ -69,6 +69,7 @@ export const useKeyboardHook = () => {
 
       const layoutData = [];
       const keyboardsWithPerformance = [];
+      console.log('initKeyboard-------------------------------');
 
       for (let rowIndex = 0; rowIndex < keyboardLayout.length; rowIndex++) {
         const row = keyboardLayout[rowIndex];
@@ -113,7 +114,7 @@ export const useKeyboardHook = () => {
         keyboardsWithPerformance.push(layoutData[rowIndex]);
       }
 
-      console.log('keyboardsWithPerformance', keyboardsWithPerformance);
+      // console.log('keyboardsWithPerformance', keyboardsWithPerformance);
       return keyboardsWithPerformance;
     } else {
       // v1 keyboard初始化

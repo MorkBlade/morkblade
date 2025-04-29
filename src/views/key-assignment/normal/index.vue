@@ -135,14 +135,14 @@ const selectItem = async (keyVal) => {
   // keyboardStore.updateKey({ colIndex: rowIdx.value, rowIndex: colIdx.value });
 };
 
-emitter.on('key-click', ({ rowIndex, colIndex }) => {
-  rowIdx.value = rowIndex;
-  colIdx.value = colIndex;
-  if (hasCurrentKey.value) {
-    console.log('hasCurrentKey', activeKeys.value);
-    const { touchMode, single } = performanceValue.value[rowIndex][colIndex];
-  }
-});
+// emitter.on('key-click', ({ rowIndex, colIndex }) => {
+//   rowIdx.value = rowIndex;
+//   colIdx.value = colIndex;
+//   if (hasCurrentKey.value) {
+//     console.log('hasCurrentKey', activeKeys.value);
+//     const { touchMode, single } = performanceValue.value[rowIndex][colIndex];
+//   }
+// });
 </script>
 
 <style scoped lang="scss">

@@ -7,6 +7,7 @@ export const useKeyboardPageHook = () => {
 
   const selectedKey = ref('');
   const checkedFn = ref(0);
+  const formData = reactive({ type: 'win', fn: 0 });
 
   const activeKeys = computed(() => {
     return keyboardStore.activeKeys;
@@ -67,6 +68,7 @@ export const useKeyboardPageHook = () => {
   return {
     selectedKey,
     checkedFn,
+    formData,
     activeKeys,
     handleAllSelect,
     handleCancelSelect,
@@ -75,5 +77,6 @@ export const useKeyboardPageHook = () => {
     handleNumSelect,
     handleLetterSelect,
     handleFnChange,
+    handleOperationKey,
   };
 };

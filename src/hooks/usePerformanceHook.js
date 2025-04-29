@@ -3,11 +3,11 @@ import { showMessage } from '@/utils/message';
 import { usePerformanceStore } from '@/stores';
 
 export const usePerformanceHook = () => {
-  const version = localStorage.getItem('keyboardVer');
+  const isVersion2 = localStorage.getItem('keyboardVer') === 'v2';
   const performanceStore = usePerformanceStore();
 
   const setSingleTravel = async (keyboards, activeKeys, type = 'single') => {
-    if (version === 'v2') {
+    if (isVersion2) {
       // v2设置single rt deadZone
       return await processKeysV2(keyboards, activeKeys);
     } else {

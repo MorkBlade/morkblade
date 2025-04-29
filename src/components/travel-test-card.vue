@@ -50,17 +50,17 @@ const performanceStore = usePerformanceStore();
 const testEnabled = ref(false);
 const maxMM = ref(0);
 const keyPressTestCount = ref(0);
-const version = localStorage.getItem('keyboardVer');
+const isVersion2 = localStorage.getItem('keyboardVer') === 'v2';
 
 const handleSwitchChange = async (value) => {
-  if(version === 'v2') {
+  if(isVersion2) {
     if (value) {
-    await performanceStore.calibrationStartV2();
-  } else {
-    setTimeout(async () => {
-      await performanceStore.calibrationEndV2();
-    }, 50);
-  }
+      await performanceStore.calibrationStartV2();
+    } else {
+      setTimeout(async () => {
+        await performanceStore.calibrationEndV2();
+      }, 50);
+    }
   } else {
     if (!value) {
       maxMM.value = 0;
@@ -72,7 +72,7 @@ const handleSwitchChange = async (value) => {
 
 watch(keyPressTestCount, async () => {
   if (testEnabled.value) {
-    if(version === 'v2') {
+    if(isVersion2) {
       const { max } = await performanceStore.getRm6X21CalibrationV2(keyboardStore.keyboards);
       maxMM.value = max;
 

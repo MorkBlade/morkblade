@@ -238,6 +238,13 @@
   --keyboard-row4-top: 198px;
   --keyboard-row5-top: 253px;
   --keyboard-row6-top: 307px;
+  --keyboard-v2-width: 896px;
+  --keyboard-v2-height: 387px;
+  --keyboard-v2-padding: 30px 37px;
+  --keyboard-pseudo-element-width: 845px;
+  --keyboard-pseudo-element-height: 290px;
+  --keyboard-pseudo-element-top: 20px;
+  --keyboard-pseudo-element-left: 27px;
 }
 
 /* 2K 分辨率 (1440p) 2560*1440 
@@ -490,6 +497,13 @@
     --keyboard-row4-top: 228px;
     --keyboard-row5-top: 291px;
     --keyboard-row6-top: 353px;
+    --keyboard-v2-width: 1030px;
+    --keyboard-v2-height: 445px;
+    --keyboard-v2-padding: 33px 46px;
+    --keyboard-pseudo-element-width: 962px;
+    --keyboard-pseudo-element-height: 342px;
+    --keyboard-pseudo-element-top: 22px;
+    --keyboard-pseudo-element-left: 35px;
   }
 }
 
@@ -738,5 +752,12 @@
     --keyboard-row4-top: 396px;
     --keyboard-row5-top: 506px;
     --keyboard-row6-top: 614px;
+    --keyboard-v2-width: 1792px;
+    --keyboard-v2-height: 774px;
+    --keyboard-v2-padding: 72px 74px;
+    --keyboard-pseudo-element-width: 1690px;
+    --keyboard-pseudo-element-height: 560px;
+    --keyboard-pseudo-element-top: 50px;
+    --keyboard-pseudo-element-left: 54px;
   }
 }

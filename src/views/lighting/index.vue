@@ -6,6 +6,7 @@
         :key="item"
         class="lighting-item"
         :class="idx === clickItem ? 'is-active' : ''"
+        :style="{ display: idx === 1 && isVersion2 ? 'none' : '' }"
         @click="changeMenu(idx)"
       >
         {{ item }}
@@ -13,15 +14,17 @@
     </div>
     <div class="display-area">
       <keyLighting
-        v-show="!clickItem"
+        v-if="!clickItem"
         v-model="lightSettingStore.light"
         @changeKeyLight="changeKeyLight"
         @changeColorPicker="changeColorPicker"
       />
-      <logoLighting v-show="clickItem === 1" v-model="lightSettingStore.logo" @changeLogoLight="changeLogoLight" />
-      <customLighting v-show="clickItem === 2" />
+      <logoLighting v-if="clickItem === 1" v-model="lightSettingStore.logo" @changeLogoLight="changeLogoLight" />
+      <customLighting v-if="clickItem === 2" />
+      <saturation v-if="clickItem === 3 && isVersion2" />
     </div>
     <lightLuminance
+      v-if="clickItem !== 3"
       @changeSleepDelay="changeSleepDelay"
       @changeLuminance="changeLuminance"
       @changeSpeed="changeSpeed"
@@ -36,65 +39,93 @@ import { useLightingHook } from '@/hooks';
 import services from '@/services/index';
 import keyLighting from './key-lighting/index.vue';
 import logoLighting from './logo-lighting/index.vue';
+import saturation from './saturation/index.vue';
 import customLighting from './custom-lighting/index.vue';
-import lightLuminance from '@/components/light-luminance.vue';
-import { onBeforeUnmount } from 'vue';
+import lightLuminance from './components/light-luminance.vue';
+import { onBeforeUnmount, ref } from 'vue';
 
 const keyboardStore = useKeyboardStore();
 const lightSettingStore = useLightSettingStore();
-const { initLighting, setLighting, setLightingPalette, initCustomLighting } = useLightingHook();
+const { initLighting, setLighting, setLightingPalette, initCustomLighting, getLightingSaturation } = useLightingHook();
 
 const clickItem = ref(0);
 const isVersion2 = localStorage.getItem('keyboardVer') === 'v2';
-const lightingItem = ['按键灯效', 'LOGO灯效', '自定义灯效'];
-let timer = null;
+const lightingItem = ['按键灯效', 'LOGO灯效', '自定义灯效', '高级设置'];
+let animationFrameId = null;
+let lastUpdateTime = 0;
+const UPDATE_INTERVAL = 100; // 100ms
+
+// 更新颜色的函数
+const updateColors = async () => {
+  try {
+    const customLighting = await services.getLightingCustomV2();
+    const root = document.documentElement;
+
+    // 清除所有现有的颜色变量
+    for (let row = 1; row <= 6; row++) {
+      for (let col = 0; col <= 14; col++) {
+        root.style.removeProperty(`--key-color-${row}-${col}`);
+      }
+    }
+
+    // 设置新的颜色变量
+    for (let row = 1; row <= 6; row++) {
+      if (customLighting[row]) {
+        for (let col = 0; col <= 14; col++) {
+          if (customLighting[row][col]) {
+            const { R, G, B } = customLighting[row][col];
+            root.style.setProperty(`--key-color-${row}-${col}`, `rgb(${R},${G},${B})`);
+          }
+        }
+      }
+    }
+
+    // 更新store数据
+    for (let row = 1; row <= 6; row++) {
+      if (customLighting[row] && keyboardStore.keyboards[row]) {
+        const newRow = keyboardStore.keyboards[row].map((key, i) => ({
+          ...key,
+          customLight: customLighting[row][i],
+        }));
+        keyboardStore.keyboards[row].length = 0;
+        keyboardStore.keyboards[row].push(...newRow);
+      }
+    }
+  } catch (error) {
+    console.error('Error updating lighting colors:', error);
+    await initLighting();
+  }
+};
+
+// 动画帧循环
+const animationLoop = async (timestamp) => {
+  if (timestamp - lastUpdateTime >= UPDATE_INTERVAL) {
+    await updateColors();
+    lastUpdateTime = timestamp;
+  }
+  animationFrameId = requestAnimationFrame(animationLoop);
+};
 
 onMounted(async () => {
   await initLighting();
   if (isVersion2) {
-    // 这种方式会卡顿，改用css变量存储背景色
-    // timer = setInterval(async () => {
-    //   await modifyCustomLightingData();
-    //   // await keyboardStore.getKeyCustomLighting(keyboardStore.customLighting);
-    // }, 300);
-    timer = setInterval(async () => {
-      const customLighting = await services.getLightingCustomV2();
-      const root = document.documentElement;
-
-      // 创建一个包含所有颜色的字符串
-      let cssText = '';
-      // 遍历所有行和列
-      for (let row = 1; row <= 6; row++) {
-        if (customLighting[row]) {
-          for (let col = 0; col <= 14; col++) {
-            if (customLighting[row][col]) {
-              const { R, G, B } = customLighting[row][col];
-              cssText += `--key-color-${row}-${col}:rgb(${R},${G},${B});`;
-            }
-          }
-        }
-      }
-      // 一次性设置所有CSS变量
-      root.style.cssText += cssText;
-
-      // 逐行更新store数据，保持响应式
-      for (let row = 1; row <= 6; row++) {
-        if (customLighting[row] && keyboardStore.keyboards[row]) {
-          const newRow = keyboardStore.keyboards[row].map((key, i) => ({
-            ...key,
-            customLight: customLighting[row][i],
-          }));
-          // 使用Vue的响应式API更新数组
-          keyboardStore.keyboards[row].length = 0;
-          keyboardStore.keyboards[row].push(...newRow);
-        }
-      }
-    }, 100);
+    await getLightingSaturation();
+    animationFrameId = requestAnimationFrame(animationLoop);
   }
 });
 
 onBeforeUnmount(() => {
-  clearInterval(timer);
+  if (animationFrameId) {
+    cancelAnimationFrame(animationFrameId);
+    animationFrameId = null;
+  }
+  // 清理所有颜色变量
+  const root = document.documentElement;
+  for (let row = 1; row <= 6; row++) {
+    for (let col = 0; col <= 14; col++) {
+      root.style.removeProperty(`--key-color-${row}-${col}`);
+    }
+  }
 });
 
 const changeMenu = (idx) => {

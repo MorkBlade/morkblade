@@ -15,7 +15,7 @@ importers:
         specifier: ^5.5.2
         version: 5.5.2
       '@sparklinkplayjoy/sdk-keyboard':
-        specifier: link:../../SDK/sdk/keyboard
+        specifier: 1.0.2
         version: link:../../SDK/sdk/keyboard
       echarts:
         specifier: ^5.5.1

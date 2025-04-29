@@ -55,7 +55,7 @@ import changeSleepIcon from '@/assets/images/change.svg';
 import downArrowed from '@/assets/images/down_icon.svg';
 import downArrow from '@/assets/images/down_icon2.svg';
 
-import horizontalSlider from './horizontal-slider.vue';
+import horizontalSlider from '@/components/horizontal-slider.vue';
 
 const lingtingData = defineModel();
 const emits = defineEmits(['changeSleepDelay', 'changeLuminance', 'changeSpeed']);

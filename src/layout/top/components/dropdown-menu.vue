@@ -62,7 +62,6 @@ const customItems = reactive([]);
 const isVersion2 = localStorage.getItem('keyboardVer') === 'v2';
 
 onMounted(async () => {
-  // console.log('mounted log config v2:', await services.getConfigListV2(), await services.getConfigV2());
   await appStore.configID(isVersion2);
   await appStore.getBaseInfo(isVersion2);
 });

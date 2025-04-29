@@ -1,0 +1,13 @@
+lockfileVersion: '9.0'
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
+importers:
+
+  .:
+    dependencies:
+      '@sparklinkplayjoy/sdk-keyboard':
+        specifier: 1.0.2
+        version: link:../../SDK/sdk/keyboard

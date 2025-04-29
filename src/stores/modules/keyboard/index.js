@@ -38,6 +38,7 @@ const useKeyboardStore = defineStore('keyboard', {
       for (let i = 0; i < keyboardsData.length; i++) {
         result.push(this.splitRowArray(keyboardsData[i], layout, i));
       }
+      this.layout = layout;
       const res = await Promise.all(result);
       return res;
     },
@@ -77,7 +78,7 @@ const useKeyboardStore = defineStore('keyboard', {
           }
         });
 
-        // console.log('results----------------------------->', rowData);
+        console.log('results----------------------------->', rowData);
         // 4. 异步获取 axis，不阻塞返回
         Promise.all(
           rowData.map(async (col, colIdx) => {

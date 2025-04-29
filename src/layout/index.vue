@@ -7,7 +7,9 @@
 </template>
 
 <script setup>
-import top from './top/index.vue';
-import container from './container/index.vue';
+import { defineAsyncComponent } from 'vue';
+
+const top = defineAsyncComponent(() => import('./top/index.vue'));
+const container = defineAsyncComponent(() => import('./container/index.vue'));
 // import mFooter from './footer/index.vue';
 </script>

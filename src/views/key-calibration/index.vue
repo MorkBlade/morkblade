@@ -48,7 +48,7 @@ const isStart = ref(false);
 
 const keys = ref([]);
 const keyID = ref(0);
-const version = localStorage.getItem('keyboardVer');
+const isVersion2 = localStorage.getItem('keyboardVer') === 'v2';
 const inputText = ref('');
 const startTime = ref(null);
 const endTime = ref(null);
@@ -56,7 +56,7 @@ const endTime = ref(null);
 const onStart = () => {
   isStart.value = !isStart.value;
   if (!isStart.value) {
-    version === 'v2' ? performanceStore.calibrationEndV2() : performanceStore.calibrationEnd();
+    isVersion2 ? performanceStore.calibrationEndV2() : performanceStore.calibrationEnd();
   }
   isAct.value = false;
 };
