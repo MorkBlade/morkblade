@@ -86,7 +86,7 @@ const { setCustomLighting } = useLightingHook();
 // const checked = ref(null);
 const customList = ['彩虹', '海浪', '炼狱', '迈阿密', '夏日微风', '交流发电机', '粘土', 'Lekker', 'Love'];
 const colorList = ['#080cfe', '#ff0000', '#ffff00', '#fe00e9', '#00fe2f', '#fe3602', '#ffffff', '#1481fe', '#00ffd8'];
-const isVersion2 = localStorage.getItem('keyboardVer') === 'v2';
+const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
 const colorWheelRef = ref(null);
 const selectedColor = ref('#ffffa8');
 const rgb = ref({ r: 255, g: 255, b: 168 });

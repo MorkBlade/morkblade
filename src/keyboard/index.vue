@@ -35,7 +35,7 @@
       </div>
     </div>
     <!-- v1 keyboard -->
-    <template v-if="vId === 7331 && pId === 257">
+    <template v-if="!isVersion2">
       <div class="keyboard-container v1">
         <div
           class="keyboard"
@@ -146,6 +146,7 @@ import emitter from '@/utils/app-emitter';
 import { scaleValue } from '@/utils/responsive.js';
 import { useKeyboardPageHook } from './useKeyboardPageHook.js';
 import { useAppStore, useKeyboardStore, useDeviceStore } from '@/stores';
+import { useAdvancedHook } from '@/hooks';
 
 import key from './key.vue';
 
@@ -155,6 +156,7 @@ const deviceStore = useDeviceStore();
 const keyboardStore = useKeyboardStore();
 const { initCustomLighting } = useLightingHook();
 const { keyboards } = storeToRefs(keyboardStore);
+const { getHighLevelKeys } = useAdvancedHook();
 const {
   selectedKey,
   checkedFn,
@@ -169,7 +171,7 @@ const {
   handleOperationKey,
   handleFnChange,
 } = useKeyboardPageHook();
-const isVersion2 = localStorage.getItem('keyboardVer') === 'v2';
+const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
 const vId = computed(() => deviceStore.devices[0]?.vendorId || undefined);
 const pId = computed(() => deviceStore.devices[0]?.productId || undefined);
 
@@ -188,6 +190,8 @@ watch(
       // 切换到其他页面时还原到层1(v2暂未做)
       isVersion2 ? '' : await keyboardStore.getLayoutKeyInfo(fn, keyboardStore.keyboards);
     }
+
+    if (newPath === '/key-assignment') await getHighLevelKeys(keyboardStore.keyboards);
   },
 );
 
@@ -196,8 +200,11 @@ onMounted(async () => {
     // 您的mounted逻辑
     await keyboardStore.initKeyboard();
     await initCustomLighting();
+    await appStore.getProtocolVersion();
     const data = await appStore.systemMode();
     formData.type = data.currentSystem;
+    // 初始化高级键数据，等待keyboard初始化后调用，防止keyboard未初始化完
+    if (route.path === '/key-assignment') await getHighLevelKeys(keyboardStore.keyboards);
     // console.log('keyboard onmounted---------------------------------------------------------------------->');
   } catch (error) {
     // 处理错误，比如显示错误提示
@@ -219,7 +226,8 @@ const handleKeyClick = (rowIndex, colIndex) => {
 
 // 匹配布局，暂时用json文件来做
 const matchLayout = () => {
-  if (vId.value === 7331 && pId.value === 257) {
+  // console.log('isVersion2: ', isVersion2);
+  if (!isVersion2) {
     return layouts.keyboardLayoutV1;
   }
   return layouts.keyboardLayoutV2;

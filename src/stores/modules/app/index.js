@@ -21,7 +21,7 @@ const useAppStore = defineStore('app', {
     baseInfo: {},
     keyboardName: '',
     changeConfig: false,
-    api: null,
+    protocolVersion: '',
   }),
 
   actions: {

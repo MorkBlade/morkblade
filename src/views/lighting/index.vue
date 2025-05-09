@@ -21,7 +21,7 @@
       />
       <logoLighting v-if="clickItem === 1" v-model="lightSettingStore.logo" @changeLogoLight="changeLogoLight" />
       <customLighting v-if="clickItem === 2" />
-      <saturation v-if="clickItem === 3 && isVersion2" />
+      <saturation v-if="clickItem === 3" />
     </div>
     <lightLuminance
       v-if="clickItem !== 3"
@@ -42,14 +42,13 @@ import logoLighting from './logo-lighting/index.vue';
 import saturation from './saturation/index.vue';
 import customLighting from './custom-lighting/index.vue';
 import lightLuminance from './components/light-luminance.vue';
-import { onBeforeUnmount, ref } from 'vue';
 
 const keyboardStore = useKeyboardStore();
 const lightSettingStore = useLightSettingStore();
 const { initLighting, setLighting, setLightingPalette, initCustomLighting, getLightingSaturation } = useLightingHook();
 
 const clickItem = ref(0);
-const isVersion2 = localStorage.getItem('keyboardVer') === 'v2';
+const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
 const lightingItem = ['按键灯效', 'LOGO灯效', '自定义灯效', '高级设置'];
 let animationFrameId = null;
 let lastUpdateTime = 0;
@@ -108,8 +107,8 @@ const animationLoop = async (timestamp) => {
 
 onMounted(async () => {
   await initLighting();
+  await getLightingSaturation();
   if (isVersion2) {
-    await getLightingSaturation();
     animationFrameId = requestAnimationFrame(animationLoop);
   }
 });

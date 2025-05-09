@@ -1,5 +1,5 @@
 <template>
-  <div class="macro-type-container">
+  <div class="macro-mode-container">
     <h3>宏类型</h3>
     <div v-for="(item, idx) in types" :key="idx" class="type-item">
       <input type="radio" :id="idx" name="type" :checked="macroSettings.mode === idx" @change="changeMacroType(idx)" />
@@ -127,13 +127,13 @@ watch(
 );
 
 // 初始化时发送当前设置到父组件
-onMounted(() => {
-  emitSettingsUpdate();
-});
+// onMounted(() => {
+//   emitSettingsUpdate();
+// });
 </script>
 
 <style scoped lang="scss">
-.macro-type-container {
+.macro-mode-container {
   width: var(--size-300);
   height: var(--macro-card-height);
   box-sizing: border-box;
@@ -170,28 +170,17 @@ onMounted(() => {
       border-radius: 50%;
       outline: none;
       cursor: pointer;
-    }
 
-    /* 鼠标悬停时的样式 */
-    input[type='radio']:hover {
-      // border-color: #007bff;
-    }
-
-    /* 选中状态下的样式 */
-    input[type='radio']:checked {
-      // border-color: #007bff;
-      // background-color: #91bc00;
-    }
-
-    /* 选中状态下的小圆点 */
-    input[type='radio']:checked::after {
-      content: '';
-      display: block;
-      width: var(--size-8);
-      height: var(--size-8);
-      margin: var(--spacing-2);
-      border-radius: 50%;
-      background-color: #91bc00;
+      /* 选中状态下的小圆点 */
+      &:checked::after {
+        content: '';
+        display: block;
+        width: var(--size-8);
+        height: var(--size-8);
+        margin: var(--spacing-2);
+        border-radius: 50%;
+        background-color: #91bc00;
+      }
     }
   }
 

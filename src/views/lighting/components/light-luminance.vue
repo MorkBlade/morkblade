@@ -62,7 +62,7 @@ const emits = defineEmits(['changeSleepDelay', 'changeLuminance', 'changeSpeed']
 
 const defaultHeight = ref(0);
 const rotate = ref(180);
-const isVersion2 = localStorage.getItem('keyboardVer') === 'v2';
+const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
 const max = isVersion2 ? 100 : 4;
 const selectedId = ref(lingtingData.value.sleepTime);
 // const luminanceVal = ref(0);

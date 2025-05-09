@@ -29,22 +29,27 @@
 
 <script setup>
 import keyboard from '@/configs/byte-to-key/keyboard';
-import { ElMessage } from 'element-plus';
-import { useHighLevelKeyStore, useKeyboardStore } from '@/stores';
+import { useKeyboardStore } from '@/stores';
+import { useAdvancedHook } from '@/hooks';
+import { showMessage } from '@/utils/message';
 
 import mDialog from '@/components/dialog.vue';
 import characterCard from '@/components/character-card.vue';
-import warnIcon from '@/assets/images/warn_icon.svg';
 
 const rsInfo = defineModel('rsInfo', {
   type: Object,
-  default: () => ({ dks: [0, 0] }),
+  default: () => ({ dks: [0, 0], delay: 0 }),
+});
+
+const { edit, editKey } = defineProps({
+  edit: { type: Boolean, default: false },
+  editKey: { type: [String, Number], default: '' },
 });
 
 const emits = defineEmits(['handleDialoConfirm', 'handleKeyTypeChange']);
 
+const { setRS } = useAdvancedHook();
 const keyboardStore = useKeyboardStore();
-const highLevelKeyStore = useHighLevelKeyStore();
 
 const isShow = ref(false);
 const key1Index = ref(-1);
@@ -56,13 +61,7 @@ const keyText = computed(() => {
 
 const saveConfig = () => {
   if (!rsInfo.value.dks[0] || !rsInfo.value.dks[1]) {
-    ElMessage({
-      grouping: true,
-      duration: 1000,
-      dangerouslyUseHTMLString: true,
-      message: `<span class="custom-message"><img src="${warnIcon}" class="warn-icon"/>请先选择需要修改的按键</span>`,
-      customClass: 'custom-message-container',
-    });
+    showMessage('请先选择需要修改的按键', 'warning');
     return;
   }
   isShow.value = true;
@@ -109,11 +108,11 @@ const handleRsKey = (keyVal) => {
 };
 
 const KeydropFirst = () => {
-  if (!rsInfo.value.dks[0]) rsInfo.value.dks[0] = keyboardStore.selectKey.value;
+  if (!rsInfo.value.dks[0]) rsInfo.value.dks[0] = keyboardStore.selectKey.keyCode;
 };
 
 const KeydropSec = () => {
-  if (!rsInfo.value.dks[1]) rsInfo.value.dks[1] = keyboardStore.selectKey.value;
+  if (!rsInfo.value.dks[1]) rsInfo.value.dks[1] = keyboardStore.selectKey.keyCode;
 };
 
 const onClick = (keyCode) => {
@@ -134,12 +133,22 @@ const onClick = (keyCode) => {
 };
 
 const save = async () => {
-  try {
-    const res = await highLevelKeyStore.setRS({ key: rsInfo.value.dks[0], dks: rsInfo.value.dks[1] });
-    return res;
-  } catch (error) {
-    console.log('error', error);
+  let key = 0;
+  let row = 0;
+  let col = 0;
+  if (edit) {
+    key = editKey;
+  } else {
+    // 获取当前键盘的keycode
+    const location = keyboardStore.activeKeys[0].split('-');
+    const [rowIndex, colIndex] = location;
+    const { keyValue } = keyboardStore.keyboards[rowIndex][colIndex];
+    key = keyValue;
+    row = +rowIndex;
+    col = +colIndex;
   }
+  const res = await setRS({ key, row, col, ...rsInfo.value });
+  return res;
 };
 defineExpose({ save });
 </script>

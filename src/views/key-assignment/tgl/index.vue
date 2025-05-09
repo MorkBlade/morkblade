@@ -26,12 +26,12 @@
 
 <script setup>
 import keyboard from '@/configs/byte-to-key/keyboard';
-import { ElMessage } from 'element-plus';
-import { useAppStore, useHighLevelKeyStore, useKeyboardStore } from '@/stores';
+import { useKeyboardStore } from '@/stores';
+import { useAdvancedHook } from '@/hooks';
+import { showMessage } from '@/utils/message';
 
 import mDialog from '@/components/dialog.vue';
 import characterCard from '@/components/character-card.vue';
-import warnIcon from '@/assets/images/warn_icon.svg';
 
 const tglInfo = defineModel('tglInfo', {
   type: Object,
@@ -45,9 +45,8 @@ const { edit, editKey } = defineProps({
 
 const emits = defineEmits(['handleDialoConfirm', 'handleKeyTypeChange']);
 
-const highLevelKeyStore = useHighLevelKeyStore();
+const { setTGL } = useAdvancedHook();
 const keyboardStore = useKeyboardStore();
-const appStore = useAppStore();
 
 const isShow = ref(false);
 const keyIndex = ref(-1);
@@ -62,13 +61,7 @@ const activeKeys = computed(() => {
 
 const saveConfig = () => {
   if (!activeKeys.value.length) {
-    ElMessage({
-      grouping: true,
-      duration: 1000,
-      dangerouslyUseHTMLString: true,
-      message: `<span class="custom-message"><img src="${warnIcon}" class="warn-icon"/>请先选择需要修改的按键</span>`,
-      customClass: 'custom-message-container',
-    });
+    showMessage('请先选择需要修改的按键', 'warning');
     return;
   }
   isShow.value = true;
@@ -96,7 +89,7 @@ const handleTglKey = (keyVal) => {
 };
 
 const KeydropFirst = () => {
-  if (!tglInfo.value.dks) tglInfo.value.dks = keyboardStore.selectKey.value;
+  if (!tglInfo.value.dks) tglInfo.value.dks = keyboardStore.selectKey.keyCode;
 };
 
 const onClick = (keyCode) => {
@@ -108,16 +101,20 @@ const onClick = (keyCode) => {
 
 const save = async () => {
   let key = 0;
+  let row = 0;
+  let col = 0;
   if (edit) {
     key = editKey;
   } else {
     // 获取当前键盘的keycode
     const location = keyboardStore.activeKeys[0].split('-');
-    const [x, y] = location;
-    const { value } = keyboardStore.keyboards[y][x];
-    key = value;
+    const [rowIndex, colIndex] = location;
+    const { keyValue } = keyboardStore.keyboards[rowIndex][colIndex];
+    key = keyValue;
+    row = +rowIndex;
+    col = +colIndex;
   }
-  const res = await highLevelKeyStore.setTGL({ key, ...tglInfo.value });
+  const res = await setTGL({ key, row, col, ...tglInfo.value });
   return res;
 };
 defineExpose({ save });

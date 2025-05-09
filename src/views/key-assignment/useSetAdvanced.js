@@ -1,18 +1,20 @@
 import keyboard from '@/configs/byte-to-key/keyboard.js';
 import { ElMessage } from 'element-plus';
-import { useHighLevelKeyStore, useKeyboardStore, usePerformanceStore } from '@/stores';
+import { useAdvancedHook } from '@/hooks';
+import { useKeyboardStore, usePerformanceStore } from '@/stores';
 
 import sureIcon from '@/assets/images/sure.svg';
 
 const useSetAdvanced = () => {
-  const highLevelKeyStore = useHighLevelKeyStore();
   const keyboardStore = useKeyboardStore();
   const performanceStore = usePerformanceStore();
+  const { getHighLevelKeys } = useAdvancedHook();
   const childRef = useTemplateRef('childRef');
 
   const minTouchTravel = ref(0);
   const maxTouchTravel = ref(10);
   const precision = ref(0);
+  const hasAdvancedData = ref(false);
 
   const selectedKeyType = ref(null);
   const selectedCenterItem = reactive({
@@ -20,13 +22,13 @@ const useSetAdvanced = () => {
   });
   const selectedCenterKeyId = ref(null);
   // socdInfo
-  const socdInfo = reactive({ pos: [0, 0], key: [0, 0], type: 0, mode: 0 });
+  const socdInfo = reactive({ pos: [0, 0], key: [0, 0], type: 0, mode: 0, delay: 100 });
   // dksInfo
   const dksInfo = reactive({ dks: [0, 0, 0, 0], trps: [0, 0, 0, 0], db: 1.4, db2: 3.0 });
   // mtInfo
   const mtInfo = reactive({ dks: [0, 0], delay: 200 });
   // rsInfo
-  const rsInfo = reactive({ dks: [0, 0] });
+  const rsInfo = reactive({ dks: [0, 0], delay: 200 });
   // mptInfo
   const mptInfo = reactive({ dks: [0, 0, 0], dbs: [0.5, 1.0, 1.5] });
   // tglInfo
@@ -84,7 +86,7 @@ const useSetAdvanced = () => {
     } else if (type === 'DKS') {
       Object.assign(dksInfo, { dks: [0, 0, 0, 0], trps: [0, 0, 0, 0], db: 1.5, db2: 3.0 });
     } else if (type === 'SOCD') {
-      Object.assign(socdInfo, { pos: [0, 0], key: [0, 0], type: 0, mode: 0 });
+      Object.assign(socdInfo, { pos: [0, 0], key: [0, 0], type: 0, mode: 0, delay: 100 });
     } else if (type === 'RS') {
       Object.assign(rsInfo, { dks: [0, 0] });
     } else if (type === 'MPT') {
@@ -107,7 +109,8 @@ const useSetAdvanced = () => {
   const handleDialoConfirm = async () => {
     try {
       const res = await childRef.value?.save();
-      await resetKeys();
+      // TODO 数据结构改变后不需要调用，待验证
+      // await resetKeys();
       if (res) {
         ElMessage({
           grouping: true,
@@ -124,19 +127,16 @@ const useSetAdvanced = () => {
     }
   };
 
-  const handleDelete = async (keyId) => {
-    await highLevelKeyStore.deleteHighLevelKey(keyId);
-    await performanceStore.getKeyPerformanceV1(keyboardStore.keyboards);
-  };
-
   const resetKeys = async () => {
-    await performanceStore.getKeyPerformanceV1(keyboardStore.keyboards);
-    const { value } = performanceStore;
-    await highLevelKeyStore.getHighLevelKeys(value);
+    // console.log('onMounted resetKeys start=======================>', keyboardStore.keyboards.length);
+    await getHighLevelKeys(keyboardStore.keyboards);
+    // console.log('onMounted resetKeys over=======================>');
+    hasAdvancedData.value = true;
   };
 
   onMounted(async () => {
-    resetKeys();
+    // console.log('advnaced onMounted----------------------->');
+    // resetKeys();
     try {
       const travelData = await performanceStore.getMaxMinTravel();
       if (travelData) {
@@ -163,20 +163,42 @@ const useSetAdvanced = () => {
   // 计算当前的高级键
   const advancedItems = computed(() => {
     const value = [];
-    // console.log('advancedItems:>>>>', highLevelKeyStore.highLevelKeys);
-    const keys = Object.keys(highLevelKeyStore.highLevelKeys);
-    keys.forEach((keyId) => {
-      // 显示的文案
-      // value.push({ keyId, keyText: keyboard[keyId], ...highLevelKeyStore.highLevelKeys[keyId] });
-      const originalData = highLevelKeyStore.highLevelKeys[keyId];
-      // 如果是 mt 类型，确保 dks3 和 dks4 为 0
-      if (originalData.type === 'mt' && originalData.mt?.dksAll) {
-        originalData.mt.dksAll.dks3 = 0;
-        originalData.mt.dksAll.dks4 = 0;
-      }
-      value.push({ keyId, keyText: keyboard[keyId], ...originalData });
-    });
-    // console.log('advancedItems', value);
+    // console.log('xxxxxxxxxxxxxxxxxxxxxxxxxxx');
+    // if (hasAdvancedData.value) {
+    const keyboards = keyboardStore.keyboards;
+    if (Array.isArray(keyboards)) {
+      keyboards.forEach((row, rowIdx) => {
+        if (Array.isArray(row)) {
+          row.forEach((col, colIdx) => {
+            if (
+              col &&
+              col.advancedKeys &&
+              col.advancedKeys.advancedType !== 0 &&
+              col.advancedKeys.advancedType !== null &&
+              col.advancedKeys.advancedType !== ''
+            ) {
+              // console.log('current key is advanced:>>>>>>>>>>', col);
+              // 只收集advancedKeys下不为null的属性
+              const advancedKeys = col.advancedKeys;
+              const filtered = {};
+              Object.keys(advancedKeys).forEach((k) => {
+                if (advancedKeys[k] !== null) {
+                  filtered[k] = advancedKeys[k];
+                }
+              });
+              value.push({
+                row: rowIdx,
+                col: colIdx,
+                keyValue: col.keyValue,
+                ...filtered,
+              });
+            }
+          });
+        }
+      });
+    }
+    // }
+    console.log('advancedItems', value);
     return value;
   });
   // 计算当前选择的高级键
@@ -199,7 +221,7 @@ const useSetAdvanced = () => {
     precision,
     handleKeyTypeChange,
     handleDialoConfirm,
-    handleDelete,
+    // handleDelete,
     advancedItems,
     handleItemClick,
   };

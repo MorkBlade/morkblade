@@ -55,8 +55,9 @@ import services from '@/services/index';
 import emitter from '@/utils/app-emitter';
 import { usePerformanceStore, useMacroStore, useKeyboardStore, useLightSettingStore } from '@/stores';
 import keyboard from '@/configs/byte-to-key/keyboard.js';
+import keyboardV2 from '@/configs/byte-to-key/keyboard-v2.js';
 import { scaleValue } from '@/utils/responsive.js';
-import { useLightingHook } from '@/hooks/useLightingHook';
+import { useLightingHook, useMacroHook, useAdvancedHook } from '@/hooks';
 
 const {
   row: rowIndex,
@@ -84,11 +85,13 @@ const performanceStore = usePerformanceStore();
 const lightSettingStore = useLightSettingStore();
 const { keyboards, layout } = storeToRefs(keyboardStore);
 const { setCustomLighting } = useLightingHook();
+const { setMacroV1 } = useMacroHook();
+const { getMacro } = useAdvancedHook();
 const currentModel = ref('mechanicalMode');
 
 const route = useRoute();
 const isShow = ref(false);
-const isVersion2 = localStorage.getItem('keyboardVer') === 'v2';
+const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
 const shape = { height: scaleValue(50), width: scaleValue(50) };
 
 emitter.on('in-the-where', ({ value }) => {
@@ -172,12 +175,12 @@ const currentKey = computed(() => {
 const showKeyCode = computed(() => {
   if (keyboards.value.length > 0) {
     const customKeysKeyName = `fn${layout.value}`;
-    console.log('currentKey.value', currentKey.value, customKeysKeyName);
+    // console.log('currentKey.value', currentKey.value, customKeysKeyName);
     const { bindKeyValue } = currentKey.value.customKeys[customKeysKeyName];
-    return keyboard[bindKeyValue];
+    return isVersion2 ? keyboardV2[bindKeyValue] : keyboard[bindKeyValue];
   }
 
-  return keyboard[0];
+  return isVersion2 ? keyboardV2[0] : keyboard[0];
 });
 
 const verifySuc = computed(() => {
@@ -197,7 +200,7 @@ const advancedTag = computed(() => {
   let type = null;
   let color = '0, 0, 0';
   if (route.path === '/key-assignment') {
-    const mode = PerformanceData.value?.advancedKeyMode;
+    const mode = currentKey.value.advancedKeys.advancedType;
     if (mode === 1) {
       type = 'DKS';
     } else if (mode === 2) {
@@ -209,7 +212,10 @@ const advancedTag = computed(() => {
     } else if (mode === 5) {
       type = 'END';
     } else if (mode === 6) {
-      type = 'MCR';
+      // TODO v2 是socd  v1是mcr
+      type = isVersion2 ? 'SOCD' : 'MCR';
+    } else if (mode === 7) {
+      type = 'RS';
     } else if (mode === 8) {
       type = 'SOCD';
     } else if (mode === 9) {
@@ -310,10 +316,11 @@ const Keydrop = async (e, rowIndex, colIndex, key) => {
 
     if (macroStore && macroStore.macroInfo) {
       macroStore.macroInfo.dks = key;
-      await macroStore.setMacro();
+      await setMacroV1();
+      await getMacro({ keyValue: key, row: rowIndex, col: colIndex, mode: 6 });
     }
   } else {
-    const isVersion2 = localStorage.getItem('keyboardVer') === 'v2';
+    const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
     isVersion2 ? keyboardStore.updateKeyV2({ rowIndex, colIndex }) : keyboardStore.updateKey({ rowIndex, colIndex });
   }
 };

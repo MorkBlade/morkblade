@@ -56,9 +56,10 @@
 
 <script setup>
 import keyboard from '@/configs/byte-to-key/keyboard';
-import { ElMessage } from 'element-plus';
 import { scaleValue } from '@/utils/responsive.js';
-import { useHighLevelKeyStore, useKeyboardStore } from '@/stores';
+import { useKeyboardStore } from '@/stores';
+import { useAdvancedHook } from '@/hooks';
+import { showMessage } from '@/utils/message';
 
 import mDialog from '@/components/dialog.vue';
 import characterCard from '@/components/character-card.vue';
@@ -66,10 +67,9 @@ import changeIcon from '@/assets/images/change.svg';
 import changedIcon from '@/assets/images/changed.svg';
 import downIcon1 from '/src/assets/images/down_icon.svg';
 import downIcon2 from '/src/assets/images/down_icon2.svg';
-import warnIcon from '@/assets/images/warn_icon.svg';
 
+const { setSocd } = useAdvancedHook();
 const keyboardStore = useKeyboardStore();
-const highLevelKeyStore = useHighLevelKeyStore();
 
 const defaultHeight = ref(0);
 const delay = ref(0);
@@ -129,13 +129,7 @@ const onMouseLe = (keyCode) => {
 
 const saveConfig = () => {
   if (!socdInfo.value.pos[0] || !socdInfo.value.pos[1]) {
-    ElMessage({
-      grouping: true,
-      duration: 1000,
-      dangerouslyUseHTMLString: true,
-      message: `<span class="custom-message"><img src="${warnIcon}" class="warn-icon"/>请先选择需要修改的按键</span>`,
-      customClass: 'custom-message-container',
-    });
+    showMessage('请先选择需要修改的按键', 'warning');
     return;
   }
   isShow.value = true;
@@ -161,7 +155,7 @@ const handleSocdKey = (keyVal) => {
 };
 
 const KeydropFirst = () => {
-  const keyVal = keyboardStore.selectKey.value;
+  const keyVal = keyboardStore.selectKey.keyCode;
   if (!socdInfo.value.pos[0]) {
     socdInfo.value.pos[0] = keyVal;
     socdInfo.value.key[0] = keyVal;
@@ -169,7 +163,7 @@ const KeydropFirst = () => {
 };
 
 const KeydropSec = () => {
-  const keyVal = keyboardStore.selectKey.value;
+  const keyVal = keyboardStore.selectKey.keyCode;
   if (!socdInfo.value.pos[1]) {
     socdInfo.value.pos[1] = keyVal;
     socdInfo.value.key[1] = keyVal;
@@ -197,7 +191,7 @@ const onClick = (keyCode) => {
 
 const save = async () => {
   try {
-    const res = await highLevelKeyStore.setSocd(socdInfo.value);
+    const res = await setSocd(socdInfo.value);
     return res;
   } catch (error) {
     console.log('error', error);

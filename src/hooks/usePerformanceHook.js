@@ -3,7 +3,7 @@ import { showMessage } from '@/utils/message';
 import { usePerformanceStore } from '@/stores';
 
 export const usePerformanceHook = () => {
-  const isVersion2 = localStorage.getItem('keyboardVer') === 'v2';
+  const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
   const performanceStore = usePerformanceStore();
 
   const setSingleTravel = async (keyboards, activeKeys, type = 'single') => {

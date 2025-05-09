@@ -15,9 +15,35 @@ const useMacroStore = defineStore('macro', {
       selectName: null,
     },
     usedMacro: [],
+    macroData: [],
   }),
 
   actions: {
+    // v2获取所有宏
+    async getMacroAllData() {
+      for (let i = 0; i < 16; i++) {
+        const name = `Macro${i}`;
+        const res = await services.getMacroModeV2({ macroId: i });
+        const { actNum } = res;
+        // 拆分offset 最大长度15条
+        const data = [];
+        const offset = Math.ceil(actNum / 15);
+        for (let j = 0; j < offset; j++) {
+          const res = await this.getMacroData({ macroId: i, offset: j });
+          const { macros } = res;
+          data.push(...macros);
+        }
+        this.macroData.push({ name, ...res, data });
+      }
+      console.log('all macro list', this.macroData);
+    },
+
+    // v2获取宏数据
+    async getMacroData({ macroId, offset }) {
+      const res = await services.getMacroDataV2({ macroId, offset });
+      return res;
+    },
+
     async setMacro() {
       const macroList = JSON.parse(localStorage.getItem('localMacros')) || [];
       let index = null;
@@ -48,7 +74,7 @@ const useMacroStore = defineStore('macro', {
       // console.log('xasdas', macros);
       const result = await services.setMacro(data, macros);
       if (this.usedMacro.indexOf(this.selectMacro.id) < 0) this.usedMacro.push(this.selectMacro.id);
-      resetKeys();
+      // resetKeys();
       this.selectMacro = null;
       return result;
     },

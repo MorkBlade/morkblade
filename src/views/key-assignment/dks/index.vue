@@ -94,13 +94,13 @@
     </div>
     <characterCard @handleSendKey="handleDksKey" />
   </div>
-  <dskDelay
+  <dksDelay
     v-model:delayPageShow="delayPageShow1"
     :delay="dksInfo.db"
     title="抬起行程"
     @changeDelay="changeDksDelay1"
   />
-  <dskDelay
+  <dksDelay
     v-model:delayPageShow="delayPageShow2"
     :delay="dksInfo.db2"
     title="触底行程"
@@ -111,20 +111,20 @@
 
 <script setup>
 import keyboard from '@/configs/byte-to-key/keyboard';
-import { ElMessage } from 'element-plus';
-import { useHighLevelKeyStore, useKeyboardStore } from '@/stores';
+import { useKeyboardStore } from '@/stores';
+import { useAdvancedHook } from '@/hooks';
+import { showMessage } from '@/utils/message';
 
 import mDialog from '@/components/dialog.vue';
-import dskDelay from './components/delay.vue';
-import warnIcon from '@/assets/images/warn_icon.svg';
+import dksDelay from './components/delay.vue';
 
 const dksInfo = defineModel('dksInfo', {
   type: Object,
   default: () => ({ dks: [0, 0, 0, 0], trps: [0, 0, 0, 0], db: 1.5, db2: 3.0 }),
 });
 
+const { setDKS } = useAdvancedHook();
 const keyboardStore = useKeyboardStore();
-const highLevelKeyStore = useHighLevelKeyStore();
 
 const { maxTouchTravel, minTouchTravel, precision, edit, editKey } = defineProps({
   maxTouchTravel: { type: Number, default: 10 },
@@ -423,7 +423,7 @@ const onClick = (key) => {
       clickData[row] = [...newRowData];
     }
   }
-  console.log('onClick log widths[key]:>>>>>>>>>>', widths[key]);
+  // console.log('onClick log widths[key]:>>>>>>>>>>', widths[key]);
 };
 
 const onMousedown = (key) => {
@@ -511,13 +511,7 @@ const stopDrag = () => {
 
 const saveConfig = () => {
   if (activeKeys.value.length === 0) {
-    ElMessage({
-      grouping: true,
-      duration: 1000,
-      dangerouslyUseHTMLString: true,
-      message: `<span class="custom-message"><img src="${warnIcon}" class="warn-icon"/>请先选择需要修改的按键</span>`,
-      customClass: 'custom-message-container',
-    });
+    showMessage('请先选择需要修改的按键', 'warning');
     return;
   }
   isShow.value = true;
@@ -611,18 +605,23 @@ const KeydropFour = () => {
   if (!dksInfo.value.dks[3]) dksInfo.value.dks[3] = keyboardStore.selectKey.value;
 };
 
-const save = () => {
+const save = async () => {
   let key = 0;
+  let row = 0;
+  let col = 0;
   if (edit) {
     key = editKey;
   } else {
     // 获取当前键盘的keycode
     const location = keyboardStore.activeKeys[0].split('-');
-    const [x, y] = location;
-    const { value } = keyboardStore.keyboards[y][x];
-    key = value;
+    const [rowIndex, colIndex] = location;
+    const { keyValue } = keyboardStore.keyboards[rowIndex][colIndex];
+    key = keyValue;
+    row = +rowIndex;
+    col = +colIndex;
   }
-  highLevelKeyStore.setDks({ ...dksInfo.value, key });
+  const res = await setDKS({ key, row, col, ...dksInfo.value });
+  return res;
 };
 defineExpose({ save });
 </script>

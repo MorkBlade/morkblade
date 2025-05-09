@@ -1,80 +1,88 @@
 <template>
-  <div class="edit-macro-container">
+  <div class="macro-data-container">
     <h3>宏列表</h3>
     <TransitionGroup name="list" tag="div" class="container">
-      <div
-        v-for="(item, i) in internalMacroData"
-        :key="`macro-item-${i}-${item.key || i}`"
-        class="item"
-        :class="[
-          item.keyType === 'key' ? 'key' : 'delay',
-          { 'selected-item': selectedCreateTime === item.createTime },
-          { dragging: draggingIndex === i },
-        ]"
-        :style="{
-          top: positions[i] + 'px',
-          position: 'absolute',
-          zIndex: draggingIndex === i ? 999 : '',
-        }"
-        @click="changeItemInfo($event, item, i)"
-      >
-        <span class="handle" @mousedown="startDrag($event, i, item.createTime)"></span>
-        <div class="content">
-          <img :src="item.status === 0 ? keyupIcon : keydownIcon" alt="" v-if="item.keyType === 'key'" />
-          <span :class="item.keyType === 'key' ? 'keyVal' : 'delayVal'">
-            {{ item.keyType === 'key' ? keyboardWord[item.keyCode] : item.timeDifference + 'ms' }}
-          </span>
-          <span class="time-diff" v-if="item.keyType === 'key'">{{ item.timeDifference.toFixed(2) + 'ms' }}</span>
-          <img class="copy-icon" src="@/assets/images/copy_icon.svg" alt="" @click="copyItem(item, i)" />
-          <img class="del-icon" src="@/assets/images/del_btn.svg" alt="" @click="deleteItem(item)" />
-        </div>
-      </div>
+      <template v-for="(item, i) in curMacro">
+        <template v-if="item.keyCode">
+          <div
+            :key="`macro-item-${i}-${item.key || i}`"
+            class="item"
+            :class="[
+              // item.keyType === 'key' ? 'key' : 'delay',
+              item.keyCode ? 'key' : 'delay',
+              { 'selected-item': selectedCreateTime === i + item.delay },
+              { dragging: draggingIndex === i },
+            ]"
+            :style="{
+              top: positions[i] + 'px',
+              position: 'absolute',
+              zIndex: draggingIndex === i ? 999 : '',
+            }"
+            @click="changeItemInfo($event, item, i)"
+          >
+            <span class="handle" @mousedown="startDrag($event, i, item.delay)"></span>
+            <div class="content">
+              <img :src="item.status === 0 ? keyupIcon : keydownIcon" alt="" v-if="item.keyCode" />
+              <span :class="item.keyCode ? 'keyVal' : 'delayVal'">
+                {{ item.keyCode ? keyboardWord[item.keyCode] : item.timeDifference + 'ms' }}
+              </span>
+              <span class="time-diff" v-if="item.keyCode">{{ parseFloat(item.delay).toFixed(2) + 'ms' }}</span>
+              <img class="copy-icon" src="@/assets/images/copy_icon.svg" alt="" @click="copyItem(item, i)" />
+              <img class="del-icon" src="@/assets/images/del_btn.svg" alt="" @click="deleteItem(item)" />
+            </div>
+          </div>
+        </template>
+      </template>
       <!-- 添加占位元素以保持容器高度 -->
       <div
         class="height-placeholder"
         key="placeholder"
-        :style="{ top: internalMacroData.length * scaleValue(65) + 'px', position: 'absolute' }"
+        :style="{ top: curMacro.length * scaleValue(65) + 'px', position: 'absolute' }"
       ></div>
     </TransitionGroup>
     <div class="button-group">
-      <div
-        v-for="(item, idx) in operationNameList"
-        :key="item"
-        class="operation-btn"
-        :class="{
-          'is-active': isAct === idx,
-          'is-pending': switchClass(idx),
-          'clear-btn': idx === operationNameList.length - 1,
-        }"
-        @click="onClick(idx)"
-        @mouseenter="onMouseEnter(idx)"
-        @mouseleave="onMouseLeave(idx)"
-      >
-        <img :src="!idx ? changeIcon : item.icon" alt="" />
-        <span>{{ !idx && isStart ? '结束录制' : item.name }}</span>
-      </div>
+      <template v-for="(item, idx) in operationNameList">
+        <template v-if="idx !== 1">
+          <div
+            :key="item"
+            class="operation-btn"
+            :class="{
+              'is-active': BottomBtnIdx === idx,
+              'is-pending': switchClass(idx),
+              'clear-btn': idx === operationNameList.length - 1,
+            }"
+            @click="onClick(idx)"
+            @mouseenter="onMouseEnter(idx)"
+            @mouseleave="onMouseLeave(idx)"
+          >
+            <img :src="!idx ? changeIcon : item.icon" alt="" />
+            <span>{{ !idx && isStart ? '结束录制' : item.name }}</span>
+          </div>
+        </template>
+      </template>
     </div>
   </div>
   <div>
-    <macroEvents
+    <macro-events-v2
       :data="macroDataItem"
       @update:key="updateMacroItemKey"
       @update:delay="updateMacroItemDelay"
       @update:status="updateMacroItemStatus"
     />
-    <macroType
-      :initialMode="macroTypeSettings.mode"
-      :initialRepeatCount="macroTypeSettings.repeatCount"
-      :initialRepeatInterval="macroTypeSettings.repeatInterval"
-      @update:settings="updateMacroTypeSettings"
+    <macro-mode-v2
+      :macroMode="macroModeSettings.mode"
+      :macroRepeatCount="macroModeSettings.repeatCount"
+      @update:settings="updateMacroMode"
     />
   </div>
 </template>
 <script setup>
 import { scaleValue } from '@/utils/responsive.js';
+import { showMessage } from '@/utils/message';
 
-import macroEvents from './macro-events.vue';
-import macroType from './macro-type.vue';
+import macroModeV2 from './macro-mode-v2.vue';
+import macroEventsV2 from './macro-events-v2.vue';
+
 import keyupIcon from '@/assets/images/keyup_icon.svg';
 import keydownIcon from '@/assets/images/keydown_icon.svg';
 import startIcon from '@/assets/images/start_icon.svg';
@@ -84,29 +92,27 @@ import eventsIcon from '@/assets/images/events_icon.svg';
 import clearIcon from '@/assets/images/clear_icon.svg';
 import keyboardWord from '@/configs/byte-to-key/keyboard';
 
-const props = defineProps({
-  macroData: { type: Array, default: () => [] },
-  parentMacro: { type: Object, default: null },
+const { macroData } = defineProps({
+  macroData: { type: Object, default: () => ({}) },
 });
 
-const emit = defineEmits(['updateMacro']);
+const emit = defineEmits(['updateMacro:data', 'updateMacro:mode', 'updateMacro:clear']);
 
-let dragIndex = 0;
-let lastKeyupEventTime = null;
-let lastKeydownEventTime = null;
+let lastKeyupEventTime = null; // 按键抬起时间戳
+let lastKeydownEventTime = null; // 按键按下时间戳
 let startY = 0;
-
-const isAct = ref(null);
-const positions = ref([]);
-const isStart = ref(false);
-const localMacros = ref([]);
+let timer = null;
 let draggingIndex = ref(null);
-const macroDataItem = ref(null);
-const savePositionInfo = ref([]);
-const internalMacroData = ref([]);
-const keyList = ref({ data: [] });
-const selectedItemIndex = ref(null);
-const selectedCreateTime = ref(null);
+const BottomBtnIdx = ref(null); // 底部按钮选中下边
+const positions = ref([]); // 存储macroItem实时位置数据
+const savePositionInfo = ref([]); // macroItem原始位置数据
+const isStart = ref(false); // 录制状态
+const macroDataItem = ref(null); // macro.data中某一项
+const curMacro = ref([]); // macro.data
+
+const selectedItemIndex = ref(null); // 当前选中macro.data的index
+const selectedCreateTime = ref(null); // macro.data高亮标识
+const lastEventTime = ref(null);
 
 const operationNameList = [
   { name: '开始录制', icon: startIcon },
@@ -115,6 +121,7 @@ const operationNameList = [
   { name: '清除序列', icon: clearIcon },
 ];
 
+// keyCode映射
 const keyValueDictionary = {
   8: 42, // backspace
   9: 43, // tab
@@ -245,39 +252,37 @@ const changeIcon = computed(() => {
 });
 
 onMounted(() => {
-  calcPosition();
-  // getKeysByValue('75');
+  calcPosition(); // 初始化position
 });
 
-// watch(
-//   () => showMacroIdx,
-//   (newVal) => {
-//     if (localMacros.value[newVal]) macroData.value = localMacros.value[newVal].data;
-//     calcPosition();
-//   },
-// );
-
 watch(
-  () => internalMacroData.value?.length,
+  () => curMacro.value?.length,
   () => {
     nextTick(calcPosition);
   },
 );
 
 watch(
-  () => props.macroData,
-  (newVal) => {
-    internalMacroData.value = Array.isArray(newVal) ? [...newVal] : [];
-    // internalMacroData.value = data;
+  () => macroData,
+  () => {
+    // curMacro.value = Array.isArray(newVal) ? [...newVal] : [];
+    if (macroData && macroData.data) {
+      const filterMacroData = macroData.data.filter((item) => item.keyCode !== 0);
+      curMacro.value = filterMacroData;
+    }
+    // curMacro.value = (newMacroData && newMacroData.data) || [];
+    // console.log('xxxxxxxxxxxxxx', macroData, curMacro.value);
   },
   { immediate: true, deep: true },
 );
 
+// 初始化position
 const calcPosition = () => {
-  positions.value = internalMacroData.value.map((_, index) => index * scaleValue(65)) || [];
-  savePositionInfo.value = internalMacroData.value.map((_, index) => index * scaleValue(65)) || [];
+  positions.value = curMacro.value.map((_, index) => index * scaleValue(65)) || [];
+  savePositionInfo.value = curMacro.value.map((_, index) => index * scaleValue(65)) || [];
 };
 
+// 录制时切换类名修改样式
 const switchClass = (idx) => {
   if (idx === 0) {
     if (isStart.value) {
@@ -286,8 +291,9 @@ const switchClass = (idx) => {
   }
 };
 
+// 底部按键事件
 const onClick = (idx) => {
-  isAct.value = idx;
+  BottomBtnIdx.value = idx;
 
   switch (idx) {
     case 0:
@@ -296,14 +302,17 @@ const onClick = (idx) => {
       if (isStart.value) {
         lastKeyupEventTime = Date.now();
         lastKeydownEventTime = Date.now();
-        document.addEventListener('keydown', handleKeydown);
-        document.addEventListener('keyup', handleKeyup);
+        document.addEventListener('keydown', handleKeyDownAndUp);
+        document.addEventListener('keyup', handleKeyDownAndUp);
+        showMessage('开始录制');
       } else {
-        document.removeEventListener('keydown', handleKeydown);
-        document.removeEventListener('keyup', handleKeyup);
+        document.removeEventListener('keydown', handleKeyDownAndUp);
+        document.removeEventListener('keyup', handleKeyDownAndUp);
+        emit('updateMacro:data', curMacro.value);
+        showMessage('结束录制');
       }
       break;
-    case 1:
+    case 1: // TODO v2添加延时再次获取时无法拆分添加的延时
       const value = {
         keyType: 'delay',
         key: '',
@@ -312,38 +321,40 @@ const onClick = (idx) => {
         timeDifference: 20,
       };
 
-      if (internalMacroData.value.length < 64) {
-        internalMacroData.value.push(value);
-        emit('updateMacro', [...internalMacroData.value]);
+      if (curMacro.value.length < 64) {
+        curMacro.value.push(value);
+        emit('updateMacro:data', [...curMacro.value]);
       }
       break;
     case 2: // 插入事件
       // 查找最后一个 type 为 key 的项
-      const lastKeyEvent = [...internalMacroData.value].reverse().find((item) => item.keyType === 'key');
-
+      const lastKeyEvent = [...curMacro.value].reverse().find((item) => item.keyCode);
+      // console.log('插入事件项： ', lastKeyEvent);
       if (lastKeyEvent) {
         // 创建深拷贝，避免引用原始对象
         const newEvent = JSON.parse(JSON.stringify(lastKeyEvent));
 
         // 更新创建时间为当前时间
-        newEvent.createTime = Date.now();
+        // newEvent.createTime = Date.now();
 
         // 如果需要，可以设置时间差为默认值或特定值
         // newEvent.timeDifference = 20; // 默认时间差值，可以根据需求调整
 
         // 添加到宏数据数组末尾
-        if (internalMacroData.value.length < 64) {
-          internalMacroData.value.push(newEvent);
-
-          // 通知父组件
-          emit('updateMacro', [...internalMacroData.value]);
+        if (curMacro.value.length < 64) {
+          curMacro.value.push(newEvent);
 
           // 重新计算位置
           calcPosition();
+          timer && clearTimeout(timer);
+          timer = setTimeout(() => {
+            emit('updateMacro:data', curMacro.value);
+          }, 500);
 
+          showMessage('插入事件成功');
           // console.log('已插入事件:', newEvent);
         } else {
-          // console.warn('宏录入数量已达上限 (64)');
+          showMessage('宏录入数量不能超过64', 'warning');
           // 如果需要，这里可以添加提示消息
         }
       } else {
@@ -352,18 +363,17 @@ const onClick = (idx) => {
       }
       break;
     case 3: // 清除序列
-      // console.log('清除序列');
-      internalMacroData.value = [];
+      if (curMacro.value.length === 0) return;
+      curMacro.value = [];
 
       isStart.value = false;
       lastKeydownEventTime = null;
       lastKeyupEventTime = null;
 
-      document.removeEventListener('keydown', handleKeydown);
-      document.removeEventListener('keyup', handleKeyup);
-
-      emit('updateMacro', []);
-
+      document.removeEventListener('keydown', handleKeyDownAndUp);
+      document.removeEventListener('keyup', handleKeyDownAndUp);
+      emit('updateMacro:clear', macroData);
+      showMessage('清除成功');
       calcPosition();
       break;
     default:
@@ -371,79 +381,40 @@ const onClick = (idx) => {
   }
 };
 
-const handleKeydown = (event) => {
-  const createTime = new Date().getTime();
-  const { key, keyCode, code, type, timeStamp } = event;
-  // console.log('timeStamp', timeStamp);
+const handleKeyDownAndUp = (event) => {
+  const currentTime = Date.now();
 
-  const value = {
-    keyType: 'key',
-    key: key,
-    status: 1,
-    keyCode: keyValueDictionary[keyCode],
-    code,
-    timeStamp,
-    type: type,
-    timeDifference: 0, // 默认值为0
-    createTime,
-  };
-
-  // 修复首次计算可能为负数的问题
-  if (lastKeydownEventTime === null) {
-    // 首次按键，将时间差设为0
-    value.timeDifference = 0;
+  const { keyCode, code, type } = event;
+  const data = { status: type === 'keydown' ? 1 : 0, delay: 0, keyCode: 0 };
+  let keyValue = keyValueDictionary[keyCode];
+  if (keyCode === 16 && code === '') {
+    // eslint-disable-next-line prefer-destructuring
+    keyValue = keyValueDictionary[500];
+  }
+  if (keyCode === 17 && code === 'ControlRight') {
+    // eslint-disable-next-line prefer-destructuring
+    keyValue = keyValueDictionary[501];
+  }
+  if (keyCode === 18 && code === 'AltRight') {
+    // eslint-disable-next-line prefer-destructuring
+    keyValue = keyValueDictionary[502];
+  }
+  data.keyCode = keyValue;
+  if (lastEventTime.value) {
+    data.delay = currentTime - lastEventTime.value;
+  }
+  if (curMacro.value.length < 64) {
+    curMacro.value.push(data);
   } else {
-    // 非首次按键，计算实际时间差
-    const diff = timeStamp - lastKeydownEventTime;
-    // 确保时间差为非负数
-    value.timeDifference = diff > 0 ? diff : 0;
+    showMessage('宏录入数量不能超过64', 'warning');
+    isStart.value = false;
+    document.removeEventListener('keydown', handleKeyDownAndUp);
+    document.removeEventListener('keyup', handleKeyDownAndUp);
+    // emit('updateMacro:data', curMacro.value);
+    // if (msg.value) MessagePlugin.close(msg.value);
+    // msg.value = MessagePlugin.error('宏录入数量不能超过64');
   }
-
-  // 更新上次按键时间戳
-  lastKeydownEventTime = timeStamp;
-
-  // 添加到宏列表
-  if (internalMacroData.value.length < 64) {
-    internalMacroData.value.push(value);
-    emit('updateMacro', [...internalMacroData.value]);
-  }
-};
-
-const handleKeyup = (event) => {
-  const createTime = new Date().getTime();
-  const { key, keyCode, code, type, timeStamp } = event;
-
-  const value = {
-    keyType: 'key',
-    key: key,
-    status: 0,
-    keyCode: keyValueDictionary[keyCode],
-    code,
-    timeStamp,
-    type: type,
-    timeDifference: 0, // 默认值为0
-    createTime,
-  };
-
-  // 修复首次计算可能为负数的问题
-  if (lastKeyupEventTime === null) {
-    // 首次按键释放，将时间差设为0
-    value.timeDifference = 0;
-  } else {
-    // 非首次按键释放，计算实际时间差
-    const diff = timeStamp - lastKeyupEventTime;
-    // 确保时间差为非负数
-    value.timeDifference = diff > 0 ? diff : 0;
-  }
-
-  // 更新上次按键释放时间戳
-  lastKeyupEventTime = timeStamp;
-
-  // 添加到宏列表
-  if (internalMacroData.value.length < 64) {
-    internalMacroData.value.push(value);
-    emit('updateMacro', [...internalMacroData.value]);
-  }
+  lastEventTime.value = currentTime;
 };
 
 const copyItem = (item, index) => {
@@ -454,21 +425,22 @@ const copyItem = (item, index) => {
   copiedItem.createTime = Date.now();
 
   // 找到当前项在数组中的索引
-  const itemIndex = internalMacroData.value.findIndex((dataItem) => dataItem === item);
+  const itemIndex = curMacro.value.findIndex((dataItem) => dataItem === item);
 
   // 如果找到了项，且宏总数未超过限制
-  if (itemIndex !== -1 && internalMacroData.value.length < 64) {
+  if (itemIndex !== -1 && curMacro.value.length < 64) {
     // 在当前项后面插入复制项
-    internalMacroData.value.splice(itemIndex + 1, 0, copiedItem);
+    curMacro.value.splice(itemIndex + 1, 0, copiedItem);
 
     // 通知父组件更新数据
-    emit('updateMacro', [...internalMacroData.value]);
+    emit('updateMacro:data', [...curMacro.value]);
+    showMessage('拷贝成功');
 
     // 重新计算位置
     calcPosition();
 
     // console.log('已复制并插入项:', copiedItem);
-  } else if (internalMacroData.value.length >= 64) {
+  } else if (curMacro.value.length >= 64) {
     // console.warn('宏录入数量已达上限 (64)');
     // 这里可以添加用户提示，例如使用消息组件提示用户
   } else {
@@ -477,10 +449,11 @@ const copyItem = (item, index) => {
 };
 
 const deleteItem = (item) => {
-  const itemIndex = internalMacroData.value.findIndex((dataItem) => dataItem === item);
+  const itemIndex = curMacro.value.findIndex((dataItem) => dataItem === item);
   if (itemIndex !== -1) {
-    internalMacroData.value.splice(itemIndex, 1);
-    emit('updateMacro', [...internalMacroData.value]);
+    curMacro.value.splice(itemIndex, 1);
+    emit('updateMacro:data', [...curMacro.value]);
+    showMessage('删除成功');
     calcPosition();
     // console.log('已删除项:', item);
   }
@@ -490,19 +463,19 @@ const changeItemInfo = (e, item, index) => {
   e.stopPropagation();
   macroDataItem.value = JSON.parse(JSON.stringify(item));
   selectedItemIndex.value = index;
-  selectedCreateTime.value = item.createTime;
+  selectedCreateTime.value = index + item.delay;
 };
 
 const onMouseEnter = (idx) => {
-  isAct.value = idx;
+  BottomBtnIdx.value = idx;
 };
 const onMouseLeave = (idx) => {
-  isAct.value = null;
+  BottomBtnIdx.value = null;
 };
 
 const startDrag = (event, index, time) => {
   draggingIndex.value = index;
-  selectedCreateTime.value = time;
+  selectedCreateTime.value = index + time;
   // 记录鼠标开始拖动时的位置
   startY = event.clientY;
 
@@ -542,13 +515,13 @@ const onDrag = (event) => {
       // 保存当前拖动元素的视觉位置
       const currentVisualPosition = positions.value[draggingIndex.value];
       // 数据交换
-      [internalMacroData.value[draggingIndex.value], internalMacroData.value[draggingIndex.value - 1]] = [
-        internalMacroData.value[draggingIndex.value - 1],
-        internalMacroData.value[draggingIndex.value],
+      [curMacro.value[draggingIndex.value], curMacro.value[draggingIndex.value - 1]] = [
+        curMacro.value[draggingIndex.value - 1],
+        curMacro.value[draggingIndex.value],
       ];
 
       // 重置所有元素的正确位置
-      savePositionInfo.value = internalMacroData.value.map((_, index) => index * scaleValue(65));
+      savePositionInfo.value = curMacro.value.map((_, index) => index * scaleValue(65));
 
       // 使用Vue的过渡系统，保持动画效果
       // 对于被交换的元素，设置新的目标位置，Vue 的transition会处理过渡动画
@@ -576,7 +549,7 @@ const onDrag = (event) => {
   }
 
   // 向下交换检测：检查是否应该与下一个元素交换位置
-  if (draggingIndex.value < internalMacroData.value.length - 1) {
+  if (draggingIndex.value < curMacro.value.length - 1) {
     // 获取下一个元素的位置
     const nextItemTop = savePositionInfo.value[draggingIndex.value + 1];
     const nextItemCenter = nextItemTop + scaleValue(25);
@@ -590,13 +563,13 @@ const onDrag = (event) => {
       const currentVisualPosition = positions.value[draggingIndex.value];
 
       // 数据交换
-      [internalMacroData.value[draggingIndex.value], internalMacroData.value[draggingIndex.value + 1]] = [
-        internalMacroData.value[draggingIndex.value + 1],
-        internalMacroData.value[draggingIndex.value],
+      [curMacro.value[draggingIndex.value], curMacro.value[draggingIndex.value + 1]] = [
+        curMacro.value[draggingIndex.value + 1],
+        curMacro.value[draggingIndex.value],
       ];
 
       // 更新所有元素的"正确"位置
-      savePositionInfo.value = internalMacroData.value.map((_, index) => index * scaleValue(65));
+      savePositionInfo.value = curMacro.value.map((_, index) => index * scaleValue(65));
 
       // 使用Vue的过渡系统，保持动画效果
       // 对于被交换的元素，设置新的目标位置，Vue 的transition会处理过渡动画
@@ -633,7 +606,7 @@ const endDrag = () => {
   draggingIndex.value = null;
 
   // 计算最终应该放置的位置
-  const finalPositions = internalMacroData.value.map((_, index) => index * scaleValue(65));
+  const finalPositions = curMacro.value.map((_, index) => index * scaleValue(65));
 
   // 允许过渡动画生效的延迟
   setTimeout(() => {
@@ -648,57 +621,57 @@ const endDrag = () => {
   // 移除事件监听器
   document.removeEventListener('mousemove', onDrag);
   document.removeEventListener('mouseup', endDrag);
-
   // 通知父组件更新数据
-  emit('updateMacro', [...internalMacroData.value]);
-};
-
-const updateMacroItemKey = (newKey) => {
-  // 确保有选中的项和数据
-  if (selectedItemIndex.value === null || !macroDataItem.value) return;
-
-  // 更新本地数据
-  macroDataItem.value.key = getKeysByValue(newKey);
-  macroDataItem.value.keyCode = newKey;
-
-  // 更新内部数组中的项
-  if (internalMacroData.value[selectedItemIndex.value]) {
-    internalMacroData.value[selectedItemIndex.value].key = getKeysByValue(newKey);
-    internalMacroData.value[selectedItemIndex.value].keyCode = newKey;
-
-    // 创建新的引用以确保触发响应式更新
-    internalMacroData.value = [...internalMacroData.value];
-
-    // 通知父组件
-    emit('updateMacro', internalMacroData.value);
-  }
+  emit('updateMacro:data', [...curMacro.value]);
 };
 
 const getKeysByValue = (targetValue) => {
   return Object.keys(keyValueDictionary).filter((key) => keyValueDictionary[key] === targetValue);
 };
 
+// 更新按键
+const updateMacroItemKey = (newKey) => {
+  // 确保有选中的项和数据
+  if (selectedItemIndex.value === null || !macroDataItem.value) return;
+
+  // 更新本地数据
+  // macroDataItem.value.keyCode = getKeysByValue(newKey);
+  macroDataItem.value.keyCode = newKey;
+
+  // 更新内部数组中的项
+  if (curMacro.value[selectedItemIndex.value]) {
+    // curMacro.value[selectedItemIndex.value].keyCode = getKeysByValue(newKey);
+    curMacro.value[selectedItemIndex.value].keyCode = newKey;
+
+    // 创建新的引用以确保触发响应式更新
+    curMacro.value = [...curMacro.value];
+
+    // 通知父组件
+    emit('updateMacro:data', curMacro.value);
+  }
+};
+
+// 更新按键延时
 const updateMacroItemDelay = (newDelay) => {
   // 确保有选中的项和数据
   if (selectedItemIndex.value === null || !macroDataItem.value) return;
 
   // 更新本地数据
-  macroDataItem.value.timeDifference = newDelay;
+  macroDataItem.value.delay = newDelay;
 
   // 更新内部数组中的项
-  if (internalMacroData.value[selectedItemIndex.value]) {
-    internalMacroData.value[selectedItemIndex.value].timeDifference = newDelay;
+  if (curMacro.value[selectedItemIndex.value]) {
+    curMacro.value[selectedItemIndex.value].delay = newDelay;
 
     // 创建新的引用以确保触发响应式更新
-    internalMacroData.value = [...internalMacroData.value];
+    curMacro.value = [...curMacro.value];
 
     // 通知父组件
-    emit('updateMacro', internalMacroData.value);
-
-    // console.log('已更新延迟时间:', newDelay);
+    emit('updateMacro:data', curMacro.value);
   }
 };
 
+// 更新按键状态(按下/抬起)
 const updateMacroItemStatus = (newStatus) => {
   // 确保有选中的项和数据
   if (selectedItemIndex.value === null || !macroDataItem.value) return;
@@ -707,48 +680,43 @@ const updateMacroItemStatus = (newStatus) => {
   macroDataItem.value.status = newStatus;
 
   // 更新内部数组中的项
-  if (internalMacroData.value[selectedItemIndex.value]) {
-    internalMacroData.value[selectedItemIndex.value].status = newStatus;
+  if (curMacro.value[selectedItemIndex.value]) {
+    curMacro.value[selectedItemIndex.value].status = newStatus;
 
     // 创建新的引用以确保触发响应式更新
-    internalMacroData.value = [...internalMacroData.value];
+    curMacro.value = [...curMacro.value];
 
     // 通知父组件
-    emit('updateMacro', internalMacroData.value);
-
-    // console.log('已更新按键状态:', newStatus);
+    emit('updateMacro:data', curMacro.value);
   }
 };
 
-// 宏类型设置，从 props.macroData 获取初始值
-const macroTypeSettings = computed(() => {
+// 获取模式
+const macroModeSettings = computed(() => {
   // 查找当前选中宏的类型设置
-  if (props.parentMacro) {
+  if (macroData) {
+    console.log('macroModeSettings', macroData, macroData.mode, macroData.repNum);
     return {
-      mode: props.parentMacro.mode || 0,
-      repeatCount: props.parentMacro.repeatCount || 1,
-      repeatInterval: props.parentMacro.repeatInterval || 1,
+      mode: macroData.mode || 0,
+      repeatCount: macroData.repNum || 0,
     };
   }
-  // 默认设置
   return {
     mode: 0,
-    repeatCount: 1,
-    repeatInterval: 1,
+    repeatCount: 0,
   };
 });
 
-// 处理宏类型设置更新
-const updateMacroTypeSettings = (newSettings) => {
-  // console.log('宏类型设置已更新:', newSettings);
-
-  // 通知父组件同时更新数据和设置
-  emit('updateMacro', internalMacroData.value, newSettings);
+// 更新宏模式 重复次数 重复间隔
+const updateMacroMode = (newSettings) => {
+  const { mode, repeatCount } = newSettings;
+  emit('updateMacro:mode', { mode, repeatCount });
+  showMessage('修改模式成功');
 };
 </script>
 
 <style lang="scss" scoped>
-.edit-macro-container {
+.macro-data-container {
   width: var(--size-960);
   height: var(--macro-height);
   box-sizing: border-box;
@@ -959,20 +927,6 @@ const updateMacroTypeSettings = (newSettings) => {
       background-image: url('/src/assets/images/pending_bg.svg');
     }
   }
-}
-
-.moveing {
-  // opacity: 0;
-}
-
-/* 恢复列表过渡效果 */
-.list-move {
-  // transition: transform 0.3s ease;
-}
-
-.list-enter-active,
-.list-leave-active {
-  // transition: all 0.3s ease;
 }
 
 .list-enter-from,

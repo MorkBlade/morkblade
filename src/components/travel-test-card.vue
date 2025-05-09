@@ -7,7 +7,7 @@
           <img
             class="progress"
             src="@/assets/images/progress.png"
-            :style="{ transform: `translateY(${testEnabled?dynamicHeight:-400}px)` }"
+            :style="{ transform: `translateY(${testEnabled ? dynamicHeight : -400}px)` }"
           />
         </div>
       </div>
@@ -50,10 +50,10 @@ const performanceStore = usePerformanceStore();
 const testEnabled = ref(false);
 const maxMM = ref(0);
 const keyPressTestCount = ref(0);
-const isVersion2 = localStorage.getItem('keyboardVer') === 'v2';
+const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
 
 const handleSwitchChange = async (value) => {
-  if(isVersion2) {
+  if (isVersion2) {
     if (value) {
       await performanceStore.calibrationStartV2();
     } else {
@@ -67,15 +67,13 @@ const handleSwitchChange = async (value) => {
     }
   }
   keyPressTestCount.value++;
-
 };
 
 watch(keyPressTestCount, async () => {
   if (testEnabled.value) {
-    if(isVersion2) {
+    if (isVersion2) {
       const { max } = await performanceStore.getRm6X21CalibrationV2(keyboardStore.keyboards);
       maxMM.value = max;
-
     } else {
       const { max } = await performanceStore.getRm6X21Travel();
       maxMM.value = max;

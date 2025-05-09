@@ -48,7 +48,7 @@ const isStart = ref(false);
 
 const keys = ref([]);
 const keyID = ref(0);
-const isVersion2 = localStorage.getItem('keyboardVer') === 'v2';
+const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
 const inputText = ref('');
 const startTime = ref(null);
 const endTime = ref(null);

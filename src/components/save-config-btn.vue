@@ -1,8 +1,8 @@
 <template>
   <div
     class="save-btn"
-    :class="{ 'is-active': isAct }"
-    @click="saveConfig"
+    :class="[{ 'is-active': isAct }, type]"
+    @click="confirmConfig"
     @mouseenter="onMouseEnter"
     @mouseleave="onMouseLeave"
   >
@@ -19,7 +19,7 @@ import { useKeyboardStore } from '@/stores';
 import mDialog from '@/components/dialog.vue';
 import defaultIcon from '@/assets/images/save_icon.svg';
 
-const { btnText, tag, disabled, needKeys } = defineProps({
+const { btnText, tag, disabled, needKeys, type } = defineProps({
   btnText: {
     type: String,
     default: '保存更改',
@@ -40,6 +40,7 @@ const { btnText, tag, disabled, needKeys } = defineProps({
     type: Boolean,
     default: true,
   },
+  type: { type: String, default: 'normal' },
 });
 const emits = defineEmits(['saveConfig']);
 
@@ -51,8 +52,12 @@ const activeKeys = computed(() => {
   return keyboardStore.activeKeys;
 });
 
-const saveConfig = () => {
+const confirmConfig = () => {
   if (disabled) return;
+  if (type === 'warning') {
+    emits('saveConfig');
+    return;
+  }
   if (activeKeys.value.length === 0 && needKeys) {
     showMessage('请先选择需要修改的按键', 'warning');
     return;
@@ -89,6 +94,22 @@ const onCancel = () => {
   position: relative;
   cursor: pointer;
 
+  &.is-active {
+    background-image: url('/src/assets/images/save_bgc.svg');
+
+    &.primary {
+      background-image: url('/src/assets/images/save_bg_primary.svg');
+    }
+
+    &.warning {
+      background-image: url('/src/assets/images/pending_bg.svg');
+    }
+
+    &.danger {
+      background-image: url('/src/assets/images/save_bg_danger.svg');
+    }
+  }
+
   img {
     width: var(--size-20);
     height: var(--size-20);
@@ -105,8 +126,5 @@ const onCancel = () => {
     top: var(--spacing-6);
     left: var(--spacing-65);
   }
-}
-.is-active {
-  background-image: url('/src/assets/images/save_bgc.svg');
 }
 </style>

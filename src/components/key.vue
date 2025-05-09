@@ -9,9 +9,8 @@
 
 <script setup>
 import keyboard from '@/configs/byte-to-key/keyboard';
+import keyboardV2 from '@/configs/byte-to-key/keyboard-v2';
 import { useKeyboardStore } from '@/stores';
-
-const keyboardStore = useKeyboardStore();
 
 const { keyValue } = defineProps({
   keyValue: { type: [Number, Object], required: true },
@@ -20,13 +19,20 @@ const { keyValue } = defineProps({
 
 const emits = defineEmits(['select']);
 
+const keyboardStore = useKeyboardStore();
+
 const isDragging = ref(false);
 const dragElement = ref(null);
 const defaultOffset = reactive({ left: 0, top: 0 });
+const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
 let dragStartTime = 0;
 
 const keyText = computed(() => {
-  return typeof keyValue === 'object' && keyValue.macroName ? keyValue.macroName : keyboard[keyValue] || '';
+  if (isVersion2) {
+    return typeof keyValue === 'object' && keyValue.macroName ? keyValue.macroName : keyboardV2[keyValue] || '';
+  } else {
+    return typeof keyValue === 'object' && keyValue.macroName ? keyValue.macroName : keyboard[keyValue] || '';
+  }
 });
 
 const handleClick = (e) => {
@@ -93,6 +99,7 @@ const stopDrag = () => {
     display: flex;
     justify-content: center;
     align-items: center;
+    word-break: break-all;
   }
   &:hover {
     background-image: url('@/assets/images/key_bgC.svg');

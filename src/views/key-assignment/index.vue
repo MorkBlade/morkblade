@@ -45,6 +45,8 @@
         v-else-if="currentComponent === 'RS'"
         ref="childRef"
         v-model:rs-info="rsInfo"
+        :edit="edit"
+        :edit-key="editKey"
         @handleKeyTypeChange="handleKeyTypeChange"
         @handleDialoConfirm="handleDialoConfirm"
       />
@@ -78,7 +80,7 @@
     </div>
     <div class="right-config-box" v-show="currentComponent !== 'normal'">
       <div>
-        <keyConfigCard :advancedData="advancedItems" @delConfig="delConfig" />
+        <keyConfigCard :advancedData="advancedItems" />
       </div>
     </div>
   </div>
@@ -86,7 +88,6 @@
 
 <script setup>
 import useSetAdvanced from './useSetAdvanced.js';
-import { useHighLevelKeyStore, useKeyboardStore, usePerformanceStore } from '@/stores';
 
 import normal from './normal/index.vue';
 import mt from './mt/index.vue';
@@ -96,11 +97,25 @@ import rs from './rs/index.vue';
 import tgl from './tgl/index.vue';
 import mpt from './mpt/index.vue';
 import end from './end/index.vue';
-import keyConfigCard from '@/components/key-config-card.vue';
+import keyConfigCard from './components/key-config-card.vue';
 
-const keyboardStore = useKeyboardStore();
-const performanceStore = usePerformanceStore();
-const highLevelKeyStore = useHighLevelKeyStore();
+const {
+  edit,
+  editKey,
+  socdInfo,
+  dksInfo,
+  mtInfo,
+  rsInfo,
+  mptInfo,
+  tglInfo,
+  endInfo,
+  maxTouchTravel,
+  minTouchTravel,
+  precision,
+  handleKeyTypeChange,
+  handleDialoConfirm,
+  advancedItems,
+} = useSetAdvanced();
 
 const clickItem = ref(0);
 const performanceItem = ['普通', '单击/长按', 'DKS', 'SOCD', 'RS', 'TGL', 'MPT', 'END'];
@@ -108,6 +123,7 @@ const performanceItem = ['普通', '单击/长按', 'DKS', 'SOCD', 'RS', 'TGL', 
 const changeMenu = (idx) => {
   clickItem.value = idx;
 };
+
 // 使用计算属性来确定当前应该显示的组件
 const currentComponent = computed(() => {
   switch (clickItem.value) {
@@ -129,31 +145,6 @@ const currentComponent = computed(() => {
       return 'normal';
   }
 });
-
-const {
-  edit,
-  editKey,
-  socdInfo,
-  dksInfo,
-  mtInfo,
-  rsInfo,
-  mptInfo,
-  tglInfo,
-  endInfo,
-  maxTouchTravel,
-  minTouchTravel,
-  precision,
-  handleKeyTypeChange,
-  handleDialoConfirm,
-  handleDelete,
-  advancedItems,
-} = useSetAdvanced();
-
-const delConfig = async (keyId) => {
-  console.log('delConfigdelConfigdelConfig');
-  await highLevelKeyStore.deleteHighLevelKey(keyId);
-  await performanceStore.getKeyPerformance(keyboardStore.keyboards);
-};
 </script>
 
 <style scoped lang="scss">

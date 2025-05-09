@@ -77,8 +77,8 @@ const progress = ref(0);
 // 连接按钮点击事件
 const handleDeviceStoreClick = async () => {
   const result = await deviceStore.connectDevice();
-  const version = deviceStore.devices[0]?.usagePage === 65440 ? 'v1':'v2'
-  localStorage.setItem('keyboardVer',version)
+  const version = deviceStore.devices[0]?.usagePage === 65440 ? 'v1' : 'v2';
+  localStorage.setItem('keyboardVersion', version);
   await appStore.getBaseInfo();
   // console.log('keyboardRunMode', appStore.baseInfo?.KeyboardRunMode, result);
   if (appStore.baseInfo?.KeyboardRunMode === 255) {

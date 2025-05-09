@@ -59,7 +59,7 @@ const performanceStore = usePerformanceStore();
 const defaultHeight = ref(0);
 const rotate = ref(0);
 const customItems = reactive([]);
-const isVersion2 = localStorage.getItem('keyboardVer') === 'v2';
+const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
 
 onMounted(async () => {
   await appStore.configID(isVersion2);

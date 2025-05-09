@@ -78,7 +78,7 @@ const useKeyboardStore = defineStore('keyboard', {
           }
         });
 
-        console.log('results----------------------------->', rowData);
+        // console.log('results----------------------------->', rowData);
         // 4. 异步获取 axis，不阻塞返回
         Promise.all(
           rowData.map(async (col, colIdx) => {

@@ -2,22 +2,20 @@
   <div class="macro-list-container">
     <h3>宏列表</h3>
     <div class="macro-list">
-      <div
-        v-for="(item, idx) in macros"
-        :key="item.id"
-        class="macro"
-        :class="{ 'is-checked': curMacroIdx === idx }"
-        @click="checkMacro(idx)"
-      >
-        <h4>{{ item.macroName }}</h4>
-        <p class="create-time">创建时间: {{ formatTimestamp(item.createTime) }}</p>
-        <p class="length">操作长度: {{ item.data.length }}</p>
-        <div class="controls-group" @click.stop>
-          <span class="copy-btn" @click="copyMacro(item)">复制</span>
-          <span class="del-btn" @click="delMacro(item.id)">删除</span>
+      <template v-for="(item, idx) in macroData" :key="item.id">
+        <!-- <template v-if="item.valid"> -->
+        <div class="macro" :class="{ 'is-checked': curMacroIdx === idx }" @click="checkMacro(idx)">
+          <h4>{{ `宏${idx + 1}` }}</h4>
+          <p class="create-time">创建时间: {{ formatTimestamp(item.createTime || Date.now()) }}</p>
+          <p class="length">操作长度: {{ getMacroValidCount(item.data) }}</p>
+          <div class="controls-group" @click.stop>
+            <!-- <span class="copy-btn" @click="copyMacro(item)">复制</span>
+            <span class="del-btn" @click="delMacro(item.id)">删除</span> -->
+          </div>
         </div>
-      </div>
-      <template v-if="macros.length < 15">
+        <!-- </template> -->
+      </template>
+      <template v-if="macroData.length < 16">
         <div class="add-macro">
           <div @click="addMacro">
             <span></span>
@@ -31,6 +29,7 @@
 
 <script setup>
 import { useMacroStore } from '@/stores';
+import { storeToRefs } from 'pinia';
 
 const macros = defineModel('macros', { default: () => [] });
 
@@ -38,7 +37,16 @@ const macros = defineModel('macros', { default: () => [] });
 const emit = defineEmits(['checkedMacroIdx']);
 
 const macroStore = useMacroStore();
+const { macroData } = storeToRefs(macroStore);
 const curMacroIdx = ref(0);
+
+// const validCount = computed(() => {
+//   let count = 0;
+//   macroData.value.forEach((item) => {
+//     if (item.valid) count += 1;
+//   });
+//   return count;
+// });
 
 const formatTimestamp = (timestamp) => {
   // 创建一个 Date 对象
@@ -62,8 +70,20 @@ const checkMacro = (idx) => {
   emit('checkedMacroIdx', idx);
 };
 
+const getMacroValidCount = (data) => {
+  let count = 0;
+  if (Array.isArray(data)) {
+    for (let i = 0; i < data.length; i++) {
+      if (data[i].status === 0 && data[i].delay === 0 && data[i].keyCode === 0) continue;
+      count += 1;
+    }
+  }
+  return count;
+};
+
 let flag = false;
 const addMacro = () => {
+  /*
   if (flag) return;
   flag = true;
   if (macros.value.length >= 16) return;
@@ -85,6 +105,8 @@ const addMacro = () => {
   setTimeout(() => {
     flag = false;
   }, 1000);
+  */
+  // macroData.value[validCount.value].valid = true;
 };
 
 const copyMacro = (macro) => {

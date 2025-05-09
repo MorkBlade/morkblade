@@ -4,7 +4,7 @@ import { storeToRefs } from 'pinia';
 import { paletteToHexArray, hexArrayToPalette } from '@/utils/colorConvert';
 
 export const useLightingHook = () => {
-  const isVersion2 = localStorage.getItem('keyboardVer') === 'v2';
+  const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
   const keyboardStore = useKeyboardStore();
   const lightSettingStore = useLightSettingStore();
   const { light } = storeToRefs(lightSettingStore);
@@ -123,19 +123,29 @@ export const useLightingHook = () => {
 
   // v2 灯光饱和度
   const getLightingSaturation = async () => {
-    const res = await services.getLightingColorCorrectionV2({ area, config: colorCorrection });
-    const { R, G, B } = res[0];
-    lightSettingStore.saturation = { R, G, B };
-    return res;
+    if (isVersion2) {
+      const res = await services.getLightingColorCorrectionV2({ area, config: colorCorrection });
+      const { R, G, B } = res[0];
+      lightSettingStore.saturation = { R, G, B };
+      return res;
+    } else {
+      const res = await services.getSaturation();
+      const { r: R, g: G, b: B } = res;
+      lightSettingStore.saturation = { R, G, B };
+    }
   };
 
   const setLightingSaturation = async () => {
-    const res = await services.setLightingColorCorrectionV2({
-      area,
-      config: colorCorrection,
-      data: lightSettingStore.saturation,
-    });
-    return res;
+    if (isVersion2) {
+      const res = await services.setLightingColorCorrectionV2({
+        config: colorCorrection,
+        data: lightSettingStore.saturation,
+      });
+      return res;
+    } else {
+      const { R, G, B } = lightSettingStore.saturation;
+      const res = await services.setLightingSaturation([R, G, B]);
+    }
   };
 
   return {

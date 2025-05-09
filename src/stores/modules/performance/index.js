@@ -98,7 +98,8 @@ const usePerformanceStore = defineStore('performance', {
           advancedType = 'RS';
         }
         keyboardItem.performance.advancedKeyMode = advancedKeyMode;
-        keyboardItem.advancedKeys.advancedType = advancedType;
+        // keyboardItem.advancedKeys.advancedType = advancedType;
+        keyboardItem.advancedKeys.advancedType = advancedKeyMode;
       }
       // 获取死区和轴相关
       await this.getDeadZoneVal(keyboardItem);

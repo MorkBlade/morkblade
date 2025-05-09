@@ -1,14 +1,14 @@
 <template>
   <div class="macro-events-container">
     <h3>宏事件设置</h3>
-    <template v-if="itemData?.keyType === 'key'">
+    <template v-if="itemData?.keyCode">
       <div class="outer-box">
         <p>更改事件按键</p>
         <div class="key" @click="changeKey">{{ keyboardWord[itemData?.keyCode] }}</div>
         <p>更改延迟数值</p>
         <input
           type="number"
-          :value="itemData?.timeDifference.toFixed(2)"
+          :value="itemData?.delay.toFixed(2)"
           :style="{ margin: `${scaleValue(10)}px 0 ${scaleValue(20)}px 0` }"
           @input="changeDelayVal"
         />
@@ -73,8 +73,14 @@
         </template>
       </div>
       <div class="operation-btn">
-        <saveConfigBtn btnText="应用更改" :icon="icon1" @saveConfig="saveConfig" />
-        <saveConfigBtn btnText="取消更改" :icon="icon2" @saveConfig="saveConfig('cancel')" />
+        <saveConfigBtn btnText="应用更改" :icon="icon1" @saveConfig="saveConfig" :needKeys="false" />
+        <saveConfigBtn
+          btnText="取消更改"
+          type="warning"
+          :icon="icon2"
+          @saveConfig="saveConfig('cancel')"
+          :needKeys="false"
+        />
       </div>
     </div>
   </div>
@@ -82,7 +88,7 @@
 
 <script setup>
 import { scaleValue } from '@/utils/responsive.js';
-import { useKeyboardStore, usePerformanceStore } from '@/stores';
+import { useKeyboardStore } from '@/stores';
 
 import saveConfigBtn from '@/components/save-config-btn.vue';
 
@@ -101,11 +107,14 @@ const { data } = defineProps({
 const emit = defineEmits(['update:delay', 'update:key', 'update:status']);
 
 const keyboardStore = useKeyboardStore();
+
 const itemData = ref(null);
 const isActive = ref('');
 const showCharacter = ref(false);
 const checkedIdx = ref(0);
 const currentKey = ref(null);
+
+let timer = null;
 const characterArr = [
   { name: '基本字符', icon: 'basic' },
   { name: '扩展字符', icon: 'extend' },
@@ -136,7 +145,7 @@ watch(
 watch(
   () => itemData.value,
   (newValue) => {
-    if (newValue && newValue.keyType === 'key') {
+    if (newValue && newValue.keyCode) {
       // 根据传入的按键状态设置 isActive
       isActive.value = newValue.status ? 'down' : 'up';
       console.log('watch itemData.value', newValue);
@@ -149,7 +158,7 @@ watch(
 );
 
 const changeEventStatus = (status) => {
-  if (!itemData.value || itemData.value.keyType !== 'key') return;
+  if (!itemData.value || !itemData.value.keyCode) return;
 
   if (status === 'down') {
     isActive.value = 'down';
@@ -164,8 +173,11 @@ const changeEventStatus = (status) => {
 
 const changeDelayVal = (e) => {
   const value = parseInt(e.target.value) || 0;
-
-  if (itemData.value) emit('update:delay', value);
+  timer && clearTimeout(timer);
+  timer = setTimeout(() => {
+    if (itemData.value) emit('update:delay', value);
+    console.log('update macro key delay');
+  }, 500);
 };
 
 const changeKey = () => {
@@ -174,7 +186,7 @@ const changeKey = () => {
 
 const Keydrop = () => {
   if (!keyboardStore.selectKey.keyCode) return;
-  const keyVal = keyboardWord[keyboardStore.selectKey.value];
+  const keyVal = keyboardWord[keyboardStore.selectKey.keyCode];
   currentKey.value = keyVal;
   // if (keyVal && itemData.value && itemData.value.keyType === 'key') {
   //   // 发送按键更新事件
@@ -190,13 +202,10 @@ const onCheck = (ite) => {
 
 const selectItem = async (keyVal) => {
   // 更新键盘存储中的选定键
-  keyboardStore.selectKey.value = keyVal;
-  // console.log('Selected key:', keyVal);
+  keyboardStore.selectKey.keyCode = keyVal;
 };
 
 const saveConfig = async (action) => {
-  // console.log(action);
-
   if (action === 'cancel') {
     // 取消操作，不发送更新
     showCharacter.value = false;
@@ -204,9 +213,9 @@ const saveConfig = async (action) => {
   }
 
   // 获取当前选择的按键值
-  const keyVal = keyboardStore.selectKey.value;
+  const keyVal = keyboardStore.selectKey.keyCode;
 
-  if (keyVal && itemData.value && itemData.value.keyType === 'key') {
+  if (keyVal && itemData.value && itemData.value.keyCode) {
     // 发送按键更新事件
     emit('update:key', keyVal);
   }

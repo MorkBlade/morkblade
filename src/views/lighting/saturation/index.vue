@@ -45,8 +45,9 @@ const lightSettingStore = useLightSettingStore();
 const { setLightingSaturation } = useLightingHook();
 const { saturation: rgb } = storeToRefs(lightSettingStore);
 
+const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
 const min = 0;
-const max = 255;
+const max = isVersion2 ? 255 : 100;
 let timer = null;
 
 const updateFromRgb = () => {

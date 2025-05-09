@@ -43,7 +43,7 @@ const lightSettingStore = useLightSettingStore();
 const checkedLight = ref(0);
 const checkedColor = ref(null);
 const emits = defineEmits(['checkStaticLight', 'checkLogoStaticLight', 'changeColorPicker', 'changeLogoColorPicker']);
-const isVersion2 = localStorage.getItem('keyboardVer') === 'v2';
+const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
 
 const currentChecked = computed(() => {
   return (idx) => {

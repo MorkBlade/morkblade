@@ -24,7 +24,7 @@ const { isStart } = defineProps({
   isStart: { type: Boolean, default: false },
 });
 const enabled = ref(false);
-const isVersion2 = localStorage.getItem('keyboardVer') === 'v2';
+const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
 const chartRef = ref(null);
 const chartInstance = ref(null);
 const keyPressTestCount = ref(0);

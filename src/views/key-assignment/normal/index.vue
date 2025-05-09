@@ -38,6 +38,7 @@
 <script setup>
 import key from '@/components/key.vue';
 import emitter from '@/utils/app-emitter';
+import { KEYBOARD_MACRO } from '@/configs/constant';
 import { useKeyboardStore, usePerformanceStore } from '@/stores';
 
 // 导入所有需要的图标
@@ -84,10 +85,12 @@ const iconMap = {
 
 const checkedIdx = ref(0);
 
-const rowIdx = ref(null);
-const colIdx = ref(null);
 const keyboardStore = useKeyboardStore();
 const performanceStore = usePerformanceStore();
+
+const rowIdx = ref(null);
+const colIdx = ref(null);
+const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
 
 const characterArr = [
   { name: '基本字符', icon: 'basic' },
@@ -102,7 +105,13 @@ const extend = [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21
 const number = [30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98];
 const special = [45, 46, 47, 48, 49, 51, 52, 53, 54, 55, 56, 57];
 const basic = [40, 41, 42, 43, 44, 79, 80, 81, 82, 224, 225, 226, 227, 228, 229, 230, 231];
-const macro = JSON.parse(localStorage.getItem('localMacros')) || [];
+const macro = computed(() => {
+  if (isVersion2) {
+    return KEYBOARD_MACRO;
+  } else {
+    return JSON.parse(localStorage.getItem('localMacros')) || [];
+  }
+});
 const keyboard = [
   61696, 61697, 61698, 61699, 62217, 62224, 62225, 62226, 62227, 62228, 62229, 62231, 62245, 62246, 62247, 62248, 62249,
   62250, 62251, 62252, 62255,

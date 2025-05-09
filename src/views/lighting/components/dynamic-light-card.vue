@@ -51,7 +51,7 @@ const { dynamicLightMode, dynamicType } = defineProps({
 
 const emits = defineEmits(['checkDynamicLight', 'changelightingMode']);
 const lightSettingStore = useLightSettingStore();
-const isVersion2 = localStorage.getItem('keyboardVer') === 'v2';
+const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
 const dynamicLightStyleV1 = [
   '波纹荡漾',
   '潮起潮落',

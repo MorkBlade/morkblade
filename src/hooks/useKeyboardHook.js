@@ -45,7 +45,7 @@ const keyboardItemInfo = {
 };
 
 export const useKeyboardHook = () => {
-  const isVersion2 = localStorage.getItem('keyboardVer') === 'v2';
+  const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
   const keyboardStore = useKeyboardStore();
   const performanceStore = usePerformanceStore();
 
