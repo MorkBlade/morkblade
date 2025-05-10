@@ -197,7 +197,16 @@ const save = async () => {
     console.log('error', error);
   }
 };
-defineExpose({ save });
+
+const reset = () => {
+  socdInfo.value.pos = [0, 0];
+  socdInfo.value.key = [0, 0];
+  socdInfo.value.type = 0;
+  socdInfo.value.mode = 0;
+  key1Index.value = -1;
+  key2Index.value = -2;
+};
+defineExpose({ save, reset });
 </script>
 
 <style scoped lang="scss">

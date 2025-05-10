@@ -3,14 +3,14 @@
     <div class="left-config-box">
       <div class="key-group">
         <div class="click-box">
-          <span>单击:</span>
+          <span>长按:</span>
           <div class="key-box" @mouseenter="onMouseEn('click')" @mouseleave="onMouseLe('click')">
             <p :class="{ 'hover-bg': !mtInfo.dks[0] }" @mouseup="KeydropFirst">{{ keyText[0] }}</p>
             <div class="del_btn" @click="onClick" v-show="mtInfo.dks[0] && clickDelIndex === 0"></div>
           </div>
         </div>
         <div class="hold-box">
-          <span>长按:</span>
+          <span>单击:</span>
           <div class="key-box" @mouseenter="onMouseEn" @mouseleave="onMouseLe">
             <p :class="{ 'hover-bg': !mtInfo.dks[1] }" @mouseup="KeydropSec">{{ keyText[1] }}</p>
             <div class="del_btn" @click="onLongPress" v-show="mtInfo.dks[1] && longDelIndex === 0"></div>
@@ -153,7 +153,14 @@ const save = async () => {
   const res = await setMT({ key, row, col, ...mtInfo.value });
   return res;
 };
-defineExpose({ save });
+
+const reset = () => {
+  mtInfo.value.dks = [0, 0];
+  mtInfo.value.delay = 200;
+  clickDelIndex.value = -1;
+  longDelIndex.value = -1;
+};
+defineExpose({ save, reset });
 </script>
 
 <style scoped lang="scss">

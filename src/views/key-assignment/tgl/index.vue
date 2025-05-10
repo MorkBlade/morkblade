@@ -117,7 +117,12 @@ const save = async () => {
   const res = await setTGL({ key, row, col, ...tglInfo.value });
   return res;
 };
-defineExpose({ save });
+
+const reset = () => {
+  tglInfo.value.dks = 0;
+  tglInfo.value.delay = 200;
+};
+defineExpose({ save, reset });
 </script>
 
 <style scoped lang="scss">

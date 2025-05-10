@@ -1,8 +1,9 @@
-import { useKeyboardStore, usePerformanceStore } from '@/stores';
+import { useKeyboardStore, usePerformanceStore, useAppStore } from '@/stores';
 import services from '@/services/index';
 
 /* -------- v1 v2获取高级键的数据解构不一致，这里一致将v1数据结构转成和v2一致进行存储 --------*/
 export const useAdvancedHook = () => {
+  const appStore = useAppStore();
   const keyboardStore = useKeyboardStore();
   const performanceStore = usePerformanceStore();
   const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
@@ -97,22 +98,27 @@ export const useAdvancedHook = () => {
 
   // 设置RS
   const setRS = async (params) => {
-    let result = null;
     let dksData = null;
+    let result = null;
     console.log('setRS log params: ', params);
     const { key, row, col, dks, delay } = params;
     if (isVersion2) {
+      let result2 = null;
       const data = { kcs: [...dks], delay };
+      const socdKey = getRowCol(dks);
+      const [[row, col], [row2, col2]] = socdKey.map((item) => item.split('-').map(Number));
       result = await services.setHigherKeyRSV2({ row, col, data });
-      console.log('setRS V2', result);
-      dksData = {
-        keyValue: key,
-        data: result,
-        row,
-        col,
-        mode: 9,
-      };
-      getRS(dksData);
+      result2 = await services.setHigherKeyRSV2({ row: row2, col: col2, data });
+      // dksData = {
+      //   keyValue: key,
+      //   data: result,
+      //   row,
+      //   col,
+      //   mode: 9,
+      // };
+      getRS({ keyValue: dks[0], data: result, row, col, mode: 9 });
+      getRS({ keyValue: dks[1], data: result2, row: row2, col: col2, mode: 9 });
+      // getRS({ ...dksData, keyValue: dks[1] });
     } else {
       result = await services.setRS({ key: dks[0], dks: dks[1] });
       const socdKey = getRowCol(dks);
@@ -126,6 +132,7 @@ export const useAdvancedHook = () => {
   // 查询MT
   const getTGL = async (params) => {
     if (isVersion2) {
+      console.log('getTGL V2: ', params);
       const { keyValue, data, row, col, mode } = params;
       const { kcs, time } = data.data;
       const mtData = { keyValue, type: 'tgl', mode, tgl: { delay: time, dksAll: [kcs] } };
@@ -182,7 +189,8 @@ export const useAdvancedHook = () => {
     if (isVersion2) {
       const { keyValue, data, row, col, mode } = params;
       const { kcs, dbs } = data.data;
-      const mptData = { keyValue, type: 'mpt', mode, dks: [...kcs], dbs: [...dbs] };
+      const dbsAll = dbs.map((ite) => ite / 1000);
+      const mptData = { keyValue, type: 'mpt', mode, dks: [...kcs], dbs: [...dbsAll] };
       const advancedKeys = {
         ...keyboardStore.keyboards[row][col].advancedKeys,
         mpt: mptData,
@@ -293,7 +301,7 @@ export const useAdvancedHook = () => {
   // 查询DKS
   const getDKS = async (params) => {
     if (isVersion2) {
-      // console.log('getDKS V2 log params:>>>>>', params);
+      console.log('getDKS V2 log params:>>>>>', params);
       const { keyValue, row, col, mode, data } = params;
       const { kcs, trps, dbs } = data.data;
       const db = dbs[0];
@@ -365,9 +373,10 @@ export const useAdvancedHook = () => {
   // 查询socd
   const getSocd = async (params) => {
     if (isVersion2) {
+      // console.log('getSocd V2:>>>>>>>>>', params);
       const { keyValue, data, row, col, mode } = params;
-      const { socdMode, kcs } = data.data;
-      const socdData = { keyValue, type: 'socd', mode, socdMode, socd: [...kcs] };
+      const { socdMode, kcs, delay } = data.data;
+      const socdData = { keyValue, type: 'socd', mode, socdMode, socd: [...kcs], delay };
       const advancedKeys = {
         ...keyboardStore.keyboards[row][col].advancedKeys,
         socd: socdData,
@@ -375,13 +384,11 @@ export const useAdvancedHook = () => {
       };
       keyboardStore.keyboards[row][col].advancedKeys = advancedKeys;
     } else {
-      const { keyValue, data, row, col, mode } = params;
-      const result = await services.getSocd(keyValue);
-      const { mode: socdMode } = result;
-      const storedSocdKeys = JSON.parse(localStorage.getItem('socdKeys') || '{}');
-      const socdKeys = storedSocdKeys[keyValue] || [];
-      console.log('getSocd v1', params, result, storedSocdKeys[keyValue], storedSocdKeys);
-      const socdData = { keyValue, type: 'socd', mode, socdMode, socd: [...socdKeys] };
+      const { keyValue, row, col, mode } = params;
+      const result = await services.getSocd(keyValue, appStore.protocolVersion);
+      const { mode: socdMode, key1, key2 } = result;
+      // console.log('getSocd v1', params, result);
+      const socdData = { keyValue, type: 'socd', mode, socdMode, socd: [key1, key2], delay: 100 };
       const advancedKeys = {
         ...keyboardStore.keyboards[row][col].advancedKeys,
         socd: socdData,
@@ -413,11 +420,6 @@ export const useAdvancedHook = () => {
       const data = { pos1: pos[0], pos2: pos[1], key1: key[0], key2: key[1], type, mode };
       const result = await services.setSocd(data);
       // console.log('v1 setSocd', data, result);
-      // v1 获取socd数据缺少关联性，暂时用localStorage存对应关系
-      const storedSocdKeys = JSON.parse(localStorage.getItem('socdKeys') || '{}');
-      storedSocdKeys[key[0]] = [...key];
-      storedSocdKeys[key[1]] = [...key];
-      localStorage.setItem('socdKeys', JSON.stringify(storedSocdKeys));
 
       getSocd({ keyValue: key[0], data: null, row: row, col: col, mode: 8 });
       getSocd({ keyValue: key[1], data: null, row: row2, col: col2, mode: 8 });

@@ -150,7 +150,14 @@ const save = async () => {
   const res = await setRS({ key, row, col, ...rsInfo.value });
   return res;
 };
-defineExpose({ save });
+
+const reset = () => {
+  rsInfo.value.dks = [0, 0];
+  rsInfo.value.delay = 0;
+  key1Index.value = -1;
+  key2Index.value = -1;
+};
+defineExpose({ save, reset });
 </script>
 
 <style scoped lang="scss">

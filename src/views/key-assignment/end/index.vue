@@ -119,7 +119,13 @@ const save = async () => {
   const res = await setEND({ key, row, col, ...endInfo.value, version: appStore.protocolVersion });
   return res;
 };
-defineExpose({ save });
+
+const reset = () => {
+  endInfo.value.dks = 0;
+  endInfo.value.delay = 200;
+  keyIndex.value = -1;
+};
+defineExpose({ save, reset });
 </script>
 
 <style scoped lang="scss">

@@ -29,6 +29,7 @@
         :max-touch-travel="maxTouchTravel"
         :min-touch-travel="minTouchTravel"
         :precision="precision"
+        :is-external-update="isExternalUpdate"
         :edit="edit"
         :edit-key="editKey"
         @handleKeyTypeChange="handleKeyTypeChange"
@@ -78,7 +79,7 @@
         @handleDialoConfirm="handleDialoConfirm"
       />
     </div>
-    <div class="right-config-box" v-show="currentComponent !== 'normal'">
+    <div class="right-config-box" v-if="currentComponent !== 'normal'">
       <div>
         <keyConfigCard :advancedData="advancedItems" />
       </div>
@@ -103,6 +104,7 @@ const {
   edit,
   editKey,
   socdInfo,
+  childRef,
   dksInfo,
   mtInfo,
   rsInfo,
@@ -112,16 +114,20 @@ const {
   maxTouchTravel,
   minTouchTravel,
   precision,
+  resetDefaultValue,
   handleKeyTypeChange,
   handleDialoConfirm,
   advancedItems,
+  keyboardStore: hookKeyboardStore,
 } = useSetAdvanced();
 
 const clickItem = ref(0);
+const isExternalUpdate = ref(false);
 const performanceItem = ['普通', '单击/长按', 'DKS', 'SOCD', 'RS', 'TGL', 'MPT', 'END'];
 
 const changeMenu = (idx) => {
   clickItem.value = idx;
+  hookKeyboardStore.activeKeys.length = 0;
 };
 
 // 使用计算属性来确定当前应该显示的组件
@@ -145,6 +151,102 @@ const currentComponent = computed(() => {
       return 'normal';
   }
 });
+
+watch(
+  () => hookKeyboardStore.activeKeys,
+  (newVal) => {
+    if (newVal.length > 0) {
+      const [row, col] = newVal[0].split('-');
+      console.log('has new active key: ', newVal, row, col, hookKeyboardStore.keyboards[row][col]);
+      const { advancedKeys } = hookKeyboardStore.keyboards[row][col];
+      let type = '';
+      switch (advancedKeys.advancedType) {
+        case 1:
+          clickItem.value = 2;
+          isExternalUpdate.value = true;
+          const { dks: dksAll, trps, db, db2 } = advancedKeys.dks;
+          Object.assign(dksInfo, { dks: [...dksAll], trps, db, db2 });
+          console.log('当前选中键是dks!', advancedKeys.dks);
+          type = 'DKS';
+          setTimeout(() => {
+            isExternalUpdate.value = false;
+          }, 100);
+          break;
+        case 2:
+          clickItem.value = 6;
+          const { dbs, dks } = advancedKeys.mpt;
+          Object.assign(mptInfo, { dks: [...dks], dbs: [...dbs] });
+          console.log('当前选中键是mpt!', advancedKeys.mpt, dbs, dks);
+          break;
+        case 3:
+          clickItem.value = 1;
+          const { mt } = advancedKeys.mt;
+          Object.assign(mtInfo, { dks: [mt.dksAll[0], mt.dksAll[1]], delay: mt.delay });
+          console.log('当前选中键是MT!', advancedKeys.mt);
+          break;
+        case 4:
+          clickItem.value = 5;
+          const { tgl } = advancedKeys.tgl;
+          Object.assign(tglInfo, { dks: tgl.dksAll[0], delay: tgl.delay });
+          // console.log('当前选中键是TGL!', advancedKeys.tgl, tgl, tgl.delay, tgl.dksAll[0]);
+          break;
+        case 5:
+          clickItem.value = 7;
+          const { end } = advancedKeys.end;
+          Object.assign(endInfo, { dks: end.dks[1], delay: end.delay });
+          console.log('当前选中键是end!', advancedKeys.end);
+          break;
+        case 6:
+        case 8:
+          clickItem.value = 3;
+          const { socd, socdMode, delay } = advancedKeys.socd;
+          for (let row = 0; row < hookKeyboardStore.keyboards.length; row++) {
+            for (let col = 0; col < hookKeyboardStore.keyboards[row].length; col++) {
+              if (
+                hookKeyboardStore.keyboards[row][col].keyValue === socd[0] ||
+                hookKeyboardStore.keyboards[row][col].keyValue === socd[1]
+              ) {
+                console.log(hookKeyboardStore.keyboards[row][col]);
+                console.log('includes: ', hookKeyboardStore.activeKeys.includes(`${row}-${col}`));
+                if (!hookKeyboardStore.activeKeys.includes(`${row}-${col}`)) {
+                  hookKeyboardStore.activeKeys.push(`${row}-${col}`);
+                }
+              }
+            }
+          }
+          Object.assign(socdInfo, { pos: [...socd], key: [...socd], type: 0, mode: socdMode, delay });
+          console.log('当前选中键是socd!', advancedKeys.socd);
+          break;
+        case 7:
+        case 9:
+          clickItem.value = 4;
+          const { rs } = advancedKeys.rs;
+          for (let row = 0; row < hookKeyboardStore.keyboards.length; row++) {
+            for (let col = 0; col < hookKeyboardStore.keyboards[row].length; col++) {
+              if (
+                hookKeyboardStore.keyboards[row][col].keyValue === rs[0] ||
+                hookKeyboardStore.keyboards[row][col].keyValue === rs[1]
+              ) {
+                console.log(hookKeyboardStore.keyboards[row][col]);
+                console.log('includes: ', hookKeyboardStore.activeKeys.includes(`${row}-${col}`));
+                if (!hookKeyboardStore.activeKeys.includes(`${row}-${col}`)) {
+                  hookKeyboardStore.activeKeys.push(`${row}-${col}`);
+                }
+              }
+            }
+          }
+          Object.assign(rsInfo, { dks: [...rs] });
+          console.log('当前选中键是rs!', advancedKeys.rs);
+          break;
+        default:
+          resetDefaultValue();
+          break;
+      }
+    } else {
+      resetDefaultValue();
+    }
+  },
+);
 </script>
 
 <style scoped lang="scss">

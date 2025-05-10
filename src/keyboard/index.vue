@@ -197,17 +197,28 @@ watch(
 
 onMounted(async () => {
   try {
-    // 您的mounted逻辑
+    // First initialize keyboard
     await keyboardStore.initKeyboard();
+
+    // Then initialize lighting
     await initCustomLighting();
+
+    // Get protocol version
     await appStore.getProtocolVersion();
+
+    // Get system mode
     const data = await appStore.systemMode();
     formData.type = data.currentSystem;
-    // 初始化高级键数据，等待keyboard初始化后调用，防止keyboard未初始化完
-    if (route.path === '/key-assignment') await getHighLevelKeys(keyboardStore.keyboards);
-    // console.log('keyboard onmounted---------------------------------------------------------------------->');
+
+    // Only initialize high level keys if we're on the key-assignment route
+    // and ensure keyboard is initialized
+    if (route.path === '/key-assignment' && keyboardStore.keyboards.length > 0) {
+      // Add a small delay to ensure component is fully mounted
+      console.log('getHighLevelKeys----------------------------------------->');
+      await new Promise((resolve) => setTimeout(resolve, 100));
+      await getHighLevelKeys(keyboardStore.keyboards);
+    }
   } catch (error) {
-    // 处理错误，比如显示错误提示
     console.error('Mounted error:', error);
   }
 });

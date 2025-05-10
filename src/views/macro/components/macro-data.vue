@@ -285,12 +285,12 @@ const onClick = (idx) => {
       if (isStart.value) {
         lastKeyupEventTime = Date.now();
         lastKeydownEventTime = Date.now();
-        document.addEventListener('keydown', handleKeydown);
-        document.addEventListener('keyup', handleKeyup);
+        document.addEventListener('keydown', handleKeysAction);
+        document.addEventListener('keyup', handleKeysAction);
         showMessage('开始录制');
       } else {
-        document.removeEventListener('keydown', handleKeydown);
-        document.removeEventListener('keyup', handleKeyup);
+        document.removeEventListener('keydown', handleKeysAction);
+        document.removeEventListener('keyup', handleKeysAction);
         showMessage('结束录制');
       }
       break;
@@ -349,8 +349,8 @@ const onClick = (idx) => {
       lastKeydownEventTime = null;
       lastKeyupEventTime = null;
 
-      document.removeEventListener('keydown', handleKeydown);
-      document.removeEventListener('keyup', handleKeyup);
+      document.removeEventListener('keydown', handleKeysAction);
+      document.removeEventListener('keyup', handleKeysAction);
 
       emit('updateMacro:clear');
       showMessage('清除成功');
@@ -361,7 +361,7 @@ const onClick = (idx) => {
   }
 };
 
-const handleKeydown = (event) => {
+const handleKeysAction = (event) => {
   const createTime = new Date().getTime();
   const { key, keyCode, code, type, timeStamp } = event;
   // console.log('timeStamp', timeStamp);
@@ -369,7 +369,7 @@ const handleKeydown = (event) => {
   const value = {
     keyType: 'key',
     key: key,
-    status: 1,
+    status: type === 'keydown' ? 1 : 0,
     keyCode: keyValueDictionary[keyCode],
     code,
     timeStamp,
@@ -387,6 +387,7 @@ const handleKeydown = (event) => {
     const diff = timeStamp - lastKeydownEventTime;
     // 确保时间差为非负数
     value.timeDifference = diff > 0 ? diff : 0;
+    console.log('handleKeysAction diff: ', diff, timeStamp, lastKeyupEventTime);
   }
 
   // 更新上次按键时间戳
@@ -399,8 +400,8 @@ const handleKeydown = (event) => {
   } else {
     showMessage('宏录入数量不能超过64', 'warning');
     isStart.value = false;
-    document.removeEventListener('keydown', handleKeydown);
-    document.removeEventListener('keyup', handleKeyup);
+    document.removeEventListener('keydown', handleKeysAction);
+    document.removeEventListener('keyup', handleKeysAction);
   }
 };
 
@@ -427,6 +428,7 @@ const handleKeyup = (event) => {
   } else {
     // 非首次按键释放，计算实际时间差
     const diff = timeStamp - lastKeyupEventTime;
+    console.log('handleKeyup diff: ', diff, timeStamp, lastKeyupEventTime);
     // 确保时间差为非负数
     value.timeDifference = diff > 0 ? diff : 0;
   }
@@ -441,8 +443,8 @@ const handleKeyup = (event) => {
   } else {
     showMessage('宏录入数量不能超过64', 'warning');
     isStart.value = false;
-    document.removeEventListener('keydown', handleKeydown);
-    document.removeEventListener('keyup', handleKeyup);
+    document.removeEventListener('keydown', handleKeysAction);
+    document.removeEventListener('keyup', handleKeysAction);
   }
 };
 

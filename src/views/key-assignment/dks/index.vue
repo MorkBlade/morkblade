@@ -114,6 +114,7 @@ import keyboard from '@/configs/byte-to-key/keyboard';
 import { useKeyboardStore } from '@/stores';
 import { useAdvancedHook } from '@/hooks';
 import { showMessage } from '@/utils/message';
+import { scaleValue } from '@/utils/responsive';
 
 import mDialog from '@/components/dialog.vue';
 import dksDelay from './components/delay.vue';
@@ -126,12 +127,13 @@ const dksInfo = defineModel('dksInfo', {
 const { setDKS } = useAdvancedHook();
 const keyboardStore = useKeyboardStore();
 
-const { maxTouchTravel, minTouchTravel, precision, edit, editKey } = defineProps({
+const { maxTouchTravel, minTouchTravel, precision, edit, editKey, isExternalUpdate } = defineProps({
   maxTouchTravel: { type: Number, default: 10 },
   minTouchTravel: { type: Number, default: 0 },
   precision: { type: Number, default: 0 },
   edit: { type: Boolean, default: false },
   editKey: { type: [String, Number], default: '' },
+  isExternalUpdate: { type: Boolean, default: false },
 });
 const emits = defineEmits(['handleKeyTypeChange', 'handleDialoConfirm']);
 
@@ -161,6 +163,8 @@ let ignoreClick = false; // 标志位，用于忽略拖拽结束后的点击事�
 const previousWidths = reactive({}); // 存储点击前的宽度值
 // 添加一个变量来跟踪当前操作的行
 const activeRow = ref(null);
+// 添加一个标志位来区分更新来源
+const recoverDkSData = ref(false);
 const clickData = reactive([
   [false, false, false, false, false, false, false],
   [false, false, false, false, false, false, false],
@@ -175,64 +179,67 @@ const titleData = [
 ];
 
 // 获取CSS变量
-const getDksKeyWidth = (num) => {
-  return parseInt(getComputedStyle(document.documentElement).getPropertyValue(`--dks-key-width${num}`));
-};
+// const getDksKeyWidth = (num) => {
+//   return parseInt(getComputedStyle(document.documentElement).getPropertyValue(`--dks-key-width${num}`));
+// };
 
 // 根据不同位置设置最大宽度限制
 const maxWidths = {
-  1: getDksKeyWidth(7), // 第一个span最大宽度 (132 - 78)
-  2: getDksKeyWidth(5), // 第二个span最大宽度 (185 - 132)
-  3: getDksKeyWidth(3), // 第三个span最大宽度 (240 - 185)
-  4: getDksKeyWidth(1), // 最后一个span最大宽度
+  1: scaleValue(185), // 第一个span最大宽度 (132 - 78)
+  2: scaleValue(130), // 第二个span最大宽度 (185 - 132)
+  3: scaleValue(80), // 第三个span最大宽度 (240 - 185)
+  4: scaleValue(20), // 最后一个span最大宽度
 };
 
 // 添加宽度映射配置
 const widthAdjustments = {
   1: [
-    { threshold: getDksKeyWidth(2), width: getDksKeyWidth(1) },
-    { threshold: getDksKeyWidth(4), width: getDksKeyWidth(3) },
-    { threshold: getDksKeyWidth(6), width: getDksKeyWidth(5) },
-    { threshold: Infinity, width: getDksKeyWidth(7) },
+    { threshold: scaleValue(60), width: scaleValue(20) },
+    { threshold: scaleValue(110), width: scaleValue(80) },
+    { threshold: scaleValue(165), width: scaleValue(130) },
+    { threshold: Infinity, width: scaleValue(185) },
   ],
   2: [
-    { threshold: getDksKeyWidth(2), width: getDksKeyWidth(1) },
-    { threshold: getDksKeyWidth(4), width: getDksKeyWidth(3) },
-    { threshold: Infinity, width: getDksKeyWidth(5) },
+    { threshold: scaleValue(60), width: scaleValue(20) },
+    { threshold: scaleValue(110), width: scaleValue(80) },
+    { threshold: Infinity, width: scaleValue(130) },
   ],
   3: [
-    { threshold: getDksKeyWidth(2), width: getDksKeyWidth(1) },
-    { threshold: Infinity, width: getDksKeyWidth(3) },
+    { threshold: scaleValue(60), width: scaleValue(20) },
+    { threshold: Infinity, width: scaleValue(80) },
   ],
 };
 
 // 添加点击数据映射配置
 const clickDataMapping = {
   1: {
-    [getDksKeyWidth(1)]: [[0]],
-    [getDksKeyWidth(3)]: [[0, 1, 2, 3]],
-    [getDksKeyWidth(5)]: [[0, 1, 2, 3, 4]],
-    [getDksKeyWidth(7)]: [[0, 1, 2, 3, 4, 5]],
+    [scaleValue(20)]: [[0]],
+    [scaleValue(80)]: [[0, 1, 2, 3]],
+    [scaleValue(130)]: [[0, 1, 2, 3, 4]],
+    [scaleValue(185)]: [[0, 1, 2, 3, 4, 5]],
   },
   2: {
-    [getDksKeyWidth(1)]: [[1]],
-    [getDksKeyWidth(3)]: [[1, 2, 3]],
-    [getDksKeyWidth(5)]: [[1, 2, 3, 4, 5]],
+    [scaleValue(20)]: [[1]],
+    [scaleValue(80)]: [[1, 2, 3]],
+    [scaleValue(130)]: [[1, 2, 3, 4, 5]],
   },
   3: {
-    [getDksKeyWidth(1)]: [[3]],
-    [getDksKeyWidth(3)]: [[3, 4, 5]],
+    [scaleValue(20)]: [[3]],
+    [scaleValue(80)]: [[3, 4, 5]],
   },
   4: {
-    [getDksKeyWidth(1)]: [[5]],
+    [scaleValue(20)]: [[5]],
   },
 };
 
 // 1 31 63 127 255
 onMounted(async () => {
+  recoverDkSData.value = true;
   for (let i = 0; i < 4; i++) {
     clickData[i] = parse8BitToBooleans(dksInfo.value.trps[i]);
   }
+  updateUIFromTrps();
+  recoverDkSData.value = false;
 });
 
 const db = computed(() => dksInfo.value.db);
@@ -251,6 +258,19 @@ const keyText = computed(() => {
 const activeKeys = computed(() => {
   return keyboardStore.activeKeys;
 });
+
+watch(
+  () => isExternalUpdate,
+  (newVal) => {
+    if (newVal) {
+      recoverDkSData.value = true;
+      for (let i = 0; i < 4; i++) {
+        clickData[i] = parse8BitToBooleans(dksInfo.value.trps[i]);
+      }
+      updateUIFromTrps();
+    }
+  },
+);
 
 watch(clickData, () => {
   let buf = 0;
@@ -281,6 +301,84 @@ watch(clickData, () => {
     dksInfo.value.trps[i] = buf;
   }
 });
+
+const updateUIFromTrps = () => {
+  if (!recoverDkSData.value) return;
+  for (let row = 0; row < 4; row++) {
+    // Reset current row state
+    isDragStates[row] = false;
+    currentKeys[row] = null;
+
+    // Skip if trps is 0
+    if (dksInfo.value.trps[row] === 0) continue;
+
+    // Analyze which bits are set to determine which span and what width
+    const rowData = clickData[row];
+
+    // Determine which span to highlight and what width to set
+    let targetSpan = null;
+    let targetWidth = scaleValue(20);
+
+    if (rowData[0]) {
+      // First bit set - could be span 1 with various widths
+      if (rowData[5]) {
+        // Bits 0,1,2,3,4,5 set - span 1 with max width
+        targetSpan = getKey(row, 1);
+        targetWidth = scaleValue(185);
+      } else if (rowData[4]) {
+        // Bits 0,1,2,3,4 set - span 1 with large width
+        targetSpan = getKey(row, 1);
+        targetWidth = scaleValue(130);
+      } else if (rowData[3]) {
+        // Bits 0,1,2,3 set - span 1 with medium width
+        targetSpan = getKey(row, 1);
+        targetWidth = scaleValue(80);
+      } else {
+        // Only bit 0 set - span 1 with min width
+        targetSpan = getKey(row, 1);
+        targetWidth = scaleValue(20);
+      }
+    } else if (rowData[1]) {
+      // Second bit set - span 2 with various widths
+      if (rowData[5]) {
+        // Bits 1,2,3,4,5 set - span 2 with max width
+        targetSpan = getKey(row, 2);
+        targetWidth = scaleValue(130);
+      } else if (rowData[3]) {
+        // Bits 1,2,3 set - span 2 with medium width
+        targetSpan = getKey(row, 2);
+        targetWidth = scaleValue(80);
+      } else {
+        // Only bit 1 set - span 2 with min width
+        targetSpan = getKey(row, 2);
+        targetWidth = scaleValue(20);
+      }
+    } else if (rowData[3]) {
+      // Fourth bit set - span 3 with various widths
+      if (rowData[5]) {
+        // Bits 3,4,5 set - span 3 with max width
+        targetSpan = getKey(row, 3);
+        targetWidth = scaleValue(80);
+      } else {
+        // Only bit 3 set - span 3 with min width
+        targetSpan = getKey(row, 3);
+        targetWidth = scaleValue(20);
+      }
+    } else if (rowData[5]) {
+      // Sixth bit set - span 4 with fixed width
+      targetSpan = getKey(row, 4);
+      targetWidth = scaleValue(20);
+    }
+
+    // Apply changes if a target span was identified
+    if (targetSpan) {
+      isDragStates[row] = true;
+      currentKeys[row] = targetSpan;
+      widths[targetSpan] = targetWidth;
+      previousWidths[targetSpan] = targetWidth;
+    }
+  }
+};
 
 const onMouseEn = (keyCode) => {
   switch (keyCode) {
@@ -351,7 +449,7 @@ const getKey = (containerIdx, itemIdx) => {
 
 const getWidth = (key) => {
   if (!(key in widths)) {
-    widths[key] = getDksKeyWidth(1); // 初始化宽度
+    widths[key] = scaleValue(20); // 初始化宽度
   }
   return widths[key];
 };
@@ -384,10 +482,10 @@ const onClick = (key) => {
     // 点击同一行的不同 span
     if (curRow) {
       // widths[curRow] = previousWidths[curRow] || 20;
-      widths[curRow] = getDksKeyWidth(1);
+      widths[curRow] = scaleValue(20);
     }
     previousWidths[key] = widths[key];
-    widths[key] = getDksKeyWidth(1);
+    widths[key] = scaleValue(20);
     isDragStates[keyRow] = true;
     currentKeys[keyRow] = key;
 
@@ -407,12 +505,12 @@ const onClick = (key) => {
     isDragStates[keyRow] = !isDragStates[keyRow];
     if (!isDragStates[keyRow]) {
       // widths[key] = previousWidths[key] || 20;
-      widths[key] = getDksKeyWidth(1);
+      widths[key] = scaleValue(20);
       currentKeys[keyRow] = null;
 
       // 同样使用整行赋值的方式更新
       const newRowData = [false, false, false, false, false, false, false];
-      const mapping = clickDataMapping[col]?.[getDksKeyWidth(1)];
+      const mapping = clickDataMapping[col]?.[scaleValue(20)];
       if (mapping) {
         mapping.forEach((indices) => {
           indices.forEach((index) => {
@@ -623,7 +721,28 @@ const save = async () => {
   const res = await setDKS({ key, row, col, ...dksInfo.value });
   return res;
 };
-defineExpose({ save });
+
+const reset = () => {
+  // 重置DKS组件状态
+  dksInfo.value.dks = [0, 0, 0, 0];
+  dksInfo.value.trps = [0, 0, 0, 0];
+  dksInfo.value.db = 1.5;
+  dksInfo.value.db2 = 3.0;
+
+  // 重置拖拽和点击状态
+  for (let i = 0; i < 4; i++) {
+    isDragStates[i] = false;
+    currentKeys[i] = null;
+    delKeyShow[i] = false;
+    clickData[i] = [false, false, false, false, false, false, false];
+  }
+
+  // 重置宽度
+  Object.keys(widths).forEach((key) => {
+    widths[key] = 20;
+  });
+};
+defineExpose({ save, reset });
 </script>
 
 <style scoped lang="scss">

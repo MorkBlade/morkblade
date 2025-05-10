@@ -127,6 +127,12 @@ const useSetAdvanced = () => {
     }
   };
 
+  const resetDefaultValue = () => {
+    if (childRef?.value && typeof childRef.value.reset === 'function') {
+      childRef.value.reset();
+    }
+  };
+
   const resetKeys = async () => {
     // console.log('onMounted resetKeys start=======================>', keyboardStore.keyboards.length);
     await getHighLevelKeys(keyboardStore.keyboards);
@@ -222,8 +228,10 @@ const useSetAdvanced = () => {
     handleKeyTypeChange,
     handleDialoConfirm,
     // handleDelete,
+    resetDefaultValue,
     advancedItems,
     handleItemClick,
+    keyboardStore,
   };
 };
 

@@ -2,7 +2,7 @@
   <div class="mpt-box">
     <div class="left-config">
       <div class="key">
-        <div class="key-box" @mouseenter="onMouseEn('key1')" @mouseleave="onMouseLe('key1')">
+        <div class="key-box" @mouseenter="onMouseEn('key1')" @mouseleave="onMouseLe(0)">
           <p :class="{ 'hover-bg': !mptInfo.dks[0] }" @mouseup="KeydropFirst">{{ keyText[0] }}</p>
           <div class="del_btn" @click="onClick('key1')" v-show="keyText[0] && delKeyShow[0]"></div>
         </div>
@@ -11,7 +11,7 @@
         </div>
       </div>
       <div class="key">
-        <div class="key-box" @mouseenter="onMouseEn('key2')" @mouseleave="onMouseLe('key2')">
+        <div class="key-box" @mouseenter="onMouseEn('key2')" @mouseleave="onMouseLe(1)">
           <p :class="{ 'hover-bg': !mptInfo.dks[1] }" @mouseup="KeydropFirst">{{ keyText[1] }}</p>
           <div class="del_btn" @click="onClick('key2')" v-show="keyText[1] && delKeyShow[1]"></div>
         </div>
@@ -20,7 +20,7 @@
         </div>
       </div>
       <div class="key">
-        <div class="key-box" @mouseenter="onMouseEn" @mouseleave="onMouseLe">
+        <div class="key-box" @mouseenter="onMouseEn" @mouseleave="onMouseLe(2)">
           <p :class="{ 'hover-bg': !mptInfo.dks[2] }" @mouseup="KeydropFirst">{{ keyText[2] }}</p>
           <div class="del_btn" @click="onClick" v-show="keyText[2] && delKeyShow[2]"></div>
         </div>
@@ -63,7 +63,7 @@ const { setMPT } = useAdvancedHook();
 const keyboardStore = useKeyboardStore();
 
 const isShow = ref(false);
-const delKeyShow = reactive([false, false, false, false]);
+const delKeyShow = reactive([false, false, false]);
 
 const keyText = computed(() => {
   return [
@@ -112,8 +112,8 @@ const onMouseEn = (keyCode) => {
   }
 };
 
-const onMouseLe = (keyCode) => {
-  // keyIndex.value = -1;
+const onMouseLe = (idx) => {
+  delKeyShow[idx] = false;
 };
 
 const handleMptKey = (keyVal) => {
@@ -171,7 +171,13 @@ const save = async () => {
   const res = await setMPT({ key, row, col, ...mptInfo.value });
   return res;
 };
-defineExpose({ save });
+
+const reset = () => {
+  mptInfo.value.dks = [0, 0, 0];
+  mptInfo.value.dbs = [0.5, 1.0, 1.5];
+  delKeyShow.value = [false, false, false];
+};
+defineExpose({ save, reset });
 </script>
 
 <style scoped lang="scss">

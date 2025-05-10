@@ -52,7 +52,7 @@ export const useMacroHook = () => {
         return {
           keyCode: item.keyCode,
           timeDifference: item.timeDifference,
-          type: item.type,
+          type: item.type === 'keyup' ? 0 : 1,
           status: item.status,
         };
       });
