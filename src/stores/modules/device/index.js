@@ -72,12 +72,35 @@ const useDeviceStore = defineStore('device', {
       }
     },
     // 恢复出厂设置
-    async factoryDataReset() {
-      try {
-        await services.factoryDataReset();
-      } catch (error) {
-        console.log(error);
+    async factoryDataReset(isVersion2) {
+      if (isVersion2) {
+        const res = await services.GFSRestoreV2('All');
+        return res;
+      } else {
+        try {
+          await services.factoryDataReset();
+        } catch (error) {
+          console.log(error);
+        }
       }
+    },
+
+    // 设备升级
+    async updateDevice(data, fn) {
+      const update = await services.upgradeV2(data, fn);
+      return update;
+    },
+
+    // boot模式
+    async appToBoot() {
+      const res = await services.appToBootV2();
+      return res;
+    },
+
+    // app模式
+    async bootToApp() {
+      const res = await services.bootToAppV2();
+      return res;
     },
   },
 });

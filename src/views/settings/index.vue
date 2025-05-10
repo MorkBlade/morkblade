@@ -75,41 +75,70 @@
         </div>
         <div class="firmware-update">
           <span>固件更新:</span>
-          <div
-            class="cover-list"
-            :class="selectedFirItem !== null ? 'is-selected' : ''"
-            @click="toggleDropdown('firmware')"
-          >
-            <img class="change-icon" :src="selectedFirItem !== null ? changedIcon : changeIcon" alt="" />
-            <span>{{ firmwareList[selectedFirItem] || '请选择' }}</span>
-            <img
-              class="down-icon"
-              :src="selectedFirItem !== null ? downIcon : downIcon2"
-              :style="{ transform: `rotate(${rotate2}deg)` }"
-            />
-            <div class="drop-list" :style="{ height: `${firmwareDefHeight}px` }">
-              <ul>
-                <li
-                  v-for="(ite, idx) in firmwareList"
-                  :key="ite"
-                  :class="{ 'checked-item': idx == selectedFirItem }"
-                  @click.stop="selectItem(idx, 'firmware')"
-                >
-                  {{ ite }}
-                </li>
-              </ul>
+          <template v-if="isVersion2">
+            <el-upload
+              ref="uploadRef"
+              class="uploader"
+              :class="{ loading }"
+              :limit="1"
+              :auto-upload="false"
+              :disabled="loading"
+              accept=".bin"
+              :before-upload="beforeUpload"
+              :on-exceed="handleExceed"
+              :on-remove="handleRemove"
+              :on-change="handleFileChange"
+            >
+              <div class="uploader-text" :class="{ hasFile: bindData.length > 0 }">
+                {{ bindData.length > 0 ? '重新选择' : '选择固件' }}
+              </div>
+              <!-- v-if="loading" -->
+              <div class="uploader-progress" v-if="loading">
+                <el-progress :percentage="displayProgress" :color="'#91bc00'" />
+              </div>
+            </el-upload>
+            <div class="update-btn" @click="startUpdate">
+              <img src="@/assets/images/update_icon.svg" alt="" />
+              <span>{{ loading ? '升级中...' : '升级固件' }}</span>
             </div>
-          </div>
-          <div
-            class="update-btn"
-            :class="{ 'is-active': updateBtnStatus }"
-            @click="updateFirware"
-            @mouseenter="onMouseEnter('firmware')"
-            @mouseleave="onMouseLeave('firmware')"
-          >
-            <img src="@/assets/images/update_icon.svg" alt="" />
-            <span>升级固件</span>
-          </div>
+          </template>
+          <template v-else>
+            <div
+              class="cover-list"
+              :class="selectedFirItem !== null ? 'is-selected' : ''"
+              @click="toggleDropdown('firmware')"
+            >
+              <img class="change-icon" :src="selectedFirItem !== null ? changedIcon : changeIcon" alt="" />
+              <span>{{ firmwareList[selectedFirItem] || '请选择' }}</span>
+              <img
+                class="down-icon"
+                :src="selectedFirItem !== null ? downIcon : downIcon2"
+                :style="{ transform: `rotate(${rotate2}deg)` }"
+              />
+              <div class="drop-list" :style="{ height: `${firmwareDefHeight}px` }">
+                <ul>
+                  <li
+                    v-for="(ite, idx) in firmwareList"
+                    :key="ite"
+                    :class="{ 'checked-item': idx == selectedFirItem }"
+                    @click.stop="selectItem(idx, 'firmware')"
+                  >
+                    {{ ite }}
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div
+              class="update-btn"
+              :class="{ 'is-active': updateBtnStatus }"
+              @click="updateFirware"
+              @mouseenter="onMouseEnter('firmware')"
+              @mouseleave="onMouseLeave('firmware')"
+            >
+              <img src="@/assets/images/update_icon.svg" alt="" />
+              <span>升级固件</span>
+            </div>
+          </template>
         </div>
       </div>
     </div>
@@ -160,9 +189,12 @@
 </template>
 
 <script setup>
-import { useAppStore, useDeviceStore, usePerformanceStore } from '@/stores';
-import mDialog from '@/components/dialog.vue';
 import { scaleValue } from '@/utils/responsive.js';
+import { showMessage } from '@/utils/message';
+import { genFileId } from 'element-plus';
+import { useAppStore, useDeviceStore, usePerformanceStore } from '@/stores';
+
+import mDialog from '@/components/dialog.vue';
 import changeIcon from '@/assets/images/change.svg';
 import changedIcon from '@/assets/images/changed.svg';
 import downIcon from '@/assets/images/down_icon.svg';
@@ -193,6 +225,16 @@ const updateBtnStatus = ref(false);
 const progress = ref(0);
 const updateRes = ref(null);
 
+const uploadRef = ref(null);
+const fileList = ref([]);
+const selectedFile = ref(null);
+const bindData = ref([]);
+const updating = ref(false);
+const updateProgress = ref(0);
+const displayProgress = ref(0);
+const loadingId = ref(null);
+const loading = ref(false);
+const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
 const urlList = ['/api/update_esports.bin', '/api/update_highlight.bin', '/api/update_beta.bin'];
 
 const keyboardName = computed(() => deviceStore.devices[0]?.productName || '--');
@@ -292,9 +334,9 @@ const updateFirware = () => {
 
 const onSure = async (keyCode) => {
   if (curClickBtn.value === 'rest') {
-    await deviceStore.factoryDataReset();
+    await deviceStore.factoryDataReset(isVersion2);
   } else {
-    console.log('asdasdasd', keyCode);
+    // console.log('asdasdasd', keyCode);
     if (keyCode === 'enterBoot') {
       toBoot();
     } else if (keyCode === 'reconnect') {
@@ -377,6 +419,145 @@ const getFirmWarePack = async (url) => {
     .catch((error) => {
       console.error('Error fetching the .bin file:', error);
     });
+};
+
+const beforeUpload = (file) => {
+  console.log('upload before', file.name.toLowerCase().endsWith('.bin'));
+  if (!file.name.toLowerCase().endsWith('.bin')) {
+    showMessage('请选择正确的固件文件（.bin）', 'warning');
+    return false;
+  }
+  return true;
+};
+
+const delay = (ms) => {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+};
+
+const handleExceed = (files) => {
+  uploadRef.value?.clearFiles();
+  const file = files[0];
+  file.uid = genFileId();
+  uploadRef.value?.handleStart(file);
+};
+
+const handleRemove = () => {
+  // console.log(uploadFile, uploadFiles);
+  console.log('clear');
+  bindData.value = [];
+};
+
+const handleFileChange = (files) => {
+  if (files) {
+    const file = files.raw;
+    if (file.name.toLowerCase().endsWith('.bin')) {
+      console.log("file.name.toLowerCase().endsWith('.bin')", file.name.toLowerCase().endsWith('.bin'));
+      const reader = new FileReader();
+      selectedFile.value = file;
+      fileList.value = files;
+      reader.onload = (evt) => {
+        const arrayBuffer = evt.target.result;
+        bindData.value = new Uint8Array(arrayBuffer);
+      };
+      reader.readAsArrayBuffer(file);
+    } else {
+      showMessage('请选择正确的固件文件（.bin）', 'warning');
+      uploadRef.value?.clearFiles();
+      fileList.value = selectedFile.value ? [{ raw: selectedFile.value }] : [];
+    }
+  } else if (fileList.value.length === 0) {
+    selectedFile.value = null;
+  }
+};
+const updateDisplayProgress = (targetProgress) => {
+  if (targetProgress < displayProgress.value) {
+    updateProgress.value = targetProgress;
+    return;
+  }
+
+  displayProgress.value = Math.max(displayProgress.value, targetProgress);
+};
+
+const startUpdate = async () => {
+  if (!selectedFile.value) {
+    showMessage('请先选择固件文件', 'warning');
+    return;
+  }
+
+  try {
+    uploadRef.value?.clearFiles();
+    updating.value = true;
+    loading.value = true;
+    updateProgress.value = 0;
+    displayProgress.value = 0;
+
+    // await showMessage('loading', UPDATE_STEPS.ENTER_BOOT);
+    await deviceStore.appToBoot();
+    await delay(4000);
+
+    // await showMessage('loading', UPDATE_STEPS.CONNECT);
+    const device = await deviceStore.connectDevice();
+    if (!device) {
+      throw new Error('连接超时，请检查设备是否正确连接');
+    }
+
+    // await showMessage('loading', UPDATE_STEPS.UPDATING);
+    const res = await deviceStore.updateDevice(bindData.value, ({ percentage }) => {
+      updateDisplayProgress(percentage);
+    });
+
+    if (!res) {
+      showMessage('更新失败，请重试', 'warning');
+      throw new Error('固件更新失败');
+    }
+
+    // 调整重启设备的消息顺序
+    // await showMessage('loading', UPDATE_STEPS.RESTARTING);
+    await deviceStore.bootToApp();
+    await delay(1500);
+    await deviceStore.connectDevice();
+    await delay(1000); // 给一点时间显示重启消息
+
+    // 成功提示
+    if (loadingId.value !== null) {
+      MessagePlugin.close(loadingId.value);
+      await delay(100);
+    }
+    // await showMessage('success', '更新成功');
+    await delay(1000);
+
+    resetStates();
+  } catch (error) {
+    console.error('更新失败:', error);
+    if (loadingId.value !== null) {
+      MessagePlugin.close(loadingId.value);
+      await delay(100);
+    }
+    // await showMessage('error', error.message || '更新失败，请重试');
+    showMessage('更新失败，请重试', 'warning');
+    resetStates();
+  } finally {
+    loading.value = false;
+  }
+};
+
+const resetStates = () => {
+  // 重置 loadingId
+  if (loadingId.value !== null) {
+    MessagePlugin.close(loadingId.value);
+    loadingId.value = null;
+  }
+
+  // 直接重置每个响应式变量
+  updating.value = false;
+  loading.value = false;
+  updateProgress.value = 0;
+  displayProgress.value = 0;
+  fileList.value = [];
+  selectedFile.value = null;
+  bindData.value = [];
 };
 </script>
 
@@ -469,6 +650,54 @@ const getFirmWarePack = async (url) => {
 
     & span {
       font-size: var(--font-size-16);
+    }
+
+    .uploader {
+      width: 200px;
+      height: 60px;
+      margin: 0 10px;
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      box-sizing: border-box;
+      border-radius: 15px;
+      border: 3px solid rgb(37, 37, 37);
+      position: relative;
+      &.loading {
+        color: rgba(255, 255, 255, 0.5);
+      }
+
+      &-text {
+        margin-top: 16px;
+        transition: all 0.2s ease-in-out;
+        &.hasFile {
+          margin-top: 0;
+        }
+      }
+
+      &-progress {
+        width: 100%;
+        margin-left: 18px;
+        position: absolute;
+        bottom: 3px;
+      }
+    }
+    ::v-deep(.el-upload:focus) {
+      // display: none;
+      color: rgb(255, 255, 255);
+    }
+    ::v-deep(.el-upload-list) {
+      // display: none;
+      width: 200px;
+    }
+    ::v-deep(.el-icon) {
+      display: none;
+    }
+    ::v-deep(.el-upload-list__item:hover) {
+      background: none;
+    }
+    ::v-deep(.el-upload-list__item-file-name) {
+      font-size: 10px;
     }
   }
 

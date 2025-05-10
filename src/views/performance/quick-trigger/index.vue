@@ -100,7 +100,7 @@ const handleRtEnabledChange = async (value) => {
       const colIndex = Number(key2);
       const { rtPressValue, rtReleaseValue } = keyboards.value[rowIndex][colIndex].performance;
       keyboards.value[rowIndex][colIndex].performance.isRt = true;
-      keyboards.value[rowIndex][colIndex].performance.isSingle = false;
+      // keyboards.value[rowIndex][colIndex].performance.isSingle = false;
       keyboards.value[rowIndex][colIndex].performance.rtPressValue = rtPressValue || 0;
       keyboards.value[rowIndex][colIndex].performance.rtReleaseValue = rtReleaseValue || 0;
     });

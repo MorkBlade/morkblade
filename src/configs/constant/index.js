@@ -239,3 +239,17 @@ export const KEYBOARD_MACRO = [
   0xf500, 0xf501, 0xf502, 0xf503, 0xf504, 0xf505, 0xf506, 0xf507, 0xf508, 0xf509, 0xf50a, 0xf50b, 0xf50c, 0xf50d,
   0xf50e, 0xf50f,
 ];
+
+export const CONFIG_MAP = {
+  Config1: 'Config1',
+  Config2: 'Config2',
+  Config3: 'Config3',
+  Config4: 'Config4',
+};
+
+export const CONFIG_OPTIONS = [
+  { value: CONFIG_MAP.Config1, name: 'Config1', label: '我的配置1' },
+  { value: CONFIG_MAP.Config2, name: 'Config2', label: '我的配置2' },
+  { value: CONFIG_MAP.Config3, name: 'Config3', label: '我的配置3' },
+  { value: CONFIG_MAP.Config4, name: 'Config4', label: '我的配置4' },
+];

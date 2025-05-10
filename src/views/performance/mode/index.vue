@@ -55,7 +55,7 @@ const debouncedUpdateSingleTravel = debounce((value) => {
     const [key1, key2] = keyLocation.split('-');
     const rowIndex = Number(key1);
     const colIndex = Number(key2);
-    keyboards.value[rowIndex][colIndex].performance.isRt = false;
+    // keyboards.value[rowIndex][colIndex].performance.isRt = false;
     keyboards.value[rowIndex][colIndex].performance.isSingle = true;
     keyboards.value[rowIndex][colIndex].performance.singleTriggeringValue = value;
   });

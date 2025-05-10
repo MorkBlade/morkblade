@@ -6,7 +6,7 @@
   >
     <img class="change-icon" :src="appStore.activeConfigIndex !== null ? changedIcon : changeIcon" />
     <span class="dropdown-text">
-      {{ appStore.configItems[appStore.activeConfigIndex]?.title }}
+      {{ appStore.configList[appStore.activeConfigIndex]?.title }}
     </span>
     <img
       class="down-icon"
@@ -19,7 +19,7 @@
     <ul>
       <!-- <ul class="dropdown-list"> -->
       <li
-        v-for="(item, index) in appStore.configItems"
+        v-for="(item, index) in appStore.configList"
         :key="index"
         :class="{ checked: appStore.activeConfigIndex === index }"
         @click="selectItem(index)"
@@ -45,7 +45,6 @@
 
 <script setup>
 import { useAppStore, useKeyboardStore, usePerformanceStore } from '@/stores';
-import services from '@/services';
 
 import changedIcon from '@/assets/images/changed.svg';
 import changeIcon from '@/assets/images/change.svg';
@@ -62,7 +61,7 @@ const customItems = reactive([]);
 const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
 
 onMounted(async () => {
-  await appStore.configID(isVersion2);
+  await appStore.getConfigID(isVersion2);
   await appStore.getBaseInfo(isVersion2);
 });
 
@@ -73,24 +72,26 @@ const toggleDropdown = () => {
 };
 const selectItem = async (index) => {
   // v1 配置切换
-  if (index === appStore.activeConfigIndex) {
-    return;
-  }
   rotate.value = rotate.value ? 0 : 180;
   defaultHeight.value = defaultHeight.value ? 0 : 400;
 
+  if (index === appStore.activeConfigIndex) {
+    return;
+  }
   const res = await appStore.setActiveConfig(index, isVersion2);
-  const timer = setTimeout(async () => {
-    // TODO v2 配置切换之后获取的数据是一样的
-    await keyboardStore.initKeyboard();
-    // await keyboardStore.getLayoutKeyInfo(keyboardStore.layout, keyboardStore.keyboards);
-    // await performanceStore.getKeyPerformanceV1(keyboardStore.keyboards);
-    if (res) {
-      appStore.changeConfig = true;
-      appStore.activeConfigIndex = index;
-    }
-    clearTimeout(timer);
-  }, 1000);
+  if (!isVersion2) {
+    const timer = setTimeout(async () => {
+      // TODO v2 配置切换之后获取的数据是一样的
+      await keyboardStore.initKeyboard();
+      // await keyboardStore.getLayoutKeyInfo(keyboardStore.layout, keyboardStore.keyboards);
+      // await performanceStore.getKeyPerformanceV1(keyboardStore.keyboards);
+      if (res) {
+        appStore.changeConfig = true;
+        appStore.activeConfigIndex = index;
+      }
+      clearTimeout(timer);
+    }, 1000);
+  }
 };
 
 const delConfig = (configInfo) => {

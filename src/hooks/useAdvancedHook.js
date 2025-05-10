@@ -72,7 +72,7 @@ export const useAdvancedHook = () => {
   // 查询RS
   const getRS = async (params) => {
     if (isVersion2) {
-      console.log('getRS V2 log params:>>>>>', params);
+      // console.log('getRS V2 log params:>>>>>', params);
       const { keyValue, row, col, mode, data } = params;
       const { kcs, delay } = data.data;
       const rsData = { keyValue, type: 'rs', mode, rs: [...kcs], delay };
@@ -85,7 +85,7 @@ export const useAdvancedHook = () => {
     } else {
       const { keyValue, row, col, mode } = params;
       const result = await services.getRS(keyValue);
-      console.log('getRS v1', params, result);
+      // console.log('getRS v1', params, result);
       const rsData = { keyValue, type: 'rs', rs: [result.dks1, result.dks2] };
       const advancedKeys = {
         ...keyboardStore.keyboards[row][col].advancedKeys,
@@ -100,7 +100,7 @@ export const useAdvancedHook = () => {
   const setRS = async (params) => {
     let dksData = null;
     let result = null;
-    console.log('setRS log params: ', params);
+    // console.log('setRS log params: ', params);
     const { key, row, col, dks, delay } = params;
     if (isVersion2) {
       let result2 = null;
@@ -132,7 +132,7 @@ export const useAdvancedHook = () => {
   // 查询MT
   const getTGL = async (params) => {
     if (isVersion2) {
-      console.log('getTGL V2: ', params);
+      // console.log('getTGL V2: ', params);
       const { keyValue, data, row, col, mode } = params;
       const { kcs, time } = data.data;
       const mtData = { keyValue, type: 'tgl', mode, tgl: { delay: time, dksAll: [kcs] } };
@@ -201,7 +201,7 @@ export const useAdvancedHook = () => {
       const { keyValue, row, col, mode } = params;
       const result = await services.getMpt(keyValue);
       const mptData = { keyValue, type: 'mpt', dks: [...result.dks], dbs: [...result.dbs] };
-      console.log('getMPT v1', mptData);
+      // console.log('getMPT v1', mptData);
       const advancedKeys = {
         ...keyboardStore.keyboards[row][col].advancedKeys,
         mpt: mptData,
@@ -277,7 +277,7 @@ export const useAdvancedHook = () => {
       // TODO v2的end可以绑定两个键值，暂时先用选中的key和绑定的key作为两个绑定的键值
       const data = { kcs: [key, dks], delay };
       result = await services.setHigherKeyENDV2({ key, row, col, data });
-      console.log('setEND V2', result);
+      // console.log('setEND V2', result);
       endData = {
         keyValue: key,
         data: result,
@@ -301,7 +301,7 @@ export const useAdvancedHook = () => {
   // 查询DKS
   const getDKS = async (params) => {
     if (isVersion2) {
-      console.log('getDKS V2 log params:>>>>>', params);
+      // console.log('getDKS V2 log params:>>>>>', params);
       const { keyValue, row, col, mode, data } = params;
       const { kcs, trps, dbs } = data.data;
       const db = dbs[0];
@@ -330,7 +330,7 @@ export const useAdvancedHook = () => {
         db,
         db2,
       };
-      console.log('getEND v1', params, dksData);
+      // console.log('getEND v1', params, dksData);
       const advancedKeys = {
         ...keyboardStore.keyboards[row][col].advancedKeys,
         dks: dksData,

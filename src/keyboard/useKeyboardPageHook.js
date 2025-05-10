@@ -1,4 +1,5 @@
 import { useKeyboardStore } from '@/stores';
+import { useKeyboardHook } from '@/hooks';
 import emitter from '@/utils/app-emitter';
 
 /* ------------ 提取多平台共用逻辑方法 ------------ */
@@ -50,12 +51,18 @@ export const useKeyboardPageHook = () => {
   };
 
   // 换层
-  const handleFnChange = (event) => {
+  const handleFnChange = (event, isVersion2) => {
+    console.log('handleFnChange', event, isVersion2);
     const fnVal = event.target.dataset.idx;
     checkedFn.value = Number(fnVal);
     formData.fn = fnVal;
     const { fn } = formData;
-    keyboardStore.getLayoutKeyInfo(fn, keyboardStore.keyboards);
+    if (isVersion2) {
+      keyboardStore.checkFnLayer(fn);
+      keyboardStore.initKeyboard();
+    } else {
+      keyboardStore.getLayoutKeyInfo(fn, keyboardStore.keyboards);
+    }
   };
 
   const handleOperationKey = (value) => {

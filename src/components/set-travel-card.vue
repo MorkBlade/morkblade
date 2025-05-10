@@ -43,11 +43,12 @@
         <input
           type="number"
           :disabled="disabled"
-          v-model.number="travelVal"
+          :value="travelVal"
           min="0"
           max="4"
           @input="updateValueFromInput"
-        />
+          />
+          <!-- v-model.number="travelVal" -->
         mm
       </div>
     </div>
@@ -143,11 +144,16 @@ const updateValue = (clientY) => {
   emits('sendKeyVal', travelVal.value);
 };
 
+let timer=null;
 const updateValueFromInput = () => {
   if (travelVal.value === '') {
     travelVal.value = 0;
   }
-  emits('sendKeyVal', travelVal.value);
+  timer && clearTimeout(timer)
+  setTimeout(()=>{
+    emits('sendKeyVal', travelVal.value);
+
+  },500)
 };
 
 // 添加全局事件监听器以处理触摸设备上的拖动

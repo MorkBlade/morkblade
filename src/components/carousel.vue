@@ -19,6 +19,13 @@
       </div>
     </div>
     <div class="right-arrow" @click="nextClick"></div>
+    <div class="bottom-taskbar">
+      <div class="bottom-taskbar__text" v-if="showText">
+        <span :style="{ backgroundColor: localCarouselData[currentIdx]?.color }">
+          {{ localCarouselData[currentIdx]?.name }}
+        </span>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -231,6 +238,30 @@ const saveConfig = () => {
 
     .no-transition {
       transition: none;
+    }
+  }
+
+  .bottom-taskbar {
+    position: absolute;
+    top: var(--size-230);
+    left: calc(var(--size-350) - var(--spacing-5));
+    &__text {
+      width: var(--size-150);
+      margin-left: var(--spacing-38);
+      margin-top: var(--spacing-10);
+      display: flex;
+      justify-content: center;
+      span {
+        display: inline-block;
+        height: var(--size-20);
+        line-height: var(--size-20);
+        text-align: center;
+        padding: 0 var(--spacing-15);
+        border-radius: var(--spacing-10);
+        color: #000;
+        font-size: var(--font-size-12);
+        font-family: 'CN Heavy';
+      }
     }
   }
 }

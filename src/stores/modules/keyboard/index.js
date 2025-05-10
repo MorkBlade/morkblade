@@ -110,6 +110,12 @@ const useKeyboardStore = defineStore('keyboard', {
       }
     },
 
+    // 切换fn层
+    checkFnLayer(layer) {
+      console.log('checkFnLayer', layer);
+      this.fnLayer = layer;
+    },
+
     // 拖拽的按键键值
     updateSelectKeyCode(data) {
       if (typeof data === 'number') {

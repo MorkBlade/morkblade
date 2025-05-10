@@ -130,6 +130,8 @@ export const useLightingHook = () => {
       return res;
     } else {
       const res = await services.getSaturation();
+      if (!res) return;
+      console.log('getLightingSaturation', res);
       const { r: R, g: G, b: B } = res;
       lightSettingStore.saturation = { R, G, B };
     }

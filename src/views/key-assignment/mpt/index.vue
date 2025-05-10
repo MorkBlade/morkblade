@@ -3,7 +3,7 @@
     <div class="left-config">
       <div class="key">
         <div class="key-box" @mouseenter="onMouseEn('key1')" @mouseleave="onMouseLe(0)">
-          <p :class="{ 'hover-bg': !mptInfo.dks[0] }" @mouseup="KeydropFirst">{{ keyText[0] }}</p>
+          <p :class="{ 'hover-bg': !mptInfo.dks[0] }" @mouseup="KeydropKey(0)">{{ keyText[0] }}</p>
           <div class="del_btn" @click="onClick('key1')" v-show="keyText[0] && delKeyShow[0]"></div>
         </div>
         <div class="slider-block">
@@ -12,7 +12,7 @@
       </div>
       <div class="key">
         <div class="key-box" @mouseenter="onMouseEn('key2')" @mouseleave="onMouseLe(1)">
-          <p :class="{ 'hover-bg': !mptInfo.dks[1] }" @mouseup="KeydropFirst">{{ keyText[1] }}</p>
+          <p :class="{ 'hover-bg': !mptInfo.dks[1] }" @mouseup="KeydropKey(1)">{{ keyText[1] }}</p>
           <div class="del_btn" @click="onClick('key2')" v-show="keyText[1] && delKeyShow[1]"></div>
         </div>
         <div class="slider-block">
@@ -21,7 +21,7 @@
       </div>
       <div class="key">
         <div class="key-box" @mouseenter="onMouseEn" @mouseleave="onMouseLe(2)">
-          <p :class="{ 'hover-bg': !mptInfo.dks[2] }" @mouseup="KeydropFirst">{{ keyText[2] }}</p>
+          <p :class="{ 'hover-bg': !mptInfo.dks[2] }" @mouseup="KeydropKey(2)">{{ keyText[2] }}</p>
           <div class="del_btn" @click="onClick" v-show="keyText[2] && delKeyShow[2]"></div>
         </div>
         <div class="slider-block">
@@ -126,8 +126,9 @@ const handleMptKey = (keyVal) => {
   }
 };
 
-const KeydropFirst = () => {
-  if (!mptInfo.value.dks) mptInfo.value.dks = keyboardStore.selectKey.keyCode;
+const KeydropKey = (idx) => {
+  // if (!mptInfo.value.dks[idx]) mptInfo.value.dks[idx] = keyboardStore.selectKey.keyCode;
+  mptInfo.value.dks[idx] = keyboardStore.selectKey.keyCode;
 };
 
 const onClick = (keyCode) => {

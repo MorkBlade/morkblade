@@ -67,7 +67,7 @@
     { "shapeScale": { "w": 1, "h": 1 }, "location": { "x": 10.7, "y": 2 } },
     { "shapeScale": { "w": 1, "h": 1 }, "location": { "x": 11.8, "y": 2 } },
     { "shapeScale": { "w": 1, "h": 1 }, "location": { "x": 12.9, "y": 2 } },
-    { "shapeScale": { "w": 2.5, "h": 1 }, "location": { "x": 13.75, "y": 2 } },
+    { "shapeScale": { "w": 2.5, "h": 1 }, "location": { "x": 14, "y": 2 } },
     { "shapeScale": { "w": 2.5, "h": 1 }, "location": { "x": 14, "y": 2 } }
   ],
   [
@@ -96,7 +96,7 @@
     { "shapeScale": { "w": 6.75, "h": 1 }, "location": { "x": 4.2, "y": 4 } },
     { "shapeScale": { "w": 0, "h": 0 }, "location": { "x": 0, "y": 0 } },
     { "shapeScale": { "w": 0, "h": 0 }, "location": { "x": 0, "y": 0 } },
-    { "shapeScale": { "w": 1.0, "h": 0 }, "location": { "x": 0, "y": 0 } },
+    { "shapeScale": { "w": 1.25, "h": 0 }, "location": { "x": 0, "y": 0 } },
     { "shapeScale": { "w": 1.25, "h": 1 }, "location": { "x": 11.1, "y": 4 } },
     { "shapeScale": { "w": 1.25, "h": 1 }, "location": { "x": 12.5, "y": 4 } },
     { "shapeScale": { "w": 1.25, "h": 1 }, "location": { "x": 13.9, "y": 4 } },

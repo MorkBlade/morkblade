@@ -54,10 +54,9 @@ export const useKeyboardHook = () => {
       // v2 keyboard初始化
       const { row } = keyboardStore.keyLayoutConfig;
       const keyboardLayout = [];
-
       for (let i = 0; i < row; i++) {
         // eslint-disable-next-line no-await-in-loop
-        const result = await services.getKeyLayoutV2({ fnLayer: keyboardStore.fnLayer, row: i });
+        const result = await services.getKeyLayoutV2({ layer: keyboardStore.fnLayer, row: i });
         const { keyboardLayout: data } = result[0];
         keyboardLayout.push(data);
       }
@@ -69,7 +68,7 @@ export const useKeyboardHook = () => {
 
       const layoutData = [];
       const keyboardsWithPerformance = [];
-      console.log('initKeyboard-------------------------------');
+      // console.log('initKeyboard-------------------------------');
 
       for (let rowIndex = 0; rowIndex < keyboardLayout.length; rowIndex++) {
         const row = keyboardLayout[rowIndex];

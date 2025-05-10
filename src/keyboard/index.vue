@@ -131,7 +131,11 @@
         仅字母
       </div>
     </div>
-    <div class="layer-container" v-if="route.path === '/key-assignment'" @click.capture="handleFnChange">
+    <div
+      class="layer-container"
+      v-if="route.path === '/key-assignment'"
+      @click.capture="(e) => handleFnChange(e, isVersion2)"
+    >
       <div class="layer" v-for="(ite, idx) in 4" :key="ite" :class="{ active: idx === checkedFn }" :data-idx="idx">
         {{ '层' + ite }}
       </div>
@@ -188,7 +192,12 @@ watch(
       formData.fn = fnVal;
       const { fn } = formData;
       // 切换到其他页面时还原到层1(v2暂未做)
-      isVersion2 ? '' : await keyboardStore.getLayoutKeyInfo(fn, keyboardStore.keyboards);
+      if (isVersion2) {
+        keyboardStore.checkFnLayer(0);
+        keyboardStore.initKeyboard();
+      } else {
+        await keyboardStore.getLayoutKeyInfo(fn, keyboardStore.keyboards);
+      }
     }
 
     if (newPath === '/key-assignment') await getHighLevelKeys(keyboardStore.keyboards);
@@ -214,7 +223,6 @@ onMounted(async () => {
     // and ensure keyboard is initialized
     if (route.path === '/key-assignment' && keyboardStore.keyboards.length > 0) {
       // Add a small delay to ensure component is fully mounted
-      console.log('getHighLevelKeys----------------------------------------->');
       await new Promise((resolve) => setTimeout(resolve, 100));
       await getHighLevelKeys(keyboardStore.keyboards);
     }

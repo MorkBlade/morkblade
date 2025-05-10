@@ -49,7 +49,7 @@ export const usePerformanceHook = () => {
   };
 
   const setAxis = async (keyboards, activeKeys, axisID) => {
-    if (version === 'v2') {
+    if (isVersion2) {
       // v2设置轴
       // 使用工具函数，并传入修改performance的回调
       return await processKeysV2(keyboards, activeKeys, (performance) => {
@@ -97,13 +97,13 @@ export const usePerformanceHook = () => {
         promises.push(
           (async () => {
             try {
-              if (version === 'v2') {
+              if (isVersion2) {
                 const params = changeParams(performance);
                 return await services.setPerformanceV2({ ...params, calibrate: 0 });
               } else {
                 // v1版本的处理
                 keyItem.isRt = touchMode === 'rt';
-                keyItem.isSingle = touchMode === 'single';
+                // keyItem.isSingle = touchMode === 'single';
 
                 const advancedKeyMode = keyItem.advancedKeyMode || '';
                 await performanceStore.setPerformanceMode(keyValue, touchMode, advancedKeyMode);
