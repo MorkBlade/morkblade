@@ -47,6 +47,10 @@
         <p>{{ keyboard[ite.mpt.dks[1]] }}</p>
         <p>{{ keyboard[ite.mpt.dks[2]] }}</p>
       </template>
+      <template v-else-if="TYPE_MAPPING[ite.advancedType] === 'macro' && ite.macro">
+        <p>{{ keyboard[ite.keyValue] }}</p>
+        <p>{{ `Mcr${ite.macro.macro.macro.mode + 1}` }}</p>
+      </template>
       <img
         class="separation"
         src="@/assets/images/separation.svg"
@@ -147,7 +151,7 @@ const shouldSkip = (index) => {
   const current = advancedData[index];
 
   // Skip if type is macro
-  if (TYPE_MAPPING[current.advancedType] === 'macro') return true;
+  // if (TYPE_MAPPING[current.advancedType] === 'macro') return true;
 
   if (TYPE_MAPPING[current.advancedType] !== 'socd' && TYPE_MAPPING[current.advancedType] !== 'rs') return false;
 
