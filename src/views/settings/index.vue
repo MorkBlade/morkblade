@@ -27,38 +27,19 @@
         <p>设备设置</p>
         <div class="rate-of-return">
           <span>回报率切换:</span>
-          <div
-            class="cover-list"
-            :class="selectedRateItem ? 'is-selected' : ''"
-            @click="toggleDropdown('rateofreturn')"
-          >
-            <img class="change-icon" :src="selectedRateItem ? changedIcon : changeIcon" alt="" />
-            <span>{{ selectedRateItem || '请选择' }}</span>
-            <img
-              class="down-icon"
-              :src="selectedRateItem ? downIcon : downIcon2"
-              :style="{ transform: `rotate(${rotate1}deg)` }"
-            />
-            <div class="drop-list" :style="{ height: `${RateDefHeight}px` }">
-              <ul>
-                <li
-                  v-for="(ite, idx) in RateOfReturnList"
-                  :key="ite"
-                  :class="{ 'checked-item': ite == selectedRateItem }"
-                  @click.stop="selectItem(idx, 'rateofreturn')"
-                >
-                  {{ ite }}
-                </li>
-              </ul>
-            </div>
-          </div>
+          <dropMenu
+            :max-height="320"
+            :items="RateOfReturnList"
+            :special-index="selectedRateIdx"
+            @sendSelectedIdx="handleSelectedRate"
+          />
         </div>
         <div class="reset-box">
           <span>恢复出厂设置:</span>
           <div
             class="save-btn"
             :class="{ 'is-active': restBtnStatus }"
-            @click="recoverRate"
+            @click="handleRecover"
             @mouseenter="onMouseEnter"
             @mouseleave="onMouseLeave"
           >
@@ -69,74 +50,65 @@
       </div>
       <div class="firmware-set">
         <p>固件设置</p>
-        <div class="content-box">
-          <span>最新固件版本:</span>
-          <span>xxxxxx</span>
-        </div>
         <div class="firmware-update">
-          <span>固件更新:</span>
+          <div class="firmware-update__choose-version">
+            <span>固件版本选择:</span>
+            <dropMenu :max-height="180" :items="firmwareVersionList" @sendSelectedIdx="handleSelectedVer" />
+            <template v-if="isVersion2">
+              <span :style="{ marginLeft: `${scaleValue(20)}px` }">子版本选择:</span>
+              <el-upload
+                ref="uploadRef"
+                class="uploader"
+                :class="{ loading }"
+                :limit="1"
+                :auto-upload="false"
+                :disabled="loading"
+                accept=".bin"
+                :on-exceed="handleExceed"
+                :on-remove="handleRemove"
+                :on-change="handleFileChange"
+              >
+                <div class="uploader-text" :class="{ hasFile: bindData.length > 0 }">
+                  {{ bindData.length > 0 ? '重新选择' : '选择固件' }}
+                </div>
+                <!-- v-if="loading" progress-->
+                <div class="uploader-progress" v-if="loading">
+                  <el-progress :percentage="progress" :color="'#91bc00'" />
+                </div>
+              </el-upload>
+            </template>
+            <template v-if="!isVersion2">
+              <span :style="{ marginLeft: `${scaleValue(20)}px` }">子版本选择:</span>
+              <dropMenu
+                :max-height="135"
+                :items="subVersionList"
+                :disabled="firmwareVerIdx === null"
+                @sendSelectedIdx="handleSelectedSubVer"
+              />
+            </template>
+          </div>
           <template v-if="isVersion2">
-            <el-upload
-              ref="uploadRef"
-              class="uploader"
-              :class="{ loading }"
-              :limit="1"
-              :auto-upload="false"
-              :disabled="loading"
-              accept=".bin"
-              :before-upload="beforeUpload"
-              :on-exceed="handleExceed"
-              :on-remove="handleRemove"
-              :on-change="handleFileChange"
-            >
-              <div class="uploader-text" :class="{ hasFile: bindData.length > 0 }">
-                {{ bindData.length > 0 ? '重新选择' : '选择固件' }}
+            <div>
+              <span>固件更新:</span>
+              <div class="update-btn" @click="startUpdate">
+                <img src="@/assets/images/update_icon.svg" alt="" />
+                <span>{{ loading ? '升级中...' : '升级固件' }}</span>
               </div>
-              <!-- v-if="loading" -->
-              <div class="uploader-progress" v-if="loading">
-                <el-progress :percentage="displayProgress" :color="'#91bc00'" />
-              </div>
-            </el-upload>
-            <div class="update-btn" @click="startUpdate">
-              <img src="@/assets/images/update_icon.svg" alt="" />
-              <span>{{ loading ? '升级中...' : '升级固件' }}</span>
             </div>
           </template>
-          <template v-else>
-            <div
-              class="cover-list"
-              :class="selectedFirItem !== null ? 'is-selected' : ''"
-              @click="toggleDropdown('firmware')"
-            >
-              <img class="change-icon" :src="selectedFirItem !== null ? changedIcon : changeIcon" alt="" />
-              <span>{{ firmwareList[selectedFirItem] || '请选择' }}</span>
-              <img
-                class="down-icon"
-                :src="selectedFirItem !== null ? downIcon : downIcon2"
-                :style="{ transform: `rotate(${rotate2}deg)` }"
-              />
-              <div class="drop-list" :style="{ height: `${firmwareDefHeight}px` }">
-                <ul>
-                  <li
-                    v-for="(ite, idx) in firmwareList"
-                    :key="ite"
-                    :class="{ 'checked-item': idx == selectedFirItem }"
-                    @click.stop="selectItem(idx, 'firmware')"
-                  >
-                    {{ ite }}
-                  </li>
-                </ul>
+          <template v-if="!isVersion2">
+            <div>
+              <span>固件更新:</span>
+              <div
+                class="update-btn"
+                :class="{ 'is-active': updateBtnStatus }"
+                @click="updateFirware"
+                @mouseenter="onMouseEnter('firmware')"
+                @mouseleave="onMouseLeave('firmware')"
+              >
+                <img src="@/assets/images/update_icon.svg" alt="" />
+                <span>升级固件</span>
               </div>
-            </div>
-            <div
-              class="update-btn"
-              :class="{ 'is-active': updateBtnStatus }"
-              @click="updateFirware"
-              @mouseenter="onMouseEnter('firmware')"
-              @mouseleave="onMouseLeave('firmware')"
-            >
-              <img src="@/assets/images/update_icon.svg" alt="" />
-              <span>升级固件</span>
             </div>
           </template>
         </div>
@@ -189,40 +161,33 @@
 </template>
 
 <script setup>
+import services from '@/services/index.js';
 import { scaleValue } from '@/utils/responsive.js';
 import { showMessage } from '@/utils/message';
 import { genFileId } from 'element-plus';
 import { useAppStore, useDeviceStore, usePerformanceStore } from '@/stores';
 
 import mDialog from '@/components/dialog.vue';
-import changeIcon from '@/assets/images/change.svg';
-import changedIcon from '@/assets/images/changed.svg';
-import downIcon from '@/assets/images/down_icon.svg';
-import downIcon2 from '@/assets/images/down_icon2.svg';
-
-import services from '@/services/index.js';
+import dropMenu from '@/components/drop-menu.vue';
 
 const router = useRouter();
 const appStore = useAppStore();
 const deviceStore = useDeviceStore();
 const performanceStore = usePerformanceStore();
 
-const RateDefHeight = ref(0); //高度
-const firmwareDefHeight = ref(0); //高度
-const selectedRateItem = ref('');
-const selectedFirItem = ref(null);
-const isShow = ref(false);
-const isUpdate = ref(false);
-const curClickBtn = ref(null);
+const isShow = ref(false); // dialog 显示状态
+const isUpdate = ref(false); // dialog 是否显示升级样式
+const eventType = ref(null); // update/recover
 const textContent = ref(''); // 弹窗提示内容
-const updateTitle = ref('');
-const rotate1 = ref(0); // 下拉箭头旋转角度
-const rotate2 = ref(0); // 下拉箭头旋转角度
+const updateTitle = ref(''); // dialog 标题
+
+const subVersionIdx = ref(null); // 子版本index
+const firmwareVerIdx = ref(null); // 固件版本index
+const selectedRateIdx = ref(null); // 回报率index
 
 // 按钮状态
 const restBtnStatus = ref(false);
 const updateBtnStatus = ref(false);
-const progress = ref(0);
 const updateRes = ref(null);
 
 const uploadRef = ref(null);
@@ -230,9 +195,7 @@ const fileList = ref([]);
 const selectedFile = ref(null);
 const bindData = ref([]);
 const updating = ref(false);
-const updateProgress = ref(0);
-const displayProgress = ref(0);
-const loadingId = ref(null);
+const progress = ref(0); // 升级进度
 const loading = ref(false);
 const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
 const urlList = ['/api/update_esports.bin', '/api/update_highlight.bin', '/api/update_beta.bin'];
@@ -245,59 +208,37 @@ const appVersionTime = computed(() => appStore.baseInfo?.appBuildDate || appStor
 
 onMounted(async () => {
   const rate = await performanceStore.getRateOfReturn();
-  selectedRateItem.value = RateOfReturnList.value[rate];
+  selectedRateIdx.value = rate;
 });
 
-const RateOfReturnList = computed(() => {
-  // if (KeyType.value === 4) {
-  //   return ['1KHz', '500Hz', '250Hz', '125Hz'];
-  // }
-  return ['8KHz', '4KHz', '2KHz', '1KHz', '500Hz', '250Hz', '125Hz'];
-});
-
-const firmwareList = computed(() => {
-  // if (KeyType.value === 4) {
-  //   return ['1KHz', '500Hz', '250Hz', '125Hz'];
-  // }
+const subVersionList = computed(() => {
   return ['电竞版', '旗舰版', '豪华版'];
 });
 
-const toggleDropdown = (keyCode) => {
-  switch (keyCode) {
-    case 'firmware':
-      firmwareDefHeight.value = firmwareDefHeight.value ? 0 : scaleValue(135);
-      rotate2.value = rotate2.value ? 0 : 180;
-      break;
-    default:
-      RateDefHeight.value = RateDefHeight.value ? 0 : scaleValue(320);
-      rotate1.value = rotate1.value ? 0 : 180;
-      break;
-  }
+const firmwareVersionList = computed(() => {
+  return ['V1.0.8(最新)', 'V1.0.7', 'V1.0.6', 'V1.0.5'];
+});
+
+const RateOfReturnList = computed(() => {
+  return ['8KHz', '4KHz', '2KHz', '1KHz', '500Hz', '250Hz', '125Hz'];
+});
+
+const handleSelectedRate = (idx) => {
+  console.log('handleSelectedRate', idx);
+  performanceStore.setRateOfReturn(idx);
 };
 
-const selectItem = (idx, keyCode) => {
-  console.log(idx, keyCode);
-
-  switch (keyCode) {
-    case 'firmware':
-      selectedFirItem.value = idx;
-      firmwareDefHeight.value = 0;
-      break;
-    default:
-      selectedRateItem.value = RateOfReturnList.value[idx];
-      performanceStore.setRateOfReturn(idx);
-      RateDefHeight.value = 0;
-      break;
-  }
+const handleSelectedSubVer = (idx) => {
+  subVersionIdx.value = idx;
 };
 
-const recoverRate = () => {
+const handleRecover = () => {
   textContent.value = '是否恢复出厂设置？';
   updateTitle.value = '';
   isUpdate.value = false;
   restBtnStatus.value = false;
   isShow.value = true;
-  curClickBtn.value = 'rest';
+  eventType.value = 'rest';
 };
 
 const onMouseEnter = (keyCode) => {
@@ -329,11 +270,11 @@ const updateFirware = () => {
   isUpdate.value = true;
   updateBtnStatus.value = false;
   isShow.value = true;
-  curClickBtn.value = 'update';
+  eventType.value = 'update';
 };
 
 const onSure = async (keyCode) => {
-  if (curClickBtn.value === 'rest') {
+  if (eventType.value === 'rest') {
     await deviceStore.factoryDataReset(isVersion2);
   } else {
     // console.log('asdasdasd', keyCode);
@@ -342,10 +283,10 @@ const onSure = async (keyCode) => {
     } else if (keyCode === 'reconnect') {
       reconnect();
     } else if (keyCode === 'update' && keyboardRunMode.value !== 255) {
-      getFirmWarePack(urlList[selectedFirItem.value]);
+      getFirmWarePack(urlList[subVersionIdx.value]);
     }
   }
-  curClickBtn.value = null;
+  eventType.value = null;
 };
 
 const onCancel = () => {
@@ -421,15 +362,7 @@ const getFirmWarePack = async (url) => {
     });
 };
 
-const beforeUpload = (file) => {
-  console.log('upload before', file.name.toLowerCase().endsWith('.bin'));
-  if (!file.name.toLowerCase().endsWith('.bin')) {
-    showMessage('请选择正确的固件文件（.bin）', 'warning');
-    return false;
-  }
-  return true;
-};
-
+/* v2升级 */
 const delay = (ms) => {
   return new Promise((resolve) => {
     setTimeout(resolve, ms);
@@ -471,13 +404,14 @@ const handleFileChange = (files) => {
     selectedFile.value = null;
   }
 };
+
 const updateDisplayProgress = (targetProgress) => {
-  if (targetProgress < displayProgress.value) {
-    updateProgress.value = targetProgress;
+  if (targetProgress < progress.value) {
+    // updateProgress.value = targetProgress;
     return;
   }
 
-  displayProgress.value = Math.max(displayProgress.value, targetProgress);
+  progress.value = Math.max(progress.value, targetProgress);
 };
 
 const startUpdate = async () => {
@@ -490,8 +424,8 @@ const startUpdate = async () => {
     uploadRef.value?.clearFiles();
     updating.value = true;
     loading.value = true;
-    updateProgress.value = 0;
-    displayProgress.value = 0;
+    // updateProgress.value = 0;
+    progress.value = 0;
 
     // await showMessage('loading', UPDATE_STEPS.ENTER_BOOT);
     await deviceStore.appToBoot();
@@ -521,20 +455,20 @@ const startUpdate = async () => {
     await delay(1000); // 给一点时间显示重启消息
 
     // 成功提示
-    if (loadingId.value !== null) {
-      MessagePlugin.close(loadingId.value);
-      await delay(100);
-    }
+    // if (loadingId.value !== null) {
+    //   MessagePlugin.close(loadingId.value);
+    //   await delay(100);
+    // }
     // await showMessage('success', '更新成功');
     await delay(1000);
 
     resetStates();
   } catch (error) {
     console.error('更新失败:', error);
-    if (loadingId.value !== null) {
-      MessagePlugin.close(loadingId.value);
-      await delay(100);
-    }
+    // if (loadingId.value !== null) {
+    //   MessagePlugin.close(loadingId.value);
+    //   await delay(100);
+    // }
     // await showMessage('error', error.message || '更新失败，请重试');
     showMessage('更新失败，请重试', 'warning');
     resetStates();
@@ -545,19 +479,24 @@ const startUpdate = async () => {
 
 const resetStates = () => {
   // 重置 loadingId
-  if (loadingId.value !== null) {
-    MessagePlugin.close(loadingId.value);
-    loadingId.value = null;
-  }
+  // if (loadingId.value !== null) {
+  //   MessagePlugin.close(loadingId.value);
+  //   loadingId.value = null;
+  // }
 
   // 直接重置每个响应式变量
   updating.value = false;
   loading.value = false;
-  updateProgress.value = 0;
-  displayProgress.value = 0;
+  // updateProgress.value = 0;
+  progress.value = 0;
   fileList.value = [];
   selectedFile.value = null;
   bindData.value = [];
+};
+
+// 选择固件版本
+const handleSelectedVer = (idx) => {
+  firmwareVerIdx.value = idx;
 };
 </script>
 
@@ -642,33 +581,43 @@ const resetStates = () => {
 
   .firmware-update {
     margin-top: var(--spacing-20);
-    display: flex;
-    align-items: center;
-    justify-content: center;
     font-family: 'CN Heavy';
     color: #ffffff;
 
-    & span {
-      font-size: var(--font-size-16);
+    &__choose-version {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      > span {
+        font-size: var(--font-size-16);
+      }
+    }
+
+    & div + div {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: var(--spacing-20);
     }
 
     .uploader {
-      width: 200px;
-      height: 60px;
-      margin: 0 10px;
+      width: var(--size-200);
+      height: var(--size-40);
+      margin: 0 var(--spacing-10);
       display: flex;
       align-items: center;
       flex-direction: column;
       box-sizing: border-box;
-      border-radius: 15px;
-      border: 3px solid rgb(37, 37, 37);
+      border-radius: var(--spacing-10);
+      border: var(--spacing-2) solid rgb(37, 37, 37);
       position: relative;
       &.loading {
         color: rgba(255, 255, 255, 0.5);
       }
 
       &-text {
-        margin-top: 16px;
+        margin-top: var(--spacing-6);
         transition: all 0.2s ease-in-out;
         &.hasFile {
           margin-top: 0;
@@ -677,9 +626,13 @@ const resetStates = () => {
 
       &-progress {
         width: 100%;
-        margin-left: 18px;
+        margin-left: var(--spacing-18);
         position: absolute;
-        bottom: 3px;
+        bottom: 0;
+
+        ::v-deep(.el-progress-bar) {
+          width: var(--size-120);
+        }
       }
     }
     ::v-deep(.el-upload:focus) {
@@ -688,7 +641,8 @@ const resetStates = () => {
     }
     ::v-deep(.el-upload-list) {
       // display: none;
-      width: 200px;
+      width: var(--size-200);
+      margin-top: calc(var(--spacing-8) * -1);
     }
     ::v-deep(.el-icon) {
       display: none;
@@ -697,7 +651,7 @@ const resetStates = () => {
       background: none;
     }
     ::v-deep(.el-upload-list__item-file-name) {
-      font-size: 10px;
+      font-size: var(--font-size-10);
     }
   }
 

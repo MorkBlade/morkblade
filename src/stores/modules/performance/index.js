@@ -308,18 +308,22 @@ const usePerformanceStore = defineStore('performance', {
     // 获取行程校准的数据
     async getRm6X21Calibration(keyboard) {
       const result = await services.getRm6X21Calibration();
-      console.log('getRm6X21Calibration log', result || '没有数据');
-      for (let y = 0; y < keyboard.length; y++) {
-        if (!this.calibrations[y]) this.calibrations[y] = [];
-        for (let x = 0; x < keyboard[y].length; x++) {
-          const { row, col } = keyboard[y][x];
-          if (!this.calibrations[y][x]) this.calibrations[y][x] = 0;
-          this.calibrations[y][x] = result.calibrations[row][col];
+      // console.log('getRm6X21Calibration log', result || '没有数据');
+      if (result.calibrations && result.travels) {
+        for (let y = 0; y < keyboard.length; y++) {
+          if (!this.calibrations[y]) this.calibrations[y] = [];
+          for (let x = 0; x < keyboard[y].length; x++) {
+            const { row, col } = keyboard[y][x];
+            if (!this.calibrations[y][x]) this.calibrations[y][x] = 0;
+            this.calibrations[y][x] = result.calibrations[row][col];
+          }
         }
+        const { max } = this.getMaxPressTravel([], result.travels);
+        this.updateVerifyKeys(result.travels, keyboard);
+        return { max };
+      } else {
+        return { max: 0 };
       }
-      const { max } = this.getMaxPressTravel([], result.travels);
-      this.updateVerifyKeys(result.travels, keyboard);
-      return { max };
     },
 
     // v2校准行程测试

@@ -29,6 +29,7 @@ import keyboard from '@/configs/byte-to-key/keyboard';
 import { useKeyboardStore } from '@/stores';
 import { useAdvancedHook } from '@/hooks';
 import { showMessage } from '@/utils/message';
+import { filterSocdAndRsKey } from '@/utils/filter-key.js';
 
 import mDialog from '@/components/dialog.vue';
 import characterCard from '@/components/character-card.vue';
@@ -85,11 +86,22 @@ const onMouseLe = (keyCode) => {
 };
 
 const handleTglKey = (keyVal) => {
-  if (!tglInfo.value.dks) tglInfo.value.dks = keyVal;
+  const unBinding = filterSocdAndRsKey(keyboardStore.keyboards, keyVal);
+  if (unBinding) {
+    showMessage('该键已绑定高级键，请重新选择', 'warning');
+    return;
+  }
+  tglInfo.value.dks = keyVal;
 };
 
 const KeydropFirst = () => {
-  if (!tglInfo.value.dks) tglInfo.value.dks = keyboardStore.selectKey.keyCode;
+  const keyVal = keyboardStore.selectKey.keyCode;
+  const unBinding = filterSocdAndRsKey(keyboardStore.keyboards, keyVal);
+  if (unBinding) {
+    showMessage('该键已绑定高级键，请重新选择', 'warning');
+    return;
+  }
+  tglInfo.value.dks = keyboardStore.selectKey.keyCode;
 };
 
 const onClick = (keyCode) => {

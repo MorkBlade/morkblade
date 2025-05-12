@@ -1,7 +1,7 @@
 import services from '@/services/index';
 import { useLightSettingStore, useKeyboardStore } from '@/stores';
 import { storeToRefs } from 'pinia';
-import { paletteToHexArray, hexArrayToPalette } from '@/utils/colorConvert';
+import { paletteToHexArray, hexArrayToPalette } from '@/utils/color-convert';
 
 export const useLightingHook = () => {
   const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
@@ -131,7 +131,7 @@ export const useLightingHook = () => {
     } else {
       const res = await services.getSaturation();
       if (!res) return;
-      console.log('getLightingSaturation', res);
+      // console.log('getLightingSaturation', res);
       const { r: R, g: G, b: B } = res;
       lightSettingStore.saturation = { R, G, B };
     }

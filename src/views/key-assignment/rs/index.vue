@@ -5,14 +5,14 @@
         <div>
           <span>按键1:</span>
           <div class="key-box" @mouseenter="onMouseEn('key1')" @mouseleave="onMouseLe('key1')">
-            <p :class="{ 'hover-bg': !rsInfo.dks[0] }" @mouseup="KeydropFirst">{{ keyText[0] }}</p>
+            <p :class="{ 'hover-bg': !rsInfo.dks[0] }" @mouseup="KeydropKey(0)">{{ keyText[0] }}</p>
             <div class="del_btn" @click="onClick('key1')" v-show="rsInfo.dks[0] && key1Index === 0"></div>
           </div>
         </div>
         <div>
           <span>按键2:</span>
           <div class="key-box" @mouseenter="onMouseEn" @mouseleave="onMouseLe">
-            <p :class="{ 'hover-bg': !rsInfo.dks[1] }" @mouseup="KeydropSec">{{ keyText[1] }}</p>
+            <p :class="{ 'hover-bg': !rsInfo.dks[1] }" @mouseup="KeydropKey(1)">{{ keyText[1] }}</p>
             <div class="del_btn" @click="onClick" v-show="rsInfo.dks[1] && key2Index === 0"></div>
           </div>
         </div>
@@ -32,6 +32,7 @@ import keyboard from '@/configs/byte-to-key/keyboard';
 import { useKeyboardStore } from '@/stores';
 import { useAdvancedHook } from '@/hooks';
 import { showMessage } from '@/utils/message';
+import { filterSocdAndRsKey } from '@/utils/filter-key.js';
 
 import mDialog from '@/components/dialog.vue';
 import characterCard from '@/components/character-card.vue';
@@ -99,7 +100,11 @@ const onMouseLe = (keyCode) => {
 };
 
 const handleRsKey = (keyVal) => {
-  console.log('asfdasfdaws', keyVal);
+  const unBinding = filterSocdAndRsKey(keyboardStore.keyboards, keyVal);
+  if (unBinding) {
+    showMessage('该键已绑定高级键，请重新选择', 'warning');
+    return;
+  }
   if (!rsInfo.value.dks[0]) {
     rsInfo.value.dks[0] = keyVal;
   } else if (!rsInfo.value.dks[1]) {
@@ -107,12 +112,14 @@ const handleRsKey = (keyVal) => {
   }
 };
 
-const KeydropFirst = () => {
-  if (!rsInfo.value.dks[0]) rsInfo.value.dks[0] = keyboardStore.selectKey.keyCode;
-};
-
-const KeydropSec = () => {
-  if (!rsInfo.value.dks[1]) rsInfo.value.dks[1] = keyboardStore.selectKey.keyCode;
+const KeydropKey = (idx) => {
+  const keyVal = keyboardStore.selectKey.keyCode;
+  const unBinding = filterSocdAndRsKey(keyboardStore.keyboards, keyVal);
+  if (unBinding) {
+    showMessage('该键已绑定高级键，请重新选择', 'warning');
+    return;
+  }
+  rsInfo.value.dks[idx] = keyVal;
 };
 
 const onClick = (keyCode) => {

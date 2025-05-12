@@ -5,14 +5,14 @@
         <div>
           <span>按键1:</span>
           <div class="key-box" @mouseenter="onMouseEn('key1')" @mouseleave="onMouseLe('key1')">
-            <p :class="{ 'hover-bg': !socdInfo.pos[0] }" @mouseup="KeydropFirst">{{ keyText[0] }}</p>
+            <p :class="{ 'hover-bg': !socdInfo.pos[0] }" @mouseup="KeydropKey(0)">{{ keyText[0] }}</p>
             <div class="del_btn" @click="onClick('key1')" v-show="socdInfo.pos[0] && key1Index === 0"></div>
           </div>
         </div>
         <div>
           <span>按键2:</span>
           <div class="key-box" @mouseenter="onMouseEn" @mouseleave="onMouseLe">
-            <p :class="{ 'hover-bg': !socdInfo.pos[1] }" @mouseup="KeydropSec">{{ keyText[1] }}</p>
+            <p :class="{ 'hover-bg': !socdInfo.pos[1] }" @mouseup="KeydropKey(1)">{{ keyText[1] }}</p>
             <div class="del_btn" @click="onClick" v-show="socdInfo.pos[1] && key2Index === 0"></div>
           </div>
         </div>
@@ -57,6 +57,7 @@
 <script setup>
 import keyboard from '@/configs/byte-to-key/keyboard';
 import { scaleValue } from '@/utils/responsive.js';
+import { filterSocdAndRsKey } from '@/utils/filter-key.js';
 import { useKeyboardStore } from '@/stores';
 import { useAdvancedHook } from '@/hooks';
 import { showMessage } from '@/utils/message';
@@ -145,6 +146,11 @@ const onCancel = () => {
 };
 
 const handleSocdKey = (keyVal) => {
+  const unBinding = filterSocdAndRsKey(keyboardStore.keyboards, keyVal);
+  if (unBinding) {
+    showMessage('该键已绑定高级键，请重新选择', 'warning');
+    return;
+  }
   if (!socdInfo.value.pos[0]) {
     socdInfo.value.pos[0] = keyVal;
     socdInfo.value.key[0] = keyVal;
@@ -154,20 +160,17 @@ const handleSocdKey = (keyVal) => {
   }
 };
 
-const KeydropFirst = () => {
+const KeydropKey = (idx) => {
   const keyVal = keyboardStore.selectKey.keyCode;
-  if (!socdInfo.value.pos[0]) {
-    socdInfo.value.pos[0] = keyVal;
-    socdInfo.value.key[0] = keyVal;
+  const unBinding = filterSocdAndRsKey(keyboardStore.keyboards, keyVal);
+  if (unBinding) {
+    showMessage('该键已绑定高级键，请重新选择', 'warning');
+    return;
   }
-};
-
-const KeydropSec = () => {
-  const keyVal = keyboardStore.selectKey.keyCode;
-  if (!socdInfo.value.pos[1]) {
-    socdInfo.value.pos[1] = keyVal;
-    socdInfo.value.key[1] = keyVal;
-  }
+  // if (!socdInfo.value.pos[idx]) {
+  socdInfo.value.pos[idx] = keyVal;
+  socdInfo.value.key[idx] = keyVal;
+  // }
 };
 
 const onClick = (keyCode) => {

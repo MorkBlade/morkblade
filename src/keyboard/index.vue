@@ -235,6 +235,7 @@ const handleKeyClick = (rowIndex, colIndex) => {
   // 当前类型
   if (route.path === '/key-assignment') {
     // 单选
+    console.log('handleKeyClick');
     keyboardStore.handleSelectKeyClick({ rowIndex, colIndex }, 'single');
   } else {
     // 多选

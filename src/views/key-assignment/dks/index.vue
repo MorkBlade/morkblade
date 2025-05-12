@@ -12,7 +12,7 @@
       <div>
         <div class="dks-key">
           <div class="key-box" @mouseenter="onMouseEn('key1')" @mouseleave="onMouseLe('key1')">
-            <p @mouseup="KeydropFirst">{{ keyText[0] }}</p>
+            <p @mouseup="KeydropKey(0)">{{ keyText[0] }}</p>
             <div class="del_btn" @click="onDelKey('key1')" v-show="keyText[0] && delKeyShow[0]"></div>
           </div>
           <span
@@ -31,7 +31,7 @@
         </div>
         <div class="dks-key">
           <div class="key-box" @mouseenter="onMouseEn('key2')" @mouseleave="onMouseLe('key2')">
-            <p @mouseup="KeydropSec">{{ keyText[1] }}</p>
+            <p @mouseup="KeydropKey(1)">{{ keyText[1] }}</p>
             <div class="del_btn" @click="onDelKey('key2')" v-show="keyText[1] && delKeyShow[1]"></div>
           </div>
           <span
@@ -50,7 +50,7 @@
         </div>
         <div class="dks-key">
           <div class="key-box" @mouseenter="onMouseEn('key3')" @mouseleave="onMouseLe('key3')">
-            <p @mouseup="KeydropThir">{{ keyText[2] }}</p>
+            <p @mouseup="KeydropKey(2)">{{ keyText[2] }}</p>
             <div class="del_btn" @click="onDelKey('key3')" v-show="keyText[2] && delKeyShow[2]"></div>
           </div>
           <span
@@ -69,7 +69,7 @@
         </div>
         <div class="dks-key">
           <div class="key-box" @mouseenter="onMouseEn" @mouseleave="onMouseLe">
-            <p @mouseup="KeydropFour">{{ keyText[3] }}</p>
+            <p @mouseup="KeydropKey(3)">{{ keyText[3] }}</p>
             <div class="del_btn" @click="onDelKey" v-show="keyText[3] && delKeyShow[3]"></div>
           </div>
           <span
@@ -115,6 +115,7 @@ import { useKeyboardStore } from '@/stores';
 import { useAdvancedHook } from '@/hooks';
 import { showMessage } from '@/utils/message';
 import { scaleValue } from '@/utils/responsive';
+import { filterSocdAndRsKey } from '@/utils/filter-key.js';
 
 import mDialog from '@/components/dialog.vue';
 import dksDelay from './components/delay.vue';
@@ -632,6 +633,11 @@ const changeDksDelay2 = (delay) => {
 };
 
 const handleDksKey = (keyVal) => {
+  const unBinding = filterSocdAndRsKey(keyboardStore.keyboards, keyVal);
+  if (unBinding) {
+    showMessage('该键已绑定高级键，请重新选择', 'warning');
+    return;
+  }
   if (!dksInfo.value.dks[0]) {
     dksInfo.value.dks[0] = keyVal;
   } else if (!dksInfo.value.dks[1]) {
@@ -687,20 +693,14 @@ const parse8BitToBooleans = (num) => {
   return result;
 };
 
-const KeydropFirst = () => {
-  if (!dksInfo.value.dks[0]) dksInfo.value.dks[0] = keyboardStore.selectKey.value;
-};
-
-const KeydropSec = () => {
-  if (!dksInfo.value.dks[1]) dksInfo.value.dks[1] = keyboardStore.selectKey.value;
-};
-
-const KeydropThir = () => {
-  if (!dksInfo.value.dks[2]) dksInfo.value.dks[2] = keyboardStore.selectKey.value;
-};
-
-const KeydropFour = () => {
-  if (!dksInfo.value.dks[3]) dksInfo.value.dks[3] = keyboardStore.selectKey.value;
+const KeydropKey = (idx) => {
+  const keyVal = keyboardStore.selectKey.keyCode;
+  const unBinding = filterSocdAndRsKey(keyboardStore.keyboards, keyVal);
+  if (unBinding) {
+    showMessage('该键已绑定高级键，请重新选择', 'warning');
+    return;
+  }
+  dksInfo.value.dks[idx] = keyboardStore.selectKey.keyCode;
 };
 
 const save = async () => {

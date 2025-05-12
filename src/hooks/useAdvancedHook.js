@@ -105,8 +105,8 @@ export const useAdvancedHook = () => {
     if (isVersion2) {
       let result2 = null;
       const data = { kcs: [...dks], delay };
-      const socdKey = getRowCol(dks);
-      const [[row, col], [row2, col2]] = socdKey.map((item) => item.split('-').map(Number));
+      const keysArray = getRowCol(dks);
+      const [[row, col], [row2, col2]] = keysArray.map((item) => item.split('-').map(Number));
       result = await services.setHigherKeyRSV2({ row, col, data });
       result2 = await services.setHigherKeyRSV2({ row: row2, col: col2, data });
       // dksData = {
@@ -121,8 +121,8 @@ export const useAdvancedHook = () => {
       // getRS({ ...dksData, keyValue: dks[1] });
     } else {
       result = await services.setRS({ key: dks[0], dks: dks[1] });
-      const socdKey = getRowCol(dks);
-      const [[row, col], [row2, col2]] = socdKey.map((item) => item.split('-').map(Number));
+      const keysArray = getRowCol(dks);
+      const [[row, col], [row2, col2]] = keysArray.map((item) => item.split('-').map(Number));
       getRS({ keyValue: dks[0], row, col, mode: 9 });
       getRS({ keyValue: dks[1], row: row2, col: col2, mode: 9 });
     }
@@ -404,8 +404,8 @@ export const useAdvancedHook = () => {
       // const { row, col, row2, col2, mode: socdMode, delay, kcs } = params;
       const { key, mode, delay } = params;
       // console.log('params', key);
-      const socdKey = getRowCol(key);
-      const [[row, col], [row2, col2]] = socdKey.map((item) => item.split('-').map(Number));
+      const keysArray = getRowCol(key);
+      const [[row, col], [row2, col2]] = keysArray.map((item) => item.split('-').map(Number));
       const data = { row, col, row2, col2, kcs: key, socdMode: mode, delay };
       const results = await services.setHigherKeySOCDV2(data);
       const [resultA, resultB] = results;
@@ -415,8 +415,8 @@ export const useAdvancedHook = () => {
       return results;
     } else {
       const { pos, key, type, mode } = params;
-      const socdKey = getRowCol(key);
-      const [[row, col], [row2, col2]] = socdKey.map((item) => item.split('-').map(Number));
+      const keysArray = getRowCol(key);
+      const [[row, col], [row2, col2]] = keysArray.map((item) => item.split('-').map(Number));
       const data = { pos1: pos[0], pos2: pos[1], key1: key[0], key2: key[1], type, mode };
       const result = await services.setSocd(data);
       // console.log('v1 setSocd', data, result);
@@ -456,8 +456,8 @@ export const useAdvancedHook = () => {
 
     if (advancedType === 'socd') {
       const { socd } = advanced;
-      const socdKey = getRowCol(socd.socd);
-      const [[row, col], [row2, col2]] = socdKey.map((item) => item.split('-').map(Number));
+      const keysArray = getRowCol(socd.socd);
+      const [[row, col], [row2, col2]] = keysArray.map((item) => item.split('-').map(Number));
 
       await Promise.all([
         services.setHigherKeyNONEV2({ row, col, data: { mode: 0 } }),
@@ -592,17 +592,17 @@ export const useAdvancedHook = () => {
  * @returns
  */
 const getRowCol = (keys) => {
-  const socdKey = [];
+  const keysArray = [];
   const keyboardStore = useKeyboardStore();
   for (let row = 0; row < keyboardStore.keyboards.length; row++) {
     for (let col = 0; col < keyboardStore.keyboards[row].length; col++) {
       if (keyboardStore.keyboards[row][col].keyValue === keys[0]) {
-        socdKey.push(`${row}-${col}`);
+        keysArray.push(`${row}-${col}`);
       }
       if (keyboardStore.keyboards[row][col].keyValue === keys[1]) {
-        socdKey.push(`${row}-${col}`);
+        keysArray.push(`${row}-${col}`);
       }
     }
   }
-  return socdKey;
+  return keysArray;
 };

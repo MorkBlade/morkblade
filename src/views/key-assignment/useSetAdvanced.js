@@ -215,6 +215,7 @@ const useSetAdvanced = () => {
   return {
     edit,
     editKey,
+    childRef,
     socdInfo,
     dksInfo,
     mtInfo,
@@ -227,7 +228,6 @@ const useSetAdvanced = () => {
     precision,
     handleKeyTypeChange,
     handleDialoConfirm,
-    // handleDelete,
     resetDefaultValue,
     advancedItems,
     handleItemClick,

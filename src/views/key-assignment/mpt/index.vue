@@ -43,6 +43,7 @@ import keyboard from '@/configs/byte-to-key/keyboard';
 import { useKeyboardStore } from '@/stores';
 import { useAdvancedHook } from '@/hooks';
 import { showMessage } from '@/utils/message';
+import { filterSocdAndRsKey } from '@/utils/filter-key.js';
 
 import mDialog from '@/components/dialog.vue';
 import characterCard from '@/components/character-card.vue';
@@ -117,6 +118,11 @@ const onMouseLe = (idx) => {
 };
 
 const handleMptKey = (keyVal) => {
+  const unBinding = filterSocdAndRsKey(keyboardStore.keyboards, keyVal);
+  if (unBinding) {
+    showMessage('该键已绑定高级键，请重新选择', 'warning');
+    return;
+  }
   if (!mptInfo.value.dks[0]) {
     mptInfo.value.dks[0] = keyVal;
   } else if (!mptInfo.value.dks[1]) {
@@ -127,8 +133,14 @@ const handleMptKey = (keyVal) => {
 };
 
 const KeydropKey = (idx) => {
+  const keyVal = keyboardStore.selectKey.keyCode;
+  const unBinding = filterSocdAndRsKey(keyboardStore.keyboards, keyVal);
+  if (unBinding) {
+    showMessage('该键已绑定高级键，请重新选择', 'warning');
+    return;
+  }
   // if (!mptInfo.value.dks[idx]) mptInfo.value.dks[idx] = keyboardStore.selectKey.keyCode;
-  mptInfo.value.dks[idx] = keyboardStore.selectKey.keyCode;
+  mptInfo.value.dks[idx] = keyVal;
 };
 
 const onClick = (keyCode) => {

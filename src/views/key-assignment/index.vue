@@ -103,8 +103,8 @@ import keyConfigCard from './components/key-config-card.vue';
 const {
   edit,
   editKey,
-  socdInfo,
   childRef,
+  socdInfo,
   dksInfo,
   mtInfo,
   rsInfo,
