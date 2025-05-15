@@ -105,7 +105,7 @@ const selectItem = (idx) => {
   }
 
   span {
-    width: 108px;
+    width: calc(var(--size-100) + var(--spacing-8));
     height: 100%;
     display: inline-block;
     text-align: center;

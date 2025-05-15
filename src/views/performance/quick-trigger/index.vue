@@ -34,7 +34,7 @@
       </div>
     </div>
     <saveConfig
-      :travelVal="travelVal"
+      :travelVal="singleTravel"
       :RTKeyDown="rtPressTravel"
       :RTKeyUp="rtReleaseTravel"
       @saveRtConfig="saveRtConfig"
@@ -137,6 +137,7 @@ const handleTriggerPointChange = async (value) => {
 
 // 设置RT按下的行程
 const setRtPressTravel = async (value) => {
+  console.log('setRtPressTravel: ', value);
   if (!rtEnabled.value) handleRtEnabledChange();
   rtPressTravel.value = value;
   rtPressLinkRelease.value ? (rtReleaseTravel.value = value) : '';

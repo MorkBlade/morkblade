@@ -49,7 +49,7 @@
       </template>
       <template v-else-if="TYPE_MAPPING[ite.advancedType] === 'macro' && ite.macro">
         <p>{{ keyboard[ite.keyValue] }}</p>
-        <p>{{ `Mcr${ite.macro.macro.macro.mode + 1}` }}</p>
+        <p>{{ `Mcr${ite.macro.macro.macro.id + 1}` }}</p>
       </template>
       <img
         class="separation"

@@ -2,11 +2,18 @@
   <div class="logo-box">
     <img class="logo-img" src="/src/assets/images/logo.png" alt="" />
     <img class="bar-img" src="/src/assets/images/green_bar.svg" alt="" />
-    <span>BOLD TKL</span>
+    <template v-if="isVersion2">
+      <span>M K 6 0</span>
+    </template>
+    <template v-else>
+      <span>BOLD TKL</span>
+    </template>
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
+</script>
 
 <style scoped lang="scss">
 .logo-box {
@@ -29,7 +36,8 @@
   }
 
   span {
-    margin-top: var(--spacing-26);
+    margin-top: var(--spacing-21);
+    font-family: 'Ridenation';
     font-size: var(--font-size-18);
     color: #ffffff;
   }

@@ -6,15 +6,15 @@
     </div>
     <div class="other-config-box">
       <span>触发行程：</span>
-      <span>{{ travelVal.toFixed(2) }}mm</span>
+      <span>{{ travelVal }}mm</span>
     </div>
     <div class="other-config-box">
       <span>RT按下行程：</span>
-      <span>{{ RTKeyDown.toFixed(2) }}mm</span>
+      <span>{{ RTKeyDown }}mm</span>
     </div>
     <div class="other-config-box">
       <span>RT抬起行程：</span>
-      <span>{{ RTKeyUp.toFixed(2) }}mm</span>
+      <span>{{ RTKeyUp }}mm</span>
     </div>
     <div class="tip-box">
       <img src="@/assets/images/warn_icon.svg" alt="" />

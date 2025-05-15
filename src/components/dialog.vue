@@ -209,7 +209,9 @@ const onCancel = () => {
       }
 
       ::v-deep(.el-progress-bar) {
-        width: var(--size-500);
+        width: calc(var(--size-510) - var(--size-10));
+        margin-left: var(--spacing-38);
+        margin-top: var(--spacing-2);
       }
     }
 

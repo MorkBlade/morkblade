@@ -2,11 +2,11 @@
   <div class="save-config-box">
     <div class="config-box1">
       <span>按下死区：</span>
-      <span>{{ keyDownUp.toFixed(2) }}mm</span>
+      <span>{{ keyDownUp }}mm</span>
     </div>
     <div class="config-box2">
       <span>抬起死区：</span>
-      <span>{{ keyUpVal.toFixed(2) }}mm</span>
+      <span>{{ keyUpVal }}mm</span>
     </div>
     <div :style="{ marginTop: '130px' }">
       <saveConfigBtn @saveConfig="saveConfig" />

@@ -140,22 +140,12 @@ const onClick = (keyCode) => {
 };
 
 const save = async () => {
-  let key = 0;
-  let row = 0;
-  let col = 0;
-  if (edit) {
-    key = editKey;
-  } else {
-    // 获取当前键盘的keycode
-    const location = keyboardStore.activeKeys[0].split('-');
-    const [rowIndex, colIndex] = location;
-    const { keyValue } = keyboardStore.keyboards[rowIndex][colIndex];
-    key = keyValue;
-    row = +rowIndex;
-    col = +colIndex;
+  try {
+    const res = await setRS(rsInfo.value);
+    return res;
+  } catch (error) {
+    console.log('error', error);
   }
-  const res = await setRS({ key, row, col, ...rsInfo.value });
-  return res;
 };
 
 const reset = () => {

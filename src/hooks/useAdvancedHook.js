@@ -385,10 +385,10 @@ export const useAdvancedHook = () => {
       keyboardStore.keyboards[row][col].advancedKeys = advancedKeys;
     } else {
       const { keyValue, row, col, mode } = params;
-      const result = await services.getSocd(keyValue, appStore.protocolVersion);
-      const { mode: socdMode, key1, key2 } = result;
+      const result = await services.getSocd(keyValue, appStore.protocolVersion || '1.0.7');
+      const { mode: socdMode, key1, key2, pos1, pos2 } = result;
       // console.log('getSocd v1', params, result);
-      const socdData = { keyValue, type: 'socd', mode, socdMode, socd: [key1, key2], delay: 100 };
+      const socdData = { keyValue, type: 'socd', mode, socdMode, socd: [pos1, pos2], delay: 100 };
       const advancedKeys = {
         ...keyboardStore.keyboards[row][col].advancedKeys,
         socd: socdData,
@@ -419,7 +419,7 @@ export const useAdvancedHook = () => {
       const [[row, col], [row2, col2]] = keysArray.map((item) => item.split('-').map(Number));
       const data = { pos1: pos[0], pos2: pos[1], key1: key[0], key2: key[1], type, mode };
       const result = await services.setSocd(data);
-      // console.log('v1 setSocd', data, result);
+      console.log('v1 setSocd', data, result);
 
       getSocd({ keyValue: key[0], data: null, row: row, col: col, mode: 8 });
       getSocd({ keyValue: key[1], data: null, row: row2, col: col2, mode: 8 });
@@ -477,9 +477,11 @@ export const useAdvancedHook = () => {
     const keysToDelete = [];
 
     if (advancedType === 'socd') {
-      const storedSocdKeys = JSON.parse(localStorage.getItem('socdKeys') || '{}');
-      const socdKeys = storedSocdKeys[advanced.keyValue] || [];
-      keysToDelete.push(...socdKeys);
+      const { socd } = advanced.socd;
+      console.log('handleV1Deletion', advanced, advancedType, socd);
+      // const storedSocdKeys = JSON.parse(localStorage.getItem('socdKeys') || '{}');
+      // const socdKeys = storedSocdKeys[advanced.keyValue] || [];
+      keysToDelete.push(...socd);
     } else if (advancedType === 'rs') {
       const { rs } = advanced;
       keysToDelete.push(...rs.rs);

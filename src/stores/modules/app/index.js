@@ -112,6 +112,7 @@ const useAppStore = defineStore('app', {
     // 获取协议版本
     async getProtocolVersion() {
       const protocolVersion = await services.getApi({ type: 'ORDER_TYPE_PROTOCOL_VERSION' });
+      console.log('getProtocolVersion', protocolVersion);
       this.protocolVersion = protocolVersion;
       return protocolVersion;
     },

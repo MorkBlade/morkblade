@@ -6,7 +6,8 @@
   >
     <img class="change-icon" :src="appStore.activeConfigIndex !== null ? changedIcon : changeIcon" />
     <span class="dropdown-text">
-      {{ appStore.configList[appStore.activeConfigIndex]?.title }}
+      <!-- {{ appStore.configList[appStore.activeConfigIndex]?.title }} -->
+      {{ $t(`messages.keyboardConfig${appStore.activeConfigIndex}`) }}
     </span>
     <img
       class="down-icon"
@@ -24,7 +25,7 @@
         :class="{ checked: appStore.activeConfigIndex === index }"
         @click="selectItem(index)"
       >
-        {{ item.title }}
+        {{ $t(`messages.keyboardConfig${index}`) }}
       </li>
       <template v-if="customItems.length > 0">
         <p style="margin-bottom: 5px">自定义配置</p>

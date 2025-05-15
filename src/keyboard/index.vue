@@ -213,7 +213,6 @@ onMounted(async () => {
     await initCustomLighting();
 
     // Get protocol version
-    await appStore.getProtocolVersion();
 
     // Get system mode
     const data = await appStore.systemMode();
@@ -221,6 +220,7 @@ onMounted(async () => {
 
     // Only initialize high level keys if we're on the key-assignment route
     // and ensure keyboard is initialized
+    await appStore.getProtocolVersion();
     if (route.path === '/key-assignment' && keyboardStore.keyboards.length > 0) {
       // Add a small delay to ensure component is fully mounted
       await new Promise((resolve) => setTimeout(resolve, 100));
@@ -470,6 +470,7 @@ const containerDimensions = computed(() => {
       left: calc(var(--spacing-3) * -1);
       top: var(--size-70);
       z-index: 5;
+      transform: rotate(180deg);
 
       & span {
         width: calc(var(--spacing-70) - var(--spacing-1));

@@ -6,7 +6,7 @@
     </div>
     <div class="config-box2">
       <span>触发行程：</span>
-      <span>{{ props.travelVal.toFixed(2) }}mm</span>
+      <span>{{ props.travelVal }}mm</span>
     </div>
     <div class="tip-box">
       <img src="@/assets/images/warn_icon.svg" alt="" />

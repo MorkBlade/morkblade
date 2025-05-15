@@ -3,7 +3,8 @@
     <div class="saturation-container__setting">
       <div class="rgb-input">
         <span>R</span>
-        <input type="number" v-model.number="rgb.R" :min="min" :max="max" @input="updateFromRgb" />
+        <input type="number" v-model.number="rgb.R" :min="min" :max="max" @input="updateFromRgb" @blur="handleBlur" />
+        <i v-if="!isVersion2">%</i>
         <horizontalSlider
           :sliderValue="rgb.R"
           :min="min"
@@ -13,7 +14,8 @@
       </div>
       <div class="rgb-input">
         <span>G</span>
-        <input type="number" v-model.number="rgb.G" :min="min" :max="max" @input="updateFromRgb" />
+        <input type="number" v-model.number="rgb.G" :min="min" :max="max" @input="updateFromRgb" @blur="handleBlur" />
+        <i v-if="!isVersion2">%</i>
         <horizontalSlider
           :sliderValue="rgb.G"
           :min="min"
@@ -23,7 +25,8 @@
       </div>
       <div class="rgb-input">
         <span>B</span>
-        <input type="number" v-model.number="rgb.B" :min="min" :max="max" @input="updateFromRgb" />
+        <input type="number" v-model.number="rgb.B" :min="min" :max="max" @input="updateFromRgb" @blur="handleBlur" />
+        <i v-if="!isVersion2">%</i>
         <horizontalSlider
           :sliderValue="rgb.B"
           :min="min"
@@ -52,9 +55,23 @@ let timer = null;
 
 const updateFromRgb = () => {
   // 确保RGB值在有效范围内
-  rgb.value.r = Math.min(255, Math.max(0, rgb.value.r));
-  rgb.value.g = Math.min(255, Math.max(0, rgb.value.g));
-  rgb.value.b = Math.min(255, Math.max(0, rgb.value.b));
+  rgb.value.R = Math.min(255, Math.max(0, rgb.value.R));
+  rgb.value.G = Math.min(255, Math.max(0, rgb.value.G));
+  rgb.value.B = Math.min(255, Math.max(0, rgb.value.B));
+};
+
+const handleBlur = () => {
+  console.log('handleBlur');
+  if (isVersion2) {
+    if (rgb.value.R > 255) rgb.value.R = 255;
+    if (rgb.value.G > 255) rgb.value.G = 255;
+    if (rgb.value.B > 255) rgb.value.B = 255;
+  } else {
+    console.log(rgb.value);
+    if (rgb.value.R > 100) rgb.value.R = 100;
+    if (rgb.value.G > 100) rgb.value.G = 100;
+    if (rgb.value.B > 100) rgb.value.B = 100;
+  }
 };
 
 const handleSaturation = (colorVal, keyCode) => {
@@ -89,6 +106,7 @@ const handleSaturation = (colorVal, keyCode) => {
       background-image: url('@/assets/images/rgb.svg');
       background-size: cover;
       background-repeat: no-repeat;
+      position: relative;
 
       span {
         margin: 0 var(--spacing-18);
@@ -96,6 +114,15 @@ const handleSaturation = (colorVal, keyCode) => {
         color: #ffffff;
         font-family: 'CN Heavy';
       }
+
+      i {
+        font-style: normal;
+        font-size: var(--font-size-10);
+        color: #cccccc;
+        position: absolute;
+        right: var(--spacing-10);
+      }
+
       input {
         width: var(--size-25);
         font-size: var(--font-size-10);

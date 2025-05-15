@@ -7,7 +7,7 @@ export const usePerformancePageHook = () => {
 
   const rowIdx = ref(null);
   const colIdx = ref(null);
-  const option = { max: 3.3, min: 0.005, step: 0.001 };
+  const option = { max: 3.3, min: 0, step: 0.001 };
 
   const activeKeys = computed(() => {
     return keyboardStore.activeKeys;

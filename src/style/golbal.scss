@@ -48,6 +48,14 @@ html {
   font-display: swap;
 }
 
+@font-face {
+  font-family: 'Ridenation';
+  src: url('@/assets/fonts/RidenationFreePersonalUse.otf');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 body {
   font-family: 'CN Regular', sans-serif;
   -webkit-user-select: none; /* Safari */

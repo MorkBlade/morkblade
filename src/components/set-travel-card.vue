@@ -24,7 +24,7 @@
           :height="sliderHeight"
           :min="min"
           :max="max"
-          v-model="travelVal"
+          :model-value="travelVal"
         />
       </div>
       <img class="slider-img isreverse" src="/src/assets/images/keystroke_scale_bg.svg" alt="" />
@@ -43,12 +43,12 @@
         <input
           type="number"
           :disabled="disabled"
-          :value="travelVal"
+          v-model="travelVal"
           min="0"
           max="4"
           @input="updateValueFromInput"
-          />
-          <!-- v-model.number="travelVal" -->
+          @blur="handleBlur"
+        />
         mm
       </div>
     </div>
@@ -140,20 +140,53 @@ const updateValue = (clientY) => {
   percentage = Math.max(0, Math.min(1, percentage)); // 确保百分比在0到1之间
   let newValue = max - percentage * (max - min);
   newValue = Math.round(newValue / step) * step; // 根据步进值四舍五入
+  if (newValue <= 0.005) newValue = 0.005;
   travelVal.value = parseFloat(newValue.toFixed(3)); // 保留一位小数
   emits('sendKeyVal', travelVal.value);
 };
 
-let timer=null;
-const updateValueFromInput = () => {
-  if (travelVal.value === '') {
+let timer = null;
+const updateValueFromInput = (e) => {
+  // if (!e.target.value) return;
+  const inputValue = parseFloat(e.target.value);
+  if (isNaN(inputValue)) {
+    console.log('asdasdasd');
     travelVal.value = 0;
+    emits('sendKeyVal', 0.005);
+    return;
   }
-  timer && clearTimeout(timer)
-  setTimeout(()=>{
-    emits('sendKeyVal', travelVal.value);
 
-  },500)
+  let sendTravel = 0;
+  if (inputValue >= max) {
+    sendTravel = max;
+  } else {
+    sendTravel = inputValue;
+  }
+  travelVal.value = sendTravel;
+  // timer && clearTimeout(timer);
+  // timer = setTimeout(() => {
+  emits('sendKeyVal', sendTravel <= 0.005 ? 0.005 : Number(sendTravel.toFixed(3)));
+  // }, 100);
+};
+
+const handleBlur = (e) => {
+  const inputValue = parseFloat(e.target.value);
+  let sendTravel = 0;
+  if (inputValue === 0) {
+    sendTravel = 0.005;
+  } else if (inputValue >= max) {
+    sendTravel = max;
+  } else if (inputValue < 0.005) {
+    sendTravel = 0.005;
+  } else {
+    sendTravel = inputValue;
+  }
+  if (isNaN(inputValue)) {
+    sendTravel = 0.005;
+  }
+  travelVal.value = sendTravel;
+  console.log('handleBlur', sendTravel);
+  emits('sendKeyVal', Number(sendTravel.toFixed(3)));
 };
 
 // 添加全局事件监听器以处理触摸设备上的拖动

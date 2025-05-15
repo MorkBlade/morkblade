@@ -9,38 +9,38 @@
       </div> -->
     </div>
     <div class="connect-title">
-      <h1>欢迎来到 MORK BLADE</h1>
-      <span>仅需三步, 轻松配置您的键盘</span>
+      <h1>{{ $t('messages.connectTip1') }}</h1>
+      <span>{{ $t('messages.connectTip2') }}</span>
       <p @click="handleDeviceStoreClick">
         <img src="@/assets/images/link2.svg" alt="" />
-        连接键盘
+        {{ $t('messages.connectKeyBoard') }}
       </p>
     </div>
     <div class="connect-guide">
       <div class="guide-item">
-        <p>点击连接键盘按钮</p>
+        <p>{{ $t('messages.connectStep1') }}</p>
         <img class="guide-item__icon1" src="@/assets/images/guide1.svg" alt="" />
         <div class="step">
           <img src="@/assets/images/sure.svg" alt="" />
-          STEP1
+          {{ $t('messages.step1') }}
         </div>
       </div>
       <img class="next_icon" src="@/assets/images/next_step.svg" alt="" />
       <div class="guide-item">
-        <p>允许访问设备</p>
+        <p>{{ $t('messages.connectStep2') }}</p>
         <img class="guide-item__icon2" src="@/assets/images/guide2.svg" alt="" />
         <div class="step">
           <img src="@/assets/images/sure.svg" alt="" />
-          STEP2
+          {{ $t('messages.step2') }}
         </div>
       </div>
       <img class="next_icon" src="@/assets/images/next_step.svg" alt="" />
       <div class="guide-item">
-        <p>开始配置键盘</p>
+        <p>{{ $t('messages.connectStep3') }}</p>
         <img class="guide-item__icon3" src="@/assets/images/guide3.svg" alt="" />
         <div class="step">
           <img src="@/assets/images/sure.svg" alt="" />
-          STEP3
+          {{ $t('messages.step3') }}
         </div>
       </div>
     </div>

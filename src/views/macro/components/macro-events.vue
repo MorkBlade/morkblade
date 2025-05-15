@@ -73,8 +73,14 @@
         </template>
       </div>
       <div class="operation-btn">
-        <saveConfigBtn btnText="应用更改" :icon="icon1" @saveConfig="saveConfig" />
-        <saveConfigBtn btnText="取消更改" :icon="icon2" @saveConfig="saveConfig('cancel')" />
+        <saveConfigBtn btnText="应用更改" :icon="icon1" :needKeys="false" @saveConfig="saveConfig" />
+        <saveConfigBtn
+          btnText="取消更改"
+          :icon="icon2"
+          :needKeys="false"
+          type="warning"
+          @saveConfig="saveConfig('cancel')"
+        />
       </div>
     </div>
   </div>
@@ -174,7 +180,7 @@ const changeKey = () => {
 
 const Keydrop = () => {
   if (!keyboardStore.selectKey.keyCode) return;
-  const keyVal = keyboardWord[keyboardStore.selectKey.value];
+  const keyVal = keyboardWord[keyboardStore.selectKey.keyCode];
   currentKey.value = keyVal;
   // if (keyVal && itemData.value && itemData.value.keyType === 'key') {
   //   // 发送按键更新事件
@@ -195,7 +201,7 @@ const selectItem = async (keyVal) => {
 };
 
 const saveConfig = async (action) => {
-  // console.log(action);
+  console.log('saveConfig', action);
 
   if (action === 'cancel') {
     // 取消操作，不发送更新
@@ -204,7 +210,7 @@ const saveConfig = async (action) => {
   }
 
   // 获取当前选择的按键值
-  const keyVal = keyboardStore.selectKey.value;
+  const keyVal = keyboardStore.selectKey.keyCode;
 
   if (keyVal && itemData.value && itemData.value.keyType === 'key') {
     // 发送按键更新事件

@@ -64,6 +64,7 @@ const debouncedUpdateSingleTravel = debounce((value) => {
 // 设置选中的为触发模式改单键程触发
 const handleTriggerPointChange = async (value) => {
   // 拿到选中的键值
+  // console.log('handleTriggerPointChange: ', value);
   singleTravel.value = value;
   debouncedUpdateSingleTravel(value);
 };
