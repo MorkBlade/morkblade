@@ -29,7 +29,7 @@ export const useAdvancedHook = () => {
         type: 'mt',
         mt: { delay: result, dksAll: [dksAll.dks1, dksAll.dks2, dksAll.dks3, dksAll.dks4] },
       };
-      console.log('get MT V1:>>>>>>>>>>> ', mtData);
+      // console.log('get MT V1:>>>>>>>>>>> ', mtData);
       const advancedKeys = {
         ...keyboardStore.keyboards[row][col].advancedKeys,
         mt: mtData,

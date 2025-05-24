@@ -52,10 +52,10 @@
         <p>固件设置</p>
         <div class="firmware-update">
           <div class="firmware-update__choose-version">
-            <span>固件版本选择:</span>
+            <span>在线升级:</span>
             <dropMenu :max-height="180" :items="firmwareVersionList" @sendSelectedIdx="handleSelectedVer" />
             <template v-if="isVersion2">
-              <span :style="{ marginLeft: `${scaleValue(20)}px` }">子版本选择:</span>
+              <span :style="{ marginLeft: `${scaleValue(20)}px` }">本地升级:</span>
               <el-upload
                 ref="uploadRef"
                 class="uploader"
@@ -73,21 +73,17 @@
                 </div>
                 <!-- v-if="loading" progress-->
                 <div class="uploader-progress" v-if="loading">
-                  <el-progress :percentage="progress" :color="'#91bc00'" />
+                  <el-progress :percentage="progress.current" :color="'#91bc00'" />
                 </div>
               </el-upload>
             </template>
             <template v-if="!isVersion2">
-              <span :style="{ marginLeft: `${scaleValue(20)}px` }">子版本选择:</span>
-              <dropMenu
-                :max-height="135"
-                :items="subVersionList"
-                :disabled="firmwareVerIdx === null"
-                @sendSelectedIdx="handleSelectedSubVer"
-              />
+              <span :style="{ marginLeft: `${scaleValue(20)}px` }">本地升级:</span>
+              <!-- :disabled="firmwareVerIdx === null" -->
+              <dropMenu :max-height="135" :items="subVersionList" @sendSelectedIdx="handleSelectedSubVer" />
             </template>
           </div>
-          <template v-if="isVersion2">
+          <template v-if="isVersion2 && bindData.length > 0">
             <div>
               <span>固件更新:</span>
               <div class="update-btn" @click="startUpdate">
@@ -96,7 +92,7 @@
               </div>
             </div>
           </template>
-          <template v-if="!isVersion2">
+          <template v-if="!isVersion2 && subVersionIdx !== null">
             <div>
               <span>固件更新:</span>
               <div
@@ -153,7 +149,7 @@
     :isUpdate="isUpdate"
     :dialogTitle="updateTitle"
     :textContent="textContent"
-    :progress="progress"
+    :progress="progress.current"
     :updateRes="updateRes"
     @sure="onSure"
     @cancel="onCancel"
@@ -162,18 +158,25 @@
 
 <script setup>
 import services from '@/services/index.js';
+import emitter from '@/utils/app-emitter';
 import { scaleValue } from '@/utils/responsive.js';
 import { showMessage } from '@/utils/message';
 import { genFileId } from 'element-plus';
-import { useAppStore, useDeviceStore, usePerformanceStore } from '@/stores';
+import { useAppStore, useDeviceStore, usePerformanceStore, useKeyboardStore, useMacroStore } from '@/stores';
+import { useAdvancedHook } from '@/hooks';
+import { useLightingHook } from '@/hooks';
 
 import mDialog from '@/components/dialog.vue';
 import dropMenu from '@/components/drop-menu.vue';
 
 const router = useRouter();
 const appStore = useAppStore();
+const macroStore = useMacroStore();
+const keyboardStore = useKeyboardStore();
 const deviceStore = useDeviceStore();
 const performanceStore = usePerformanceStore();
+const { initLighting } = useLightingHook();
+const { getHighLevelKeys } = useAdvancedHook();
 
 const isShow = ref(false); // dialog 显示状态
 const isUpdate = ref(false); // dialog 是否显示升级样式
@@ -195,8 +198,12 @@ const fileList = ref([]);
 const selectedFile = ref(null);
 const bindData = ref([]);
 const updating = ref(false);
-const progress = ref(0); // 升级进度
+// const progress = ref(0); // 升级进度
 const loading = ref(false);
+const progress = reactive({
+  current: 0,
+  total: 0,
+});
 const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
 const urlList = ['/api/update_esports.bin', '/api/update_highlight.bin', '/api/update_beta.bin'];
 
@@ -205,9 +212,22 @@ const KeyboardSN = computed(() => appStore.baseInfo?.KeyboardSN || appStore.base
 const appVersion = computed(() => appStore.baseInfo?.appVersion || '--');
 const keyboardRunMode = computed(() => appStore.baseInfo?.KeyboardRunMode);
 const appVersionTime = computed(() => appStore.baseInfo?.appBuildDate || appStore.baseInfo?.timestamp || '--');
+const progressPercentage = computed(() => {
+  if (progress.current === 0) {
+    return 0;
+  }
+  return Math.round((progress.current / progress.total) * 100);
+});
+
+emitter.on('resetData', (flag) => {
+  if (flag) {
+    console.log('resetData----------->');
+    regainKeyboardData();
+  }
+});
 
 onMounted(async () => {
-  const rate = await performanceStore.getRateOfReturn();
+  const rate = await performanceStore.getRateOfReturn(isVersion2);
   selectedRateIdx.value = rate;
 });
 
@@ -223,9 +243,9 @@ const RateOfReturnList = computed(() => {
   return ['8KHz', '4KHz', '2KHz', '1KHz', '500Hz', '250Hz', '125Hz'];
 });
 
-const handleSelectedRate = (idx) => {
-  console.log('handleSelectedRate', idx);
-  performanceStore.setRateOfReturn(idx);
+const handleSelectedRate = (idx, ite) => {
+  console.log('handleSelectedRate:', idx, ite);
+  performanceStore.setRateOfReturn(idx, ite, isVersion2);
 };
 
 const handleSelectedSubVer = (idx) => {
@@ -278,13 +298,13 @@ const onSure = async (keyCode) => {
     await deviceStore.factoryDataReset(isVersion2);
   } else {
     // console.log('asdasdasd', keyCode);
-    if (keyCode === 'enterBoot') {
-      toBoot();
-    } else if (keyCode === 'reconnect') {
-      reconnect();
-    } else if (keyCode === 'update' && keyboardRunMode.value !== 255) {
-      getFirmWarePack(urlList[subVersionIdx.value]);
-    }
+    // if (keyCode === 'enterBoot') {
+    //   toBoot();
+    // } else if (keyCode === 'reconnect') {
+    //   reconnect();
+    // } else if (keyCode === 'update' && keyboardRunMode.value !== 255) {
+    getFirmWarePack(urlList[subVersionIdx.value]);
+    // }
   }
   eventType.value = null;
 };
@@ -315,15 +335,33 @@ const getFirmWarePack = async (url) => {
       const reader = new FileReader();
       reader.onload = async function (e) {
         const resultArrayBuffer = reader.result;
+        // console.log('resultArrayBuffer', resultArrayBuffer);
         try {
-          const result = await services.updateBin(resultArrayBuffer, (data) => {
-            const { current, total } = data;
-            progress.value = parseFloat(((current / total) * 100).toFixed(2));
-            console.log('current and total:>>>', current / total);
+          // const result = await services.updateBin(resultArrayBuffer, (data) => {
+          //   const { current, total } = data;
+          //   progress.value = parseFloat(((current / total) * 100).toFixed(2));
+          //   console.log('current and total:>>>', current / total);
+          // });
+          emitter.emit('isUpdate', true);
+          const result = await services.updateBin(resultArrayBuffer, ({ current, total }) => {
+            console.log('current: ', current);
+            if (current === 100) {
+              progress.current = 100;
+            } else {
+              progress.current = parseFloat(((current / total) * 100).toFixed(2));
+            }
+            progress.total = total;
+            // updateStatus.value = status;
           });
           console.log('update suc-------------> ', result);
-          updateRes.value = true;
-          deviceStore.updateSuc = true;
+          if (result.success === true) {
+            emitter.emit('isUpdate', false);
+            updateRes.value = true;
+            deviceStore.updateSuc = true;
+            progress.current = 0;
+            isShow.value = false;
+            showMessage('升级成功！');
+          }
           // setTimeout(() => {
           //   router.push({
           //     path: '/key-calibration',
@@ -331,18 +369,19 @@ const getFirmWarePack = async (url) => {
           //   });
           // }, 2000);
 
-          setTimeout(() => {
-            // 10s后检查是否在进行
-            if (!progress.value) {
-              isShow.value = false;
-              router.push({
-                path: '/',
-                replace: true,
-              });
-            }
-          }, 10000);
+          // setTimeout(() => {
+          //   // 10s后检查是否在进行
+          //   if (!progress.value) {
+          //     isShow.value = false;
+          //     router.push({
+          //       path: '/',
+          //       replace: true,
+          //     });
+          //   }
+          // }, 10000);
         } catch (error) {
           console.log('update failed----------->', error);
+          progress.current = 0;
           updateRes.value = false;
           setTimeout(() => {
             router.push({
@@ -378,7 +417,7 @@ const handleExceed = (files) => {
 
 const handleRemove = () => {
   // console.log(uploadFile, uploadFiles);
-  console.log('clear');
+  // console.log('clear');
   bindData.value = [];
 };
 
@@ -410,8 +449,9 @@ const updateDisplayProgress = (targetProgress) => {
     // updateProgress.value = targetProgress;
     return;
   }
-
-  progress.value = Math.max(progress.value, targetProgress);
+  // console.log('targetProgress:', targetProgress);
+  progress.current = Math.max(progress.value, targetProgress);
+  // progress.value = targetProgress - 0;
 };
 
 const startUpdate = async () => {
@@ -421,6 +461,7 @@ const startUpdate = async () => {
   }
 
   try {
+    emitter.emit('isUpdate', true);
     uploadRef.value?.clearFiles();
     updating.value = true;
     loading.value = true;
@@ -428,14 +469,14 @@ const startUpdate = async () => {
     progress.value = 0;
 
     // await showMessage('loading', UPDATE_STEPS.ENTER_BOOT);
-    await deviceStore.appToBoot();
-    await delay(4000);
+    // await deviceStore.appToBoot();
+    // await delay(4000);
 
     // await showMessage('loading', UPDATE_STEPS.CONNECT);
-    const device = await deviceStore.connectDevice();
-    if (!device) {
-      throw new Error('连接超时，请检查设备是否正确连接');
-    }
+    // const device = await deviceStore.connectDevice();
+    // if (!device) {
+    //   throw new Error('连接超时，请检查设备是否正确连接');
+    // }
 
     // await showMessage('loading', UPDATE_STEPS.UPDATING);
     const res = await deviceStore.updateDevice(bindData.value, ({ percentage }) => {
@@ -460,6 +501,8 @@ const startUpdate = async () => {
     //   await delay(100);
     // }
     // await showMessage('success', '更新成功');
+    showMessage('更新成功');
+    emitter.emit('isUpdate', false);
     await delay(1000);
 
     resetStates();
@@ -488,15 +531,39 @@ const resetStates = () => {
   updating.value = false;
   loading.value = false;
   // updateProgress.value = 0;
-  progress.value = 0;
+  progress.current = 0;
+  progress.total = 0;
   fileList.value = [];
   selectedFile.value = null;
   bindData.value = [];
+  regainKeyboardData();
 };
 
 // 选择固件版本
 const handleSelectedVer = (idx) => {
   firmwareVerIdx.value = idx;
+};
+
+const regainKeyboardData = async () => {
+  appStore.getBaseInfo(isVersion2);
+  // 获取键盘数据
+  keyboardStore.checkFnLayer(0);
+  await keyboardStore.initKeyboard();
+  await initLighting();
+  // const keyboards = await keyboardStore.getKeyLayout({ layer: keyboardStore.fnLayer });
+  // console.log('regain keyboards data:', keyboards);
+  // 获取性能数据
+  // await performanceStore.getPerformance(keyboards);
+  // 获取高级键
+  console.log('isVersion2: ', isVersion2);
+  await getHighLevelKeys(keyboardStore.keyboards);
+  if (isVersion2) {
+    // 获取宏数据
+    await macroStore.getMacroAllData();
+  } else {
+    console.log('remove macro data');
+    localStorage.removeItem('localMacros');
+  }
 };
 </script>
 

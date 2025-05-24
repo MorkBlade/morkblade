@@ -10,13 +10,27 @@
   >
     <p class="top-key">{{ showKeyCode }}</p>
     <!-- <p class="center-key" v-if="!singleTravel && !rtReleaseTravel && !rtPressTravel">{{ byteToKey[keyItem.keyValue] }}</p> -->
+    <!-- 'mechanicalMode', 'quickTrigger' -->
     <div class="show-val-box" v-if="route.path === '/performance'">
-      <p class="single-travel" v-if="singleTravel !== null">{{ singleTravel }}</p>
-      <template v-if="currentModel == 'mechanicalMode' || currentModel == 'quickTrigger'">
-        <p class="rt-press-travel" v-if="rtPressTravel !== null">{{ rtPressTravel }}</p>
-        <p class="rt-release-travel" v-if="rtReleaseTravel !== null">{{ rtReleaseTravel }}</p>
+      <template v-if="isVersion2">
+        <!-- TODO 性能预设要显示啥数据 -->
+        <template v-if="currentModel === 'mechanicalMode'">
+          <p class="single-travel" v-if="singleTravel !== null">{{ singleTravel }}</p>
+        </template>
+        <template v-else-if="currentModel === 'quickTrigger'">
+          <p class="rt-first-travel" v-if="rtPressTravel !== null">{{ rtFirstTravel }}</p>
+          <p class="rt-press-travel" v-if="rtPressTravel !== null">{{ rtPressTravel }}</p>
+          <p class="rt-release-travel" v-if="rtReleaseTravel !== null">{{ rtReleaseTravel }}</p>
+        </template>
       </template>
-      <template v-if="currentModel == 'deadZone'">
+      <template v-else>
+        <template v-if="currentModel !== 'deadZone' && currentModel !== 'axis'">
+          <p class="single-travel" v-if="singleTravel !== null">{{ singleTravel }}</p>
+          <p class="rt-press-travel" v-if="rtPressTravel !== null && isRT">{{ rtPressTravel }}</p>
+          <p class="rt-release-travel" v-if="rtReleaseTravel !== null && isRT">{{ rtReleaseTravel }}</p>
+        </template>
+      </template>
+      <template v-if="currentModel === 'deadZone'">
         <p class="rt-release-travel">{{ pressDeadTravel }}</p>
         <p class="rt-release-travel">{{ releaseDead }}</p>
       </template>
@@ -225,12 +239,18 @@ const advancedTag = computed(() => {
   return type;
 });
 
+// 显示rtFirstTravel
+const rtFirstTravel = computed(() => {
+  if (currentModel !== 'deadZone' && currentModel !== 'axis' && PerformanceData.value?.rtFirstTouch) {
+    console.log('rtrtFirstTravel: ', PerformanceData.value?.rtFirstTouch);
+    return PerformanceData.value?.rtFirstTouch;
+  }
+  return null;
+});
+
 // 显示rtPressTravel
 const rtPressTravel = computed(() => {
-  if (
-    (currentModel.value === 'mechanicalMode' || currentModel.value === 'quickTrigger') &&
-    PerformanceData.value?.rtPressValue
-  ) {
+  if (currentModel !== 'deadZone' && currentModel !== 'axis' && PerformanceData.value?.rtPressValue) {
     return PerformanceData.value?.rtPressValue;
   }
   return null;
@@ -238,10 +258,7 @@ const rtPressTravel = computed(() => {
 
 // 显示rtReleaseTravel
 const rtReleaseTravel = computed(() => {
-  if (
-    (currentModel.value === 'mechanicalMode' || currentModel.value === 'quickTrigger') &&
-    PerformanceData.value?.rtReleaseValue
-  ) {
+  if (currentModel !== 'deadZone' && currentModel !== 'axis' && PerformanceData.value?.rtReleaseValue) {
     return PerformanceData.value?.rtReleaseValue;
   }
   return null;
@@ -251,6 +268,21 @@ const rtReleaseTravel = computed(() => {
 const singleTravel = computed(() => {
   if (PerformanceData.value?.singleTriggeringValue) {
     return PerformanceData.value?.singleTriggeringValue;
+  }
+  return null;
+});
+
+// key rt模式
+const isRT = computed(() => {
+  if (PerformanceData.value?.isRt) {
+    return PerformanceData.value?.isRt;
+  }
+  return null;
+});
+// key single模式
+const isSingle = computed(() => {
+  if (PerformanceData.value?.isSingle) {
+    return PerformanceData.value?.isSingle;
   }
   return null;
 });
@@ -386,7 +418,8 @@ const onMouseLeave = () => {
   //   align-items: center;
   //   justify-content: center;
   // }
-  .single-travel {
+  .single-travel,
+  .rt-first-travel {
     font-size: var(--font-size-8);
     font-weight: 100;
     color: #91bc00;

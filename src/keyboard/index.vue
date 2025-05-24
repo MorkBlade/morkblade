@@ -131,15 +131,17 @@
         仅字母
       </div>
     </div>
-    <div
-      class="layer-container"
-      v-if="route.path === '/key-assignment'"
-      @click.capture="(e) => handleFnChange(e, isVersion2)"
-    >
-      <div class="layer" v-for="(ite, idx) in 4" :key="ite" :class="{ active: idx === checkedFn }" :data-idx="idx">
-        {{ '层' + ite }}
+    <template v-if="route.path === '/key-assignment'">
+      <div
+        class="layer-container"
+        v-if="isVersion2 || advancedMenu === 'customKey'"
+        @click.capture="(e) => handleFnChange(e, isVersion2)"
+      >
+        <div class="layer" v-for="(ite, idx) in 4" :key="ite" :class="{ active: idx === checkedFn }" :data-idx="idx">
+          {{ '层' + ite }}
+        </div>
       </div>
-    </div>
+    </template>
   </div>
 </template>
 
@@ -176,8 +178,11 @@ const {
   handleFnChange,
 } = useKeyboardPageHook();
 const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
-const vId = computed(() => deviceStore.devices[0]?.vendorId || undefined);
-const pId = computed(() => deviceStore.devices[0]?.productId || undefined);
+const advancedMenu = ref('customKey');
+
+emitter.on('advancedMenu', ({ value }) => {
+  advancedMenu.value = value;
+});
 
 watch(
   () => route.path,

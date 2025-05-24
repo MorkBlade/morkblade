@@ -12,7 +12,7 @@
       </div>
     </div>
     <div class="display-area">
-      <normal v-if="currentComponent === 'normal'" />
+      <custom-key v-if="currentComponent === 'customKey'" />
       <mt
         v-else-if="currentComponent === 'MT'"
         ref="childRef"
@@ -79,7 +79,7 @@
         @handleDialoConfirm="handleDialoConfirm"
       />
     </div>
-    <div class="right-config-box" v-if="currentComponent !== 'normal'">
+    <div class="right-config-box" v-if="currentComponent !== 'customKey'">
       <div>
         <keyConfigCard :advancedData="advancedItems" />
       </div>
@@ -89,8 +89,9 @@
 
 <script setup>
 import useSetAdvanced from './useSetAdvanced.js';
+import emitter from '@/utils/app-emitter';
 
-import normal from './normal/index.vue';
+import customKey from './custom-key/index.vue';
 import mt from './mt/index.vue';
 import dks from './dks/index.vue';
 import socd from './socd/index.vue';
@@ -132,24 +133,35 @@ const changeMenu = (idx) => {
 
 // 使用计算属性来确定当前应该显示的组件
 const currentComponent = computed(() => {
+  let keyCode = 'customKey';
   switch (clickItem.value) {
     case 1:
-      return 'MT';
+      keyCode = 'MT';
+      break;
     case 2:
-      return 'DKS';
+      keyCode = 'DKS';
+      break;
     case 3:
-      return 'SOCD';
+      keyCode = 'SOCD';
+      break;
     case 4:
-      return 'RS';
+      keyCode = 'RS';
+      break;
     case 5:
-      return 'TGL';
+      keyCode = 'TGL';
+      break;
     case 6:
-      return 'MPT';
+      keyCode = 'MPT';
+      break;
     case 7:
-      return 'END';
+      keyCode = 'END';
+      break;
     default:
-      return 'normal';
+      keyCode = 'customKey';
+      break;
   }
+  emitter.emit('advancedMenu', { value: keyCode });
+  return keyCode;
 });
 
 watch(

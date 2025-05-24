@@ -117,9 +117,9 @@ const selectLanguage = (language) => {
       width: var(--spacing-38);
       height: var(--spacing-38);
       background-image: url('@/assets/images/bg.svg');
-      background-size: 'cover';
-      background-position: 'center';
-      background-repeat: 'no-repeat';
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
     }
 
     li img {

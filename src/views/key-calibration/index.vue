@@ -185,11 +185,13 @@ onUnmounted(() => {
     .keys {
       display: flex;
       flex-wrap: wrap;
+      max-height: 62%;
+      overflow: hidden;
 
       div {
         height: var(--size-50);
         width: var(--size-50);
-        margin: 0 var(--spacing-20) var(--spacing-10) 0;
+        margin: 0 var(--spacing-15) var(--spacing-10) 0;
         font-size: var(--font-size-16);
         font-family: 'Airal Blod';
         color: #ffffff;

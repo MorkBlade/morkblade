@@ -29,11 +29,12 @@
           <!-- </div> -->
           <div class="btn-group">
             <p>{{ textContent }}</p>
-            <div class="update-btn" :style="updateStep !== 0 ? { left: '215px' } : ''" @click="onSure('enterBoot')">
+            <div class="update-btn" :style="enterUpdate ? { left: '215px' } : ''" @click="onSure('enterBoot')">
               <img class="update-img" src="@/assets/images/sure_icon.svg" alt="" />
-              <span class="update-text">{{ text[updateStep] }}</span>
+              <!-- <span class="update-text">{{ text[updateStep] }}</span> -->
+              <span class="update-text">{{ updateSuc ? '确认' : enterUpdate ? '升级中..' : '升级' }}</span>
             </div>
-            <div class="cancel-btn" @click="onCancel" v-if="updateStep === 0">
+            <div class="cancel-btn" @click="onCancel" v-if="!enterUpdate">
               <img src="@/assets/images/cancel_icon.svg" alt="" />
               <span>取消升级</span>
             </div>
@@ -107,26 +108,32 @@ const onSure = () => {
   }
   if (updating.value) return;
   if (!isUpdate) {
-    updateStep.value = 0;
+    // updateStep.value = 0;
     emits('update:isShow', false); // 更新父组件的状态
+    emits('sure');
   }
 
-  let keyCode;
-  if (!updateStep.value) {
-    keyCode = 'enterBoot';
-  } else if (updateStep.value === 1) {
-    keyCode = 'reconnect';
-  } else if (updateStep.value === 2) {
-    keyCode = 'update';
+  // let keyCode;
+  // if (!updateStep.value) {
+  //   keyCode = 'enterBoot';
+  // } else if (updateStep.value === 1) {
+  //   keyCode = 'reconnect';
+  // } else if (updateStep.value === 2) {
+  //   keyCode = 'update';
+  //   updating.value = true;
+  //   enterUpdate.value = true;
+  // }
+  // updateStep.value++;
+  // emits('sure', keyCode);
+  if (isUpdate) {
     updating.value = true;
     enterUpdate.value = true;
+    emits('sure', 'update');
   }
-  updateStep.value++;
-  emits('sure', keyCode);
 };
 
 const onCancel = () => {
-  updateStep.value = 0;
+  // updateStep.value = 0;
   emits('update:isShow', false); // 更新父组件的状态
   emits('cancel');
 };

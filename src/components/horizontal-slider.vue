@@ -133,6 +133,7 @@ const updateValue = (clientX) => {
     top: 0;
     left: 0;
     z-index: 3;
+    background-color: transparent;
     background-image: url('@/assets/images/luminance_btn.svg');
     background-size: cover;
     background-repeat: no-repeat;

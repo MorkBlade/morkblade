@@ -36,6 +36,7 @@ export const useLightingHook = () => {
       const logoLighting = await services.getLogoLighting();
       modifyLightingData(keyboardLighting, logoLighting);
     }
+    lightSettingStore.saturation = { R: 0, G: 0, B: 0 };
   };
 
   const setLighting = async (lightingType = 'keyboard') => {
@@ -169,7 +170,7 @@ const modifyLightingData = (keyboardLighting, logoLighting) => {
     if (!data) return;
 
     const target = type === 'keyboard' ? lightSettingStore.light : lightSettingStore.logo;
-    console.log('data', data);
+    // console.log('data', data);
     const colors = data.colors.map((color, index) => ({ color, id: index }));
 
     Object.assign(target, {

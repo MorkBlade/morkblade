@@ -70,19 +70,13 @@ const rtPressTravel = ref(performanceStore.rtPressTravel);
 const rtReleaseTravel = ref(performanceStore.rtReleaseTravel);
 const singleTravel = ref(performanceStore.singleTouchTravel);
 const rtPressLinkRelease = ref(true);
+const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
 
 emitter.on('key-click', async ({ rowIndex, colIndex }) => {
   rowIdx.value = rowIndex;
   colIdx.value = colIndex;
   if (hasCurrentKey.value) {
-    const { singleTriggeringValue, rtPressValue, rtReleaseValue } = keyboards.value[rowIndex][colIndex].performance;
-    console.log('rtPressValue, rtReleaseValue', rtPressValue, rtReleaseValue);
-    rtEnabled.value = true;
-    await handleRtEnabledChange();
-    singleTravel.value =
-      typeof singleTriggeringValue === 'number' ? singleTriggeringValue : Number(singleTriggeringValue);
-    rtPressTravel.value = typeof rtPressValue === 'number' ? rtPressValue : Number(rtPressValue);
-    rtReleaseTravel.value = typeof rtReleaseValue === 'number' ? rtReleaseValue : Number(rtReleaseValue);
+    renderRtValue(rowIndex, colIndex);
   } else {
     rtEnabled.value = false;
   }
@@ -92,7 +86,34 @@ emitter.on('rt-enabled', ({ value }) => {
   rtEnabled.value = value;
 });
 
-const handleRtEnabledChange = async (value) => {
+onMounted(() => {
+  if (keyboardStore.activeKeys.length > 0) {
+    const lastKey = keyboardStore.activeKeys[keyboardStore.activeKeys.length - 1].split('-');
+    const [rowIndex, colIndex] = lastKey;
+    renderRtValue(rowIndex, colIndex);
+  }
+});
+
+const renderRtValue = (rowIndex, colIndex) => {
+  const { singleTriggeringValue, rtFirstTouch, rtPressValue, rtReleaseValue } =
+    keyboards.value[rowIndex][colIndex].performance;
+  rtEnabled.value = true;
+  handleRtEnabledChange();
+  let singleTravelVal;
+  if (isVersion2) {
+    singleTravelVal = typeof rtFirstTouch === 'number' ? rtFirstTouch : parseFloat(rtFirstTouch);
+  } else {
+    singleTravelVal =
+      typeof singleTriggeringValue === 'number' ? singleTriggeringValue : parseFloat(singleTriggeringValue);
+  }
+  const rtPressTravelVal = typeof rtPressValue === 'number' ? rtPressValue : parseFloat(rtPressValue);
+  const rtReleaseTravelVal = typeof rtReleaseValue === 'number' ? rtReleaseValue : parseFloat(rtReleaseValue);
+  singleTravel.value = singleTravelVal;
+  rtPressTravel.value = rtPressTravelVal;
+  rtReleaseTravel.value = rtReleaseTravelVal;
+};
+
+const handleRtEnabledChange = (value) => {
   if (rtEnabled.value && activeKeys.value.length > 0) {
     activeKeys.value.map(async (keyLocation) => {
       const [key1, key2] = keyLocation.split('-');
@@ -100,7 +121,7 @@ const handleRtEnabledChange = async (value) => {
       const colIndex = Number(key2);
       const { rtPressValue, rtReleaseValue } = keyboards.value[rowIndex][colIndex].performance;
       keyboards.value[rowIndex][colIndex].performance.isRt = true;
-      // keyboards.value[rowIndex][colIndex].performance.isSingle = false;
+      keyboards.value[rowIndex][colIndex].performance.isSingle = false;
       keyboards.value[rowIndex][colIndex].performance.rtPressValue = rtPressValue || 0;
       keyboards.value[rowIndex][colIndex].performance.rtReleaseValue = rtReleaseValue || 0;
     });
@@ -113,12 +134,13 @@ const debouncedUpdateRtTreavel = debounce((value) => {
     const [key1, key2] = keyLocation.split('-');
     const rowIndex = Number(key1);
     const colIndex = Number(key2);
+    keyboards.value[rowIndex][colIndex].performance.mode = 1;
     keyboards.value[rowIndex][colIndex].performance.isRt = true;
     keyboards.value[rowIndex][colIndex].performance.isSingle = false;
     keyboards.value[rowIndex][colIndex].performance.rtPressValue = rtPressTravel.value;
     keyboards.value[rowIndex][colIndex].performance.rtReleaseValue = rtReleaseTravel.value;
   });
-}, 200);
+}, 120);
 
 // 更新单触发行程的防抖函数
 const debouncedUpdateSingleTravel = debounce((value) => {
@@ -126,9 +148,13 @@ const debouncedUpdateSingleTravel = debounce((value) => {
     const [key1, key2] = keyLocation.split('-');
     const rowIndex = Number(key1);
     const colIndex = Number(key2);
-    keyboards.value[rowIndex][colIndex].performance.singleTriggeringValue = value;
+    if (isVersion2) {
+      keyboards.value[rowIndex][colIndex].performance.rtFirstTouch = value;
+    } else {
+      keyboards.value[rowIndex][colIndex].performance.singleTriggeringValue = value;
+    }
   });
-}, 200);
+}, 120);
 
 const handleTriggerPointChange = async (value) => {
   singleTravel.value = value;
@@ -137,7 +163,7 @@ const handleTriggerPointChange = async (value) => {
 
 // 设置RT按下的行程
 const setRtPressTravel = async (value) => {
-  console.log('setRtPressTravel: ', value);
+  // console.log('setRtPressTravel: ', value);
   if (!rtEnabled.value) handleRtEnabledChange();
   rtPressTravel.value = value;
   rtPressLinkRelease.value ? (rtReleaseTravel.value = value) : '';
@@ -167,6 +193,7 @@ const onLink = async () => {
 };
 
 const saveRtConfig = async () => {
+  console.log('saveconfig');
   const { setSingleTravel } = usePerformanceHook();
   const res = setSingleTravel(keyboards.value, activeKeys.value, 'rt');
   if (res) {

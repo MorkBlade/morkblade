@@ -131,7 +131,10 @@ body {
     border: var(--spacing-3) solid rgb(37, 37, 37) !important;
   }
   .IroSlider {
-    width: var(--size-150) !important;
+    width: var(--iro-slider--outer-width) !important;
+    // width: 154px !important;
+    // width: 182px !important;
+    // width: 333px !important;
     height: var(--size-14) !important;
     background-image: url('@/assets/images/IroSlider.svg') !important;
     background-size: cover !important;
@@ -142,12 +145,17 @@ body {
     width: var(--size-15) !important;
     height: var(--size-15) !important;
     top: var(--iro-handle-top) !important;
-    left: var(--iro-handle-left) !important;
+    // left: var(--iro-handle-left) !important;
+    left: -11px !important;
   }
   .IroSliderGradient {
     top: var(--spacing-3) !important;
+    // top: 3.5px !important;
     left: var(--spacing-3) !important;
-    width: var(--size-144) !important;
+    width: var(--iro-slider-width) !important; // 1081:151 2k:176 4k:328
+    // width: 148px !important; // 1081:148 2k:176 4k:328
+    // width: 173px !important; // 1081:148 2k:176 4k:328
+    // width: 320px !important; // 1081:148 2k:176 4k:328
     height: var(--size-8) !important;
   }
 

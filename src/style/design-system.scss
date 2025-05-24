@@ -173,6 +173,7 @@
   --assignment-leftbox-width: 300px;
   --character-card-width: 650px;
   --character-card-height: 290px;
+  --character-card-small-height: 170px;
   --character-card-tab-width: 110px;
   --character-card-tab-width2: 150px;
   --character-card-tab-height: 30px;
@@ -231,6 +232,8 @@
   --slider-width: 190;
   --slider-btn-offset: 11;
   --lighting-custom-width: 590px;
+  --iro-slider--outer-width: 154px;
+    --iro-slider-width: 148px;
   --iro-handle-top: -13px;
   --iro-handle-left: -15px;
   --keyboard-row2-top: 89px;
@@ -433,6 +436,7 @@
     --assignment-leftbox-width: 343px;
     --character-card-width: 742px;
     --character-card-height: 330px;
+    --character-card-small-height: 210px;
     --character-card-tab-width: 124px;
     --character-card-tab-width2: 180px;
     --character-card-tab-height: 36px;
@@ -490,7 +494,9 @@
     --lighting-item-right: 10.5px;
     --slider-width: 218;
     --slider-btn-offset: 5;
-    --iro-handle-top: -13.5px;
+    --iro-slider--outer-width: 182px;
+    --iro-slider-width: 173px;
+    --iro-handle-top: -12.5px;
     --iro-handle-left: -16px;
     --keyboard-row2-top: 102px;
     --keyboard-row3-top: 164px;
@@ -688,6 +694,7 @@
     --assignment-leftbox-width: 600px;
     --character-card-width: 1300px;
     --character-card-height: 580px;
+    --character-card-small-height: 340px;
     --character-card-tab-width: 220px;
     --character-card-tab-width2: 300px;
     --character-card-tab-height: 60px;
@@ -745,6 +752,8 @@
     --lighting-set-width: 780px;
     --slider-width: 380;
     --slider-btn-offset: 22;
+    --iro-slider--outer-width: 333px;
+    --iro-slider-width: 320px;
     --iro-handle-top: -12px;
     --iro-handle-left: -25px;
     --keyboard-row2-top: 178px;

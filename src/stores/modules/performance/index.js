@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 
 import services from '@/services/index';
 import { useKeyboardStore } from '@/stores';
+import { KEY_SHAFT } from '@/configs/constant';
 
 const state = {
   precision: 0.1, // 键盘行程精度
@@ -26,6 +27,7 @@ const state = {
   deadZoneValue: [], // 死区数据
   calibrations: [], // 当前键盘需要显示的性能值
   veifyKey: {}, // 校验按下的键
+  isTravelTest: false,
 };
 
 const usePerformanceStore = defineStore('performance', {
@@ -164,6 +166,8 @@ const usePerformanceStore = defineStore('performance', {
         } = performanceResult;
         // 设置当前键盘的性能模式
         performance.mode = mode;
+        performance.isRt = mode === 1;
+        performance.isSingle = mode === 0;
         performance.singleTriggeringValue = normalPress;
         // performance.normalRelease = normalRelease;
         performance.rtFirstTouch = rtFirstTouch;
@@ -299,10 +303,20 @@ const usePerformanceStore = defineStore('performance', {
       return result;
     },
 
-    async getRm6X21Travel() {
-      const result = await services.getRm6X21Travel();
-      const { max, press } = this.getMaxPressTravel(result.status, result.travels);
-      return { max, press };
+    async getRm6X21Travel(keyboards, isVersion2) {
+      if (isVersion2) {
+        let max = 0;
+        for (let i = 0; i < keyboards.length; i++) {
+          const route = await services.getRouteV2({ row: i });
+          const curMax = Math.max(...route[0].data);
+          if (curMax > max) max = curMax;
+        }
+        return { max: max / 1000 };
+      } else {
+        const result = await services.getRm6X21Travel();
+        const { max, press } = this.getMaxPressTravel(result.status, result.travels);
+        return { max, press };
+      }
     },
 
     // 获取行程校准的数据
@@ -330,11 +344,11 @@ const usePerformanceStore = defineStore('performance', {
     async calibrationStartV2() {
       this.isCalibrating = true;
       const result = await services.calibrationStartV2();
-      console.log('calibrationStart ', result);
+      // console.log('calibrationStart ', result);
     },
 
     async calibrationEndV2() {
-      console.log('calibrationEnd');
+      // console.log('calibrationEnd');
       const keyboardStore = useKeyboardStore();
       this.isCalibrating = false;
       this.clearVerifyKeys();
@@ -350,8 +364,8 @@ const usePerformanceStore = defineStore('performance', {
     },
 
     async getRm6X21CalibrationV2(keyboard) {
-      // if (!this.isCalibrating) return { max: 0 }; // 如果不在校准状态，直接返回
-
+      if (!this.isCalibrating) return { max: 0 }; // 如果不在校准状态，直接返回
+      // console.log('getRm6X21CalibrationV2');
       const sample = [];
       const travels = [];
       const calibrationStatus = [];
@@ -379,7 +393,7 @@ const usePerformanceStore = defineStore('performance', {
       }
 
       const { max } = this.getMaxPressTravel([], travels);
-      console.log('getRm6X21CalibrationV2', max);
+      // console.log('getRm6X21CalibrationV2', max);
       if (this.isTravelTest) this.updateVerifyKeysV2(travels, keyboard);
       return { max: max / 1000 };
     },
@@ -402,6 +416,7 @@ const usePerformanceStore = defineStore('performance', {
               }
             }
             if (keyItem) {
+              // console.log('keyItem: ', keyItem, travels[i][j]);
               const { maxTravel, minTravel } = KEY_SHAFT.find((shaft) => shaft.id === keyItem.performance.axisID + 1);
               // 使用 keyValue 作为属性名，设置为 true
               newVerifyKey[keyItem.keyValue] = {
@@ -426,7 +441,7 @@ const usePerformanceStore = defineStore('performance', {
               };
             }
           }
-
+          // console.log('veifyKey: ', this.veifyKey);
           // 更新veifyKey对象
           this.veifyKey = newVerifyKey;
         }
@@ -434,16 +449,26 @@ const usePerformanceStore = defineStore('performance', {
     },
 
     // 查询回报率
-    async getRateOfReturn() {
-      const result = await services.getApi({ type: 'ORDER_TYPE_ROES' });
+    async getRateOfReturn(isVersion2) {
+      if (isVersion2) {
+        const result = await services.getRateOfReturnV2();
+        return result[0]?.value;
+      } else {
+        const result = await services.getApi({ type: 'ORDER_TYPE_ROES' });
+        return result;
+      }
       // const res2 = await services.getApi({ type: 'ORDER_TYPE_AXOSOME' });
-      return result;
     },
 
     // 设置回报率
-    async setRateOfReturn(value) {
-      const result = await services.setRateOfReturn(value);
-      return result;
+    async setRateOfReturn(rateIdx, rateText, isVersion2) {
+      if (isVersion2) {
+        const result = await services.setRateOfReturnV2(`R${rateText}`);
+        return result;
+      } else {
+        const result = await services.setRateOfReturn(rateIdx);
+        return result;
+      }
     },
 
     // 更新校验按键状态
@@ -499,7 +524,7 @@ const usePerformanceStore = defineStore('performance', {
     async calibrationStart() {
       this.clearVerifyKeys();
       const result = await services.calibrationStart();
-      console.log('calibrationStart v1 v1', result);
+      // console.log('calibrationStart v1 v1', result);
       return result;
     },
 

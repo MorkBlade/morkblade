@@ -14,7 +14,7 @@
           v-for="(ite, idx) in items"
           :key="ite"
           :class="{ 'checked-item': idx == selectedIdx }"
-          @click.stop="selectItem(idx, 'firmware')"
+          @click.stop="selectItem(idx, ite)"
         >
           {{ ite }}
         </li>
@@ -57,9 +57,9 @@ watch(
   },
 );
 
-const selectItem = (idx) => {
+const selectItem = (idx, ite) => {
   if (selectedIdx.value !== idx) {
-    emit('sendSelectedIdx', idx);
+    emit('sendSelectedIdx', idx, ite);
   }
   selectedIdx.value = idx;
   coverListHeight.value = 0;

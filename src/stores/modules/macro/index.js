@@ -35,7 +35,7 @@ const useMacroStore = defineStore('macro', {
         }
         this.macroData.push({ name, ...res, data });
       }
-      console.log('all macro list', this.macroData);
+      // console.log('all macro list', this.macroData);
     },
 
     // v2获取宏数据

@@ -68,7 +68,7 @@ export const useKeyboardHook = () => {
 
       const layoutData = [];
       const keyboardsWithPerformance = [];
-      // console.log('initKeyboard-------------------------------');
+      // console.log('initKeyboard-------------------------------', keyboardLayout);
 
       for (let rowIndex = 0; rowIndex < keyboardLayout.length; rowIndex++) {
         const row = keyboardLayout[rowIndex];

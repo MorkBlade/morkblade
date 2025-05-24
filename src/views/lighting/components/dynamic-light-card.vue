@@ -11,6 +11,7 @@
           :class="{ 'is-dychecked': currentChecked(idx) }"
           @click="changelightingMode(idx)"
         >
+          <img :src="getImagePath(idx, 'keyLight')" alt="" v-if="dynamicType === 'keyLight'" />
           <span>{{ ite }}</span>
         </div>
       </template>
@@ -75,26 +76,26 @@ const dynamicLightStyleV1 = [
   '水波荡漾',
 ];
 const dynamicLightStyleV2 = [
-  '样式一',
-  '样式二',
-  '样式三',
-  '样式四',
-  '样式五',
-  '样式六',
-  '样式七',
-  '样式八',
-  '样式九',
-  '样式十',
-  '样式十一',
-  '样式十二',
-  '样式十三',
-  '样式十四',
-  '样式十五',
-  '样式十六',
-  '样式十七',
-  '样式十八',
-  '样式十九',
-  '样式二十',
+  '宁静之光',
+  '波纹荡漾',
+  '潮起潮落',
+  '涟漪轻漾',
+  '旋转风暴',
+  '幸运彩虹',
+  '闪耀彩虹',
+  '熠熠生辉',
+  '移动窗格',
+  '波形变换',
+  '移形换影',
+  '正弦曲线',
+  '行云流水',
+  '百花争艳',
+  '斑斓镶嵌',
+  '雨落如注',
+  '跃动不息',
+  '踏雪无痕',
+  '踏雪寻梅',
+  '镭射穿云',
 ];
 
 const dynamicLightModeList = computed(() => {

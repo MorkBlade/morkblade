@@ -133,7 +133,7 @@ export const KEY_SHAFT = [
     src: axisIcon6,
   },
   { id: 7, name: '万磁王pom', maxTravel: 3400, minTravel: 10, color: '#fbcfbc', src: axisIcon7 },
-  { id: 8, name: '磁轴8', maxTravel: 3300, minTravel: 10, color: '#fafa', src: axisIcon8 },
+  { id: 0, name: '磁轴8', maxTravel: 3300, minTravel: 10, color: '#fafa', src: axisIcon8 },
 ];
 export const HIGH_LEVEL_KEYS = [
   {

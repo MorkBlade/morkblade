@@ -62,7 +62,7 @@
 
 <script setup>
 // defineOptions({ name: 'ConnectIndex' });
-
+import emitter from '@/utils/app-emitter';
 import services from '@/services/index.js';
 import { useAppStore, useDeviceStore } from '@/stores';
 import { scaleValue } from '@/utils/responsive.js';
@@ -73,6 +73,13 @@ const appStore = useAppStore();
 
 const isUpdate = ref(false);
 const progress = ref(0);
+
+// 拔插事件的监听
+emitter.on('disconnect', (isUpdate) => {
+  if (isUpdate) return;
+  console.log('connect page log disconnect');
+  if (router) router.replace({ path: '/' });
+});
 
 // 连接按钮点击事件
 const handleDeviceStoreClick = async () => {

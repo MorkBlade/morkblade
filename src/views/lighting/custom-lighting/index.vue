@@ -10,7 +10,7 @@
           :class="{ 'is-checked': currentPreset === idx }"
           @click="changePreinstall(idx)"
         >
-          <img :src="`/src/assets/images/customlight${idx + 1}.svg`" alt="" />
+          <img :src="customLightImages[idx]" alt="" />
           <span class="color-text">{{ customList[idx] }}</span>
         </div>
       </div>
@@ -91,6 +91,19 @@ const colorWheelRef = ref(null);
 const selectedColor = ref('#ffffa8');
 const rgb = ref({ r: 255, g: 255, b: 168 });
 let colorPicker = ref(null);
+
+// Import all custom light images
+const customLightImages = {
+  0: new URL('@/assets/images/customlight1.svg', import.meta.url).href,
+  1: new URL('@/assets/images/customlight2.svg', import.meta.url).href,
+  2: new URL('@/assets/images/customlight3.svg', import.meta.url).href,
+  3: new URL('@/assets/images/customlight4.svg', import.meta.url).href,
+  4: new URL('@/assets/images/customlight5.svg', import.meta.url).href,
+  5: new URL('@/assets/images/customlight6.svg', import.meta.url).href,
+  6: new URL('@/assets/images/customlight7.svg', import.meta.url).href,
+  7: new URL('@/assets/images/customlight8.svg', import.meta.url).href,
+  8: new URL('@/assets/images/customlight9.svg', import.meta.url).href,
+};
 
 // 初始化色轮
 onMounted(() => {

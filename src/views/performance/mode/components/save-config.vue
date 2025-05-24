@@ -2,7 +2,8 @@
   <div class="save-config-box">
     <div class="config-box1">
       <span>快速触发：</span>
-      <span>{{ quickTrigger }}</span>
+      <!-- <span>{{ quickTrigger }}</span> -->
+      <span>否</span>
     </div>
     <div class="config-box2">
       <span>触发行程：</span>

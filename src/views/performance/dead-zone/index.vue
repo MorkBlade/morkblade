@@ -85,20 +85,32 @@ emitter.on('key-click', ({ rowIndex, colIndex }) => {
   rowIdx.value = rowIndex;
   colIdx.value = colIndex;
   if (hasCurrentKey.value) {
-    const { deadBandPressValue, deadBandReleaseValue } = keyboards.value[rowIndex][colIndex].performance;
-    const releaseHeight = (deadBandPressValue / max) * maxKeyDeadHeight.value;
-    releaseDeadHeight.value = Math.round(releaseHeight);
-    const pressHeight = (deadBandReleaseValue / max) * maxKeyDeadHeight.value;
-    pressDeadHeight.value = Math.round(pressHeight);
+    renderRtValue(rowIndex, colIndex);
   }
 });
+
+onMounted(() => {
+  if (keyboardStore.activeKeys.length > 0) {
+    const lastKey = keyboardStore.activeKeys[keyboardStore.activeKeys.length - 1].split('-');
+    const [rowIndex, colIndex] = lastKey;
+    renderRtValue(rowIndex, colIndex);
+  }
+});
+
+const renderRtValue = (rowIndex, colIndex) => {
+  const { deadBandPressValue, deadBandReleaseValue } = keyboards.value[rowIndex][colIndex].performance;
+  const releaseHeight = (deadBandPressValue / max) * maxKeyDeadHeight.value;
+  releaseDeadHeight.value = Math.round(releaseHeight);
+  const pressHeight = (deadBandReleaseValue / max) * maxKeyDeadHeight.value;
+  pressDeadHeight.value = Math.round(pressHeight);
+};
 
 const handlePressDeadChange = async (value) => {
   pressDead.value = value;
   const lastActiveKey = activeKeys.value[activeKeys.value.length - 1];
   const [rowIndx, colIndx] = lastActiveKey.split('-');
   const { deadBandReleaseValue } = keyboards.value[rowIndx][colIndx].performance;
-  const height = (value || deadBandReleaseValue / max) * maxKeyDeadHeight.value;
+  const height = ((value ?? deadBandReleaseValue) / max) * maxKeyDeadHeight.value;
   pressDeadHeight.value = Math.round(height);
   debouncedUpdateDZPress(value);
 };
@@ -108,7 +120,7 @@ const handleReleaseDeadChange = async (value) => {
   const lastActiveKey = activeKeys.value[activeKeys.value.length - 1];
   const [rowIndx, colIndx] = lastActiveKey.split('-');
   const { deadBandPressValue } = keyboards.value[rowIndx][colIndx].performance;
-  const height = (value || deadBandPressValue / max) * maxKeyDeadHeight.value;
+  const height = ((value ?? deadBandPressValue) / max) * maxKeyDeadHeight.value;
   releaseDeadHeight.value = Math.round(height);
   debouncedUpdateDZRelease(value);
 };
@@ -121,7 +133,7 @@ const debouncedUpdateDZPress = debounce((value) => {
     const colIndex = Number(key2);
     keyboards.value[rowIndex][colIndex].performance.deadBandPressValue = value;
   });
-}, 200);
+}, 100);
 
 // 防抖
 const debouncedUpdateDZRelease = debounce((value) => {
@@ -131,7 +143,7 @@ const debouncedUpdateDZRelease = debounce((value) => {
     const colIndex = Number(key2);
     keyboards.value[rowIndex][colIndex].performance.deadBandReleaseValue = value;
   });
-}, 200);
+}, 100);
 
 const saveDeadZoneTravel = async () => {
   const { setSingleTravel } = usePerformanceHook();
@@ -180,7 +192,7 @@ const saveDeadZoneTravel = async () => {
       .bottom-box {
         width: var(--size-28);
         height: var(--size-50);
-        border-radius: var(--border-radius-3);
+        border-radius: var(--spacing-3);
         background-color: rgb(253, 255, 0);
         position: absolute;
         left: var(--spacing-6);

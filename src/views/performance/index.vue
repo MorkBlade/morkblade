@@ -54,7 +54,7 @@ watch(
   () => appStore.changeConfig,
   (newVal) => {
     if (newVal) {
-      console.log('changeConfig', newVal);
+      // console.log('changeConfig', newVal);
       appStore.changeConfig = false;
       if (clickItem.value == 4) {
         clickItem.value = 4;

@@ -2,7 +2,8 @@
   <div class="save-config-box">
     <div class="config-box">
       <span>快速触发：</span>
-      <span>{{ quickTrigger }}</span>
+      <!-- <span>{{ quickTrigger }}</span> -->
+      <span>是</span>
     </div>
     <div class="other-config-box">
       <span>触发行程：</span>
@@ -45,6 +46,7 @@ const quickTrigger = ref(false);
 const triggerTravel = ref(0);
 
 const onSure = () => {
+  console.log('xxxxxxxxxxxx');
   emit('saveRtConfig', true);
 };
 </script>

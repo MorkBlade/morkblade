@@ -1,5 +1,5 @@
 <template>
-  <div class="key" @click="handleClick" @mousedown="startDrag" draggable="false">
+  <div class="key" @click="handleClick" @mousedown="startDrag" draggable="false" v-if="keyText">
     <p>{{ keyText }}</p>
   </div>
   <div ref="dragElement" class="key key-mirror" v-if="isDragging" :style="isDragging ? defaultOffset : ''">

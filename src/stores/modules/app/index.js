@@ -64,7 +64,8 @@ const useAppStore = defineStore('app', {
         const result = await services.getConfigListV2();
         const result2 = await services.getConfigV2();
         const curConfig = result2[0].key;
-        this.activeConfigIndex = result[0]?.list.findIndex((item) => item === curConfig);
+        // this.activeConfigIndex = result[0]?.list.findIndex((item) => item === curConfig);
+        this.activeConfigIndex = result2[0].value;
         const configList = result[0]?.list
           .filter((item) => item !== undefined)
           .map((item, idx) => ({
@@ -112,7 +113,7 @@ const useAppStore = defineStore('app', {
     // 获取协议版本
     async getProtocolVersion() {
       const protocolVersion = await services.getApi({ type: 'ORDER_TYPE_PROTOCOL_VERSION' });
-      console.log('getProtocolVersion', protocolVersion);
+      // console.log('getProtocolVersion', protocolVersion);
       this.protocolVersion = protocolVersion;
       return protocolVersion;
     },

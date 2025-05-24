@@ -46,6 +46,7 @@
 
 <script setup>
 import { useAppStore, useKeyboardStore, usePerformanceStore } from '@/stores';
+import { useAdvancedHook } from '@/hooks';
 
 import changedIcon from '@/assets/images/changed.svg';
 import changeIcon from '@/assets/images/change.svg';
@@ -54,7 +55,7 @@ import downArrow from '@/assets/images/down_icon2.svg';
 
 const appStore = useAppStore();
 const keyboardStore = useKeyboardStore();
-const performanceStore = usePerformanceStore();
+const { getHighLevelKeys } = useAdvancedHook();
 
 const defaultHeight = ref(0);
 const rotate = ref(0);
@@ -80,23 +81,27 @@ const selectItem = async (index) => {
     return;
   }
   const res = await appStore.setActiveConfig(index, isVersion2);
-  if (!isVersion2) {
-    const timer = setTimeout(async () => {
-      // TODO v2 配置切换之后获取的数据是一样的
+  if (res) {
+    if (!isVersion2) {
+      const timer = setTimeout(async () => {
+        // TODO v2 配置切换之后获取的数据是一样的
+        await keyboardStore.initKeyboard();
+        // await keyboardStore.getLayoutKeyInfo(keyboardStore.layout, keyboardStore.keyboards);
+        // await performanceStore.getKeyPerformanceV1(keyboardStore.keyboards);
+        if (res) {
+          appStore.changeConfig = true;
+          appStore.activeConfigIndex = index;
+        }
+        clearTimeout(timer);
+      }, 1000);
+    } else {
       await keyboardStore.initKeyboard();
-      // await keyboardStore.getLayoutKeyInfo(keyboardStore.layout, keyboardStore.keyboards);
-      // await performanceStore.getKeyPerformanceV1(keyboardStore.keyboards);
-      if (res) {
-        appStore.changeConfig = true;
-        appStore.activeConfigIndex = index;
-      }
-      clearTimeout(timer);
-    }, 1000);
+      await getHighLevelKeys(keyboardStore.keyboards);
+    }
   }
 };
 
 const delConfig = (configInfo) => {
-  console.log('del config', configInfo);
   const index = customItems.indexOf(configInfo);
   customItems.splice(index, 1);
 };

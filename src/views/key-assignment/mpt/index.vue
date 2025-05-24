@@ -283,6 +283,7 @@ defineExpose({ save, reset });
           height: calc(var(--size-32) - var(--size-8));
           margin: var(--socd-el-button-margin);
           border: none;
+          background-color: transparent;
           background-image: url('@/assets/images/luminance_btn.svg');
           background-size: cover;
           background-repeat: no-repeat;

@@ -56,6 +56,8 @@
 </template>
 
 <script setup>
+import { showMessage } from '@/utils/message';
+
 const { title, keyVal, sliderVal, min, max, offsetX, deadZone, disabled } = defineProps({
   title: { type: String, default: '' },
   keyVal: { type: [String, Number], default: 0 },
@@ -140,7 +142,7 @@ const updateValue = (clientY) => {
   percentage = Math.max(0, Math.min(1, percentage)); // 确保百分比在0到1之间
   let newValue = max - percentage * (max - min);
   newValue = Math.round(newValue / step) * step; // 根据步进值四舍五入
-  if (newValue <= 0.005) newValue = 0.005;
+  if (newValue <= 0.005 && !deadZone) newValue = 0.005;
   travelVal.value = parseFloat(newValue.toFixed(3)); // 保留一位小数
   emits('sendKeyVal', travelVal.value);
 };
@@ -150,33 +152,27 @@ const updateValueFromInput = (e) => {
   // if (!e.target.value) return;
   const inputValue = parseFloat(e.target.value);
   if (isNaN(inputValue)) {
-    console.log('asdasdasd');
     travelVal.value = 0;
-    emits('sendKeyVal', 0.005);
+    emits('sendKeyVal', 0);
+    return;
+  } else if (inputValue >= max) {
+    travelVal.value = max;
+    emits('sendKeyVal', max);
     return;
   }
 
-  let sendTravel = 0;
-  if (inputValue >= max) {
-    sendTravel = max;
-  } else {
-    sendTravel = inputValue;
-  }
-  travelVal.value = sendTravel;
-  // timer && clearTimeout(timer);
-  // timer = setTimeout(() => {
-  emits('sendKeyVal', sendTravel <= 0.005 ? 0.005 : Number(sendTravel.toFixed(3)));
-  // }, 100);
+  travelVal.value = inputValue;
+  emits('sendKeyVal', inputValue);
 };
 
 const handleBlur = (e) => {
   const inputValue = parseFloat(e.target.value);
   let sendTravel = 0;
-  if (inputValue === 0) {
+  if (inputValue === 0 && !deadZone) {
     sendTravel = 0.005;
   } else if (inputValue >= max) {
     sendTravel = max;
-  } else if (inputValue < 0.005) {
+  } else if (inputValue < 0.005 && !deadZone) {
     sendTravel = 0.005;
   } else {
     sendTravel = inputValue;
@@ -185,7 +181,9 @@ const handleBlur = (e) => {
     sendTravel = 0.005;
   }
   travelVal.value = sendTravel;
-  console.log('handleBlur', sendTravel);
+
+  if (inputValue <= 0.005 && !deadZone) showMessage('最小值为0.005', 'warning');
+  if (inputValue >= max) showMessage('最大值为3.3', 'warning');
   emits('sendKeyVal', Number(sendTravel.toFixed(3)));
 };
 

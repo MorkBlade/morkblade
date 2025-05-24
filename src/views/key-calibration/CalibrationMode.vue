@@ -99,6 +99,7 @@ const handleEnabledChange = async (value) => {
   if (value) {
     isVersion2 ? performanceStore.calibrationStartV2() : performanceStore.calibrationStart();
   } else {
+    performanceStore.isTravelTest = false;
     isVersion2 ? performanceStore.calibrationEndV2() : performanceStore.calibrationEnd();
   }
   // emitter.emit('calibration-mode', { value });
@@ -120,6 +121,7 @@ watch(keyPressTestCount, async () => {
   if (isStart) {
     let mmBuff = 0;
     if (isVersion2) {
+      performanceStore.isTravelTest = true;
       const { max } = await performanceStore.getRm6X21CalibrationV2(keyboardStore.keyboards);
       mmBuff = max;
     } else {

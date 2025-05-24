@@ -20,15 +20,16 @@
 import { showMessage } from '@/utils/message';
 import { useKeyboardStore, usePerformanceStore } from '@/stores';
 import { scaleValue } from '@/utils/responsive.js';
+import { storeToRefs } from 'pinia';
+import { usePerformanceHook } from '@/hooks';
+import { usePerformancePageHook } from '../usePerformancePageHook';
 import emitter from '@/utils/app-emitter';
 
 import travelTestCard from '@/components/travel-test-card.vue';
 import setTravelCard from '@/components/set-travel-card.vue';
 import saveConfig from './components/save-config.vue';
-import sureIcon from '@/assets/images/sure.svg';
-import { storeToRefs } from 'pinia';
-import { usePerformanceHook } from '@/hooks';
-import { usePerformancePageHook } from '../usePerformancePageHook';
+import { onBeforeUnmount } from 'vue';
+import { onMounted } from 'vue';
 
 const { rowIdx, colIdx, option, activeKeys, disabled, debounce, hasCurrentKey } = usePerformancePageHook();
 const keyboardStore = useKeyboardStore();
@@ -41,13 +42,26 @@ const singleTravel = ref(performanceStore.singleTouchTravel);
 emitter.on('key-click', ({ rowIndex, colIndex }) => {
   rowIdx.value = rowIndex;
   colIdx.value = colIndex;
-  console.log('single listen click: ', rowIndex, colIndex);
+  // console.log('single listen click: ', rowIndex, colIndex);
   if (hasCurrentKey.value) {
-    const { singleTriggeringValue } = keyboards.value[rowIndex][colIndex].performance;
-    singleTravel.value =
-      typeof singleTriggeringValue === 'number' ? singleTriggeringValue : parseFloat(singleTriggeringValue);
+    renderRtValue(rowIndex, colIndex);
   }
 });
+
+onMounted(() => {
+  if (keyboardStore.activeKeys.length > 0) {
+    const lastKey = keyboardStore.activeKeys[keyboardStore.activeKeys.length - 1].split('-');
+    const [rowIndex, colIndex] = lastKey;
+    renderRtValue(rowIndex, colIndex);
+  }
+});
+
+const renderRtValue = (rowIndex, colIndex) => {
+  const { singleTriggeringValue } = keyboards.value[rowIndex][colIndex].performance;
+  const singleTravelVal =
+    typeof singleTriggeringValue === 'number' ? singleTriggeringValue : parseFloat(singleTriggeringValue);
+  singleTravel.value = singleTravelVal;
+};
 
 // 更新单触发行程的防抖函数
 const debouncedUpdateSingleTravel = debounce((value) => {
@@ -55,11 +69,11 @@ const debouncedUpdateSingleTravel = debounce((value) => {
     const [key1, key2] = keyLocation.split('-');
     const rowIndex = Number(key1);
     const colIndex = Number(key2);
-    // keyboards.value[rowIndex][colIndex].performance.isRt = false;
+    keyboards.value[rowIndex][colIndex].performance.isRt = false;
     keyboards.value[rowIndex][colIndex].performance.isSingle = true;
     keyboards.value[rowIndex][colIndex].performance.singleTriggeringValue = value;
   });
-}, 200);
+}, 100);
 
 // 设置选中的为触发模式改单键程触发
 const handleTriggerPointChange = async (value) => {
