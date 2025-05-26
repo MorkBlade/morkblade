@@ -174,13 +174,17 @@
   left: 0;
   right: 0;
   bottom: 0;
-  & div {
+  & > div {
     width: var(--size-220);
     height: calc(var(--spacing-50) * 2);
     background-color: #fff;
     border-radius: var(--spacing-10);
     box-sizing: border-box;
-    padding: var(--spacing-20) var(--spacing-10);
+    padding: var(--spacing-5) var(--spacing-10);
+
+    > span {
+      color: #807e7e;
+    }
 
     ::v-deep(.el-progress-bar__innerText) {
       color: #000;

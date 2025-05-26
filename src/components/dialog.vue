@@ -21,15 +21,15 @@
           <!-- <p v-if="updateSuc || updateRes !== null" class="update-tip">
             {{ updateRes ? '升级之后请重新校准' : '升级失败请重试' }}
           </p> -->
-          <div class="update-progress" v-if="enterUpdate">
+          <div class="update-progress" v-if="enterUpdate && !updateRes">
             <!-- <span>升级中...</span> -->
-            <el-progress :percentage="progress" :color="'#91bc00'" :show-text="false" :stroke-width="10"></el-progress>
-            <span>{{ `${progress}%` }}</span>
+            <el-progress :percentage="progress" :color="'#91bc00'" :show-text="true" :stroke-width="10"></el-progress>
+            <!-- <span>{{ `${progress}%` }}</span> -->
           </div>
           <!-- </div> -->
           <div class="btn-group">
             <p>{{ textContent }}</p>
-            <div class="update-btn" :style="enterUpdate ? { left: '215px' } : ''" @click="onSure('enterBoot')">
+            <div class="update-btn" :style="enterUpdate ? { left: '215px' } : ''" @click="onSure">
               <img class="update-img" src="@/assets/images/sure_icon.svg" alt="" />
               <!-- <span class="update-text">{{ text[updateStep] }}</span> -->
               <span class="update-text">{{ updateSuc ? '确认' : enterUpdate ? '升级中..' : '升级' }}</span>
@@ -46,6 +46,7 @@
 </template>
 
 <script setup>
+import { onMounted } from 'vue';
 import { onBeforeUnmount, ref, watch } from 'vue';
 
 const { dialogTitle, textContent, isShow, isUpdate, progress, updateRes } = defineProps({
@@ -92,6 +93,10 @@ watch(
     }
   },
 );
+onMounted(() => {
+  // 初始化时添加滚动限制
+  console.log('dialog mounted, adding wheel event listener');
+});
 
 // 组件卸载时确保移除事件监听
 onBeforeUnmount(() => {
@@ -219,6 +224,9 @@ const onCancel = () => {
         width: calc(var(--size-510) - var(--size-10));
         margin-left: var(--spacing-38);
         margin-top: var(--spacing-2);
+      }
+      ::v-deep(.el-progress__text) {
+        color: #ffffff;
       }
     }
 

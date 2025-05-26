@@ -64,7 +64,6 @@
         <span>{{ TYPE_MAPPING[ite.advancedType]?.toUpperCase() }}</span>
       </div>
     </div>
-    <mDialog v-model:isShow="isShow" @sure="onSure" @cancel="onCancel" />
   </template>
 </template>
 
@@ -111,10 +110,7 @@
 
 
 */
-import { useAdvancedHook } from '@/hooks';
-
 import keyboard from '@/configs/byte-to-key/keyboard';
-import mDialog from '@/components/dialog.vue';
 
 const { title, advancedData } = defineProps({
   title: {
@@ -125,10 +121,8 @@ const { title, advancedData } = defineProps({
   },
 });
 
-const emits = defineEmits(['delConfig']);
+const emit = defineEmits(['delConfig']);
 
-const { delAdvancedConfig } = useAdvancedHook();
-const isShow = ref(false);
 const advancedVal = ref(null);
 const delAdvancedType = ref('');
 const delAdvancedItem = ref(null);
@@ -214,20 +208,7 @@ const isNextItemRs = (index) => {
 };
 
 const delAdvanced = (item, type) => {
-  isShow.value = true;
-  delAdvancedItem.value = item;
-  advancedVal.value = item.keyValue;
-  delAdvancedType.value = type;
-};
-
-const onSure = async () => {
-  isShow.value = false;
-  console.log('del advanced: ', delAdvancedItem.value, delAdvancedType.value);
-  delAdvancedConfig(delAdvancedItem.value, delAdvancedType.value);
-  // emits('delConfig', advancedVal.value);
-};
-const onCancel = () => {
-  isShow.value = false;
+  emit('delConfig', item, type);
 };
 </script>
 

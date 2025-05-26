@@ -181,7 +181,11 @@ const useKeyboardStore = defineStore('keyboard', {
       const activeKeys = [];
       this.keyboards.forEach((row, rowIndex) => {
         row.forEach((col, colIndex) => {
-          activeKeys.push(`${rowIndex}-${colIndex}`);
+          if (col.keyValue !== 0) {
+            // 排除无效按键
+            // 只选中有效按键
+            activeKeys.push(`${rowIndex}-${colIndex}`);
+          }
         });
       });
       this.activeKeys = activeKeys;

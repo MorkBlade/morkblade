@@ -7,19 +7,19 @@
     </div>
     <div class="config-box2">
       <span>触发行程：</span>
-      <span>{{ props.travelVal }}mm</span>
+      <span>{{ travelVal }}mm</span>
     </div>
     <div class="tip-box">
       <img src="@/assets/images/warn_icon.svg" alt="" />
       <span>提示：保存选择按钮为机械模式</span>
     </div>
-    <saveConfigBtn @saveConfig="onclick" />
+    <saveConfigBtn :verify="travelVal > 0" @saveConfig="onclick" />
   </div>
 </template>
 
 <script setup>
 import saveConfigBtn from '@/components/save-config-btn.vue';
-const props = defineProps({
+const { travelVal } = defineProps({
   travelVal: {
     type: Number,
     default: 0,

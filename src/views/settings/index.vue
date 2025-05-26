@@ -212,16 +212,9 @@ const KeyboardSN = computed(() => appStore.baseInfo?.KeyboardSN || appStore.base
 const appVersion = computed(() => appStore.baseInfo?.appVersion || '--');
 const keyboardRunMode = computed(() => appStore.baseInfo?.KeyboardRunMode);
 const appVersionTime = computed(() => appStore.baseInfo?.appBuildDate || appStore.baseInfo?.timestamp || '--');
-const progressPercentage = computed(() => {
-  if (progress.current === 0) {
-    return 0;
-  }
-  return Math.round((progress.current / progress.total) * 100);
-});
 
 emitter.on('resetData', (flag) => {
   if (flag) {
-    console.log('resetData----------->');
     regainKeyboardData();
   }
 });
@@ -335,20 +328,14 @@ const getFirmWarePack = async (url) => {
       const reader = new FileReader();
       reader.onload = async function (e) {
         const resultArrayBuffer = reader.result;
-        // console.log('resultArrayBuffer', resultArrayBuffer);
         try {
-          // const result = await services.updateBin(resultArrayBuffer, (data) => {
-          //   const { current, total } = data;
-          //   progress.value = parseFloat(((current / total) * 100).toFixed(2));
-          //   console.log('current and total:>>>', current / total);
-          // });
           emitter.emit('isUpdate', true);
           const result = await services.updateBin(resultArrayBuffer, ({ current, total }) => {
             console.log('current: ', current);
             if (current === 100) {
               progress.current = 100;
             } else {
-              progress.current = parseFloat(((current / total) * 100).toFixed(2));
+              progress.current = parseInt((current / total) * 100);
             }
             progress.total = total;
             // updateStatus.value = status;
@@ -359,15 +346,9 @@ const getFirmWarePack = async (url) => {
             updateRes.value = true;
             deviceStore.updateSuc = true;
             progress.current = 0;
-            isShow.value = false;
+            // isShow.value = false;
             showMessage('升级成功！');
           }
-          // setTimeout(() => {
-          //   router.push({
-          //     path: '/key-calibration',
-          //     replace: true,
-          //   });
-          // }, 2000);
 
           // setTimeout(() => {
           //   // 10s后检查是否在进行
@@ -383,12 +364,14 @@ const getFirmWarePack = async (url) => {
           console.log('update failed----------->', error);
           progress.current = 0;
           updateRes.value = false;
+          isShow.value = false;
+          showMessage('设备未连接或升级中断，请重试', 'warning');
           setTimeout(() => {
             router.push({
               path: '/',
               replace: true,
             });
-          }, 2000);
+          }, 1000);
         }
         // 假设 updateFile.raw 是一个 Blob 对象
         // updateFile = { raw: blob };
@@ -484,7 +467,7 @@ const startUpdate = async () => {
     });
 
     if (!res) {
-      showMessage('更新失败，请重试', 'warning');
+      showMessage('升级失败，请重试', 'warning');
       throw new Error('固件更新失败');
     }
 
@@ -501,7 +484,7 @@ const startUpdate = async () => {
     //   await delay(100);
     // }
     // await showMessage('success', '更新成功');
-    showMessage('更新成功');
+    showMessage('升级成功');
     emitter.emit('isUpdate', false);
     await delay(1000);
 
@@ -513,7 +496,7 @@ const startUpdate = async () => {
     //   await delay(100);
     // }
     // await showMessage('error', error.message || '更新失败，请重试');
-    showMessage('更新失败，请重试', 'warning');
+    showMessage('升级失败，请重试', 'warning');
     resetStates();
   } finally {
     loading.value = false;

@@ -61,7 +61,7 @@ import { showMessage } from '@/utils/message';
 const { title, keyVal, sliderVal, min, max, offsetX, deadZone, disabled } = defineProps({
   title: { type: String, default: '' },
   keyVal: { type: [String, Number], default: 0 },
-  sliderVal: { type: Number, default: 0 },
+  sliderVal: { type: [Number, Array, String], default: 0 },
   min: { type: Number },
   max: { type: Number },
   offsetX: { type: Number },

@@ -13,7 +13,7 @@ const getIconByType = (type) => {
   }
 };
 
-export const showMessage = (message, type = 'success', duration = 1000) => {
+export const showMessage = (message, type = 'success', duration = 1500) => {
   const icon = getIconByType(type);
   ElMessage({
     grouping: true,

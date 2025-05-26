@@ -26,8 +26,10 @@
       <template v-else>
         <template v-if="currentModel !== 'deadZone' && currentModel !== 'axis'">
           <p class="single-travel" v-if="singleTravel !== null">{{ singleTravel }}</p>
-          <p class="rt-press-travel" v-if="rtPressTravel !== null && isRT">{{ rtPressTravel }}</p>
-          <p class="rt-release-travel" v-if="rtReleaseTravel !== null && isRT">{{ rtReleaseTravel }}</p>
+          <template v-if="currentModel !== 'mechanicalMode'">
+            <p class="rt-press-travel" v-if="rtPressTravel !== null && isRT">{{ rtPressTravel }}</p>
+            <p class="rt-release-travel" v-if="rtReleaseTravel !== null && isRT">{{ rtReleaseTravel }}</p>
+          </template>
         </template>
       </template>
       <template v-if="currentModel === 'deadZone'">

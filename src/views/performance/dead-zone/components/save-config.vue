@@ -9,7 +9,7 @@
       <span>{{ keyUpVal }}mm</span>
     </div>
     <div :style="{ marginTop: '130px' }">
-      <saveConfigBtn @saveConfig="saveConfig" />
+      <saveConfigBtn :verify="keyDownUp !== null && keyUpVal !== null" @saveConfig="saveConfig" />
     </div>
   </div>
 </template>

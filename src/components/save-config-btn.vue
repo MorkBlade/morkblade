@@ -19,7 +19,7 @@ import { useKeyboardStore } from '@/stores';
 import mDialog from '@/components/dialog.vue';
 import defaultIcon from '@/assets/images/save_icon.svg';
 
-const { btnText, tag, disabled, needKeys, type } = defineProps({
+const { btnText, tag, disabled, needKeys, type, verify } = defineProps({
   btnText: {
     type: String,
     default: '保存更改',
@@ -41,6 +41,7 @@ const { btnText, tag, disabled, needKeys, type } = defineProps({
     default: true,
   },
   type: { type: String, default: 'normal' },
+  verify: { type: Boolean },
 });
 const emits = defineEmits(['saveConfig']);
 
@@ -53,7 +54,7 @@ const activeKeys = computed(() => {
 });
 
 const confirmConfig = () => {
-  if (disabled) return;
+  if (disabled || !verify) return;
   if (type === 'warning') {
     emits('saveConfig');
     return;

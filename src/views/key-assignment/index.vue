@@ -81,17 +81,20 @@
     </div>
     <div class="right-config-box" v-if="currentComponent !== 'customKey'">
       <div>
-        <keyConfigCard :advancedData="advancedItems" />
+        <keyConfigCard :advancedData="advancedItems" @del-config="handleDeleteAdvanced" />
       </div>
     </div>
+    <template v-if="isShow">
+      <mDialog v-model:isShow="isShow" @sure="onSure" @cancel="onCancel" />
+    </template>
   </div>
 </template>
 
 <script setup>
 import useSetAdvanced from './useSetAdvanced.js';
 import emitter from '@/utils/app-emitter';
+import { useAdvancedHook } from '@/hooks';
 
-import customKey from './custom-key/index.vue';
 import mt from './mt/index.vue';
 import dks from './dks/index.vue';
 import socd from './socd/index.vue';
@@ -99,6 +102,8 @@ import rs from './rs/index.vue';
 import tgl from './tgl/index.vue';
 import mpt from './mpt/index.vue';
 import end from './end/index.vue';
+import customKey from './custom-key/index.vue';
+import mDialog from '@/components/dialog.vue';
 import keyConfigCard from './components/key-config-card.vue';
 
 const {
@@ -121,8 +126,12 @@ const {
   advancedItems,
   keyboardStore: hookKeyboardStore,
 } = useSetAdvanced();
+const { delAdvancedConfig } = useAdvancedHook();
 
 const clickItem = ref(0);
+const isShow = ref(false);
+const delAdvancedType = ref('');
+const delAdvancedItem = ref(null);
 const isExternalUpdate = ref(false);
 const performanceItem = ['普通', '单击/长按', 'DKS', 'SOCD', 'RS', 'TGL', 'MPT', 'END'];
 
@@ -259,6 +268,23 @@ watch(
     }
   },
 );
+
+const handleDeleteAdvanced = (item, type) => {
+  isShow.value = true;
+  delAdvancedItem.value = item;
+  delAdvancedType.value = type;
+};
+
+const onSure = async () => {
+  isShow.value = false;
+  console.log('del advanced: ', delAdvancedItem.value, delAdvancedType.value);
+  delAdvancedConfig(delAdvancedItem.value, delAdvancedType.value);
+  // emits('delConfig', advancedVal.value);
+};
+
+const onCancel = () => {
+  isShow.value = false;
+};
 </script>
 
 <style scoped lang="scss">

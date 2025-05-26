@@ -21,7 +21,7 @@
       <img src="@/assets/images/warn_icon.svg" alt="" />
       <span>提示：保存选择按钮为RT模式</span>
     </div>
-    <saveConfigBtn @saveConfig="onSure" />
+    <saveConfigBtn :verify="travelVal > 0 && RTKeyDown > 0 && RTKeyUp > 0" @saveConfig="onSure" />
   </div>
 </template>
 

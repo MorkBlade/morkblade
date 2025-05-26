@@ -44,10 +44,11 @@
         </div>
       </div>
     </div>
-    <div v-if="isUpdate" class="update-box">
-      <!-- <div class="update-box"> -->
+    <div class="update-box" v-if="isUpdate">
+      <!-- <div class="update-box">   -->
       <div>
-        <span>升级中...</span>
+        <p>升级模式</p>
+        <span>正在升级中...</span>
         <el-progress
           :percentage="progress"
           :color="'#91bc00'"
@@ -66,6 +67,7 @@ import emitter from '@/utils/app-emitter';
 import services from '@/services/index.js';
 import { useAppStore, useDeviceStore } from '@/stores';
 import { scaleValue } from '@/utils/responsive.js';
+import { showMessage } from '@/utils/message';
 
 const router = useRouter();
 const deviceStore = useDeviceStore();
@@ -100,6 +102,7 @@ const handleDeviceStoreClick = async () => {
 };
 
 const getFirmWarePack = async (url) => {
+  let updateSuc = false;
   fetch(url)
     .then((response) => {
       if (!response.ok) {
@@ -116,26 +119,21 @@ const getFirmWarePack = async (url) => {
         try {
           const result = await services.updateBin(resultArrayBuffer, (data) => {
             const { current, total } = data;
-            progress.value = parseFloat(((current / total) * 100).toFixed(2));
-            console.log('current and total:>>>', current / total);
+            const curProgress = parseInt((current / total) * 100);
+            console.log('current and total:>>>', curProgress);
+            if (updateSuc) return;
+            progress.value = curProgress;
+            if (curProgress === 100) updateSuc = true;
           });
           console.log('update suc-------------> ', result);
-          // updateRes.value = true;
-          // deviceStore.updateSuc = true;
-          // setTimeout(() => {
-          //   router.push({
-          //     path: '/key-calibration',
-          //     replace: true,
-          //   });
-          // }, 2000);
+          if (result && result.success) {
+            showMessage('升级成功');
+          }
           await deviceStore.connectDevice();
         } catch (error) {
           console.log('update failed----------->', error);
-          // updateRes.value = false;
+          showMessage('升级失败，请重试', 'warning');
         }
-        // 假设 updateFile.raw 是一个 Blob 对象
-        // updateFile = { raw: blob };
-        // console.log(updateFile.raw);
         isUpdate.value = false;
       };
       reader.readAsArrayBuffer(blob);

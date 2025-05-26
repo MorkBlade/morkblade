@@ -76,6 +76,8 @@ const useDeviceStore = defineStore('device', {
     // 恢复出厂设置
     async connectDevice() {
       try {
+        const devices = await services.getDevices();
+        console.log('connectDevice log devices', devices);
         services.on('GETDEVICEINFO', (requestDeviceStatus) => {
           this.requestDeviceStatus = requestDeviceStatus;
         });
@@ -83,13 +85,14 @@ const useDeviceStore = defineStore('device', {
           console.log('isupdate', data);
           this.isUpdate = data;
         });
-        services.on('usbChange', (data) => {
+        services.on('usbChange', async (data) => {
           console.log('USB设备变化2222222:', data);
           const { device } = data;
           if (data.updateFail) {
             emitter.emit('toUpdate');
             this.isUpdate = false;
           }
+
           if (data.type === 'disconnect' || data.type === 'isUpgrading_disconnect') {
             // 如果不是在升级页面的话 路由回到连接页面
             console.log('this.isUpdate', this.isUpdate);
@@ -128,7 +131,6 @@ const useDeviceStore = defineStore('device', {
           }
         });
 
-        const devices = await services.getDevices();
         // 监听设备拔插
         if (devices.length > 0) {
           const [device] = devices;
