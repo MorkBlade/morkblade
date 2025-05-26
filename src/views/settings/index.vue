@@ -204,13 +204,25 @@ const progress = reactive({
   current: 0,
   total: 0,
 });
-const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
+const isVersion2 = ref(localStorage.getItem('keyboardVersion') === 'v2');
 const urlList = ['/api/update_esports.bin', '/api/update_highlight.bin', '/api/update_beta.bin'];
 
-const keyboardName = computed(() => deviceStore.devices[0]?.productName || '--');
+const keyboardName = computed(() => {
+  if (!isVersion2.value) {
+    const device = deviceStore.devices.find(
+      (item) => item.usagePage === 65440 && item.vendorId === 7331 && item.productId === 257,
+    );
+    return device.productName || '--';
+  } else {
+    const device = deviceStore.devices.find(
+      (item) => item.usagePage === 65456 && item.vendorId === 7334 && item.productId === 5380,
+    );
+    return device.productName || '--';
+  }
+});
 const KeyboardSN = computed(() => appStore.baseInfo?.KeyboardSN || appStore.baseInfo?.sn || '--');
 const appVersion = computed(() => appStore.baseInfo?.appVersion || '--');
-const keyboardRunMode = computed(() => appStore.baseInfo?.KeyboardRunMode);
+// const keyboardRunMode = computed(() => appStore.baseInfo?.KeyboardRunMode);
 const appVersionTime = computed(() => appStore.baseInfo?.appBuildDate || appStore.baseInfo?.timestamp || '--');
 
 emitter.on('resetData', (flag) => {
@@ -219,8 +231,16 @@ emitter.on('resetData', (flag) => {
   }
 });
 
+emitter.on('versionChange', (flag) => {
+  if (flag) {
+    setTimeout(() => {
+      isVersion2.value = localStorage.getItem('keyboardVersion') === 'v2';
+    }, 240);
+  }
+});
+
 onMounted(async () => {
-  const rate = await performanceStore.getRateOfReturn(isVersion2);
+  const rate = await performanceStore.getRateOfReturn(isVersion2.value);
   selectedRateIdx.value = rate;
 });
 
@@ -238,7 +258,7 @@ const RateOfReturnList = computed(() => {
 
 const handleSelectedRate = (idx, ite) => {
   console.log('handleSelectedRate:', idx, ite);
-  performanceStore.setRateOfReturn(idx, ite, isVersion2);
+  performanceStore.setRateOfReturn(idx, ite, isVersion2.value);
 };
 
 const handleSelectedSubVer = (idx) => {
@@ -288,7 +308,7 @@ const updateFirware = () => {
 
 const onSure = async (keyCode) => {
   if (eventType.value === 'rest') {
-    await deviceStore.factoryDataReset(isVersion2);
+    await deviceStore.factoryDataReset(isVersion2.value);
   } else {
     // console.log('asdasdasd', keyCode);
     // if (keyCode === 'enterBoot') {
@@ -528,7 +548,7 @@ const handleSelectedVer = (idx) => {
 };
 
 const regainKeyboardData = async () => {
-  appStore.getBaseInfo(isVersion2);
+  appStore.getBaseInfo(isVersion2.value);
   // 获取键盘数据
   keyboardStore.checkFnLayer(0);
   await keyboardStore.initKeyboard();
@@ -538,9 +558,9 @@ const regainKeyboardData = async () => {
   // 获取性能数据
   // await performanceStore.getPerformance(keyboards);
   // 获取高级键
-  console.log('isVersion2: ', isVersion2);
-  await getHighLevelKeys(keyboardStore.keyboards);
-  if (isVersion2) {
+  console.log('isVersion2: ', isVersion2.value);
+  await getHighLevelKeys(keyboardStore.keyboards, isVersion2.value);
+  if (isVersion2.value) {
     // 获取宏数据
     await macroStore.getMacroAllData();
   } else {

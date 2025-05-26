@@ -75,7 +75,9 @@ const useAppStore = defineStore('app', {
         this.configList = configList;
         // this.activeConfigIndex = (result && result[0]?.value) || 0;
       } else {
-        const { configID } = await services.getApi({ type: 'ORDER_TYPE_CONFIG' });
+        const res = await services.getApi({ type: 'ORDER_TYPE_CONFIG' });
+        console.log('getConfigID v1', res);
+        const { configID } = res || {};
         this.activeConfigIndex = configID || 0;
       }
     },
@@ -113,7 +115,7 @@ const useAppStore = defineStore('app', {
     // 获取协议版本
     async getProtocolVersion() {
       const protocolVersion = await services.getApi({ type: 'ORDER_TYPE_PROTOCOL_VERSION' });
-      // console.log('getProtocolVersion', protocolVersion);
+      // console.log('getProtocolVersion: ', protocolVersion);
       this.protocolVersion = protocolVersion;
       return protocolVersion;
     },

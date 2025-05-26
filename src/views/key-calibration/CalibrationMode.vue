@@ -14,6 +14,7 @@
 <script setup>
 defineOptions({ name: 'DeviceCalibrationMode' });
 
+import emitter from '@/utils/app-emitter';
 import echarts from '@/configs/echarts/index.js';
 import { scaleValue } from '@/utils/responsive.js';
 import { useKeyboardStore, usePerformanceStore } from '@/stores';
@@ -24,7 +25,7 @@ const { isStart } = defineProps({
   isStart: { type: Boolean, default: false },
 });
 const enabled = ref(false);
-const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
+const isVersion2 = ref(localStorage.getItem('keyboardVersion') === 'v2');
 const chartRef = ref(null);
 const chartInstance = ref(null);
 const keyPressTestCount = ref(0);
@@ -95,12 +96,20 @@ onMounted(() => {
   }
 });
 
+emitter.on('versionChange', (flag) => {
+  if (flag) {
+    setTimeout(() => {
+      isVersion2.value = localStorage.getItem('keyboardVersion') === 'v2';
+    }, 240);
+  }
+});
+
 const handleEnabledChange = async (value) => {
   if (value) {
-    isVersion2 ? performanceStore.calibrationStartV2() : performanceStore.calibrationStart();
+    isVersion2.value ? performanceStore.calibrationStartV2() : performanceStore.calibrationStart();
   } else {
     performanceStore.isTravelTest = false;
-    isVersion2 ? performanceStore.calibrationEndV2() : performanceStore.calibrationEnd();
+    isVersion2.value ? performanceStore.calibrationEndV2() : performanceStore.calibrationEnd();
   }
   // emitter.emit('calibration-mode', { value });
   keyPressTestCount.value++;
@@ -120,7 +129,7 @@ watch(
 watch(keyPressTestCount, async () => {
   if (isStart) {
     let mmBuff = 0;
-    if (isVersion2) {
+    if (isVersion2.value) {
       performanceStore.isTravelTest = true;
       const { max } = await performanceStore.getRm6X21CalibrationV2(keyboardStore.keyboards);
       mmBuff = max;

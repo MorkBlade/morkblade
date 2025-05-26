@@ -1,6 +1,7 @@
 <template>
   <div class="axis-container">
     <div class="axis-container__setting">
+      <!-- :carouselData="performanceStore.axisList" -->
       <mCarousel
         showText
         :carouselData="KEY_SHAFT"
@@ -21,7 +22,7 @@
         <span>{{ travelRange }}</span>
         <!-- {{ axisID }} -->
       </div>
-      <saveConfigBtn btnText="应用轴体" @saveConfig="handleSaveAxis" />
+      <saveConfigBtn btnText="应用轴体" :verify="true" @saveConfig="handleSaveAxis" />
     </div>
   </div>
 </template>
@@ -53,7 +54,7 @@ const axisID = computed(() => {
     const [key1, key2] = lastcheckedKey.split('-');
     const rowIndex = Number(key1);
     const colIndex = Number(key2);
-    console.log(keyboards.value[rowIndex][colIndex].performance.axisID);
+    // console.log(keyboards.value[rowIndex][colIndex].performance.axisID);
     return keyboards.value[rowIndex][colIndex].performance.axisID;
   }
   return 0;
@@ -69,6 +70,7 @@ const travelRange = computed(() => {
 const handleSaveAxis = async () => {
   if (activeKeys.value.length !== 0) {
     const { setAxis } = usePerformanceHook();
+    console.log('set axis:', keyboards.value, activeKeys.value, checkAixsId.value);
     const res = setAxis(keyboards.value, activeKeys.value, checkAixsId.value);
     if (res) {
       ElMessage({
@@ -84,6 +86,7 @@ const handleSaveAxis = async () => {
 
 const changeAxis = (axisID) => {
   checkAixsId.value = KEY_SHAFT.findIndex((ite) => ite.id === axisID);
+  console.log('changeAxis', axisID, checkAixsId.value);
 };
 </script>
 

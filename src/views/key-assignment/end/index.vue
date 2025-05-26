@@ -87,21 +87,21 @@ const onMouseLe = (keyCode) => {
 };
 
 const handleEndKey = (keyVal) => {
-  const unBinding = filterSocdAndRsKey(keyboardStore.keyboards, keyVal);
-  if (unBinding) {
-    showMessage('该键已绑定高级键，请重新选择', 'warning');
-    return;
-  }
+  // const unBinding = filterSocdAndRsKey(keyboardStore.keyboards, keyVal);
+  // if (unBinding) {
+  //   showMessage('该键已绑定高级键，请重新选择', 'warning');
+  //   return;
+  // }
   endInfo.value.dks = keyVal;
 };
 
 const KeydropFirst = () => {
   const keyVal = keyboardStore.selectKey.keyCode;
-  const unBinding = filterSocdAndRsKey(keyboardStore.keyboards, keyVal);
-  if (unBinding) {
-    showMessage('该键已绑定高级键，请重新选择', 'warning');
-    return;
-  }
+  // const unBinding = filterSocdAndRsKey(keyboardStore.keyboards, keyVal);
+  // if (unBinding) {
+  //   showMessage('该键已绑定高级键，请重新选择', 'warning');
+  //   return;
+  // }
   endInfo.value.dks = keyVal;
 };
 

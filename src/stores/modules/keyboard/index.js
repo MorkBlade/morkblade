@@ -84,7 +84,7 @@ const useKeyboardStore = defineStore('keyboard', {
           rowData.map(async (col, colIdx) => {
             try {
               const { axis } = await services.getAxis(col.key);
-              params[colIdx].axisID = axis;
+              params[colIdx].performance.axisID = axis;
               // const col = colNum + rowNum * 14;
               const { key, layout, value } = col;
               const customKeysKeyName = `fn${layout}`;
@@ -93,7 +93,7 @@ const useKeyboardStore = defineStore('keyboard', {
               customKeys[customKeysKeyName].bindKeyValue = value;
             } catch (error) {
               console.error(`Failed to get axis for key ${col.key}:`, error);
-              params[colIdx].axisID = 0;
+              params[colIdx].performance.axisID = 0;
             }
           }),
         ).catch(console.error);

@@ -47,6 +47,7 @@
 <script setup>
 import { useAppStore, useKeyboardStore, usePerformanceStore } from '@/stores';
 import { useAdvancedHook } from '@/hooks';
+import emitter from '@/utils/app-emitter';
 
 import changedIcon from '@/assets/images/changed.svg';
 import changeIcon from '@/assets/images/change.svg';
@@ -60,11 +61,19 @@ const { getHighLevelKeys } = useAdvancedHook();
 const defaultHeight = ref(0);
 const rotate = ref(0);
 const customItems = reactive([]);
-const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
+const isVersion2 = ref(localStorage.getItem('keyboardVersion') === 'v2');
+
+emitter.on('versionChange', (flag) => {
+  if (flag) {
+    setTimeout(() => {
+      isVersion2.value = localStorage.getItem('keyboardVersion') === 'v2';
+    }, 240);
+  }
+});
 
 onMounted(async () => {
-  await appStore.getConfigID(isVersion2);
-  await appStore.getBaseInfo(isVersion2);
+  await appStore.getConfigID(isVersion2.value);
+  await appStore.getBaseInfo(isVersion2.value);
 });
 
 const toggleDropdown = () => {
@@ -80,15 +89,16 @@ const selectItem = async (index) => {
   if (index === appStore.activeConfigIndex) {
     return;
   }
-  const res = await appStore.setActiveConfig(index, isVersion2);
+  const res = await appStore.setActiveConfig(index, isVersion2.value);
   if (res) {
-    if (!isVersion2) {
+    if (!isVersion2.value) {
       const timer = setTimeout(async () => {
         // TODO v2 配置切换之后获取的数据是一样的
-        await keyboardStore.initKeyboard();
         // await keyboardStore.getLayoutKeyInfo(keyboardStore.layout, keyboardStore.keyboards);
         // await performanceStore.getKeyPerformanceV1(keyboardStore.keyboards);
         if (res) {
+          await keyboardStore.initKeyboard();
+          await getHighLevelKeys(keyboardStore.keyboards, isVersion2.value);
           appStore.changeConfig = true;
           appStore.activeConfigIndex = index;
         }
@@ -96,7 +106,7 @@ const selectItem = async (index) => {
       }, 1000);
     } else {
       await keyboardStore.initKeyboard();
-      await getHighLevelKeys(keyboardStore.keyboards);
+      await getHighLevelKeys(keyboardStore.keyboards, isVersion2.value);
     }
   }
 };

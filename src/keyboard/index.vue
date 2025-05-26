@@ -151,15 +151,17 @@ import layouts from '@/configs/layout/index.js';
 import emitter from '@/utils/app-emitter';
 import { scaleValue } from '@/utils/responsive.js';
 import { useKeyboardPageHook } from './useKeyboardPageHook.js';
-import { useAppStore, useKeyboardStore, useDeviceStore } from '@/stores';
+import { useAppStore, useKeyboardStore, useDeviceStore, usePerformanceStore } from '@/stores';
 import { useAdvancedHook } from '@/hooks';
 
 import key from './key.vue';
+import { set } from 'vue-demi';
 
 const route = useRoute();
 const appStore = useAppStore();
 const deviceStore = useDeviceStore();
 const keyboardStore = useKeyboardStore();
+const performanceStore = usePerformanceStore();
 const { initCustomLighting } = useLightingHook();
 const { keyboards } = storeToRefs(keyboardStore);
 const { getHighLevelKeys } = useAdvancedHook();
@@ -177,11 +179,20 @@ const {
   handleOperationKey,
   handleFnChange,
 } = useKeyboardPageHook();
-const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
 const advancedMenu = ref('customKey');
+
+const isVersion2 = ref(localStorage.getItem('keyboardVersion') === 'v2');
 
 emitter.on('advancedMenu', ({ value }) => {
   advancedMenu.value = value;
+});
+
+emitter.on('versionChange', (flag) => {
+  if (flag) {
+    setTimeout(() => {
+      isVersion2.value = localStorage.getItem('keyboardVersion') === 'v2';
+    }, 240);
+  }
 });
 
 watch(
@@ -197,7 +208,7 @@ watch(
       formData.fn = fnVal;
       const { fn } = formData;
       // 切换到其他页面时还原到层1(v2暂未做)
-      if (isVersion2) {
+      if (isVersion2.value) {
         keyboardStore.checkFnLayer(0);
         keyboardStore.initKeyboard();
       } else {
@@ -212,7 +223,9 @@ watch(
 onMounted(async () => {
   try {
     // First initialize keyboard
+    await performanceStore.getGlobalTouchTravel();
     await keyboardStore.initKeyboard();
+    await performanceStore.getAixsList(isVersion2.value);
 
     // Then initialize lighting
     await initCustomLighting();
@@ -229,7 +242,7 @@ onMounted(async () => {
     if (route.path === '/key-assignment' && keyboardStore.keyboards.length > 0) {
       // Add a small delay to ensure component is fully mounted
       await new Promise((resolve) => setTimeout(resolve, 100));
-      await getHighLevelKeys(keyboardStore.keyboards);
+      await getHighLevelKeys(keyboardStore.keyboards, isVersion2.value);
     }
   } catch (error) {
     console.error('Mounted error:', error);
@@ -251,8 +264,8 @@ const handleKeyClick = (rowIndex, colIndex) => {
 
 // 匹配布局，暂时用json文件来做
 const matchLayout = () => {
-  // console.log('isVersion2: ', isVersion2);
-  if (!isVersion2) {
+  // console.log('isVersion2: ', isVersion2.value);
+  if (!isVersion2.value) {
     return layouts.keyboardLayoutV1;
   }
   return layouts.keyboardLayoutV2;
@@ -373,6 +386,7 @@ const containerDimensions = computed(() => {
     display: flex;
     justify-content: center;
     align-items: center;
+    transition: width 0.3s ease-in-out;
     &.v2 .keyboard {
       // 特殊背景图 故需要写死宽高
       width: var(--keyboard-v2-width) !important;
@@ -382,6 +396,7 @@ const containerDimensions = computed(() => {
       background-repeat: no-repeat;
       border: none;
       padding: var(--keyboard-v2-padding);
+      transition: width 0.3s ease-in-out;
       &::after {
         content: '';
         width: var(--keyboard-pseudo-element-width);
@@ -402,6 +417,7 @@ const containerDimensions = computed(() => {
       box-sizing: border-box;
       padding: var(--spacing-21) var(--spacing-24);
       background-color: #000;
+      transition: width 0.3s ease-in-out;
       &::after {
         content: '';
         width: 99.2%;

@@ -633,11 +633,11 @@ const changeDksDelay2 = (delay) => {
 };
 
 const handleDksKey = (keyVal) => {
-  const unBinding = filterSocdAndRsKey(keyboardStore.keyboards, keyVal);
-  if (unBinding) {
-    showMessage('该键已绑定高级键，请重新选择', 'warning');
-    return;
-  }
+  // const unBinding = filterSocdAndRsKey(keyboardStore.keyboards, keyVal);
+  // if (unBinding) {
+  //   showMessage('该键已绑定高级键，请重新选择', 'warning');
+  //   return;
+  // }
   if (!dksInfo.value.dks[0]) {
     dksInfo.value.dks[0] = keyVal;
   } else if (!dksInfo.value.dks[1]) {
@@ -694,12 +694,12 @@ const parse8BitToBooleans = (num) => {
 };
 
 const KeydropKey = (idx) => {
-  const keyVal = keyboardStore.selectKey.keyCode;
-  const unBinding = filterSocdAndRsKey(keyboardStore.keyboards, keyVal);
-  if (unBinding) {
-    showMessage('该键已绑定高级键，请重新选择', 'warning');
-    return;
-  }
+  // const keyVal = keyboardStore.selectKey.keyCode;
+  // const unBinding = filterSocdAndRsKey(keyboardStore.keyboards, keyVal);
+  // if (unBinding) {
+  //   showMessage('该键已绑定高级键，请重新选择', 'warning');
+  //   return;
+  // }
   dksInfo.value.dks[idx] = keyboardStore.selectKey.keyCode;
 };
 

@@ -145,6 +145,7 @@ const useSetAdvanced = () => {
     // resetKeys();
     try {
       const travelData = await performanceStore.getMaxMinTravel();
+      console.log('travelData', travelData);
       if (travelData) {
         const { maxTouchTravel: max, minTouchTravel: min, precision: step } = travelData;
         minTouchTravel.value = min;
@@ -169,7 +170,7 @@ const useSetAdvanced = () => {
   // 计算当前的高级键
   const advancedItems = computed(() => {
     const value = [];
-    // console.log('xxxxxxxxxxxxxxxxxxxxxxxxxxx');
+    console.log('xxxxxxxxxxxxxxxxxxxxxxxxxxx');
     // if (hasAdvancedData.value) {
     const keyboards = keyboardStore.keyboards;
     if (Array.isArray(keyboards)) {

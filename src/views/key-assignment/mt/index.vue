@@ -121,11 +121,11 @@ const onCancel = () => {
 };
 
 const handleMtKey = (keyVal) => {
-  const unBinding = filterSocdAndRsKey(keyboardStore.keyboards, keyVal);
-  if (unBinding) {
-    showMessage('该键已绑定高级键，请重新选择', 'warning');
-    return;
-  }
+  // const unBinding = filterSocdAndRsKey(keyboardStore.keyboards, keyVal);
+  // if (unBinding) {
+  //   showMessage('该键已绑定高级键，请重新选择', 'warning');
+  //   return;
+  // }
   if (!mtInfo.value.dks[0]) {
     mtInfo.value.dks[0] = keyVal;
   } else if (!mtInfo.value.dks[1]) {
@@ -135,11 +135,11 @@ const handleMtKey = (keyVal) => {
 
 const KeydropKey = (idx) => {
   const keyVal = keyboardStore.selectKey.keyCode;
-  const unBinding = filterSocdAndRsKey(keyboardStore.keyboards, keyVal);
-  if (unBinding) {
-    showMessage('该键已绑定高级键，请重新选择', 'warning');
-    return;
-  }
+  // const unBinding = filterSocdAndRsKey(keyboardStore.keyboards, keyVal);
+  // if (unBinding) {
+  //   showMessage('该键已绑定高级键，请重新选择', 'warning');
+  //   return;
+  // }
   mtInfo.value.dks[idx] = keyVal;
 };
 

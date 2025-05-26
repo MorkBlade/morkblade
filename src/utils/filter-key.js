@@ -5,7 +5,13 @@ export const filterSocdAndRsKey = (keyboards, keyValue) => {
     for (let col = 0; col < keyboards[row].length; col++) {
       if (keyboards[row][col].keyValue !== keyValue) continue;
       const { advancedKeys } = keyboards[row][col];
-      if (advancedKeys.advancedType) {
+      if (
+        advancedKeys.advancedType &&
+        (advancedKeys.advancedType === 8 ||
+          advancedKeys.advancedType === 6 ||
+          advancedKeys.advancedType === 7 ||
+          advancedKeys.advancedType === 9)
+      ) {
         unBinding = true;
       }
     }

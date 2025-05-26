@@ -28,6 +28,7 @@ const state = {
   calibrations: [], // 当前键盘需要显示的性能值
   veifyKey: {}, // 校验按下的键
   isTravelTest: false,
+  axisList: [], // 轴列表
 };
 
 const usePerformanceStore = defineStore('performance', {
@@ -58,6 +59,7 @@ const usePerformanceStore = defineStore('performance', {
           keyboardItem.performance.isGlobalTriggering = true;
           keyboardItem.performance.isSingle = false;
           keyboardItem.performance.isRt = false;
+          keyboardItem.performance.singleTriggeringValue = this.globalTouchTravel;
         } else if (touchMode === 'single') {
           keyboardItem.performance.isSingle = true;
           keyboardItem.performance.isGlobalTriggering = false;
@@ -573,6 +575,28 @@ const usePerformanceStore = defineStore('performance', {
       };
 
       return { mode, dbTravel, touchMode, advancedKeyMode };
+    },
+
+    async getAixsList(isVersion2) {
+      if (isVersion2) {
+        const result = await services.getAxisListV2();
+        console.log('getAxisListV2: ', result);
+        // this.axisList = result.axisList.map((item) => {
+        //   return KEY_SHAFT.find((shaft) => shaft.id === item);
+        // });
+        // return result;
+      } else {
+        const res = await services.getAxisList();
+        const axisList = res && res.axisList;
+        axisList.forEach((item) => {
+          KEY_SHAFT.forEach((shaft) => {
+            if (shaft.id === item) {
+              this.axisList.push(shaft);
+            }
+          });
+        });
+        return res;
+      }
     },
   },
 });

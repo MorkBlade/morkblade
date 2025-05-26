@@ -29,6 +29,7 @@
 
 <script setup>
 import { useLightSettingStore } from '@/stores';
+import emitter from '@/utils/app-emitter';
 
 const { staticLightColorList, staticType } = defineProps({
   staticLightColorList: {
@@ -43,7 +44,15 @@ const lightSettingStore = useLightSettingStore();
 const checkedLight = ref(0);
 const checkedColor = ref(null);
 const emits = defineEmits(['checkStaticLight', 'checkLogoStaticLight', 'changeColorPicker', 'changeLogoColorPicker']);
-const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
+const isVersion2 = ref(localStorage.getItem('keyboardVersion') === 'v2');
+
+emitter.on('versionChange', (flag) => {
+  if (flag) {
+    setTimeout(() => {
+      isVersion2.value = localStorage.getItem('keyboardVersion') === 'v2';
+    }, 240);
+  }
+});
 
 const currentChecked = computed(() => {
   return (idx) => {
@@ -70,10 +79,10 @@ const onClick = (idx) => {
 const onChange = (color) => {
   console.log('color picker change:>>>>>>', color, checkedLight.value);
   if (staticType === 'keyLight') {
-    emits('changeColorPicker', color, checkedLight.value, isVersion2);
+    emits('changeColorPicker', color, checkedLight.value, isVersion2.value);
   } else {
     // TODO v2暂无logo灯
-    emits('changeLogoColorPicker', color, checkedLight.value, isVersion2);
+    emits('changeLogoColorPicker', color, checkedLight.value, isVersion2.value);
   }
 };
 </script>

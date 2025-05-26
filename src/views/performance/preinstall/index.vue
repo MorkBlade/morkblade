@@ -2,7 +2,7 @@
   <div class="preinstall-box">
     <mCarousel :carouselData="PRESET_SETTINGS" @handleChangeItem="handleChangePreset" @handleSave="handleSavePreset" />
     <div class="bottom-taskbar">
-      <saveConfigBtn btnText="应用预设" :needKeys="false" @saveConfig="handleSavePreset" />
+      <saveConfigBtn btnText="应用预设" :needKeys="false" :verify="true" @saveConfig="handleSavePreset" />
     </div>
   </div>
 </template>

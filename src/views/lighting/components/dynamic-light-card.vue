@@ -35,6 +35,7 @@
 
 <script setup>
 import { useLightSettingStore } from '@/stores';
+import emitter from '@/utils/app-emitter';
 
 // 预加载键盘灯光图片
 const keyLightImages = import.meta.glob('@/assets/images/dynamic*.svg', { eager: true });
@@ -52,7 +53,7 @@ const { dynamicLightMode, dynamicType } = defineProps({
 
 const emits = defineEmits(['checkDynamicLight', 'changelightingMode']);
 const lightSettingStore = useLightSettingStore();
-const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
+const isVersion2 = ref(localStorage.getItem('keyboardVersion') === 'v2');
 const dynamicLightStyleV1 = [
   '波纹荡漾',
   '潮起潮落',
@@ -98,9 +99,17 @@ const dynamicLightStyleV2 = [
   '镭射穿云',
 ];
 
+emitter.on('versionChange', (flag) => {
+  if (flag) {
+    setTimeout(() => {
+      isVersion2.value = localStorage.getItem('keyboardVersion') === 'v2';
+    }, 240);
+  }
+});
+
 const dynamicLightModeList = computed(() => {
   if (dynamicType === 'keyLight') {
-    if (isVersion2) {
+    if (isVersion2.value) {
       return dynamicLightStyleV2;
     }
     return dynamicLightStyleV1;
@@ -111,7 +120,7 @@ const dynamicLightModeList = computed(() => {
 
 const currentChecked = computed(() => {
   return (idx) => {
-    if (isVersion2) {
+    if (isVersion2.value) {
       if (dynamicType === 'keyLight') {
         return lightSettingStore.light.mode === idx;
       } else {

@@ -6,10 +6,11 @@ export const useAdvancedHook = () => {
   const appStore = useAppStore();
   const keyboardStore = useKeyboardStore();
   const performanceStore = usePerformanceStore();
-  const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
+  // const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
 
   // 查询MT
   const getMT = async (params) => {
+    const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
     if (isVersion2) {
       const { keyValue, data, row, col, mode } = params;
       const { kcs, time } = data.data;
@@ -44,6 +45,7 @@ export const useAdvancedHook = () => {
     let result = null;
     let mtData = null;
     const { key, row, col, delay, dks } = params;
+    const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
     if (isVersion2) {
       const data = { time: delay, kcs: [...dks] };
       result = await services.setHigherKeyMTV2({ key, row, col, data });
@@ -71,6 +73,7 @@ export const useAdvancedHook = () => {
 
   // 查询RS
   const getRS = async (params) => {
+    const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
     if (isVersion2) {
       // console.log('getRS V2 log params:>>>>>', params);
       const { keyValue, row, col, mode, data } = params;
@@ -102,6 +105,7 @@ export const useAdvancedHook = () => {
     let result = null;
     // console.log('setRS log params: ', params);
     const { key, row, col, dks, delay } = params;
+    const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
     if (isVersion2) {
       let result2 = null;
       const data = { kcs: [...dks], delay };
@@ -131,6 +135,7 @@ export const useAdvancedHook = () => {
 
   // 查询MT
   const getTGL = async (params) => {
+    const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
     if (isVersion2) {
       // console.log('getTGL V2: ', params);
       const { keyValue, data, row, col, mode } = params;
@@ -161,6 +166,7 @@ export const useAdvancedHook = () => {
     let result = null;
     let tglData = null;
     const { key, row, col, delay, dks } = params;
+    const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
     if (isVersion2) {
       const data = { kcs: dks, delay };
       result = await services.setHigherKeyTGLV2({ key, row, col, data });
@@ -186,6 +192,7 @@ export const useAdvancedHook = () => {
 
   // 查询MPT
   const getMPT = async (params) => {
+    const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
     if (isVersion2) {
       const { keyValue, data, row, col, mode } = params;
       const { kcs, dbs } = data.data;
@@ -216,6 +223,7 @@ export const useAdvancedHook = () => {
     let result = null;
     let mptData = null;
     const { key, row, col, dks, dbs } = params;
+    const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
     if (isVersion2) {
       // const dbsAll = dbs.map((item) => item * 1000);
       const data = { kcs: [...dks], dbs: [...dbs] };
@@ -243,6 +251,7 @@ export const useAdvancedHook = () => {
 
   // 查询END
   const getEND = async (params) => {
+    const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
     if (isVersion2) {
       const { keyValue, row, col, mode, data } = params;
       const { kcs, delay } = data.data;
@@ -273,6 +282,7 @@ export const useAdvancedHook = () => {
     let endData = null;
     // console.log('setEND log params: ', params);
     const { key, row, col, dks, delay, version } = params;
+    const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
     if (isVersion2) {
       // TODO v2的end可以绑定两个键值，暂时先用选中的key和绑定的key作为两个绑定的键值
       const data = { kcs: [key, dks], delay };
@@ -300,6 +310,7 @@ export const useAdvancedHook = () => {
 
   // 查询DKS
   const getDKS = async (params) => {
+    const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
     if (isVersion2) {
       // console.log('getDKS V2 log params:>>>>>', params);
       const { keyValue, row, col, mode, data } = params;
@@ -346,6 +357,7 @@ export const useAdvancedHook = () => {
     let dksData = null;
     // console.log('setEND log params: ', params);
     const { key, row, col, db, db2, dks, trps } = params;
+    const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
     if (isVersion2) {
       const data = { kcs: [...dks], trps: [...trps], dbs: [db, db2] };
       result = await services.setHigherKeyDKSV2({ row, col, data });
@@ -372,6 +384,7 @@ export const useAdvancedHook = () => {
 
   // 查询socd
   const getSocd = async (params) => {
+    const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
     if (isVersion2) {
       // console.log('getSocd V2:>>>>>>>>>', params);
       const { keyValue, data, row, col, mode } = params;
@@ -385,7 +398,8 @@ export const useAdvancedHook = () => {
       keyboardStore.keyboards[row][col].advancedKeys = advancedKeys;
     } else {
       const { keyValue, row, col, mode } = params;
-      const result = await services.getSocd(keyValue, appStore.protocolVersion || '1.0.7');
+      const protocolVersion = typeof appStore.protocolVersion === 'string' ? appStore.protocolVersion : '1.0.7';
+      const result = await services.getSocd(keyValue, protocolVersion);
       const { mode: socdMode, key1, key2, pos1, pos2 } = result;
       // console.log('getSocd v1', params, result);
       const socdData = { keyValue, type: 'socd', mode, socdMode, socd: [pos1, pos2], delay: 100 };
@@ -400,6 +414,7 @@ export const useAdvancedHook = () => {
 
   // 设置socd
   const setSocd = async (params) => {
+    const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
     if (isVersion2) {
       // const { row, col, row2, col2, mode: socdMode, delay, kcs } = params;
       const { key, mode, delay } = params;
@@ -429,6 +444,7 @@ export const useAdvancedHook = () => {
 
   // 删除高级键
   const delAdvancedConfig = async (advanced, advancedType) => {
+    const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
     try {
       if (isVersion2) {
         await handleV2Deletion(advanced, advancedType);
@@ -514,7 +530,7 @@ export const useAdvancedHook = () => {
   };
 
   // 初始化高级键数据
-  const getHighLevelKeys = async (keyboards) => {
+  const getHighLevelKeys = async (keyboards, isVersion2) => {
     try {
       const processKey = async (keyValue, data, row, col, mode) => {
         if (!keyValue) return;
@@ -546,7 +562,7 @@ export const useAdvancedHook = () => {
 
             try {
               const result = await services.getHigherKeyV2({ row, col });
-              // console.log('getHighLevelKeys result', result);
+              console.log('getHighLevelKeys result', result);
               const data = result;
               const advancedKeyMode = data.mode;
               await processKey(keyValue, data, row, col, advancedKeyMode);

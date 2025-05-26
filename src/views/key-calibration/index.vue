@@ -34,6 +34,7 @@
   </div>
 </template>
 <script setup>
+import emitter from '@/utils/app-emitter';
 import { useDeviceStore, useKeyboardStore, usePerformanceStore } from '@/stores';
 
 import CalibrationMode from './CalibrationMode.vue';
@@ -48,15 +49,23 @@ const isStart = ref(false);
 
 const keys = ref([]);
 const keyID = ref(0);
-const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
+const isVersion2 = ref(localStorage.getItem('keyboardVersion') === 'v2');
 const inputText = ref('');
 const startTime = ref(null);
 const endTime = ref(null);
 
+emitter.on('versionChange', (flag) => {
+  if (flag) {
+    setTimeout(() => {
+      isVersion2.value = localStorage.getItem('keyboardVersion') === 'v2';
+    }, 240);
+  }
+});
+
 const onStart = () => {
   isStart.value = !isStart.value;
   if (!isStart.value) {
-    isVersion2 ? performanceStore.calibrationEndV2() : performanceStore.calibrationEnd();
+    isVersion2.value ? performanceStore.calibrationEndV2() : performanceStore.calibrationEnd();
   }
   isAct.value = false;
 };

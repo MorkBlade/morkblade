@@ -49,6 +49,7 @@
 <script setup>
 import { scaleValue } from '@/utils/responsive.js';
 import { LIGHT_SLEEP_DELAY } from '@/configs/constant/index.js';
+import emitter from '@/utils/app-emitter';
 
 import changedSleepIcon from '@/assets/images/changed.svg';
 import changeSleepIcon from '@/assets/images/change.svg';
@@ -62,13 +63,20 @@ const emits = defineEmits(['changeSleepDelay', 'changeLuminance', 'changeSpeed']
 
 const defaultHeight = ref(0);
 const rotate = ref(180);
-const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
-const max = isVersion2 ? 100 : 4;
+const isVersion2 = ref(localStorage.getItem('keyboardVersion') === 'v2');
+const max = isVersion2.value ? 100 : 4;
 const selectedId = ref(lingtingData.value.sleepTime);
 // const luminanceVal = ref(0);
 // const speedVal = ref(0);
-
 // const LightSleepDelaySelect = ref(lingtingData.value.sleepTime);
+
+emitter.on('versionChange', (flag) => {
+  if (flag) {
+    setTimeout(() => {
+      isVersion2.value = localStorage.getItem('keyboardVersion') === 'v2';
+    }, 240);
+  }
+});
 
 const toggleDropdown = () => {
   defaultHeight.value = defaultHeight.value ? 0 : scaleValue(590);
@@ -113,8 +121,9 @@ const getLuminance = (val) => {
 
 const getSpeed = (val) => {
   if (lingtingData.value.speed === val) return;
-  if (isVersion2) {
+  if (isVersion2.value) {
     // v2 暂时没有休眠时间设置
+    emits('changeSpeed', val, isVersion2.value);
   } else {
     lingtingData.value.speed = val;
     emits('changeSpeed', val);

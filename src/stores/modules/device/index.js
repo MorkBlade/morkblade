@@ -137,6 +137,7 @@ const useDeviceStore = defineStore('device', {
           this.devices = devices;
           this.device = device;
           if (device) {
+            console.log('device store log device', device, devices);
             await services.init(device.id);
             this.connectDeviceStatus = true;
             return true;

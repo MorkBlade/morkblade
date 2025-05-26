@@ -35,6 +35,7 @@
 <script setup>
 import { useLightSettingStore, useKeyboardStore } from '@/stores';
 import { useLightingHook } from '@/hooks';
+import emitter from '@/utils/app-emitter';
 
 import services from '@/services/index';
 import keyLighting from './key-lighting/index.vue';
@@ -48,11 +49,19 @@ const lightSettingStore = useLightSettingStore();
 const { initLighting, setLighting, setLightingPalette, initCustomLighting, getLightingSaturation } = useLightingHook();
 
 const clickItem = ref(0);
-const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
+const isVersion2 = ref(localStorage.getItem('keyboardVersion') === 'v2');
 const lightingItem = ['按键灯效', 'LOGO灯效', '自定义灯效', '高级设置'];
 let animationFrameId = null;
 let lastUpdateTime = 0;
 const UPDATE_INTERVAL = 100; // 100ms
+
+emitter.on('versionChange', (flag) => {
+  if (flag) {
+    setTimeout(() => {
+      isVersion2.value = localStorage.getItem('keyboardVersion') === 'v2';
+    }, 240);
+  }
+});
 
 // 更新颜色的函数
 const updateColors = async () => {
@@ -108,7 +117,7 @@ const animationLoop = async (timestamp) => {
 onMounted(async () => {
   await initLighting();
   await getLightingSaturation();
-  if (isVersion2) {
+  if (isVersion2.value) {
     animationFrameId = requestAnimationFrame(animationLoop);
   }
 });
@@ -152,7 +161,7 @@ const changeMenu = (idx) => {
       break;
   }
   // 先取消自定义灯光
-  isVersion2 ? initCustomLighting(inCustomLighting) : '';
+  isVersion2.value ? initCustomLighting(inCustomLighting) : '';
   changeKeyLight();
 };
 
@@ -186,11 +195,15 @@ const changeLuminance = async (luminance) => {
   await setLighting('logo');
 };
 
-const changeSpeed = async (speed) => {
+const changeSpeed = async (speed, isVersion2) => {
   lightSettingStore.light.speed = speed;
-  lightSettingStore.logo.speed = speed;
-  await setLighting();
-  await setLighting('logo');
+  if (isVersion2) {
+    await setLighting();
+  } else {
+    lightSettingStore.logo.speed = speed;
+    await setLighting();
+    await setLighting('logo');
+  }
 };
 
 const changeSleepDelay = async (delay) => {

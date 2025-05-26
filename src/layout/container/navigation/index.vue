@@ -20,6 +20,7 @@
 </template>
 
 <script setup>
+import { useKeyboardStore } from '@/stores';
 import emitter from '@/utils/app-emitter';
 
 import performanceW from '@/assets/images/performance-w.svg';
@@ -73,6 +74,7 @@ const routesInfo = [
 ];
 const router = useRouter();
 const defaultActive = ref('/performance');
+const keyboardStore = useKeyboardStore();
 const handleClick = async (ite) => {
   if (defaultActive.value !== ite.path) {
     // 确保只有当路径改变时才进行更新
@@ -86,6 +88,7 @@ const handleClick = async (ite) => {
         path: ite.path,
         replace: false,
       });
+      keyboardStore.cancelSelectKey();
     } catch (err) {
       console.error('Navigation error:', err);
     }

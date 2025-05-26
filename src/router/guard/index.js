@@ -16,6 +16,9 @@ export default function createRouteGuard(router) {
       return;
     }
     const deviceStore = useDeviceStore();
+    // console.log('router beforeEach------------------------>');
+    // const version = deviceStore.devices[0]?.usagePage === 65440 ? 'v1' : 'v2';
+    // localStorage.setItem('keyboardVersion', version);
     try {
       if (!deviceStore.connectDeviceStatus) {
         const result = await deviceStore.connectDevice();

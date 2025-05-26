@@ -23,18 +23,18 @@
         @sendKeyVal="handleReleaseDeadChange"
       />
       <div class="key-dead-preview">
-        <img src="@/assets/images/key_dead_scale.svg" alt="" />
+        <img src="@/assets/images/scale.svg" alt="" />
         <div class="key-dead-scale">
           <div class="top-box" :style="{ height: `${pressDeadHeight}px` }"></div>
           <div class="bottom-box" :style="{ height: `${releaseDeadHeight}px` }"></div>
         </div>
-        <img src="@/assets/images/key_dead_scale.svg" alt="" />
+        <img src="@/assets/images/scale.svg" alt="" />
         <div class="nums">
           <p class="scale_0">0.10</p>
           <p class="scale_1">1.00</p>
           <p class="scale_2">2.00</p>
           <p class="scale_3">3.00</p>
-          <p class="scale_3_3">4.00</p>
+          <p class="scale_3_3">{{ maxTravel || '3.30' }}</p>
         </div>
       </div>
     </div>
@@ -45,6 +45,7 @@
 <script setup>
 import { showMessage } from '@/utils/message';
 import emitter from '@/utils/app-emitter';
+import { KEY_SHAFT } from '@/configs/constant/index.js';
 import { usePerformanceHook } from '@/hooks';
 import { scaleValue } from '@/utils/responsive.js';
 import { useKeyboardStore, usePerformanceStore } from '@/stores';
@@ -58,12 +59,14 @@ import travelTestCard from '@/components/travel-test-card.vue';
 const { rowIdx, colIdx, activeKeys, disabled, debounce, hasCurrentKey } = usePerformancePageHook();
 
 const keyboardStore = useKeyboardStore();
+const performanceStore = usePerformanceStore();
 const { keyboards } = storeToRefs(keyboardStore);
 
 const min = 0; // 最小值
 const max = 1; // 最大值
 const pressDeadHeight = ref(10);
 const releaseDeadHeight = ref(10);
+const maxTravel = ref(null);
 const pressDead = ref(0.2);
 const releaseDead = ref(0.2);
 const maxKeyDeadHeight = computed(() => {
@@ -98,7 +101,10 @@ onMounted(() => {
 });
 
 const renderRtValue = (rowIndex, colIndex) => {
-  const { deadBandPressValue, deadBandReleaseValue } = keyboards.value[rowIndex][colIndex].performance;
+  const { deadBandPressValue, deadBandReleaseValue, axisID } = keyboards.value[rowIndex][colIndex].performance;
+  const axisItem = performanceStore.axisList.find((item) => item.id === axisID);
+  console.log('轴体信息', axisItem);
+  maxTravel.value = axisItem ? (axisItem.maxTravel / 1000).toFixed(2) : null;
   const releaseHeight = (deadBandPressValue / max) * maxKeyDeadHeight.value;
   releaseDeadHeight.value = Math.round(releaseHeight);
   const pressHeight = (deadBandReleaseValue / max) * maxKeyDeadHeight.value;
@@ -210,7 +216,7 @@ const saveDeadZoneTravel = async () => {
     img {
       height: var(--size-250);
       width: var(--size-25);
-      object-fit: fill;
+      object-fit: cover;
     }
 
     img:first-child {

@@ -12,6 +12,7 @@ export const useLightingHook = () => {
   const lightData = light.value;
 
   const initLighting = async () => {
+    console.log('Initializing lighting data...', isVersion2);
     if (isVersion2) {
       const lightingBase = await services.getLightingBaseV2({ area: area, config: base });
       const { open, mode, luminance, speed, direction, selectStaticColor } = lightingBase[0];
@@ -33,6 +34,7 @@ export const useLightingHook = () => {
     } else {
       // v1初始化灯光数据
       const keyboardLighting = await services.getLighting();
+      console.log('keyboardLighting', keyboardLighting);
       const logoLighting = await services.getLogoLighting();
       modifyLightingData(keyboardLighting, logoLighting);
     }

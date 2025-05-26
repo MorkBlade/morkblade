@@ -16,8 +16,10 @@
       <template v-else-if="TYPE_MAPPING[ite.advancedType] === 'socd' && ite.socd">
         <!-- type === 0 的情况 -->
         <template v-if="ite.socd.socdMode === 0">
-          <p :style="{ marginRight: '8px' }">{{ keyboard[ite.keyValue] }}</p>
-          <p>{{ keyboard[getNextSocdKeyId(idx)] }}</p>
+          <p :style="{ marginRight: '8px' }">
+            {{ ite.socd.socd[0] === ite.keyValue ? keyboard[ite.socd.socd[0]] : keyboard[ite.socd.socd[1]] }}
+          </p>
+          <p>{{ ite.socd.socd[0] === ite.keyValue ? keyboard[ite.socd.socd[1]] : keyboard[ite.socd.socd[0]] }}</p>
         </template>
         <!-- type === 1 的情况 -->
         <template v-else-if="ite.socd.socdMode === 1">
@@ -111,6 +113,7 @@
 
 */
 import keyboard from '@/configs/byte-to-key/keyboard';
+import { useKeyboardStore } from '@/stores';
 
 const { title, advancedData } = defineProps({
   title: {
@@ -123,6 +126,7 @@ const { title, advancedData } = defineProps({
 
 const emit = defineEmits(['delConfig']);
 
+const keyboardStore = useKeyboardStore();
 const advancedVal = ref(null);
 const delAdvancedType = ref('');
 const delAdvancedItem = ref(null);
@@ -147,26 +151,26 @@ const shouldSkip = (index) => {
   // Skip if type is macro
   // if (TYPE_MAPPING[current.advancedType] === 'macro') return true;
 
-  if (TYPE_MAPPING[current.advancedType] !== 'socd' && TYPE_MAPPING[current.advancedType] !== 'rs') return false;
+  // if (TYPE_MAPPING[current.advancedType] !== 'socd' && TYPE_MAPPING[current.advancedType] !== 'rs') return false;
 
-  for (let i = 0; i < index; i++) {
-    const prev = advancedData[i];
-    // socd 跳过逻辑
-    if (TYPE_MAPPING[prev.advancedType] === 'socd' && Array.isArray(prev.socd?.socd)) {
-      if (prev.socd.socd.includes(current.keyValue)) {
-        return true;
-      }
-    }
-    // rs 跳过逻辑
-    if (TYPE_MAPPING[prev.advancedType] === 'rs' && Array.isArray(prev.rs?.rs) && Array.isArray(current.rs?.rs)) {
-      // 判断两组 rs 是否完全一样（顺序无关）
-      const prevSet = new Set(prev.rs.rs);
-      const currSet = new Set(current.rs.rs);
-      if (prevSet.size === currSet.size && [...prevSet].every((v) => currSet.has(v))) {
-        return true;
-      }
-    }
-  }
+  // for (let i = 0; i < index; i++) {
+  //   const prev = advancedData[i];
+  //   // socd 跳过逻辑
+  //   if (TYPE_MAPPING[prev.advancedType] === 'socd' && Array.isArray(prev.socd?.socd)) {
+  //     if (prev.socd.socd.includes(current.keyValue)) {
+  //       return true;
+  //     }
+  //   }
+  //   // rs 跳过逻辑
+  //   if (TYPE_MAPPING[prev.advancedType] === 'rs' && Array.isArray(prev.rs?.rs) && Array.isArray(current.rs?.rs)) {
+  //     // 判断两组 rs 是否完全一样（顺序无关）
+  //     const prevSet = new Set(prev.rs.rs);
+  //     const currSet = new Set(current.rs.rs);
+  //     if (prevSet.size === currSet.size && [...prevSet].every((v) => currSet.has(v))) {
+  //       return true;
+  //     }
+  //   }
+  // }
   return false;
 };
 
