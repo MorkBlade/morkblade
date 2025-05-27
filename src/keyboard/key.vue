@@ -46,6 +46,7 @@
       @mouseenter="handleMouseOver(keyItem.keyValue)"
       @mouseleave="onMouseLeave"
       @mouseup.stop="startMouseUp"
+      @contextmenu="(e) => handleContextmenu(e, keyItem.keyValue)"
     >
       <p class="top-key">{{ showKeyCode }}</p>
     </div>
@@ -56,7 +57,7 @@
     </template>
     <img :src="verifyIcon" class="verify_icon" v-if="route.path === '/key-calibration' && verifySuc" />
     <div v-if="route.path === '/performance' && currentModel == 'axis' && axisVal !== null" class="axis">
-      <span :style="{ backgroundColor: KEY_SHAFT?.[axisVal]?.color ?? 'transparent' }"></span>
+      <span :style="{ backgroundColor: axisColor }"></span>
     </div>
   </div>
 </template>
@@ -105,12 +106,20 @@ const currentModel = ref('mechanicalMode');
 
 const route = useRoute();
 const isShow = ref(false);
-const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
+const isVersion2 = ref(localStorage.getItem('keyboardVersion') === 'v2');
 const shape = { height: scaleValue(50), width: scaleValue(50) };
 
 emitter.on('in-the-where', ({ value }) => {
   currentModel.value = value;
   performanceStore.currentModel = value;
+});
+
+emitter.on('versionChange', (flag) => {
+  if (flag) {
+    setTimeout(() => {
+      isVersion2.value = localStorage.getItem('keyboardVersion') === 'v2';
+    }, 240);
+  }
 });
 
 watch(
@@ -191,10 +200,10 @@ const showKeyCode = computed(() => {
     const customKeysKeyName = `fn${layout.value}`;
     // console.log('currentKey.value', currentKey.value, customKeysKeyName);
     const { bindKeyValue } = currentKey.value.customKeys[customKeysKeyName];
-    return isVersion2 ? keyboardV2[bindKeyValue] : keyboard[bindKeyValue];
+    return isVersion2.value ? keyboardV2[bindKeyValue] : keyboard[bindKeyValue];
   }
 
-  return isVersion2 ? keyboardV2[0] : keyboard[0];
+  return isVersion2.value ? keyboardV2[0] : keyboard[0];
 });
 
 const verifySuc = computed(() => {
@@ -227,7 +236,7 @@ const advancedTag = computed(() => {
       type = 'END';
     } else if (mode === 6) {
       // TODO v2 是socd  v1是mcr
-      type = isVersion2 ? 'SOCD' : 'MCR';
+      type = isVersion2.value ? 'SOCD' : 'MCR';
     } else if (mode === 7) {
       type = 'RS';
     } else if (mode === 8) {
@@ -308,9 +317,17 @@ const axisVal = computed(() => {
   return null;
 });
 
-const changeKeyLightColor = async (key) => {
+const axisColor = computed(() => {
+  if (isVersion2.value) {
+    return performanceStore.axisList?.[axisVal.value]?.axis_color ?? 'transparent';
+  } else {
+    return KEY_SHAFT?.[axisVal.value]?.color ?? 'transparent';
+  }
+});
+
+const changeKeyLightColor = async (key, isCustom = true) => {
   const { r, g, b } = lightSettingStore.currentColor;
-  currentKey.value.customLight = { R: r, G: g, B: b, isCustom: true };
+  currentKey.value.customLight = { R: r, G: g, B: b, isCustom };
   setCustomLighting(key);
   // await services.setCustomLighting({ key, ...lightSettingStore.currentColor });
 };
@@ -369,6 +386,27 @@ const keyColorStyle = computed(() => {
 
 const onMouseLeave = () => {
   // Implementation of onMouseLeave
+};
+
+const handleContextmenu = (e, key) => {
+  if (!isVersion2.value) return;
+  // console.log('handleMouseOver');
+  e.preventDefault();
+  if (currentKey.value.customLight?.isCustom) {
+    changeKeyLightColor(key, false);
+  }
+};
+
+const changeKeyCustomLight = async (e, isCustom = true) => {
+  if (inLightingPage.value) {
+    let color;
+    if (!isCustom) {
+      color = { R: 0, G: 0, B: 0 };
+    } else {
+      color = lightingStore.colorPickerPanel;
+    }
+    keyboardStore.setKeyColor(rowIndex, colIndex, color, isCustom);
+  }
 };
 </script>
 

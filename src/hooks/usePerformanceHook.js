@@ -171,7 +171,6 @@ const processKeysV2 = async (keyboards, activeKeys, modifyPerformance = null) =>
     const rowIndex = Number(key1);
     const colIndex = Number(key2);
     const { performance } = keyboards[rowIndex][colIndex];
-    console.log('performance: ', performance);
 
     // 如果有需要修改performance的回调，执行它
     if (modifyPerformance) {

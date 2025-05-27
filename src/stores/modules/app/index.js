@@ -22,6 +22,7 @@ const useAppStore = defineStore('app', {
     keyboardName: '',
     changeConfig: false,
     protocolVersion: '',
+    // keyboardVersion: '', // 键盘版本v1 v2
   }),
 
   actions: {

@@ -14,15 +14,25 @@
           :data-id="item.id"
           class="slide"
         >
-          <img :src="item.src" alt="" draggable="false" />
+          <template v-if="item.image_url === '#'">
+            <img :src="axisIcon1" alt="" draggable="false" />
+          </template>
+          <template v-else>
+            <img :src="item.src || item.image_url" alt="" draggable="false" />
+          </template>
         </div>
       </div>
     </div>
     <div class="right-arrow" @click="nextClick"></div>
     <div class="bottom-taskbar">
       <div class="bottom-taskbar__text" v-if="showText">
-        <span :style="{ backgroundColor: localCarouselData[currentIdx]?.color }">
-          {{ localCarouselData[currentIdx]?.name }}
+        <span
+          :style="{
+            backgroundColor:
+              localCarouselData[currentIdx]?.color || localCarouselData[currentIdx]?.axis_color || '#fff',
+          }"
+        >
+          {{ localCarouselData[currentIdx]?.name || localCarouselData[currentIdx]?.axis_name || '磁轴' }}
         </span>
       </div>
     </div>
@@ -31,6 +41,7 @@
 
 <script setup>
 import { scaleValue } from '@/utils/responsive.js';
+import axisIcon1 from '@/assets/images/wanciwang.webp';
 
 const { carouselData, offset, selectedId } = defineProps({
   carouselData: { type: Array, default: () => [] },
@@ -71,7 +82,10 @@ const prevClickSlide = () => {
       // console.log('prev click', currentIdx.value, offsetVal.value, SLIDE_WIDTH.value, originalLength.value - 1);
     }, 500);
   }
-  emits('handleChangeItem', localCarouselData.value[currentIdx.value].id);
+  emits(
+    'handleChangeItem',
+    localCarouselData.value[currentIdx.value].id || localCarouselData.value[currentIdx.value].axis_id,
+  );
   setTimeout(() => {
     flag = false;
   }, 300);
@@ -96,8 +110,11 @@ const nextClick = () => {
       offsetVal.value = 0;
     }, 500);
   }
-  console.log('handleChangeItem', localCarouselData.value, currentIdx.value, localCarouselData.value[currentIdx.value]);
-  emits('handleChangeItem', localCarouselData.value[currentIdx.value].id);
+  // console.log('handleChangeItem', localCarouselData.value, currentIdx.value, localCarouselData.value[currentIdx.value]);
+  emits(
+    'handleChangeItem',
+    localCarouselData.value[currentIdx.value].id || localCarouselData.value[currentIdx.value].axis_id,
+  );
   setTimeout(() => {
     flag = false;
   }, 300);
@@ -114,7 +131,7 @@ onMounted(() => {
 watch(
   () => selectedId,
   (newVal) => {
-    console.log('new selcet axis id', newVal);
+    // console.log('new selcet axis id', newVal);
   },
 );
 

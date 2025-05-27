@@ -12,7 +12,7 @@ export const useLightingHook = () => {
   const lightData = light.value;
 
   const initLighting = async () => {
-    console.log('Initializing lighting data...', isVersion2);
+    const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
     if (isVersion2) {
       const lightingBase = await services.getLightingBaseV2({ area: area, config: base });
       const { open, mode, luminance, speed, direction, selectStaticColor } = lightingBase[0];
@@ -42,6 +42,7 @@ export const useLightingHook = () => {
   };
 
   const setLighting = async (lightingType = 'keyboard') => {
+    const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
     if (isVersion2) {
       const res = await services.setLightingBaseV2({
         area: area,
@@ -106,6 +107,7 @@ export const useLightingHook = () => {
   };
 
   const setCustomLighting = async (key) => {
+    const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
     if (isVersion2) {
       const customLightData = [];
       keyboardStore.keyboards.forEach((row, rowIndex) => {

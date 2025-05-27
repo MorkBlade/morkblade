@@ -108,6 +108,7 @@ const renderRtValue = (rowIndex, colIndex) => {
   }
   const rtPressTravelVal = typeof rtPressValue === 'number' ? rtPressValue : parseFloat(rtPressValue);
   const rtReleaseTravelVal = typeof rtReleaseValue === 'number' ? rtReleaseValue : parseFloat(rtReleaseValue);
+  console.log('sigleTravelVal: ', singleTravelVal);
   singleTravel.value = singleTravelVal || 0.1;
   rtPressTravel.value = rtPressTravelVal || 0.1;
   rtReleaseTravel.value = rtReleaseTravelVal || 0.1;

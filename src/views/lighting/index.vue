@@ -161,7 +161,7 @@ const changeMenu = (idx) => {
       break;
   }
   // 先取消自定义灯光
-  isVersion2.value ? initCustomLighting(inCustomLighting) : '';
+  // isVersion2.value ? initCustomLighting(inCustomLighting) : '';
   changeKeyLight();
 };
 

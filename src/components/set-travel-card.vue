@@ -3,10 +3,10 @@
     <div class="slider_box">
       <img class="slider-img" src="/src/assets/images/keystroke_scale_bg.svg" alt="" />
       <div class="progress-bar" ref="sliderContainer">
-        <div
+        <!-- <div
           class="slider-btn"
           :class="{ disabled: disabled }"
-          :style="handleStyle"
+          :style="{ top: handleStyle.top }"
           v-on="
             !disabled
               ? {
@@ -15,8 +15,23 @@
                 }
               : {}
           "
-        ></div>
-        <el-slider
+        ></div> -->
+        <div class="my-slider" :style="{ height: handleStyle.sliderHeight }">
+          <div
+            class="slider-btn"
+            :class="{ disabled: disabled }"
+            v-on="
+              !disabled
+                ? {
+                    mousedown: startDrag,
+                    // touchstart: startDrag,
+                  }
+                : {}
+            "
+          ></div>
+          <!-- :style="{ top: handleStyle.top }" -->
+        </div>
+        <!-- <el-slider
           ref="slider"
           vertical
           disabled
@@ -25,7 +40,9 @@
           :min="min"
           :max="max"
           :model-value="travelVal"
-        />
+        /> -->
+        <!-- :model-value="0.5 * 2.5" -->
+        <!-- :model-value="0.1 * 8.5" -->
       </div>
       <img class="slider-img isreverse" src="/src/assets/images/keystroke_scale_bg.svg" alt="" />
       <div class="nums">
@@ -57,6 +74,7 @@
 
 <script setup>
 import { showMessage } from '@/utils/message';
+import { scaleValue } from '@/utils/responsive';
 
 const { title, keyVal, sliderVal, min, max, offsetX, deadZone, disabled } = defineProps({
   title: { type: String, default: '' },
@@ -81,6 +99,30 @@ const travelVal = ref(null);
 let dragging = false;
 let startY = 0;
 
+// 刻度线的值和像素位置（根据实际UI调整）
+const scaleMap = [
+  { value: 0.005, pos: 0 },
+  { value: 0.1, pos: 42 },
+  { value: 1.0, pos: 92 },
+  { value: 2.0, pos: 142 },
+  { value: 3.3, pos: 190 },
+];
+
+// 根据 value 计算像素位置
+function valueToPos(val) {
+  if (val <= scaleMap[0].value) return scaleMap[0].pos;
+  if (val > scaleMap[scaleMap.length - 1].value) return scaleMap[scaleMap.length - 1].pos;
+  for (let i = 0; i < scaleMap.length - 1; i++) {
+    const cur = scaleMap[i];
+    const next = scaleMap[i + 1];
+    if (val >= cur.value && val <= next.value) {
+      const percent = (val - cur.value) / (next.value - cur.value);
+      return cur.pos + percent * (next.pos - cur.pos);
+    }
+  }
+  return 0;
+}
+
 watch(
   () => sliderVal,
   (newVal) => {
@@ -91,10 +133,19 @@ watch(
 
 // 计算滑块样式
 const handleStyle = computed(() => {
-  const percentage = (travelVal.value - min) / (max - min);
-  let top = percentage * sliderHeight.value.replace('px', '') - 10 + 'px';
+  // sliderHeight.value 可能是字符串如"192px"，需转为数字
+  const height = Number(sliderHeight.value.replace('px', '')) || scaleValue(192);
+  // scaleMap的最大像素要和slider实际高度一致
+  const scaleMaxPx = scaleMap[scaleMap.length - 1].pos;
+  const scaleRatio = height / scaleMaxPx;
+  // 计算实际像素位置
+  let topPx = valueToPos(travelVal.value) * scaleRatio - scaleValue(10); // -10为滑块居中修正
+  // 限制范围
+  if (topPx < 0) topPx = 0;
+  if (topPx > height - scaleValue(15)) topPx = height - scaleValue(15); // 20为滑块高度
   return {
-    top, // 根据进度计算底部位置
+    top: topPx + 'px',
+    sliderHeight: topPx + scaleValue(18) + 'px',
   };
 });
 
@@ -121,8 +172,7 @@ const onDrag = (e) => {
   } else {
     clientY = e.clientY;
   }
-
-  updateValue(clientY);
+  updateValue(clientY - 30);
 };
 
 // 结束拖拽或鼠标离开
@@ -147,7 +197,6 @@ const updateValue = (clientY) => {
   emits('sendKeyVal', travelVal.value);
 };
 
-let timer = null;
 const updateValueFromInput = (e) => {
   // if (!e.target.value) return;
   const inputValue = parseFloat(e.target.value);
@@ -233,6 +282,16 @@ onUnmounted(() => {
       background-image: url('@/assets/images/travel_progress_bg.svg');
       background-size: cover;
       background-repeat: no-repeat;
+      position: relative;
+
+      .my-slider {
+        position: absolute;
+        top: var(--spacing-3);
+        left: var(--spacing-3);
+        width: var(--size-16);
+        border-radius: var(--spacing-15);
+        background-color: rgb(145, 188, 0);
+      }
 
       .el-slider {
         transform: rotate(180deg);
@@ -244,8 +303,8 @@ onUnmounted(() => {
         height: var(--size-22);
         cursor: grab;
         position: absolute;
-        top: 0;
-        left: 0;
+        bottom: -3px;
+        left: -3px;
         z-index: 3;
         background-image: url('@/assets/images/sliding_block2.svg');
         background-size: cover;
@@ -267,7 +326,7 @@ onUnmounted(() => {
       height: var(--size-200);
       top: calc(var(--spacing-5) * -1);
       left: var(--spacing-95);
-      background-color: pink;
+      // background-color: pink;
 
       p {
         color: #ccc;

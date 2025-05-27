@@ -225,7 +225,6 @@ onMounted(async () => {
     // First initialize keyboard
     await performanceStore.getGlobalTouchTravel();
     await keyboardStore.initKeyboard();
-    await performanceStore.getAixsList(isVersion2.value);
 
     // Then initialize lighting
     await initCustomLighting();

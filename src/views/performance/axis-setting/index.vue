@@ -4,7 +4,7 @@
       <!-- :carouselData="performanceStore.axisList" -->
       <mCarousel
         showText
-        :carouselData="KEY_SHAFT"
+        :carouselData="performanceStore.axisList"
         :btnText="'应用轴体'"
         :offset="scaleValue(25)"
         :width="scaleValue(920)"
@@ -62,9 +62,13 @@ const axisID = computed(() => {
 
 const travelRange = computed(() => {
   if (checkAixsId.value === null) return '';
-  return (
-    KEY_SHAFT[checkAixsId.value]?.minTravel / 1000 + 'mm' + '-' + KEY_SHAFT[checkAixsId.value]?.maxTravel / 1000 + 'mm'
-  );
+  const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
+  if (isVersion2) {
+    const axisList = performanceStore.axisList;
+    return `${axisList[checkAixsId.value]?.doctrine_range_right}mm-${axisList[checkAixsId.value]?.doctrine_range_left}mm`;
+  } else {
+    return `${KEY_SHAFT[checkAixsId.value]?.travelRangeRight}mm-${KEY_SHAFT[checkAixsId.value]?.travelRangeLeft}mm`;
+  }
 });
 
 const handleSaveAxis = async () => {
@@ -85,7 +89,13 @@ const handleSaveAxis = async () => {
 };
 
 const changeAxis = (axisID) => {
-  checkAixsId.value = KEY_SHAFT.findIndex((ite) => ite.id === axisID);
+  const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
+  if (isVersion2) {
+    const axisList = performanceStore.axisList;
+    checkAixsId.value = axisList.findIndex((ite) => ite.axis_id === axisID);
+  } else {
+    checkAixsId.value = KEY_SHAFT.findIndex((ite) => ite.id === axisID);
+  }
   console.log('changeAxis', axisID, checkAixsId.value);
 };
 </script>

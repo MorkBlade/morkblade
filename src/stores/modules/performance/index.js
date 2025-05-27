@@ -577,14 +577,19 @@ const usePerformanceStore = defineStore('performance', {
       return { mode, dbTravel, touchMode, advancedKeyMode };
     },
 
-    async getAixsList(isVersion2) {
+    async getAixsList(isVersion2, allAxisList) {
       if (isVersion2) {
         const result = await services.getAxisListV2();
+        const { list } = result[0];
         console.log('getAxisListV2: ', result);
-        // this.axisList = result.axisList.map((item) => {
-        //   return KEY_SHAFT.find((shaft) => shaft.id === item);
-        // });
-        // return result;
+        list.forEach((item) => {
+          const index = allAxisList.findIndex((axis) => axis.axis_id === item);
+          if (index !== -1) {
+            const item = allAxisList[index];
+            this.axisList.push(item);
+          }
+        });
+        return list;
       } else {
         const res = await services.getAxisList();
         const axisList = res && res.axisList;

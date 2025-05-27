@@ -22,11 +22,26 @@
 </template>
 
 <script setup>
+import { httpService } from '@/http/api/index.js';
+import { usePerformanceStore } from '@/stores';
+
 import Navigation from './navigation/index.vue';
+
 const Keyboard = defineAsyncComponent(() => import('@/keyboard/index.vue'));
 const route = useRoute();
+const performanceStore = usePerformanceStore();
+
 const isNotShow = computed(() => {
   return route.path === '/settings' || route.path === '/connect' || route.path === '/macro' || route.path === '/';
+});
+
+onMounted(async () => {
+  const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
+  let res;
+  if (isVersion2) {
+    res = await httpService.getAxisList();
+  }
+  performanceStore.getAixsList(isVersion2, res);
 });
 </script>
 
