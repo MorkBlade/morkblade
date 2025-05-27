@@ -25,9 +25,14 @@
           </template>
         </template>
         <template v-else-if="currentModel === 'quickTrigger'">
-          <p class="rt-first-travel" v-if="rtPressTravel !== null">{{ rtFirstTravel }}</p>
-          <p class="rt-press-travel" v-if="rtPressTravel !== null">{{ rtPressTravel }}</p>
-          <p class="rt-release-travel" v-if="rtReleaseTravel !== null">{{ rtReleaseTravel }}</p>
+          <template v-if="isRT">
+            <p class="rt-first-travel" v-if="rtPressTravel !== null">{{ rtFirstTravel }}</p>
+            <p class="rt-press-travel" v-if="rtPressTravel !== null">{{ rtPressTravel }}</p>
+            <p class="rt-release-travel" v-if="rtReleaseTravel !== null">{{ rtReleaseTravel }}</p>
+          </template>
+          <template v-else>
+            <p class="single-travel" v-if="singleTravel !== null">{{ singleTravel }}</p>
+          </template>
         </template>
       </template>
       <template v-else>
