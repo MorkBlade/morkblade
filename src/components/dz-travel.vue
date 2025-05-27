@@ -59,8 +59,8 @@
           type="number"
           :disabled="disabled"
           v-model="travelVal"
-          min="0"
-          max="4"
+          :min="0"
+          :max="4"
           @input="updateValueFromInput"
           @blur="handleBlur"
         />

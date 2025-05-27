@@ -4,7 +4,7 @@
       <div class="slider_box">
         <img class="slider-img" src="/src/assets/images/keystroke_scale_bg.svg" alt="" />
         <div class="progress-bar" ref="sliderContainer">
-          <div
+          <!-- <div
             class="slider-btn"
             :class="{ disabled: disabled }"
             :style="handleStyle"
@@ -26,7 +26,22 @@
             :min="min"
             :max="max"
             v-model="psliderVal"
-          />
+          /> -->
+          <div class="my-slider" :style="{ height: handleStyle.top }">
+            <div
+              class="slider-btn"
+              :class="{ disabled: disabled }"
+              v-on="
+                !disabled
+                  ? {
+                      mousedown: startDrag,
+                      // touchstart: startDrag,
+                    }
+                  : {}
+              "
+            ></div>
+            <!-- :style="{ top: handleStyle.top }" -->
+          </div>
         </div>
         <img class="slider-img isreverse" src="/src/assets/images/keystroke_scale_bg.svg" alt="" />
         <div class="nums">
@@ -40,7 +55,7 @@
       <div class="text-box">
         <span>{{ title }}</span>
         <div class="travel-input">
-          <input type="number" v-model.number="psliderVal" min="0" max="4" @input="updateValueFromInput" />
+          <input type="number" v-model.number="psliderVal" :min="0" :max="4" @input="updateValueFromInput" />
           mm
         </div>
       </div>
@@ -50,6 +65,9 @@
 </template>
 
 <script setup>
+import { scaleValue } from '@/utils/responsive';
+import { showMessage } from '@/utils/message';
+
 const delayPageShow = defineModel('delayPageShow', Boolean, false);
 const { delay, title } = defineProps({
   delay: {
@@ -83,7 +101,7 @@ watch(
 // 计算滑块样式
 const handleStyle = computed(() => {
   const percentage = (psliderVal.value - min) / (max - min);
-  let top = percentage * sliderHeight.value.replace('px', '') - 10 + 'px';
+  let top = percentage * sliderHeight.value.replace('px', '') + scaleValue(10) + 'px';
   return {
     top, // 根据进度计算底部位置
   };
@@ -136,12 +154,42 @@ const updateValue = (clientY) => {
   emits('changeDelay', psliderVal.value);
 };
 
-const updateValueFromInput = () => {
-  if (psliderVal.value === '') {
+const updateValueFromInput = (e) => {
+  const inputValue = parseFloat(e.target.value);
+  if (isNaN(inputValue)) {
     psliderVal.value = 0;
+    emits('changeDelay', 0);
+    return;
+  } else if (inputValue >= max) {
+    psliderVal.value = max;
+    emits('changeDelay', max);
+    return;
   }
-  emits('changeDelay', psliderVal.value);
+
+  psliderVal.value = inputValue;
+  emits('changeDelay', inputValue);
+  // if (psliderVal.value === '') {
+  //   psliderVal.value = 0;
+  // }
+  // emits('changeDelay', psliderVal.value);
 };
+
+// const handleBlur = (e) => {
+//   const inputValue = parseFloat(e.target.value);
+//   let sendTravel = 0;
+//   if (inputValue >= max) {
+//     sendTravel = max;
+//   } else {
+//     sendTravel = inputValue;
+//   }
+//   if (isNaN(inputValue)) {
+//     sendTravel = 0.005;
+//   }
+//   psliderVal.value = sendTravel;
+
+//   if (inputValue >= max) showMessage('最大值为4', 'warning');
+//   emits('changeDelay', sendTravel);
+// };
 
 // 添加全局事件监听器以处理触摸设备上的拖动
 onMounted(() => {
@@ -204,6 +252,15 @@ const onCloseDelayPage = () => {
         background-size: cover;
         background-repeat: no-repeat;
 
+        .my-slider {
+          position: absolute;
+          top: var(--spacing-3);
+          left: var(--spacing-3);
+          width: var(--size-16);
+          border-radius: var(--spacing-15);
+          background-color: rgb(145, 188, 0);
+        }
+
         .el-slider {
           transform: rotate(180deg);
           --el-slider-height: var(--size-15);
@@ -214,8 +271,8 @@ const onCloseDelayPage = () => {
           height: var(--size-22);
           cursor: grab;
           position: absolute;
-          top: 0;
-          left: 0;
+          bottom: -3px;
+          left: -3px;
           z-index: 3;
           background-image: url('@/assets/images/sliding_block2.svg');
           background-size: cover;
