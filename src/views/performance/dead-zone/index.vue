@@ -53,7 +53,7 @@ import { usePerformancePageHook } from '../usePerformancePageHook';
 
 import sureIcon from '@/assets/images/sure.svg';
 import saveConfig from './components/save-config.vue';
-import setTravelCard from '@/components/set-travel-card.vue';
+import setTravelCard from '@/components/dz-travel.vue';
 import travelTestCard from '@/components/travel-test-card.vue';
 
 const { rowIdx, colIdx, activeKeys, disabled, debounce, hasCurrentKey } = usePerformancePageHook();
@@ -88,9 +88,21 @@ emitter.on('key-click', ({ rowIndex, colIndex }) => {
   rowIdx.value = rowIndex;
   colIdx.value = colIndex;
   if (hasCurrentKey.value) {
-    renderRtValue(rowIndex, colIndex);
+    // renderRtValue(rowIndex, colIndex);
   }
 });
+
+watch(
+  () => keyboardStore.activeKeys,
+  (newValue) => {
+    if (newValue.length > 0) {
+      const lastKey = newValue[newValue.length - 1].split('-');
+      const [rowIndex, colIndex] = lastKey;
+      renderRtValue(rowIndex, colIndex);
+    }
+  },
+  { deep: true },
+);
 
 onMounted(() => {
   if (keyboardStore.activeKeys.length > 0) {
@@ -133,21 +145,45 @@ const handleReleaseDeadChange = async (value) => {
 
 // 防抖
 const debouncedUpdateDZPress = debounce((value) => {
-  activeKeys.value.map(async (keyLocation) => {
+  const updates = [];
+  activeKeys.value.forEach((keyLocation) => {
     const [key1, key2] = keyLocation.split('-');
     const rowIndex = Number(key1);
     const colIndex = Number(key2);
-    keyboards.value[rowIndex][colIndex].performance.deadBandPressValue = value;
+    // Collect updates without directly modifying state
+    updates.push({
+      rowIndex,
+      colIndex,
+      performance: { deadBandPressValue: value },
+    });
+  });
+
+  // Apply updates in a batch
+  updates.forEach(({ rowIndex, colIndex, performance }) => {
+    const currentPerformance = { ...keyboards.value[rowIndex][colIndex].performance };
+    keyboards.value[rowIndex][colIndex].performance = { ...currentPerformance, ...performance };
   });
 }, 100);
 
 // 防抖
 const debouncedUpdateDZRelease = debounce((value) => {
-  activeKeys.value.map(async (keyLocation) => {
+  const updates = [];
+  activeKeys.value.forEach((keyLocation) => {
     const [key1, key2] = keyLocation.split('-');
     const rowIndex = Number(key1);
     const colIndex = Number(key2);
-    keyboards.value[rowIndex][colIndex].performance.deadBandReleaseValue = value;
+    // Collect updates without directly modifying state
+    updates.push({
+      rowIndex,
+      colIndex,
+      performance: { deadBandReleaseValue: value },
+    });
+  });
+
+  // Apply updates in a batch
+  updates.forEach(({ rowIndex, colIndex, performance }) => {
+    const currentPerformance = { ...keyboards.value[rowIndex][colIndex].performance };
+    keyboards.value[rowIndex][colIndex].performance = { ...currentPerformance, ...performance };
   });
 }, 100);
 

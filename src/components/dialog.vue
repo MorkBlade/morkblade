@@ -93,10 +93,6 @@ watch(
     }
   },
 );
-onMounted(() => {
-  // 初始化时添加滚动限制
-  console.log('dialog mounted, adding wheel event listener');
-});
 
 // 组件卸载时确保移除事件监听
 onBeforeUnmount(() => {

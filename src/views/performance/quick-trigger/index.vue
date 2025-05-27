@@ -56,6 +56,7 @@ import saveConfig from './components/save-config.vue';
 import sureIcon from '@/assets/images/sure.svg';
 import linkIcon from '@/assets/images/link1.svg';
 import linkedIcon from '@/assets/images/link2.svg';
+import { watch } from 'vue';
 
 const keyboardStore = useKeyboardStore();
 const performanceStore = usePerformanceStore();
@@ -76,7 +77,7 @@ emitter.on('key-click', async ({ rowIndex, colIndex }) => {
   rowIdx.value = rowIndex;
   colIdx.value = colIndex;
   if (hasCurrentKey.value) {
-    renderRtValue(rowIndex, colIndex);
+    // renderRtValue(rowIndex, colIndex);
   } else {
     rtEnabled.value = false;
   }
@@ -85,6 +86,18 @@ emitter.on('key-click', async ({ rowIndex, colIndex }) => {
 emitter.on('rt-enabled', ({ value }) => {
   rtEnabled.value = value;
 });
+
+watch(
+  () => keyboardStore.activeKeys,
+  (newValue) => {
+    if (newValue.length > 0) {
+      const lastKey = newValue[newValue.length - 1].split('-');
+      const [rowIndex, colIndex] = lastKey;
+      renderRtValue(rowIndex, colIndex);
+    }
+  },
+  { deep: true },
+);
 
 onMounted(() => {
   if (keyboardStore.activeKeys.length > 0) {
@@ -120,9 +133,10 @@ const handleRtEnabledChange = (value) => {
       const [key1, key2] = keyLocation.split('-');
       const rowIndex = Number(key1);
       const colIndex = Number(key2);
-      const { rtPressValue, rtReleaseValue } = keyboards.value[rowIndex][colIndex].performance;
-      keyboards.value[rowIndex][colIndex].performance.isRt = true;
-      keyboards.value[rowIndex][colIndex].performance.isSingle = false;
+      const { rtPressValue, rtReleaseValue, isRt, isSingle } = keyboards.value[rowIndex][colIndex].performance;
+      console.log('rt----------------------------->>>>');
+      keyboards.value[rowIndex][colIndex].performance.isRt = isRt;
+      keyboards.value[rowIndex][colIndex].performance.isSingle = isSingle;
       keyboards.value[rowIndex][colIndex].performance.rtPressValue = rtPressValue || 0;
       keyboards.value[rowIndex][colIndex].performance.rtReleaseValue = rtReleaseValue || 0;
     });
@@ -130,30 +144,54 @@ const handleRtEnabledChange = (value) => {
 };
 
 // 更新键盘配置的防抖函数
-const debouncedUpdateRtTreavel = debounce((value) => {
-  activeKeys.value.map(async (keyLocation) => {
+const debouncedUpdateRtTreavel = debounce(() => {
+  const updates = [];
+  activeKeys.value.forEach((keyLocation) => {
     const [key1, key2] = keyLocation.split('-');
     const rowIndex = Number(key1);
     const colIndex = Number(key2);
-    keyboards.value[rowIndex][colIndex].performance.mode = 1;
-    keyboards.value[rowIndex][colIndex].performance.isRt = true;
-    keyboards.value[rowIndex][colIndex].performance.isSingle = false;
-    keyboards.value[rowIndex][colIndex].performance.rtPressValue = rtPressTravel.value;
-    keyboards.value[rowIndex][colIndex].performance.rtReleaseValue = rtReleaseTravel.value;
+    // Collect updates without directly modifying state
+    updates.push({
+      rowIndex,
+      colIndex,
+      performance: {
+        mode: 1,
+        isRt: true,
+        isSingle: false,
+        rtPressValue: rtPressTravel.value,
+        rtReleaseValue: rtReleaseTravel.value,
+      },
+    });
+  });
+
+  // Apply updates in a batch
+  updates.forEach(({ rowIndex, colIndex, performance }) => {
+    // Create a copy to ensure reactivity updates correctly if needed
+    const currentPerformance = { ...keyboards.value[rowIndex][colIndex].performance };
+    keyboards.value[rowIndex][colIndex].performance = { ...currentPerformance, ...performance };
   });
 }, 120);
 
 // 更新单触发行程的防抖函数
 const debouncedUpdateSingleTravel = debounce((value) => {
-  activeKeys.value.map(async (keyLocation) => {
+  const updates = [];
+  activeKeys.value.forEach((keyLocation) => {
     const [key1, key2] = keyLocation.split('-');
     const rowIndex = Number(key1);
     const colIndex = Number(key2);
-    if (isVersion2) {
-      keyboards.value[rowIndex][colIndex].performance.rtFirstTouch = value;
-    } else {
-      keyboards.value[rowIndex][colIndex].performance.singleTriggeringValue = value;
-    }
+    // Collect updates without directly modifying state
+    updates.push({
+      rowIndex,
+      colIndex,
+      performance: isVersion2 ? { rtFirstTouch: value } : { singleTriggeringValue: value },
+    });
+  });
+
+  // Apply updates in a batch
+  updates.forEach(({ rowIndex, colIndex, performance }) => {
+    // Create a copy to ensure reactivity updates correctly if needed
+    const currentPerformance = { ...keyboards.value[rowIndex][colIndex].performance };
+    keyboards.value[rowIndex][colIndex].performance = { ...currentPerformance, ...performance };
   });
 }, 120);
 
@@ -169,7 +207,7 @@ const setRtPressTravel = async (value) => {
   rtPressTravel.value = value;
   rtPressLinkRelease.value ? (rtReleaseTravel.value = value) : '';
   if (rtEnabled.value) {
-    debouncedUpdateRtTreavel(value);
+    debouncedUpdateRtTreavel();
   }
 };
 
@@ -180,7 +218,7 @@ const setRtReleaseTravel = async (value) => {
   rtPressLinkRelease.value ? (rtPressTravel.value = value) : '';
 
   if (rtEnabled.value) {
-    debouncedUpdateRtTreavel(value);
+    debouncedUpdateRtTreavel();
   }
 };
 

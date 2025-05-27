@@ -138,7 +138,7 @@ export const useKeyboardHook = () => {
             keyboardItems[rowIndex].push(keyboardItem);
           });
         });
-        console.log('keyboardItems', keyboardItems);
+        // console.log('keyboardItems', keyboardItems);
         // 获取每一层的值
         await keyboardStore.getLayoutKeyInfo(keyboardStore.layout, keyboardItems);
         await performanceStore.getKeyPerformanceV1(keyboardItems);

@@ -145,7 +145,6 @@ const useSetAdvanced = () => {
     // resetKeys();
     try {
       const travelData = await performanceStore.getMaxMinTravel();
-      console.log('travelData', travelData);
       if (travelData) {
         const { maxTouchTravel: max, minTouchTravel: min, precision: step } = travelData;
         minTouchTravel.value = min;

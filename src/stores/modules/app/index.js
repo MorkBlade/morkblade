@@ -77,7 +77,6 @@ const useAppStore = defineStore('app', {
         // this.activeConfigIndex = (result && result[0]?.value) || 0;
       } else {
         const res = await services.getApi({ type: 'ORDER_TYPE_CONFIG' });
-        console.log('getConfigID v1', res);
         const { configID } = res || {};
         this.activeConfigIndex = configID || 0;
       }

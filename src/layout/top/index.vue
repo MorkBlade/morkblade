@@ -38,7 +38,6 @@ const connectMk = async () => {
   emitter.emit('versionChange', true);
   const devices = await services.getDevices();
   // history.go(0);
-  console.log('connectDevice log devices', devices, deviceStore.devices[1]?.id);
   await services.init(deviceStore.devices[1].id);
   delay(2000);
   const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';

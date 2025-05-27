@@ -494,10 +494,15 @@ export const useAdvancedHook = () => {
 
     if (advancedType === 'socd') {
       const { socd } = advanced.socd;
-      console.log('handleV1Deletion', advanced, advancedType, socd);
+      const socdKeyValid = socd.every((key) => key !== 0);
+      // console.log('handleV1Deletion', advanced, advancedType, socd, socdKeyValid);
+      if (socdKeyValid) {
+        keysToDelete.push(...socd);
+      } else {
+        keysToDelete.push(advanced.keyValue);
+      }
       // const storedSocdKeys = JSON.parse(localStorage.getItem('socdKeys') || '{}');
       // const socdKeys = storedSocdKeys[advanced.keyValue] || [];
-      keysToDelete.push(...socd);
     } else if (advancedType === 'rs') {
       const { rs } = advanced;
       keysToDelete.push(...rs.rs);

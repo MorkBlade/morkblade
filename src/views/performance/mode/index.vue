@@ -44,9 +44,21 @@ emitter.on('key-click', ({ rowIndex, colIndex }) => {
   colIdx.value = colIndex;
   // console.log('single listen click: ', rowIndex, colIndex);
   if (hasCurrentKey.value) {
-    renderRtValue(rowIndex, colIndex);
+    // renderRtValue(rowIndex, colIndex);
   }
 });
+
+watch(
+  () => keyboardStore.activeKeys,
+  (newValue) => {
+    if (newValue.length > 0) {
+      const lastKey = newValue[newValue.length - 1].split('-');
+      const [rowIndex, colIndex] = lastKey;
+      renderRtValue(rowIndex, colIndex);
+    }
+  },
+  { deep: true },
+);
 
 onMounted(() => {
   if (keyboardStore.activeKeys.length > 0) {
@@ -65,13 +77,27 @@ const renderRtValue = (rowIndex, colIndex) => {
 
 // 更新单触发行程的防抖函数
 const debouncedUpdateSingleTravel = debounce((value) => {
-  activeKeys.value.map(async (keyLocation) => {
+  const updates = [];
+  activeKeys.value.forEach((keyLocation) => {
     const [key1, key2] = keyLocation.split('-');
     const rowIndex = Number(key1);
     const colIndex = Number(key2);
-    keyboards.value[rowIndex][colIndex].performance.isRt = false;
-    keyboards.value[rowIndex][colIndex].performance.isSingle = true;
-    keyboards.value[rowIndex][colIndex].performance.singleTriggeringValue = value;
+    // Collect updates without directly modifying state
+    updates.push({
+      rowIndex,
+      colIndex,
+      performance: {
+        isRt: false,
+        isSingle: true,
+        singleTriggeringValue: value,
+      },
+    });
+  });
+
+  // Apply updates in a batch
+  updates.forEach(({ rowIndex, colIndex, performance }) => {
+    const currentPerformance = { ...keyboards.value[rowIndex][colIndex].performance };
+    keyboards.value[rowIndex][colIndex].performance = { ...currentPerformance, ...performance };
   });
 }, 100);
 
