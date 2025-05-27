@@ -39,7 +39,7 @@ const state = {
   },
 
   // 项目特定state
-  currentColor: { r: 255, g: 255, b: 168 },
+  currentColor: { r: 189, g: 214, b: 0 },
   enterCustom: false, // 是否在自定义灯光页面
   currentPreset: -1, // -1 表示没有使用预设方案，0-8 分别对应九种预设方案
 };

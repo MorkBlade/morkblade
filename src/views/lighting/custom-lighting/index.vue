@@ -88,8 +88,8 @@ const customList = ['彩虹', '海浪', '炼狱', '迈阿密', '夏日微风', '
 const colorList = ['#080cfe', '#ff0000', '#ffff00', '#fe00e9', '#00fe2f', '#fe3602', '#ffffff', '#1481fe', '#00ffd8'];
 const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
 const colorWheelRef = ref(null);
-const selectedColor = ref('#ffffa8');
-const rgb = ref({ r: 255, g: 255, b: 168 });
+const selectedColor = ref('#bdd600');
+const rgb = ref({ r: 189, g: 214, b: 0 });
 let colorPicker = ref(null);
 
 // Import all custom light images
@@ -107,6 +107,9 @@ const customLightImages = {
 
 // 初始化色轮
 onMounted(() => {
+  if (keyboardStore.activeKeys.length > 0) {
+    keyboardStore.cancelSelectKey();
+  }
   if (colorWheelRef.value) {
     // 获取容器宽度，确保颜色选择器不会太大
     const containerWidth = parseInt(

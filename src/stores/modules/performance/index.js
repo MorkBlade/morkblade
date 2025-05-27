@@ -151,7 +151,7 @@ const usePerformanceStore = defineStore('performance', {
     async getPerformanceValueV2(params, performance) {
       // console.log('getPerformanceValueV2');
       const [performanceResult] = await services.getPerformanceV2(params);
-      // console.log('getPerformanceValueV2', performanceResult);
+      console.log('getPerformanceValueV2', performanceResult);
       // const performanceResult = Array.isArray(result) && result.length > 0 ? result[0] : null;
       if (performanceResult) {
         const {
@@ -581,7 +581,7 @@ const usePerformanceStore = defineStore('performance', {
       if (isVersion2) {
         const result = await services.getAxisListV2();
         const { list } = result[0];
-        console.log('getAxisListV2: ', result);
+        // console.log('getAxisListV2: ', result);
         list.forEach((item) => {
           const index = allAxisList.findIndex((axis) => axis.axis_id === item);
           if (index !== -1) {
@@ -594,11 +594,11 @@ const usePerformanceStore = defineStore('performance', {
         const res = await services.getAxisList();
         const axisList = res && res.axisList;
         axisList.forEach((item) => {
-          KEY_SHAFT.forEach((shaft) => {
-            if (shaft.id === item) {
-              this.axisList.push(shaft);
-            }
-          });
+          const index = allAxisList.findIndex((axis) => axis.axis_id === item);
+          if (index !== -1) {
+            const item = allAxisList[index];
+            this.axisList.push(item);
+          }
         });
         return res;
       }

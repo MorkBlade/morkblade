@@ -15,7 +15,7 @@
     <div class="axis-container__info">
       <div class="axis-name">
         <span>轴体名称:</span>
-        <span>{{ KEY_SHAFT[checkAixsId]?.name }}</span>
+        <span>{{ performanceStore.axisList[checkAixsId]?.axis_name }}</span>
       </div>
       <div class="axis-travel">
         <span>轴体行程:</span>
@@ -62,13 +62,8 @@ const axisID = computed(() => {
 
 const travelRange = computed(() => {
   if (checkAixsId.value === null) return '';
-  const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
-  if (isVersion2) {
-    const axisList = performanceStore.axisList;
-    return `${axisList[checkAixsId.value]?.doctrine_range_right}mm-${axisList[checkAixsId.value]?.doctrine_range_left}mm`;
-  } else {
-    return `${KEY_SHAFT[checkAixsId.value]?.travelRangeRight}mm-${KEY_SHAFT[checkAixsId.value]?.travelRangeLeft}mm`;
-  }
+  const axisList = performanceStore.axisList;
+  return `${axisList[checkAixsId.value]?.doctrine_range_right}mm-${axisList[checkAixsId.value]?.doctrine_range_left}mm`;
 });
 
 const handleSaveAxis = async () => {
@@ -90,12 +85,12 @@ const handleSaveAxis = async () => {
 
 const changeAxis = (axisID) => {
   const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
-  if (isVersion2) {
-    const axisList = performanceStore.axisList;
-    checkAixsId.value = axisList.findIndex((ite) => ite.axis_id === axisID);
-  } else {
-    checkAixsId.value = KEY_SHAFT.findIndex((ite) => ite.id === axisID);
-  }
+  // if (isVersion2) {
+  // } else {
+  //   checkAixsId.value = KEY_SHAFT.findIndex((ite) => ite.id === axisID);
+  // }
+  const axisList = performanceStore.axisList;
+  checkAixsId.value = axisList.findIndex((ite) => ite.axis_id === axisID);
   console.log('changeAxis', axisID, checkAixsId.value);
 };
 </script>

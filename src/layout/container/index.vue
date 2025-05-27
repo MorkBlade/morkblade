@@ -37,10 +37,7 @@ const isNotShow = computed(() => {
 
 onMounted(async () => {
   const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
-  let res;
-  if (isVersion2) {
-    res = await httpService.getAxisList();
-  }
+  const res = await httpService.getAxisList();
   performanceStore.getAixsList(isVersion2, res);
 });
 </script>

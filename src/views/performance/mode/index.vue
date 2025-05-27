@@ -69,9 +69,14 @@ onMounted(() => {
 });
 
 const renderRtValue = (rowIndex, colIndex) => {
-  const { singleTriggeringValue } = keyboards.value[rowIndex][colIndex].performance;
-  const singleTravelVal =
-    typeof singleTriggeringValue === 'number' ? singleTriggeringValue : parseFloat(singleTriggeringValue);
+  const { singleTriggeringValue, isRt, rtFirstTouch } = keyboards.value[rowIndex][colIndex].performance;
+  let singleTravelVal;
+  if (isRt) {
+    singleTravelVal = typeof rtFirstTouch === 'number' ? rtFirstTouch : parseFloat(rtFirstTouch);
+  } else {
+    singleTravelVal =
+      typeof singleTriggeringValue === 'number' ? singleTriggeringValue : parseFloat(singleTriggeringValue);
+  }
   singleTravel.value = singleTravelVal;
 };
 
@@ -87,6 +92,7 @@ const debouncedUpdateSingleTravel = debounce((value) => {
       rowIndex,
       colIndex,
       performance: {
+        mode: 0,
         isRt: false,
         isSingle: true,
         singleTriggeringValue: value,
@@ -111,6 +117,30 @@ const handleTriggerPointChange = async (value) => {
 
 const saveSingleConfig = async () => {
   const { setSingleTravel } = usePerformanceHook();
+  const updates = [];
+  activeKeys.value.forEach((keyLocation) => {
+    const [key1, key2] = keyLocation.split('-');
+    const rowIndex = Number(key1);
+    const colIndex = Number(key2);
+    // Collect updates without directly modifying state
+    const { singleTriggeringValue } = keyboards.value[rowIndex][colIndex].performance;
+    updates.push({
+      rowIndex,
+      colIndex,
+      performance: {
+        mode: 0,
+        isRt: false,
+        isSingle: true,
+        singleTriggeringValue,
+      },
+    });
+  });
+
+  // Apply updates in a batch
+  updates.forEach(({ rowIndex, colIndex, performance }) => {
+    const currentPerformance = { ...keyboards.value[rowIndex][colIndex].performance };
+    keyboards.value[rowIndex][colIndex].performance = { ...currentPerformance, ...performance };
+  });
   const res = setSingleTravel(keyboards.value, activeKeys.value);
   if (res) {
     showMessage('修改成功');

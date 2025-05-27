@@ -6,7 +6,7 @@
         :key="item"
         class="lighting-item"
         :class="idx === clickItem ? 'is-active' : ''"
-        :style="{ display: idx === 1 && isVersion2 ? 'none' : '' }"
+        :style="{ display: (idx === 1 && isVersion2) || (idx === 3 && isVersion2) ? 'none' : '' }"
         @click="changeMenu(idx)"
       >
         {{ item }}
@@ -46,7 +46,8 @@ import lightLuminance from './components/light-luminance.vue';
 
 const keyboardStore = useKeyboardStore();
 const lightSettingStore = useLightSettingStore();
-const { initLighting, setLighting, setLightingPalette, initCustomLighting, getLightingSaturation } = useLightingHook();
+const { initLighting, setLighting, setLightingPalette, initCustomLighting, setCustomLighting, getLightingSaturation } =
+  useLightingHook();
 
 const clickItem = ref(0);
 const isVersion2 = ref(localStorage.getItem('keyboardVersion') === 'v2');
@@ -136,6 +137,26 @@ onBeforeUnmount(() => {
   }
 });
 
+const setCustomLightingStatus = async (isCustom) => {
+  try {
+    const { r, g, b } = lightSettingStore.currentColor;
+    const customLight = { R: r, G: g, B: b, isCustom };
+
+    // 一行一行异步设置灯光
+    for (const row of keyboardStore.keyboards) {
+      for (const key of row) {
+        key.customLight = { ...customLight };
+      }
+      // 每设置完一行就更新一次灯光
+      await setCustomLighting();
+      // 给UI一个喘息的机会
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    }
+  } catch (error) {
+    console.error('Failed to set custom lighting status:', error);
+  }
+};
+
 const changeMenu = (idx) => {
   clickItem.value = idx;
   let inCustomLighting = false;
@@ -149,6 +170,7 @@ const changeMenu = (idx) => {
       // lightSettingStore.light.mode = 1
       inCustomLighting = true;
       lightSettingStore.updateEnterCustom(true);
+      if (isVersion2.value) setCustomLightingStatus(true);
       break;
     default:
       if (lightSettingStore.light.mode) {
@@ -158,6 +180,7 @@ const changeMenu = (idx) => {
       }
       inCustomLighting = false;
       lightSettingStore.updateEnterCustom(false);
+      if (isVersion2.value) setCustomLightingStatus(false);
       break;
   }
   // 先取消自定义灯光

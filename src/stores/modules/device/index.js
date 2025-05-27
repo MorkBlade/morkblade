@@ -97,6 +97,7 @@ const useDeviceStore = defineStore('device', {
             console.log('this.isUpdate', this.isUpdate);
             if (!this.isUpdate) {
               // if (router) router.replace({ path: '/' });
+              console.log('out connectDevice', this.reseted);
               if (this.reseted) return;
               emitter.emit('disconnect', this.isUpdate);
               return;

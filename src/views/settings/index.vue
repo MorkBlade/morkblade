@@ -52,8 +52,10 @@
         <p>固件设置</p>
         <div class="firmware-update">
           <div class="firmware-update__choose-version">
-            <span>在线升级:</span>
-            <dropMenu :max-height="180" :items="firmwareVersionList" @sendSelectedIdx="handleSelectedVer" />
+            <template v-if="!isVersion2">
+              <span>在线升级:</span>
+              <dropMenu :max-height="180" :items="firmwareVersionList" @sendSelectedIdx="handleSelectedVer" />
+            </template>
             <template v-if="isVersion2">
               <span :style="{ marginLeft: `${scaleValue(20)}px` }">本地升级:</span>
               <el-upload
@@ -245,7 +247,7 @@ onMounted(async () => {
 });
 
 const subVersionList = computed(() => {
-  return ['电竞版', '旗舰版', '豪华版'];
+  return ['电竞版', '高亮版', '测试版'];
 });
 
 const firmwareVersionList = computed(() => {

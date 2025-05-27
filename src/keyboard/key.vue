@@ -15,7 +15,14 @@
       <template v-if="isVersion2">
         <!-- TODO 性能预设要显示啥数据 -->
         <template v-if="currentModel === 'mechanicalMode'">
-          <p class="single-travel" v-if="singleTravel !== null">{{ singleTravel }}</p>
+          <template v-if="isRT">
+            <p class="rt-first-travel" v-if="rtPressTravel !== null">{{ rtFirstTravel }}</p>
+            <p class="rt-press-travel" v-if="rtPressTravel !== null">{{ rtPressTravel }}</p>
+            <p class="rt-release-travel" v-if="rtReleaseTravel !== null">{{ rtReleaseTravel }}</p>
+          </template>
+          <template v-else>
+            <p class="single-travel" v-if="singleTravel !== null">{{ singleTravel }}</p>
+          </template>
         </template>
         <template v-else-if="currentModel === 'quickTrigger'">
           <p class="rt-first-travel" v-if="rtPressTravel !== null">{{ rtFirstTravel }}</p>
@@ -38,20 +45,29 @@
     <div class="advanced-key-box" v-if="route.path === '/key-assignment'">
       <span class="advanced-tag" v-if="advancedTag">{{ advancedTag }}</span>
     </div>
-    <div
-      class="color-key"
-      v-if="lightSettingStore.enterCustom"
-      :style="{ backgroundColor: currentKeyColor }"
-      @mousedown.stop="(e) => startMouseDown(e, keyItem.keyValue)"
-      @mouseenter="handleMouseOver(keyItem.keyValue)"
-      @mouseleave="onMouseLeave"
-      @mouseup.stop="startMouseUp"
-      @contextmenu="(e) => handleContextmenu(e, keyItem.keyValue)"
-    >
-      <p class="top-key">{{ showKeyCode }}</p>
-    </div>
-    <template v-if="route.path === '/lighting' && isVersion2 && lightSettingStore.light.mode !== 0">
-      <div class="color-key" v-if="!lightSettingStore.enterCustom" :style="keyColorStyle">
+    <template v-if="!isVersion2 && lightSettingStore.enterCustom">
+      <div
+        class="color-key"
+        :style="{ backgroundColor: currentKeyColor }"
+        @mousedown.stop="(e) => startMouseDown(e, keyItem.keyValue)"
+        @mouseenter="handleMouseOver(keyItem.keyValue)"
+        @mouseleave="onMouseLeave"
+        @mouseup.stop="startMouseUp"
+        @contextmenu="(e) => handleContextmenu(e, keyItem.keyValue)"
+      >
+        <p class="top-key">{{ showKeyCode }}</p>
+      </div>
+    </template>
+    <template v-if="route.path === '/lighting' && isVersion2">
+      <div
+        class="color-key"
+        :style="keyColorStyle"
+        @mousedown.stop="(e) => startMouseDown(e, keyItem.keyValue)"
+        @mouseenter="handleMouseOver(keyItem.keyValue)"
+        @mouseleave="onMouseLeave"
+        @mouseup.stop="startMouseUp"
+        @contextmenu="(e) => handleContextmenu(e, keyItem.keyValue)"
+      >
         <p class="top-key">{{ showKeyCode }}</p>
       </div>
     </template>
@@ -318,11 +334,7 @@ const axisVal = computed(() => {
 });
 
 const axisColor = computed(() => {
-  if (isVersion2.value) {
-    return performanceStore.axisList?.[axisVal.value]?.axis_color ?? 'transparent';
-  } else {
-    return KEY_SHAFT?.[axisVal.value]?.color ?? 'transparent';
-  }
+  return performanceStore.axisList?.[axisVal.value]?.axis_color ?? 'transparent';
 });
 
 const changeKeyLightColor = async (key, isCustom = true) => {

@@ -104,6 +104,7 @@ onMounted(() => {
     const lastKey = keyboardStore.activeKeys[keyboardStore.activeKeys.length - 1].split('-');
     const [rowIndex, colIndex] = lastKey;
     renderRtValue(rowIndex, colIndex);
+    // debouncedUpdateRtTreavel();
   }
 });
 
@@ -121,7 +122,7 @@ const renderRtValue = (rowIndex, colIndex) => {
   }
   const rtPressTravelVal = typeof rtPressValue === 'number' ? rtPressValue : parseFloat(rtPressValue);
   const rtReleaseTravelVal = typeof rtReleaseValue === 'number' ? rtReleaseValue : parseFloat(rtReleaseValue);
-  console.log('sigleTravelVal: ', singleTravelVal);
+  console.log('sigleTravelVal: ', singleTravelVal, rtPressTravelVal, rtReleaseTravelVal);
   singleTravel.value = singleTravelVal || 0.1;
   rtPressTravel.value = rtPressTravelVal || 0.1;
   rtReleaseTravel.value = rtReleaseTravelVal || 0.1;
@@ -134,11 +135,10 @@ const handleRtEnabledChange = (value) => {
       const rowIndex = Number(key1);
       const colIndex = Number(key2);
       const { rtPressValue, rtReleaseValue, isRt, isSingle } = keyboards.value[rowIndex][colIndex].performance;
-      console.log('rt----------------------------->>>>');
       keyboards.value[rowIndex][colIndex].performance.isRt = isRt;
       keyboards.value[rowIndex][colIndex].performance.isSingle = isSingle;
-      keyboards.value[rowIndex][colIndex].performance.rtPressValue = rtPressValue || 0;
-      keyboards.value[rowIndex][colIndex].performance.rtReleaseValue = rtReleaseValue || 0;
+      keyboards.value[rowIndex][colIndex].performance.rtPressValue = rtPressValue || 0.1;
+      keyboards.value[rowIndex][colIndex].performance.rtReleaseValue = rtReleaseValue || 0.1;
     });
   }
 };
@@ -234,6 +234,31 @@ const onLink = async () => {
 const saveRtConfig = async () => {
   console.log('saveconfig');
   const { setSingleTravel } = usePerformanceHook();
+  const updates = [];
+  activeKeys.value.forEach((keyLocation) => {
+    const [key1, key2] = keyLocation.split('-');
+    const rowIndex = Number(key1);
+    const colIndex = Number(key2);
+    // Collect updates without directly modifying state
+    const { rtPressValue: rtPress, rtReleaseValue: rtRelease } = keyboards.value[rowIndex][colIndex].performance;
+    updates.push({
+      rowIndex,
+      colIndex,
+      performance: {
+        mode: 1,
+        isRt: true,
+        isSingle: false,
+        rtPressValue: rtPress !== 0.1 ? rtPress : rtPressTravel.value,
+        rtReleaseValue: rtRelease !== 0.1 ? rtRelease : rtReleaseTravel.value,
+      },
+    });
+  });
+  // Apply updates in a batch
+  updates.forEach(({ rowIndex, colIndex, performance }) => {
+    // Create a copy to ensure reactivity updates correctly if needed
+    const currentPerformance = { ...keyboards.value[rowIndex][colIndex].performance };
+    keyboards.value[rowIndex][colIndex].performance = { ...currentPerformance, ...performance };
+  });
   const res = setSingleTravel(keyboards.value, activeKeys.value, 'rt');
   if (res) {
     showMessage('修改成功');
