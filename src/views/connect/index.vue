@@ -67,6 +67,7 @@ import services from '@/services/index.js';
 import { useAppStore, useDeviceStore } from '@/stores';
 import { scaleValue } from '@/utils/responsive.js';
 import { showMessage } from '@/utils/message';
+import { httpService } from '@/http/api/index.js';
 
 const router = useRouter();
 const deviceStore = useDeviceStore();
@@ -84,7 +85,11 @@ const handleDeviceStoreClick = async () => {
   // console.log('keyboardRunMode', appStore.baseInfo?.KeyboardRunMode, result);
   if (appStore.baseInfo?.KeyboardRunMode === 255) {
     isUpdate.value = true;
-    getFirmWarePack('/api/update_esports.bin');
+    if (version === 'v2') {
+      await handleOnlineUpdate();
+    } else {
+      getFirmWarePack('/api/update_esports.bin');
+    }
     return;
   } else {
     if (result) {
@@ -133,6 +138,26 @@ const getFirmWarePack = async (url) => {
     .catch((error) => {
       console.error('Error fetching the .bin file:', error);
     });
+};
+
+const handleOnlineUpdate = async () => {
+  try {
+    const boardId = deviceStore.info?.boardId.toString(16).padStart(8, '0');
+    const vid = deviceStore.device?.vendorId.toString(16).padStart(4, '0');
+    const pid = deviceStore.device?.productId.toString(16).padStart(4, '0');
+    const params = { board_id: boardId, vid, pid };
+    console.log('params:', params);
+    // const res = await httpService.getFirmwarePack({ board_id: '00150004', vid: '1CA6', pid: '1504' });
+    const res = await httpService.getFirmwarePack(params);
+    console.log('getFirmwarePack res: ', res, params);
+    if (res && res.firmware.firmware_name.toLowerCase().endsWith('.bin')) {
+      console.log('获取到升级bin包');
+      selectedFile.value = res;
+      await getFirmWarePack(res.firmware.firmware_file);
+    }
+  } catch (error) {
+    console.error('错误:', error.response || error);
+  }
 };
 </script>
 

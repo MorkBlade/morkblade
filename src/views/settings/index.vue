@@ -80,7 +80,7 @@
               </el-upload>
             </template>
             <template v-if="!isVersion2">
-              <span :style="{ marginLeft: `${scaleValue(20)}px` }">本地升级:</span>
+              <span :style="{ marginLeft: `${scaleValue(20)}px` }">子版本选择:</span>
               <!-- :disabled="firmwareVerIdx === null" -->
               <dropMenu :max-height="135" :items="subVersionList" @sendSelectedIdx="handleSelectedSubVer" />
             </template>

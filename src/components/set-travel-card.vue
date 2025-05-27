@@ -101,7 +101,21 @@ let startY = 0;
 
 // 刻度线的值和像素位置（根据实际UI调整）
 const scaleMap = [
-  { value: 0.005, pos: 0 },
+  { value: 0.005, pos: 11 },
+  // { value: 0.006, pos: 8 },
+  // { value: 0.007, pos: 12 },
+  // { value: 0.008, pos: 16 },
+  { value: 0.009, pos: 20 },
+  // { value: 0.01, pos: 22 },
+  { value: 0.01, pos: 26 },
+  // { value: 0.02, pos: 20 },
+  // { value: 0.03, pos: 30 },
+  { value: 0.04, pos: 30 },
+  { value: 0.05, pos: 32 },
+  { value: 0.06, pos: 34 },
+  { value: 0.07, pos: 36 },
+  { value: 0.08, pos: 38 },
+  { value: 0.09, pos: 40 },
   { value: 0.1, pos: 42 },
   { value: 1.0, pos: 92 },
   { value: 2.0, pos: 142 },
@@ -115,6 +129,7 @@ function valueToPos(val) {
   for (let i = 0; i < scaleMap.length - 1; i++) {
     const cur = scaleMap[i];
     const next = scaleMap[i + 1];
+    console.log('cur', cur, 'next', next, 'val', val);
     if (val >= cur.value && val <= next.value) {
       const percent = (val - cur.value) / (next.value - cur.value);
       return cur.pos + percent * (next.pos - cur.pos);
@@ -143,6 +158,7 @@ const handleStyle = computed(() => {
   // 限制范围
   if (topPx < 0) topPx = 0;
   if (topPx > height - scaleValue(15)) topPx = height - scaleValue(15); // 20为滑块高度
+
   return {
     top: topPx + 'px',
     sliderHeight: topPx + scaleValue(18) + 'px',

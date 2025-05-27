@@ -71,7 +71,8 @@ onMounted(() => {
 const renderRtValue = (rowIndex, colIndex) => {
   const { singleTriggeringValue, isRt, rtFirstTouch } = keyboards.value[rowIndex][colIndex].performance;
   let singleTravelVal;
-  if (isRt) {
+  const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
+  if (isRt && isVersion2) {
     singleTravelVal = typeof rtFirstTouch === 'number' ? rtFirstTouch : parseFloat(rtFirstTouch);
   } else {
     singleTravelVal =
