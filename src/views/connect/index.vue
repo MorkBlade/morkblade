@@ -83,10 +83,10 @@ const handleDeviceStoreClick = async () => {
   localStorage.setItem('keyboardVersion', version);
   await appStore.getBaseInfo();
   // console.log('keyboardRunMode', appStore.baseInfo?.KeyboardRunMode, result);
+  await handleOnlineUpdate();
   if (appStore.baseInfo?.KeyboardRunMode === 255) {
     isUpdate.value = true;
     if (version === 'v2') {
-      await handleOnlineUpdate();
     } else {
       getFirmWarePack('/api/update_esports.bin');
     }
@@ -147,14 +147,14 @@ const handleOnlineUpdate = async () => {
     const pid = deviceStore.device?.productId.toString(16).padStart(4, '0');
     const params = { board_id: boardId, vid, pid };
     console.log('params:', params);
-    // const res = await httpService.getFirmwarePack({ board_id: '00150004', vid: '1CA6', pid: '1504' });
-    const res = await httpService.getFirmwarePack(params);
+    const res = await httpService.getFirmwarePack({ board_id: '00150004', vid: '1CA6', pid: '1504' });
+    // const res = await httpService.getFirmwarePack(params);
     console.log('getFirmwarePack res: ', res, params);
-    if (res && res.firmware.firmware_name.toLowerCase().endsWith('.bin')) {
-      console.log('获取到升级bin包');
-      selectedFile.value = res;
-      await getFirmWarePack(res.firmware.firmware_file);
-    }
+    // if (res && res.firmware.firmware_name.toLowerCase().endsWith('.bin')) {
+    //   console.log('获取到升级bin包');
+    //   selectedFile.value = res;
+    //   await getFirmWarePack(res.firmware.firmware_file);
+    // }
   } catch (error) {
     console.error('错误:', error.response || error);
   }

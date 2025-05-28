@@ -101,42 +101,31 @@ let startY = 0;
 
 // 刻度线的值和像素位置（根据实际UI调整）
 const scaleMap = [
-  { value: 0.005, pos: 11 },
-  // { value: 0.006, pos: 8 },
-  // { value: 0.007, pos: 12 },
-  // { value: 0.008, pos: 16 },
-  { value: 0.009, pos: 20 },
+  // { value: 0, pos: 18 },
+  // { value: 0.001, pos: 18 },
+  // { value: 0.002, pos: 18 },
+  // { value: 0.003, pos: 18 },
+  // { value: 0.004, pos: 18 },
+  { value: 0.005, pos: 7 },
+  { value: 0.006, pos: 8 },
+  { value: 0.007, pos: 9 },
+  { value: 0.008, pos: 10 },
+  { value: 0.009, pos: 11 },
   // { value: 0.01, pos: 22 },
-  { value: 0.01, pos: 26 },
-  // { value: 0.02, pos: 20 },
-  // { value: 0.03, pos: 30 },
-  { value: 0.04, pos: 30 },
-  { value: 0.05, pos: 32 },
-  { value: 0.06, pos: 34 },
-  { value: 0.07, pos: 36 },
-  { value: 0.08, pos: 38 },
-  { value: 0.09, pos: 40 },
-  { value: 0.1, pos: 42 },
+  { value: 0.01, pos: 12 },
+  { value: 0.02, pos: 14 },
+  { value: 0.03, pos: 16 },
+  { value: 0.04, pos: 18 },
+  { value: 0.05, pos: 20 },
+  { value: 0.06, pos: 24 },
+  { value: 0.07, pos: 28 },
+  { value: 0.08, pos: 32 },
+  { value: 0.09, pos: 36 },
+  { value: 0.1, pos: 40 },
   { value: 1.0, pos: 92 },
   { value: 2.0, pos: 142 },
   { value: 3.3, pos: 190 },
 ];
-
-// 根据 value 计算像素位置
-function valueToPos(val) {
-  if (val <= scaleMap[0].value) return scaleMap[0].pos;
-  if (val > scaleMap[scaleMap.length - 1].value) return scaleMap[scaleMap.length - 1].pos;
-  for (let i = 0; i < scaleMap.length - 1; i++) {
-    const cur = scaleMap[i];
-    const next = scaleMap[i + 1];
-    console.log('cur', cur, 'next', next, 'val', val);
-    if (val >= cur.value && val <= next.value) {
-      const percent = (val - cur.value) / (next.value - cur.value);
-      return cur.pos + percent * (next.pos - cur.pos);
-    }
-  }
-  return 0;
-}
 
 watch(
   () => sliderVal,
@@ -146,22 +135,62 @@ watch(
   { immediate: true },
 );
 
-// 计算滑块样式
-const handleStyle = computed(() => {
-  // sliderHeight.value 可能是字符串如"192px"，需转为数字
-  const height = Number(sliderHeight.value.replace('px', '')) || scaleValue(192);
-  // scaleMap的最大像素要和slider实际高度一致
-  const scaleMaxPx = scaleMap[scaleMap.length - 1].pos;
-  const scaleRatio = height / scaleMaxPx;
-  // 计算实际像素位置
-  let topPx = valueToPos(travelVal.value) * scaleRatio - scaleValue(10); // -10为滑块居中修正
-  // 限制范围
-  if (topPx < 0) topPx = 0;
-  if (topPx > height - scaleValue(15)) topPx = height - scaleValue(15); // 20为滑块高度
+/**
+ * 将数值转换为对应的像素位置
+ * @param {number} val - 输入的数值
+ * @returns {number} 对应的像素位置
+ *
+ * 该函数根据输入的数值，在scaleMap中查找对应的像素位置
+ * 如果数值超出范围，返回边界值
+ * 如果在范围内，则通过线性插值计算具体位置
+ */
+function valueToPos(val) {
+  // 如果值小于等于最小值，返回最小位置
+  if (val <= scaleMap[0].value) return scaleMap[0].pos;
+  // 如果值大于最大值，返回最大位置
+  if (val > scaleMap[scaleMap.length - 1].value) return scaleMap[scaleMap.length - 1].pos;
 
+  // 遍历scaleMap查找值所在的区间
+  for (let i = 0; i < scaleMap.length - 1; i++) {
+    const cur = scaleMap[i];
+    const next = scaleMap[i + 1];
+    // console.log('cur', cur, 'next', next, 'val', val, prevTravel.value);
+    // 找到值所在的区间后，使用线性插值计算具体位置
+    if (val >= cur.value && val <= next.value) {
+      const percent = (val - cur.value) / (next.value - cur.value);
+      return cur.pos + percent * (next.pos - cur.pos);
+    }
+  }
+  return 0;
+}
+
+/**
+ * 计算滑块的样式
+ * 根据当前值计算滑块的位置和高度
+ * 返回包含top和sliderHeight的对象
+ */
+const handleStyle = computed(() => {
+  // 获取滑块容器的高度，如果获取失败则使用默认值192
+  const height = Number(sliderHeight.value.replace('px', '')) || scaleValue(192);
+
+  // 获取scaleMap中的最大像素位置
+  const scaleMaxPx = scaleMap[scaleMap.length - 1].pos;
+  // 计算缩放比例，用于将scaleMap中的位置映射到实际滑块高度
+  const scaleRatio = height / scaleMaxPx;
+
+  // 计算滑块的实际像素位置，减去10px用于滑块居中
+  let topPx = valueToPos(travelVal.value) * scaleRatio - scaleValue(10);
+
+  // 限制滑块位置在有效范围内
+  if (topPx < 0) topPx = 0;
+  if (topPx > height - scaleValue(15)) topPx = height - scaleValue(15);
+  let newTop = 0;
+  if (prevTravel.value > travelVal.value) {
+  }
+  // 返回包含滑块位置和高度信息的对象
   return {
-    top: topPx + 'px',
-    sliderHeight: topPx + scaleValue(18) + 'px',
+    top: topPx + 'px', // 滑块顶部位置
+    sliderHeight: topPx + scaleValue(18) + 'px', // 滑块高度（包含18px的额外高度）
   };
 });
 
@@ -200,7 +229,7 @@ const endDrag = () => {
   document.removeEventListener('touchmove', onDrag);
   document.removeEventListener('touchend', endDrag);
 };
-
+const prevTravel = ref(0);
 // 更新值
 const updateValue = (clientY) => {
   const rect = sliderContainer.value.getBoundingClientRect();
@@ -209,6 +238,7 @@ const updateValue = (clientY) => {
   let newValue = max - percentage * (max - min);
   newValue = Math.round(newValue / step) * step; // 根据步进值四舍五入
   if (newValue <= 0.005 && !deadZone) newValue = 0.005;
+  prevTravel.value = travelVal.value;
   travelVal.value = parseFloat(newValue.toFixed(3)); // 保留一位小数
   emits('sendKeyVal', travelVal.value);
 };
