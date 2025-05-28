@@ -15,6 +15,7 @@ const state = {
   updateSuc: false,
   isDeviceConnected: false, // 添加设备连接状态
   reseted: false,
+  isDoubleLighting: false,
 };
 const useDeviceStore = defineStore('device', {
   state: () => state,
@@ -180,6 +181,16 @@ const useDeviceStore = defineStore('device', {
     async bootToApp() {
       const res = await services.bootToAppV2();
       return res;
+    },
+
+    // 双灯位获取
+    async getDoubleLighting() {
+      // console.log('getLightingAreagetLightingArea');
+      const doubleLightingRes = await services.getDoubleLightingV2();
+      console.log('doubleLightingRes: ', doubleLightingRes);
+      // const { doubleLighting } = doubleLightingRes;
+      // if (doubleLighting) this.isDoubleLighting = true;
+      return doubleLightingRes;
     },
   },
 });

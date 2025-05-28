@@ -214,12 +214,12 @@ const keyboardName = computed(() => {
     const device = deviceStore.devices.find(
       (item) => item.usagePage === 65440 && item.vendorId === 7331 && item.productId === 257,
     );
-    return device.productName || '--';
+    return device?.productName || '--';
   } else {
     const device = deviceStore.devices.find(
       (item) => item.usagePage === 65456 && item.vendorId === 7334 && item.productId === 5380,
     );
-    return device.productName || '--';
+    return device?.productName || '--';
   }
 });
 const KeyboardSN = computed(() => appStore.baseInfo?.KeyboardSN || appStore.baseInfo?.sn || '--');
@@ -507,6 +507,7 @@ const startUpdate = async () => {
     // }
     // await showMessage('success', '更新成功');
     showMessage('升级成功');
+    await deviceStore.getDoubleLighting();
     emitter.emit('isUpdate', false);
     await delay(1000);
 

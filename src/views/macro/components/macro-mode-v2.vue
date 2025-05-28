@@ -20,14 +20,14 @@
           <button
             class="decrement-btn"
             @click="decrementValue('repeatCount')"
-            :disabled="macroSettings.repeatCount <= 1"
+            :disabled="macroSettings.repeatCount <= 0"
           >
             -
           </button>
           <input
             class="value"
             type="number"
-            :min="1"
+            :min="0"
             v-model.number="macroSettings.repeatCount"
             @change="validateRepeatCount"
           />
@@ -107,7 +107,7 @@ const validateRepeatInterval = () => {
 
 // 减少值
 const decrementValue = (key) => {
-  if (key === 'repeatCount' && macroSettings.repeatCount > 1) {
+  if (key === 'repeatCount' && macroSettings.repeatCount >= 1) {
     macroSettings.repeatCount--;
     emitSettingsUpdate();
   } else if (key === 'repeatInterval' && macroSettings.repeatInterval > 1) {
