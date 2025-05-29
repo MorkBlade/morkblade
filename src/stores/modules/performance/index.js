@@ -151,7 +151,7 @@ const usePerformanceStore = defineStore('performance', {
     async getPerformanceValueV2(params, performance) {
       // console.log('getPerformanceValueV2');
       const [performanceResult] = await services.getPerformanceV2(params);
-      console.log('getPerformanceValueV2', performanceResult);
+      // console.log('getPerformanceValueV2', performanceResult);
       // const performanceResult = Array.isArray(result) && result.length > 0 ? result[0] : null;
       if (performanceResult) {
         const {

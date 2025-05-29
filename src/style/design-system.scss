@@ -248,6 +248,8 @@
   --keyboard-pseudo-element-height: 290px;
   --keyboard-pseudo-element-top: 20px;
   --keyboard-pseudo-element-left: 27px;
+  --saturation-width: 324px;
+  --lamp-item-gap: 66px;
 }
 
 /* 2K 分辨率 (1440p) 2560*1440 
@@ -510,6 +512,8 @@
     --keyboard-pseudo-element-height: 342px;
     --keyboard-pseudo-element-top: 22px;
     --keyboard-pseudo-element-left: 35px;
+    --saturation-width: 372px;
+    --lamp-item-gap: 76px;
   }
 }
 
@@ -768,5 +772,7 @@
     --keyboard-pseudo-element-height: 560px;
     --keyboard-pseudo-element-top: 50px;
     --keyboard-pseudo-element-left: 54px;
+    --saturation-width: 648px;
+    --lamp-item-gap: 132px;
   }
 }

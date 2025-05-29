@@ -188,8 +188,8 @@ const useDeviceStore = defineStore('device', {
       // console.log('getLightingAreagetLightingArea');
       const doubleLightingRes = await services.getDoubleLightingV2();
       console.log('doubleLightingRes: ', doubleLightingRes);
-      // const { doubleLighting } = doubleLightingRes;
-      // if (doubleLighting) this.isDoubleLighting = true;
+      const { doubleLighting } = doubleLightingRes;
+      if (doubleLighting) this.isDoubleLighting = true;
       return doubleLightingRes;
     },
   },

@@ -228,6 +228,7 @@ onMounted(async () => {
 
     // Then initialize lighting
     await initCustomLighting();
+    if (isVersion2.value) await deviceStore.getDoubleLighting();
 
     // Get protocol version
 

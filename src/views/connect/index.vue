@@ -88,7 +88,7 @@ const handleDeviceStoreClick = async () => {
     isUpdate.value = true;
     if (version === 'v2') {
     } else {
-      getFirmWarePack('/api/update_esports.bin');
+      getFirmWarePack('/bin-data/update_esports.bin');
     }
     return;
   } else {

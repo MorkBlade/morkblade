@@ -6,7 +6,7 @@
         :key="item"
         class="lighting-item"
         :class="idx === clickItem ? 'is-active' : ''"
-        :style="{ display: (idx === 1 && isVersion2) || (idx === 3 && isVersion2) ? 'none' : '' }"
+        :style="{ display: idx === 1 && isVersion2 ? 'none' : '' }"
         @click="changeMenu(idx)"
       >
         {{ item }}
@@ -19,35 +19,54 @@
         @changeKeyLight="changeKeyLight"
         @changeColorPicker="changeColorPicker"
       />
-      <logoLighting v-if="clickItem === 1" v-model="lightSettingStore.logo" @changeLogoLight="changeLogoLight" />
+      <logoLighting
+        v-if="clickItem === 1 && !isVersion2"
+        v-model="lightSettingStore.logo"
+        @changeLogoLight="changeLogoLight"
+      />
       <customLighting v-if="clickItem === 2" />
-      <saturation v-if="clickItem === 3" />
+      <lightingAdvanced v-if="clickItem === 3" />
     </div>
     <lightLuminance
       v-if="clickItem !== 3"
       @changeSleepDelay="changeSleepDelay"
-      @changeLuminance="changeLuminance"
-      @changeSpeed="changeSpeed"
+      @changeLuminance="debouncedChangeLuminance"
+      @changeSpeed="debouncedChangeSpeed"
       v-model="lightSettingStore.light"
     />
   </div>
 </template>
 <script setup>
-import { useLightSettingStore, useKeyboardStore } from '@/stores';
+import { useLightSettingStore, useKeyboardStore, useDeviceStore } from '@/stores';
 import { useLightingHook } from '@/hooks';
 import emitter from '@/utils/app-emitter';
 
 import services from '@/services/index';
 import keyLighting from './key-lighting/index.vue';
 import logoLighting from './logo-lighting/index.vue';
-import saturation from './saturation/index.vue';
+import lightingAdvanced from './lighting-advanced/index.vue';
 import customLighting from './custom-lighting/index.vue';
 import lightLuminance from './components/light-luminance.vue';
+import { storeToRefs } from 'pinia';
 
 const keyboardStore = useKeyboardStore();
+const deviceStore = useDeviceStore();
 const lightSettingStore = useLightSettingStore();
+const { upOpen, downOpen } = storeToRefs(lightSettingStore);
+const { isDoubleLighting } = storeToRefs(deviceStore);
 const { initLighting, setLighting, setLightingPalette, initCustomLighting, setCustomLighting, getLightingSaturation } =
   useLightingHook();
+
+// 防抖
+const debounce = (fn, delay) => {
+  let timer = null;
+  return function (...args) {
+    if (timer) clearTimeout(timer);
+    timer = setTimeout(() => {
+      fn.apply(this, args);
+    }, delay);
+  };
+};
 
 const clickItem = ref(0);
 const isVersion2 = ref(localStorage.getItem('keyboardVersion') === 'v2');
@@ -116,7 +135,8 @@ const animationLoop = async (timestamp) => {
 };
 
 onMounted(async () => {
-  await initLighting();
+  const lampData = isDoubleLighting.value ? 'DoubleLighting' : 'SingleLighting';
+  await initLighting(lampData);
   await getLightingSaturation();
   if (isVersion2.value) {
     animationFrameId = requestAnimationFrame(animationLoop);
@@ -170,6 +190,7 @@ const changeMenu = (idx) => {
       // lightSettingStore.light.mode = 1
       inCustomLighting = true;
       lightSettingStore.updateEnterCustom(true);
+      // 设置自定义灯光状态
       if (isVersion2.value) setCustomLightingStatus(true);
       break;
     default:
@@ -180,6 +201,7 @@ const changeMenu = (idx) => {
       }
       inCustomLighting = false;
       lightSettingStore.updateEnterCustom(false);
+      // 设置自定义灯光状态
       if (isVersion2.value) setCustomLightingStatus(false);
       break;
   }
@@ -190,7 +212,13 @@ const changeMenu = (idx) => {
 
 // 切换灯光
 const changeKeyLight = async () => {
-  setLighting();
+  let keyCode;
+  if (upOpen.value && !downOpen.value) {
+    keyCode = 'OpenUp';
+  } else if (!upOpen.value && downOpen.value) {
+    keyCode = 'OpenDown';
+  }
+  setLighting('DoubleLighting', keyCode);
 };
 
 // 修改colorPicker触发修改灯光，v1没有
@@ -203,31 +231,43 @@ const changeColorPicker = async (isVersion2) => {
 };
 
 const changeLuminance = async (luminance) => {
-  // console.log('changeLuminance: ', luminance);
-  // if (!clickItem.value) {
-  //   console.log('change keyborad luminance');
-  //   lightSettingStore.light.luminance = luminance;
-  //   setLighting();
-  // } else if (clickItem.value === 1) {
-  //   console.log('change logo luminance');
-  // }
   // TODO 根据条件判断设置keyboard logo亮度会不生效
   lightSettingStore.light.luminance = luminance;
-  lightSettingStore.logo.luminance = luminance;
-  await setLighting();
-  await setLighting('logo');
+  if (isVersion2) {
+    let keyCode;
+    if (upOpen.value && !downOpen.value) {
+      keyCode = 'OpenUp';
+    } else if (!upOpen.value && downOpen.value) {
+      keyCode = 'OpenDown';
+    }
+    await setLighting('DoubleLighting', keyCode);
+  } else {
+    lightSettingStore.logo.luminance = luminance;
+    await setLighting();
+    await setLighting('logo');
+  }
 };
 
 const changeSpeed = async (speed, isVersion2) => {
   lightSettingStore.light.speed = speed;
   if (isVersion2) {
-    await setLighting();
+    let keyCode;
+    if (upOpen.value && !downOpen.value) {
+      keyCode = 'OpenUp';
+    } else if (!upOpen.value && downOpen.value) {
+      keyCode = 'OpenDown';
+    }
+    await setLighting('DoubleLighting', keyCode);
   } else {
     lightSettingStore.logo.speed = speed;
     await setLighting();
     await setLighting('logo');
   }
 };
+
+// Create debounced versions of the functions
+const debouncedChangeLuminance = debounce(changeLuminance, 200);
+const debouncedChangeSpeed = debounce(changeSpeed, 200);
 
 const changeSleepDelay = async (delay) => {
   lightSettingStore.light.sleepTime = delay;
