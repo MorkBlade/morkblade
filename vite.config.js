@@ -36,10 +36,10 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      '/api': {
-        target: 'https://morkblade.lewike.com/',
+      '/bin-data': {
+        target: 'https://www.morkblade.hk/',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ''), // 如果需要去掉 /api 前缀
+        rewrite: (path) => path.replace(/^\/bin-data/, '/bin-data/'), // 如果需要去掉 /api 前缀
       },
     },
   },

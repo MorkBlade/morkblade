@@ -42,6 +42,9 @@ const state = {
   currentColor: { r: 189, g: 214, b: 0 },
   enterCustom: false, // 是否在自定义灯光页面
   currentPreset: -1, // -1 表示没有使用预设方案，0-8 分别对应九种预设方案
+  lamp: 'SingleLighting', // 单双灯位 SingleLighting/DoubleLighting
+  upOpen: false, // 上灯位状态
+  downOpen: false, // 下灯位状态
 };
 
 export const useLightSettingStore = defineStore('lightSetting', {
@@ -84,6 +87,10 @@ export const useLightSettingStore = defineStore('lightSetting', {
     // 当前选中自定义颜色
     updateCurrentColor(color) {
       this.currentColor = color;
+    },
+
+    updateSwitch(open) {
+      this.light.open = open;
     },
 
     updateEnterCustom(flag) {

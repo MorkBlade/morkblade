@@ -207,7 +207,7 @@ const progress = reactive({
   total: 0,
 });
 const isVersion2 = ref(localStorage.getItem('keyboardVersion') === 'v2');
-const urlList = ['/api/update_esports.bin', '/api/update_highlight.bin', '/api/update_beta.bin'];
+const urlList = ['/bin-data/update_esports.bin', '/bin-data/update_highlight.bin', '/bin-data/update_beta.bin'];
 
 const keyboardName = computed(() => {
   if (!isVersion2.value) {

@@ -11,18 +11,31 @@ export const useLightingHook = () => {
   const { area, base, palette, colorCorrection } = lightSettingStore;
   const lightData = light.value;
 
-  const initLighting = async () => {
+  const initLighting = async (lampData) => {
     const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
     if (isVersion2) {
-      const lightingBase = await services.getLightingBaseV2({ area: area, config: base });
+      lightSettingStore.lamp = lightSettingStore.area === 'Keyboard' ? lampData : 'SingleLighting';
+      const lightingBase = await services.getLightingBaseV2({ area: area, config: base }, lightSettingStore.lamp);
       const { open, mode, luminance, speed, direction, selectStaticColor } = lightingBase[0];
-      // lightSettingStore.light.open = open === 'OpenUp';
-      lightData.open = true;
+      // lightData.open = true;
+      lightData.open = open === 'Open' || open === 'OpenUp' || open === 'OpenDown';
       lightData.mode = mode;
       lightData.luminance = luminance;
       lightData.speed = speed;
       lightData.direction = direction === 'Forward';
       lightData.selectStaticColor = selectStaticColor;
+      // console.log('lightData.openlightData.open', lightData.open);
+      if (open === 'Open') {
+        lightSettingStore.upOpen = true;
+        lightSettingStore.downOpen = true;
+      } else if (open === 'OpenUp') {
+        lightSettingStore.upOpen = true;
+      } else if (open === 'OpenDown') {
+        lightSettingStore.downOpen = true;
+      } else {
+        lightSettingStore.upOpen = false;
+        lightSettingStore.downOpen = false;
+      }
 
       const lightingPalette = await services.getLightingPaletteV2({ area: area, config: palette });
 
@@ -34,27 +47,34 @@ export const useLightingHook = () => {
     } else {
       // v1初始化灯光数据
       const keyboardLighting = await services.getLighting();
-      console.log('keyboardLighting', keyboardLighting);
+      // console.log('keyboardLighting', keyboardLighting);
       const logoLighting = await services.getLogoLighting();
       modifyLightingData(keyboardLighting, logoLighting);
     }
     lightSettingStore.saturation = { R: 0, G: 0, B: 0 };
   };
 
-  const setLighting = async (lightingType = 'keyboard') => {
+  const setLighting = async (lightingType = 'keyboard', keyCode) => {
     const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
     if (isVersion2) {
+      let open;
+      if (keyCode) {
+        open = keyCode;
+      } else {
+        open = lightData.open ? 'Open' : 'Close';
+      }
       const res = await services.setLightingBaseV2({
         area: area,
         config: base,
         data: {
-          open: lightData.open ? 'OpenUp' : 'Close',
+          open,
           mode: lightData.mode,
           luminance: lightData.luminance,
           speed: lightData.speed,
           direction: lightData.direction ? 'Forward' : 'Backward',
           selectStaticColor: lightData.selectStaticColor,
         },
+        lamp: lightSettingStore.lamp,
       });
       return res;
     } else {

@@ -1,9 +1,5 @@
 <template>
   <div class="light-luminance">
-    <!-- <template v-if="isVersion2"> -->
-    <!-- <div>123</div> -->
-    <!-- </template> -->
-    <!-- <template v-else> -->
     <div class="sleep-time-box">
       <span class="title">休眠时间:</span>
       <div
@@ -37,7 +33,6 @@
         </div>
       </div>
     </div>
-    <!-- </template> -->
     <div class="lumminance-box">
       <span class="title">亮度:</span>
       <horizontalSlider :sliderValue="lingtingData.luminance" :min="0" :max="max" @sendSliderVal="getLuminance" />

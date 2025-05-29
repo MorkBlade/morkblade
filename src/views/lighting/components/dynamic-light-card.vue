@@ -78,7 +78,6 @@ const dynamicLightStyleV1 = [
 ];
 const dynamicLightStyleV2 = [
   '宁静之光',
-  '波纹荡漾',
   '潮起潮落',
   '涟漪轻漾',
   '旋转风暴',
@@ -97,6 +96,7 @@ const dynamicLightStyleV2 = [
   '踏雪无痕',
   '踏雪寻梅',
   '镭射穿云',
+  '水波荡漾',
 ];
 
 emitter.on('versionChange', (flag) => {
