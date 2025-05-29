@@ -151,14 +151,14 @@ const useSetAdvanced = () => {
         maxTouchTravel.value = max;
         precision.value = step;
       } else {
-        console.error('getMaxMinTravel returned null or undefined');
+        // console.error('getMaxMinTravel returned null or undefined');
         // Set default values or handle the error as needed
         minTouchTravel.value = 0;
         maxTouchTravel.value = 4;
         precision.value = 0;
       }
     } catch (error) {
-      console.error('Error fetching max/min travel:', error);
+      // console.error('Error fetching max/min travel:', error);
       // Handle the error, possibly setting default values
       minTouchTravel.value = 0;
       maxTouchTravel.value = 4;

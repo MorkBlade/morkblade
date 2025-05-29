@@ -187,7 +187,6 @@ const useDeviceStore = defineStore('device', {
     async getDoubleLighting() {
       // console.log('getLightingAreagetLightingArea');
       const doubleLightingRes = await services.getDoubleLightingV2();
-      console.log('doubleLightingRes: ', doubleLightingRes);
       const { doubleLighting } = doubleLightingRes;
       if (doubleLighting) this.isDoubleLighting = true;
       return doubleLightingRes;

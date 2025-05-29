@@ -567,7 +567,7 @@ export const useAdvancedHook = () => {
 
             try {
               const result = await services.getHigherKeyV2({ row, col });
-              console.log('getHighLevelKeys result', result);
+              // console.log('getHighLevelKeys result', result);
               const data = result;
               const advancedKeyMode = data.mode;
               await processKey(keyValue, data, row, col, advancedKeyMode);

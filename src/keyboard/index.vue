@@ -216,7 +216,7 @@ watch(
       }
     }
 
-    if (newPath === '/key-assignment') await getHighLevelKeys(keyboardStore.keyboards);
+    if (newPath === '/key-assignment') await getHighLevelKeys(keyboardStore.keyboards, isVersion2.value);
   },
 );
 

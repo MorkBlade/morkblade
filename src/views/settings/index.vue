@@ -56,6 +56,10 @@
               <span>在线升级:</span>
               <dropMenu :max-height="180" :items="firmwareVersionList" @sendSelectedIdx="handleSelectedVer" />
             </template>
+            <!-- <template v-if="isVersion2">
+              <span>在线升级:</span>
+              <div class="onlin-upload" @click="handleOnlineUpdate">点击下载固件</div>
+            </template> -->
             <template v-if="isVersion2">
               <span :style="{ marginLeft: `${scaleValue(20)}px` }">本地升级:</span>
               <el-upload
@@ -165,8 +169,8 @@ import { scaleValue } from '@/utils/responsive.js';
 import { showMessage } from '@/utils/message';
 import { genFileId } from 'element-plus';
 import { useAppStore, useDeviceStore, usePerformanceStore, useKeyboardStore, useMacroStore } from '@/stores';
-import { useAdvancedHook } from '@/hooks';
-import { useLightingHook } from '@/hooks';
+import { useAdvancedHook, useLightingHook } from '@/hooks';
+import { httpService } from '@/http/api/index.js';
 
 import mDialog from '@/components/dialog.vue';
 import dropMenu from '@/components/drop-menu.vue';
@@ -555,13 +559,13 @@ const regainKeyboardData = async () => {
   // 获取键盘数据
   keyboardStore.checkFnLayer(0);
   await keyboardStore.initKeyboard();
-  await initLighting();
+  // await initLighting();
   // const keyboards = await keyboardStore.getKeyLayout({ layer: keyboardStore.fnLayer });
   // console.log('regain keyboards data:', keyboards);
   // 获取性能数据
   // await performanceStore.getPerformance(keyboards);
   // 获取高级键
-  console.log('isVersion2: ', isVersion2.value);
+  // console.log('isVersion2: ', isVersion2.value);
   await getHighLevelKeys(keyboardStore.keyboards, isVersion2.value);
   if (isVersion2.value) {
     // 获取宏数据
@@ -569,6 +573,24 @@ const regainKeyboardData = async () => {
   } else {
     console.log('remove macro data');
     localStorage.removeItem('localMacros');
+  }
+};
+
+const handleOnlineUpdate = async () => {
+  try {
+    const boardId = appStore.baseInfo?.boardId.toString(16).padStart(8, '0');
+    const vid = deviceStore.device?.vendorId.toString(16).padStart(4, '0');
+    const pid = deviceStore.device?.productId.toString(16).padStart(4, '0');
+    const params = { board_id: boardId, vid, pid };
+    // const res = await httpService.getFirmwarePack({ board_id: '00150004', vid: '1CA6', pid: '1504' });
+    const res = await httpService.getFirmwarePack(params);
+    console.log('handleOnlineUpdate', res, params);
+    // if (res && res.firmware.firmware_name.toLowerCase().endsWith('.bin')) {
+    //   selectedFile.value = res;
+    //   await getFirmWarePack(res.firmware.firmware_file);
+    // }
+  } catch (error) {
+    console.error('错误:', error.response || error);
   }
 };
 </script>
@@ -664,6 +686,18 @@ const regainKeyboardData = async () => {
 
       > span {
         font-size: var(--font-size-16);
+      }
+
+      & .onlin-upload {
+        width: var(--size-200);
+        height: var(--size-40);
+        box-sizing: border-box;
+        margin: 0 var(--spacing-10);
+        text-align: center;
+        line-height: var(--size-40);
+        border-radius: var(--spacing-10);
+        border: var(--spacing-2) solid rgb(37, 37, 37);
+        cursor: pointer;
       }
     }
 
