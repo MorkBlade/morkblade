@@ -130,23 +130,24 @@ const delay = (ms) => {
 };
 
 onMounted(async () => {
-  if (deviceStore.updateSuc) {
-    console.log('asdasdasdwas onmounted');
-    await deviceStore.connectDevice();
-    delay(100);
-    await keyboardStore.initKeyboard();
-    setTimeout(async () => {
-      deviceStore.updateSuc = false;
-      try {
-        onStart();
-      } catch (error) {
-        console.error('Error in setTimeout:', error);
-        await deviceStore.connectDevice();
-        delay(2000);
-        onStart();
-      }
-    }, 2000);
-  }
+  // TODO 升级成功后跳转到校验逻辑
+  // if (deviceStore.updateSuc) {
+  //   console.log('asdasdasdwas onmounted');
+  //   await deviceStore.connectDevice();
+  //   delay(100);
+  //   await keyboardStore.initKeyboard();
+  //   setTimeout(async () => {
+  //     deviceStore.updateSuc = false;
+  //     try {
+  //       onStart();
+  //     } catch (error) {
+  //       console.error('Error in setTimeout:', error);
+  //       await deviceStore.connectDevice();
+  //       delay(2000);
+  //       onStart();
+  //     }
+  //   }, 2000);
+  // }
 
   window.addEventListener('keydown', addKey);
   window.addEventListener('keyup', releaseKey);
