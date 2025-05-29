@@ -345,6 +345,14 @@ const axisColor = computed(() => {
 const changeKeyLightColor = async (key, isCustom = true) => {
   const { r, g, b } = lightSettingStore.currentColor;
   currentKey.value.customLight = { R: r, G: g, B: b, isCustom };
+  const { row, col } = currentKey.value;
+  // TODO 空格键包含5个键位灯，暂时先这么处理
+  if (isVersion2.value && row === 5 && col === 6) {
+    keyboards.value[row][col - 2].customLight = { R: r, G: g, B: b, isCustom };
+    keyboards.value[row][col - 1].customLight = { R: r, G: g, B: b, isCustom };
+    keyboards.value[row][col + 1].customLight = { R: r, G: g, B: b, isCustom };
+    keyboards.value[row][col + 2].customLight = { R: r, G: g, B: b, isCustom };
+  }
   setCustomLighting(key);
   // await services.setCustomLighting({ key, ...lightSettingStore.currentColor });
 };

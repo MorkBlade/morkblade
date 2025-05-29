@@ -39,7 +39,18 @@ export default defineConfig({
       '/bin-data': {
         target: 'https://www.morkblade.hk/',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/bin-data/, '/bin-data/'), // 如果需要去掉 /api 前缀
+        rewrite: (path) => path.replace(/^\/bin-data/, '/bin-data/'),
+      },
+      '/api/v1': {
+        target: 'https://api.sparklinkplayjoy.com',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/v1/, '/api/v1'),
+        secure: false,
+      },
+      '/storage': {
+        target: 'https://api.sparklinkplayjoy.com',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/storage/, '/storage'),
       },
     },
   },

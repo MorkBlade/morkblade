@@ -112,7 +112,6 @@ const useKeyboardStore = defineStore('keyboard', {
 
     // 切换fn层
     checkFnLayer(layer) {
-      console.log('checkFnLayer', layer);
       this.fnLayer = layer;
     },
 

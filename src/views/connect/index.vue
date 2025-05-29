@@ -83,10 +83,11 @@ const handleDeviceStoreClick = async () => {
   localStorage.setItem('keyboardVersion', version);
   await appStore.getBaseInfo();
   // console.log('keyboardRunMode', appStore.baseInfo?.KeyboardRunMode, result);
-  await handleOnlineUpdate();
   if (appStore.baseInfo?.KeyboardRunMode === 255) {
     isUpdate.value = true;
     if (version === 'v2') {
+      // TODO 暂未发现v2升级失败进不去驱动
+      // await handleOnlineUpdate();
     } else {
       getFirmWarePack('/bin-data/update_esports.bin');
     }
@@ -149,7 +150,7 @@ const handleOnlineUpdate = async () => {
     console.log('params:', params);
     const res = await httpService.getFirmwarePack({ board_id: '00150004', vid: '1CA6', pid: '1504' });
     // const res = await httpService.getFirmwarePack(params);
-    console.log('getFirmwarePack res: ', res, params);
+    // console.log('getFirmwarePack res: ', res, params);
     // if (res && res.firmware.firmware_name.toLowerCase().endsWith('.bin')) {
     //   console.log('获取到升级bin包');
     //   selectedFile.value = res;

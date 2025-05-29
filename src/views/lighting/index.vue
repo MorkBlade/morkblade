@@ -212,13 +212,20 @@ const changeMenu = (idx) => {
 
 // 切换灯光
 const changeKeyLight = async () => {
-  let keyCode;
-  if (upOpen.value && !downOpen.value) {
-    keyCode = 'OpenUp';
-  } else if (!upOpen.value && downOpen.value) {
-    keyCode = 'OpenDown';
+  if (isVersion2.value) {
+    let keyCode;
+    if (upOpen.value && !downOpen.value) {
+      keyCode = 'OpenUp';
+      await setLighting('DoubleLighting', keyCode);
+    } else if (!upOpen.value && downOpen.value) {
+      keyCode = 'OpenDown';
+      await setLighting('DoubleLighting', keyCode);
+    } else {
+      await setLighting();
+    }
+  } else {
+    await setLighting();
   }
-  setLighting('DoubleLighting', keyCode);
 };
 
 // 修改colorPicker触发修改灯光，v1没有
@@ -233,7 +240,7 @@ const changeColorPicker = async (isVersion2) => {
 const changeLuminance = async (luminance) => {
   // TODO 根据条件判断设置keyboard logo亮度会不生效
   lightSettingStore.light.luminance = luminance;
-  if (isVersion2) {
+  if (isVersion2.value) {
     let keyCode;
     if (upOpen.value && !downOpen.value) {
       keyCode = 'OpenUp';

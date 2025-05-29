@@ -89,9 +89,11 @@ const { title, keyVal, sliderVal, min, max, offsetX, deadZone, disabled } = defi
 });
 
 const emits = defineEmits(['sendKeyVal']);
+
 const slider = ref(null);
 const sliderContainer = ref(null);
 const step = 0.001; // 步进值
+const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
 const sliderHeight = computed(() => {
   return getComputedStyle(document.documentElement).getPropertyValue('--slider-height').trim();
 }); // 滑块高度
@@ -237,7 +239,11 @@ const updateValue = (clientY) => {
   percentage = Math.max(0, Math.min(1, percentage)); // 确保百分比在0到1之间
   let newValue = max - percentage * (max - min);
   newValue = Math.round(newValue / step) * step; // 根据步进值四舍五入
-  if (newValue <= 0.005 && !deadZone) newValue = 0.005;
+  if (isVersion2) {
+    if (newValue <= 0.001 && !deadZone) newValue = 0.001;
+  } else {
+    if (newValue <= 0.005 && !deadZone) newValue = 0.005;
+  }
   prevTravel.value = travelVal.value;
   travelVal.value = parseFloat(newValue.toFixed(3)); // 保留一位小数
   emits('sendKeyVal', travelVal.value);
@@ -264,20 +270,36 @@ const handleBlur = (e) => {
   const inputValue = parseFloat(e.target.value);
   let sendTravel = 0;
   if (inputValue === 0 && !deadZone) {
-    sendTravel = 0.005;
+    if (isVersion2) {
+      sendTravel = 0.001;
+    } else {
+      sendTravel = 0.005;
+    }
   } else if (inputValue >= max) {
     sendTravel = max;
   } else if (inputValue < 0.005 && !deadZone) {
-    sendTravel = 0.005;
+    if (isVersion2) {
+      sendTravel = 0.001;
+    } else {
+      sendTravel = 0.005;
+    }
   } else {
     sendTravel = inputValue;
   }
   if (isNaN(inputValue)) {
-    sendTravel = 0.005;
+    if (isVersion2) {
+      sendTravel = 0.001;
+    } else {
+      sendTravel = 0.005;
+    }
   }
   travelVal.value = sendTravel;
 
-  if (inputValue <= 0.005 && !deadZone) showMessage('最小值为0.005', 'warning');
+  if (isVersion2) {
+    if (inputValue <= 0.001 && !deadZone) showMessage('最小值为0.001', 'warning');
+  } else {
+    if (inputValue <= 0.005 && !deadZone) showMessage('最小值为0.005', 'warning');
+  }
   if (inputValue >= max) showMessage('最大值为3.3', 'warning');
   emits('sendKeyVal', Number(sendTravel.toFixed(3)));
 };

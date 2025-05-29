@@ -56,10 +56,21 @@
               <span>在线升级:</span>
               <dropMenu :max-height="180" :items="firmwareVersionList" @sendSelectedIdx="handleSelectedVer" />
             </template>
-            <!-- <template v-if="isVersion2">
+            <template v-if="isVersion2">
               <span>在线升级:</span>
-              <div class="onlin-upload" @click="handleOnlineUpdate">点击下载固件</div>
-            </template> -->
+              <div class="online-upload" :class="{ loading }" @click="handleOnlineUpdate">
+                <span :class="{ hasFile: bindData.length > 0 && onlineUpload }">
+                  {{ bindData.length > 0 && onlineUpload ? '已下载固件' : '点击下载固件' }}
+                </span>
+                <!-- v-if="loading" progress-->
+                <p class="online-pack-name" v-if="!loading">
+                  {{ selectedFile ? selectedFile.name + '_' + selectedFile.firmware.firmware_version : '' }}
+                </p>
+                <div class="uploader-progress" v-if="loading && onlineUpload">
+                  <el-progress :percentage="progress.current" :color="'#91bc00'" />
+                </div>
+              </div>
+            </template>
             <template v-if="isVersion2">
               <span :style="{ marginLeft: `${scaleValue(20)}px` }">本地升级:</span>
               <el-upload
@@ -74,11 +85,11 @@
                 :on-remove="handleRemove"
                 :on-change="handleFileChange"
               >
-                <div class="uploader-text" :class="{ hasFile: bindData.length > 0 }">
-                  {{ bindData.length > 0 ? '重新选择' : '选择固件' }}
+                <div class="uploader-text" :class="{ hasFile: bindData.length > 0 && !onlineUpload }">
+                  {{ bindData.length > 0 && !onlineUpload ? '重新选择' : '选择固件' }}
                 </div>
                 <!-- v-if="loading" progress-->
-                <div class="uploader-progress" v-if="loading">
+                <div class="uploader-progress" v-if="loading && !onlineUpload">
                   <el-progress :percentage="progress.current" :color="'#91bc00'" />
                 </div>
               </el-upload>
@@ -206,6 +217,7 @@ const bindData = ref([]);
 const updating = ref(false);
 // const progress = ref(0); // 升级进度
 const loading = ref(false);
+const onlineUpload = ref(false); // v2在线升级
 const progress = reactive({
   current: 0,
   total: 0,
@@ -499,10 +511,10 @@ const startUpdate = async () => {
 
     // 调整重启设备的消息顺序
     // await showMessage('loading', UPDATE_STEPS.RESTARTING);
-    await deviceStore.bootToApp();
-    await delay(1500);
-    await deviceStore.connectDevice();
-    await delay(1000); // 给一点时间显示重启消息
+    // await deviceStore.bootToApp();
+    // await delay(1500);
+    // await deviceStore.connectDevice();
+    // await delay(1000); // 给一点时间显示重启消息
 
     // 成功提示
     // if (loadingId.value !== null) {
@@ -512,10 +524,13 @@ const startUpdate = async () => {
     // await showMessage('success', '更新成功');
     showMessage('升级成功');
     await deviceStore.getDoubleLighting();
+    await appStore.getConfigID(isVersion2.value);
+    await appStore.getBaseInfo(isVersion2.value);
     emitter.emit('isUpdate', false);
     await delay(1000);
 
     resetStates();
+    regainKeyboardData();
   } catch (error) {
     console.error('更新失败:', error);
     // if (loadingId.value !== null) {
@@ -525,6 +540,7 @@ const startUpdate = async () => {
     // await showMessage('error', error.message || '更新失败，请重试');
     showMessage('升级失败，请重试', 'warning');
     resetStates();
+    regainKeyboardData();
   } finally {
     loading.value = false;
   }
@@ -546,7 +562,8 @@ const resetStates = () => {
   fileList.value = [];
   selectedFile.value = null;
   bindData.value = [];
-  regainKeyboardData();
+  uploadRef.value?.clearFiles();
+  onlineUpload.value = false;
 };
 
 // 选择固件版本
@@ -577,6 +594,7 @@ const regainKeyboardData = async () => {
 };
 
 const handleOnlineUpdate = async () => {
+  if (loading.value) return;
   try {
     const boardId = appStore.baseInfo?.boardId.toString(16).padStart(8, '0');
     const vid = deviceStore.device?.vendorId.toString(16).padStart(4, '0');
@@ -584,14 +602,42 @@ const handleOnlineUpdate = async () => {
     const params = { board_id: boardId, vid, pid };
     // const res = await httpService.getFirmwarePack({ board_id: '00150004', vid: '1CA6', pid: '1504' });
     const res = await httpService.getFirmwarePack(params);
+    resetStates();
+    onlineUpload.value = true;
     console.log('handleOnlineUpdate', res, params);
-    // if (res && res.firmware.firmware_name.toLowerCase().endsWith('.bin')) {
-    //   selectedFile.value = res;
-    //   await getFirmWarePack(res.firmware.firmware_file);
-    // }
+    if (res && res.firmware.firmware_name.toLowerCase().endsWith('.bin')) {
+      selectedFile.value = res;
+      await getOnlineFirmWarePack(res.firmware.firmware_file);
+    }
   } catch (error) {
     console.error('错误:', error.response || error);
   }
+};
+
+const getOnlineFirmWarePack = async (url) => {
+  const relativeUrl = url.replace('https://api.sparklinkplayjoy.com', '');
+  fetch(relativeUrl)
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.arrayBuffer();
+    })
+    .then((arrayBuffer) => {
+      const blob = new Blob([arrayBuffer], { type: 'application/octet-stream' });
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const arrayBuffer = e.target.result;
+        console.log('arrayBuffer: ', arrayBuffer);
+        bindData.value = new Uint8Array(arrayBuffer);
+        console.log('arrayBuffer: ', bindData.value);
+      };
+      reader.readAsArrayBuffer(blob);
+    })
+    .catch((error) => {
+      console.error('Error fetching the .bin file:', error);
+    });
 };
 </script>
 
@@ -688,16 +734,36 @@ const handleOnlineUpdate = async () => {
         font-size: var(--font-size-16);
       }
 
-      & .onlin-upload {
+      & .online-upload {
         width: var(--size-200);
         height: var(--size-40);
         box-sizing: border-box;
         margin: 0 var(--spacing-10);
         text-align: center;
-        line-height: var(--size-40);
+        // line-height: var(--size-40);
         border-radius: var(--spacing-10);
         border: var(--spacing-2) solid rgb(37, 37, 37);
         cursor: pointer;
+        position: relative;
+
+        > span {
+          display: inline-block;
+          margin-top: var(--spacing-6);
+          transition: all 0.2s ease-in-out;
+          &.hasFile {
+            margin-top: 0;
+          }
+        }
+
+        & .online-pack-name {
+          color: #ccc;
+          font-size: 10px;
+          margin: 0;
+        }
+
+        ::v-deep(.el-progress__text) {
+          text-align: left;
+        }
       }
     }
 
@@ -706,6 +772,10 @@ const handleOnlineUpdate = async () => {
       align-items: center;
       justify-content: center;
       margin-top: var(--spacing-20);
+    }
+    .loading {
+      color: rgba(255, 255, 255, 0.5);
+      cursor: not-allowed;
     }
 
     .uploader {
@@ -719,9 +789,6 @@ const handleOnlineUpdate = async () => {
       border-radius: var(--spacing-10);
       border: var(--spacing-2) solid rgb(37, 37, 37);
       position: relative;
-      &.loading {
-        color: rgba(255, 255, 255, 0.5);
-      }
 
       &-text {
         margin-top: var(--spacing-6);
