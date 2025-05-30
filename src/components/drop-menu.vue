@@ -31,7 +31,7 @@ import changedIcon from '@/assets/images/changed.svg';
 import downIcon from '@/assets/images/down_icon.svg';
 import downIcon2 from '@/assets/images/down_icon2.svg';
 
-const { maxHeight, items, disabled, specialIndex } = defineProps({
+const { maxHeight, items, disabled, specialIndex, defaultSelect } = defineProps({
   maxHeight: { type: Number, default: 0 },
   items: { type: Array, default: () => [] },
   disabled: { type: Boolean, default: false },
@@ -53,7 +53,8 @@ const toggleDropdown = () => {
 watch(
   () => specialIndex,
   (newVal) => {
-    if (newVal !== undefined) selectedIdx.value = specialIndex;
+    if (newVal !== undefined) selectedIdx.value = newVal;
+    console.log('specialIndexspecialIndex', newVal, selectedIdx.value);
   },
 );
 

@@ -46,7 +46,7 @@
       </div>
       <img class="slider-img isreverse" src="/src/assets/images/keystroke_scale_bg.svg" alt="" />
       <div class="nums">
-        <p class="scale_0">{{ deadZone ? '0.01' : '0.005' }}</p>
+        <p class="scale_0">{{ deadZone ? '0.01' : isVersion2 ? '0.001' : '0.005' }}</p>
         <p class="scale_1">{{ deadZone ? '0.25' : '0.10' }}</p>
         <p class="scale_2">{{ deadZone ? '0.50' : '1.00' }}</p>
         <p class="scale_3">{{ deadZone ? '0.75' : '2.00' }}</p>

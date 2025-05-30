@@ -189,7 +189,7 @@ const keyStyle = computed(() => {
 });
 
 const currentKeyColor = computed(() => {
-  const { R, G, B } = currentKey.value.customLight || { R: 100, G: 100, B: 255 };
+  const { R, G, B } = currentKey.value.customLight || { R: 100, G: 100, B: 255, isCustom: false };
   if (!R && !G && !B) {
     return 'rgba(255, 255, 255,0)';
   }

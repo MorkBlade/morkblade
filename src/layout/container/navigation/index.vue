@@ -16,12 +16,14 @@
         </template>
       </el-menu-item>
     </el-menu>
+    <div class="best-version" v-if="hasNewVersion"></div>
   </div>
 </template>
 
 <script setup>
-import { useKeyboardStore } from '@/stores';
 import emitter from '@/utils/app-emitter';
+import { useAppStore, useDeviceStore, useKeyboardStore } from '@/stores';
+import { httpService } from '@/http/api/index.js';
 
 import performanceW from '@/assets/images/performance-w.svg';
 import performanceB from '@/assets/images/performance-b.svg';
@@ -35,6 +37,7 @@ import keyCalibrationW from '@/assets/images/key-calibration-w.svg';
 import keyCalibrationB from '@/assets/images/key-calibration-b.svg';
 import settingsW from '@/assets/images/settings-w.svg';
 import settingsB from '@/assets/images/settings-b.svg';
+import { onMounted } from 'vue';
 
 // 创建图标映射对象
 const iconMap = {
@@ -72,9 +75,64 @@ const routesInfo = [
   { path: '/key-calibration', name: '按键校准', icon: 'key-calibration' },
   { path: '/settings', name: '设置', icon: 'settings' },
 ];
+const route = useRoute();
 const router = useRouter();
 const defaultActive = ref('/performance');
+const appStore = useAppStore();
+const deviceStore = useDeviceStore();
 const keyboardStore = useKeyboardStore();
+const hasNewVersion = ref(false);
+const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
+
+const getNavItemClass = computed(() => {
+  return (ite, idx) => {
+    const isActive = defaultActive.value === ite.path;
+    let positionClass = '';
+
+    if (idx === 0) {
+      positionClass = isActive ? 'nav-first-active' : 'nav-first';
+    } else if (idx === routesInfo.length - 1) {
+      positionClass = isActive ? 'nav-last-active' : 'nav-last';
+    } else {
+      positionClass = isActive ? 'nav-middle-active' : 'nav-middle';
+    }
+
+    return [positionClass, { 'is-nav-active': isActive }];
+  };
+});
+
+watch(
+  () => route.path,
+  (newPath) => {
+    defaultActive.value = newPath;
+  },
+  { immediate: true },
+);
+
+onMounted(() => {
+  if (isVersion2) {
+    setTimeout(async () => {
+      const boardId = appStore.baseInfo?.boardId.toString(16).padStart(8, '0');
+      const vid = deviceStore.device?.vendorId.toString(16).padStart(4, '0');
+      const pid = deviceStore.device?.productId.toString(16).padStart(4, '0');
+      const params = { board_id: boardId, vid, pid };
+      // const res = await httpService.getFirmwarePack({ board_id: '00150004', vid: '1CA6', pid: '1504' });
+      const res = await httpService.getFirmwarePack(params);
+      if (res && res.firmware.firmware_version) {
+        const bestVersion = res.firmware.firmware_version.replace('v', '');
+        hasNewVersion.value = bestVersion > appStore.baseInfo?.appVersion;
+        console.log('onMounted log res: ', bestVersion > appStore.baseInfo?.appVersion);
+      }
+    }, 200);
+  }
+});
+
+const getIconSrc = (ite) => {
+  const isActive = defaultActive.value === ite.path;
+  const type = isActive ? 'b' : 'w';
+  return iconMap[ite.icon][type];
+};
+
 const handleClick = async (ite) => {
   if (defaultActive.value !== ite.path) {
     // 确保只有当路径改变时才进行更新
@@ -94,37 +152,6 @@ const handleClick = async (ite) => {
     }
   }
 };
-const route = useRoute();
-watch(
-  () => route.path,
-  (newPath) => {
-    defaultActive.value = newPath;
-  },
-  { immediate: true },
-);
-
-const getNavItemClass = computed(() => {
-  return (ite, idx) => {
-    const isActive = defaultActive.value === ite.path;
-    let positionClass = '';
-
-    if (idx === 0) {
-      positionClass = isActive ? 'nav-first-active' : 'nav-first';
-    } else if (idx === routesInfo.length - 1) {
-      positionClass = isActive ? 'nav-last-active' : 'nav-last';
-    } else {
-      positionClass = isActive ? 'nav-middle-active' : 'nav-middle';
-    }
-
-    return [positionClass, { 'is-nav-active': isActive }];
-  };
-});
-
-const getIconSrc = (ite) => {
-  const isActive = defaultActive.value === ite.path;
-  const type = isActive ? 'b' : 'w';
-  return iconMap[ite.icon][type];
-};
 </script>
 
 <style scoped lang="scss">
@@ -137,6 +164,7 @@ const getIconSrc = (ite) => {
   // margin-left: 270px;
   margin-top: var(--spacing-25);
   background-color: transparent;
+  position: relative;
 
   .el-menu {
     background-color: transparent;
@@ -238,6 +266,16 @@ const getIconSrc = (ite) => {
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+  }
+
+  .best-version {
+    width: var(--size-10);
+    height: var(--size-10);
+    border-radius: 50%;
+    background-color: red;
+    position: absolute;
+    top: var(--spacing-8);
+    right: var(--spacing-5);
   }
 }
 </style>

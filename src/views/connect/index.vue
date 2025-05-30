@@ -148,8 +148,8 @@ const handleOnlineUpdate = async () => {
     const pid = deviceStore.device?.productId.toString(16).padStart(4, '0');
     const params = { board_id: boardId, vid, pid };
     console.log('params:', params);
-    const res = await httpService.getFirmwarePack({ board_id: '00150004', vid: '1CA6', pid: '1504' });
-    // const res = await httpService.getFirmwarePack(params);
+    // const res = await httpService.getFirmwarePack({ board_id: '00150004', vid: '1CA6', pid: '1504' });
+    const res = await httpService.getFirmwarePack(params);
     // console.log('getFirmwarePack res: ', res, params);
     // if (res && res.firmware.firmware_name.toLowerCase().endsWith('.bin')) {
     //   console.log('获取到升级bin包');
