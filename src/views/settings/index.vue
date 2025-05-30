@@ -62,14 +62,15 @@
                 <span :class="{ hasFile: bindData.length > 0 && onlineUpload }">
                   {{ bindData.length > 0 && onlineUpload ? '已下载固件' : '点击下载固件' }}
                 </span>
-                <p class="online-pack-name" v-if="!loading">
+
+                <p class="online-pack-name" v-if="!loading && onlineUpload">
                   {{ selectedFile ? selectedFile.name + '_' + selectedFile.firmware.firmware_version : '' }}
                 </p>
                 <div class="uploader-progress" v-if="loading && onlineUpload">
                   <el-progress :percentage="progress.current" :color="'#91bc00'" />
                 </div>
               </div>
-            </template> -->
+              </template> -->
             <template v-if="isVersion2">
               <span :style="{ marginLeft: `${scaleValue(20)}px` }">本地升级:</span>
               <el-upload
