@@ -581,7 +581,6 @@ const usePerformanceStore = defineStore('performance', {
       if (isVersion2) {
         const result = await services.getAxisListV2();
         const { list } = result[0];
-        // console.log('getAxisListV2: ', result);
         list.forEach((item) => {
           const index = allAxisList.findIndex((axis) => axis.axis_id === item);
           if (index !== -1) {
@@ -589,6 +588,7 @@ const usePerformanceStore = defineStore('performance', {
             this.axisList.push(item);
           }
         });
+        console.log('getAxisListV2: ', this.axisList);
         return list;
       } else {
         const res = await services.getAxisList();

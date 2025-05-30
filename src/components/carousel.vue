@@ -1,41 +1,64 @@
 <template>
   <div class="carousel-box" :style="{ marginLeft: `${offset}px`, width: `${width}px` }">
-    <div class="left-arrow" @click="prevClickSlide"></div>
-    <div class="shadow" @mousedown="startDrag" @mousemove="onDrag" @mouseup="endDrag" @mouseleave="endDrag">
-      <div
-        class="carousel"
-        :class="noTransition ? 'no-transition' : ''"
-        :style="{ transform: `translateX(${offsetVal}px)` }"
-      >
+    <template v-if="carouselData.length > 1">
+      <div class="left-arrow" @click="prevClickSlide"></div>
+      <div class="shadow" @mousedown="startDrag" @mousemove="onDrag" @mouseup="endDrag" @mouseleave="endDrag">
         <div
-          v-for="(item, index) in localCarouselData"
-          :key="item.src"
-          :class="{ selected: currentIdx === index }"
-          :data-id="item.id"
-          class="slide"
+          class="carousel"
+          :class="noTransition ? 'no-transition' : ''"
+          :style="{ transform: `translateX(${offsetVal}px)` }"
         >
-          <template v-if="item.image_url === '#'">
-            <img :src="axisIcon1" alt="" draggable="false" />
-          </template>
-          <template v-else>
-            <img :src="item.src || item.image_url" alt="" draggable="false" />
-          </template>
+          <div
+            v-for="(item, index) in localCarouselData"
+            :key="item.src"
+            :class="{ selected: currentIdx === index }"
+            :data-id="item.id"
+            class="slide"
+          >
+            <template v-if="item.image_url === '#'">
+              <img :src="axisIcon1" alt="" draggable="false" />
+            </template>
+            <template v-else>
+              <img :src="item.src || item.image_url" alt="" draggable="false" />
+            </template>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="right-arrow" @click="nextClick"></div>
-    <div class="bottom-taskbar">
-      <div class="bottom-taskbar__text" v-if="showText">
-        <span
-          :style="{
-            backgroundColor:
-              localCarouselData[currentIdx]?.color || localCarouselData[currentIdx]?.axis_color || '#fff',
-          }"
-        >
-          {{ localCarouselData[currentIdx]?.name || localCarouselData[currentIdx]?.axis_name || '磁轴' }}
-        </span>
+      <div class="right-arrow" @click="nextClick"></div>
+      <div class="bottom-taskbar">
+        <div class="bottom-taskbar__text" v-if="showText">
+          <span
+            :style="{
+              backgroundColor:
+                localCarouselData[currentIdx]?.color || localCarouselData[currentIdx]?.axis_color || '#fff',
+            }"
+          >
+            {{ localCarouselData[currentIdx]?.name || localCarouselData[currentIdx]?.axis_name || '磁轴' }}
+          </span>
+        </div>
       </div>
-    </div>
+    </template>
+    <template v-else>
+      <div class="single-axis">
+        <template v-if="carouselData[0].image_url === '#'">
+          <img :src="axisIcon1" alt="" draggable="false" />
+        </template>
+        <template v-else>
+          <img :src="carouselData[0].src || carouselData[0].image_url" alt="" draggable="false" />
+        </template>
+      </div>
+      <div class="bottom-taskbar">
+        <div class="bottom-taskbar__text" v-if="showText">
+          <span
+            :style="{
+              backgroundColor: carouselData[0]?.color || carouselData[0]?.axis_color || '#fff',
+            }"
+          >
+            {{ carouselData[0]?.name || carouselData[0]?.axis_name || '磁轴' }}
+          </span>
+        </div>
+      </div>
+    </template>
   </div>
 </template>
 
@@ -124,16 +147,30 @@ const nextClick = () => {
 // 初始化
 onMounted(() => {
   // 设置初始位置
-  currentIdx.value = 6;
-  offsetVal.value = -(SLIDE_WIDTH.value * 3);
+  if (carouselData.length < 5) {
+    currentIdx.value = 3;
+    offsetVal.value = 0;
+  } else {
+    currentIdx.value = 6;
+    offsetVal.value = -(SLIDE_WIDTH.value * 3);
+  }
+  if (carouselData.length === 1) {
+    emits('handleChangeItem', carouselData[0].id || carouselData[0].axis_id);
+  } else {
+    // console.log('onMounted log: ', localCarouselData.value[currentIdx.value]);
+    emits(
+      'handleChangeItem',
+      localCarouselData.value[currentIdx.value].id || localCarouselData.value[currentIdx.value].axis_id,
+    );
+  }
 });
 
-watch(
-  () => selectedId,
-  (newVal) => {
-    // console.log('new selcet axis id', newVal);
-  },
-);
+// watch(
+//   () => selectedId,
+//   (newVal) => {
+//     // console.log('new selcet axis id', newVal);
+//   },
+// );
 
 const isDragging = ref(false);
 const startX = ref(0);
@@ -180,6 +217,8 @@ const saveConfig = () => {
   width: var(--carousel-outer-width);
   height: var(--size-230);
   display: flex;
+  justify-content: center;
+  // align-items: center;
   // margin-left: 160px;
   position: relative;
 
@@ -255,6 +294,29 @@ const saveConfig = () => {
 
     .no-transition {
       transition: none;
+    }
+  }
+
+  .single-axis {
+    width: var(--size-150);
+    height: var(--size-150);
+    overflow: hidden;
+    // margin-left: var(--spacing-15);
+    margin-top: var(--spacing-40);
+    flex-shrink: 0;
+    // transition: transform 0.5s ease;
+    background-image: url('@/assets/images/check_item.svg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    // transition: all 0.3s;
+
+    img {
+      width: var(--size-50);
+      height: var(--size-50);
+      object-fit: fill;
     }
   }
 

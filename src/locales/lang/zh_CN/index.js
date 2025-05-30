@@ -1,6 +1,6 @@
 export default {
   messages: {
-    connectTip1: '欢迎来到 MORK BLADE',
+    connectTip1: '欢迎来到 AULA',
     connectTip2: '仅需三步，轻松配置您的键盘',
     connectKeyBoard: '连接键盘',
     connectStep1: '点击连接键盘按钮',

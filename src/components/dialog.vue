@@ -141,6 +141,14 @@ const onCancel = () => {
 </script>
 
 <style scoped lang="scss">
+.m-dialog {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 20;
+}
 .shadow {
   position: fixed;
   top: 0;
@@ -153,7 +161,7 @@ const onCancel = () => {
   .dialog-content {
     width: var(--size-600);
     height: var(--size-300);
-    position: absolute;
+    position: fixed;
     top: 50%;
     left: 50%;
     margin-left: calc(var(--size-300) * -1);
