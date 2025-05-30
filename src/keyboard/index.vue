@@ -227,7 +227,7 @@ onMounted(async () => {
     await keyboardStore.initKeyboard();
 
     // Then initialize lighting
-    await initCustomLighting();
+    // await initCustomLighting();
     if (isVersion2.value) await deviceStore.getDoubleLighting();
 
     // Get protocol version

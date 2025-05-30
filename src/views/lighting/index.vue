@@ -136,6 +136,7 @@ const animationLoop = async (timestamp) => {
 
 onMounted(async () => {
   const lampData = isDoubleLighting.value ? 'DoubleLighting' : 'SingleLighting';
+  console.log('lighting onMounted-------------------->');
   await initLighting(lampData);
   await getLightingSaturation();
   if (isVersion2.value) {
@@ -165,6 +166,8 @@ const setCustomLightingStatus = async (isCustom) => {
     // 一行一行异步设置灯光
     for (const row of keyboardStore.keyboards) {
       for (const key of row) {
+        // Skip if key already has isCustom set to true
+        // if (key.customLight?.isCustom) continue;
         key.customLight = { ...customLight };
       }
       // 每设置完一行就更新一次灯光
