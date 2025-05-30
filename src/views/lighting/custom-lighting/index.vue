@@ -235,9 +235,8 @@ const changePreinstall = async (idx) => {
               B: Number(b),
               isCustom: true,
             };
-            if (key.row === 5 && key.col === 6) {
+            if (isVersion2 && key.row === 5 && key.col === 6) {
               const { row, col, customLight } = key;
-              console.log('key custom is: ', row, col, customLight);
               keyboardStore.keyboards[row][col - 2].customLight = customLight;
               keyboardStore.keyboards[row][col - 1].customLight = customLight;
               keyboardStore.keyboards[row][col + 1].customLight = customLight;
@@ -270,6 +269,7 @@ const debounceApiCalls = (apiCalls) => {
 
   // 设置新的定时器，延迟500ms执行
   debounceTimer = setTimeout(async () => {
+    console.log('设置自定义灯光');
     await Promise.all(apiCalls.map((params) => services.setCustomLighting(params)));
     debounceTimer = null;
   }, 200);

@@ -90,6 +90,8 @@ export const usePerformanceHook = () => {
         performance.singleTriggeringValue = triggerValue;
         performance.rtPressValue = rtValue;
         performance.rtReleaseValue = rtValue;
+        performance.isRt = rtValue !== 0;
+        performance.isSingle = rtValue === 0;
         performance.row = row;
         performance.col = col;
 
