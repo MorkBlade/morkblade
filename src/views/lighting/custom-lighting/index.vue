@@ -223,12 +223,26 @@ const changePreinstall = async (idx) => {
           if (rgbMatch) {
             const [_, r, g, b] = rgbMatch;
             // 更新键盘按键的customLight值
+            // if (col.row === 5 && col.col === 5) {
+            //   console.log('空格键需要多加两个灯', col);
+            //   const customLight = col.customLight;
+            //   // customLightData[rowIndex].push(customLight);
+            //   // customLightData[rowIndex].push(customLight);
+            // }
             key.customLight = {
               R: Number(r),
               G: Number(g),
               B: Number(b),
               isCustom: true,
             };
+            if (key.row === 5 && key.col === 6) {
+              const { row, col, customLight } = key;
+              console.log('key custom is: ', row, col, customLight);
+              keyboardStore.keyboards[row][col - 2].customLight = customLight;
+              keyboardStore.keyboards[row][col - 1].customLight = customLight;
+              keyboardStore.keyboards[row][col + 1].customLight = customLight;
+              keyboardStore.keyboards[row][col + 2].customLight = customLight;
+            }
 
             // 收集API调用
             apiCalls.push({

@@ -136,7 +136,6 @@ const animationLoop = async (timestamp) => {
 
 onMounted(async () => {
   const lampData = isDoubleLighting.value ? 'DoubleLighting' : 'SingleLighting';
-  console.log('lighting onMounted-------------------->');
   await initLighting(lampData);
   await getLightingSaturation();
   if (isVersion2.value) {
