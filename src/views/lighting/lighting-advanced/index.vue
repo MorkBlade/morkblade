@@ -128,7 +128,7 @@ const { isDoubleLighting } = storeToRefs(deviceStore);
 
 const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
 const min = 0;
-const max = isVersion2 ? 255 : 100;
+const max = isVersion2 ? 50 : 100;
 const topLamp = ref(false);
 const bottomLamp = ref(false);
 const allLamp = ref(upOpen.value && downOpen.value);
@@ -143,9 +143,9 @@ const updateFromRgb = () => {
 
 const handleBlur = () => {
   if (isVersion2) {
-    if (rgb.value.R > 255) rgb.value.R = 255;
-    if (rgb.value.G > 255) rgb.value.G = 255;
-    if (rgb.value.B > 255) rgb.value.B = 255;
+    if (rgb.value.R > 50) rgb.value.R = 50;
+    if (rgb.value.G > 50) rgb.value.G = 50;
+    if (rgb.value.B > 50) rgb.value.B = 50;
   } else {
     console.log(rgb.value);
     if (rgb.value.R > 100) rgb.value.R = 100;
