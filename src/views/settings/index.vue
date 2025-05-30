@@ -62,7 +62,6 @@
                 <span :class="{ hasFile: bindData.length > 0 && onlineUpload }">
                   {{ bindData.length > 0 && onlineUpload ? '已下载固件' : '点击下载固件' }}
                 </span>
-
                 <p class="online-pack-name" v-if="!loading && onlineUpload">
                   {{ selectedFile ? selectedFile.name + '_' + selectedFile.firmware.firmware_version : '' }}
                 </p>
