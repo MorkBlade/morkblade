@@ -48,10 +48,7 @@
           :class="checkedIdx == idx ? 'selected' : ''"
           @click="onCheck(idx)"
         >
-          <img
-            :src="checkedIdx == idx ? `/src/assets/images/${ite.icon}_c.svg` : `/src/assets/images/${ite.icon}.svg`"
-            alt=""
-          />
+          <img :src="checkedIdx == idx ? ite.icon2 : ite.icon1" alt="" />
           <span>{{ ite.name }}</span>
         </div>
       </div>
@@ -73,11 +70,12 @@
         </template>
       </div>
       <div class="operation-btn">
-        <saveConfigBtn btnText="应用更改" :icon="icon1" :needKeys="false" @saveConfig="saveConfig" />
+        <saveConfigBtn btnText="应用更改" :icon="icon1" :needKeys="false" @saveConfig="saveConfig" :verify="true" />
         <saveConfigBtn
           btnText="取消更改"
           :icon="icon2"
           :needKeys="false"
+          :verify="true"
           type="warning"
           @saveConfig="saveConfig('cancel')"
         />
@@ -91,6 +89,7 @@ import { scaleValue } from '@/utils/responsive.js';
 import { useKeyboardStore, usePerformanceStore } from '@/stores';
 
 import saveConfigBtn from '@/components/save-config-btn.vue';
+import keyboardWord from '@/configs/byte-to-key/keyboard';
 
 import upIcon from '@/assets/images/up.svg';
 import upCheckedIcon from '@/assets/images/up_checked.svg';
@@ -98,7 +97,16 @@ import downIcon from '@/assets/images/down.svg';
 import downCheckedIcon from '@/assets/images/down_checked.svg';
 import icon1 from '@/assets/images/sure.svg';
 import icon2 from '@/assets/images/clear_icon.svg';
-import keyboardWord from '@/configs/byte-to-key/keyboard';
+import basicIcon1 from '@/assets/images/basic.svg';
+import basicIcon2 from '@/assets/images/basic_c.svg';
+import extendIcon1 from '@/assets/images/extend.svg';
+import extendIcon2 from '@/assets/images/extend_c.svg';
+import specialIcon1 from '@/assets/images/special.svg';
+import specialIcon2 from '@/assets/images/special_c.svg';
+import keyboardIcon1 from '@/assets/images/keyboard.svg';
+import keyboardIcon2 from '@/assets/images/keyboard_c.svg';
+import mouseIcon1 from '@/assets/images/mouse.svg';
+import mouseIcon2 from '@/assets/images/mouse_c.svg';
 
 const { data } = defineProps({
   data: { type: Object, default: {} },
@@ -113,19 +121,24 @@ const showCharacter = ref(false);
 const checkedIdx = ref(0);
 const currentKey = ref(null);
 const characterArr = [
-  { name: '基本字符', icon: 'basic' },
-  { name: '扩展字符', icon: 'extend' },
-  { name: '特殊字符', icon: 'special' },
-  { name: '键盘控制', icon: 'keyboard' },
-  { name: '鼠标键', icon: 'mouse' },
+  { name: '基本字符', icon1: basicIcon1, icon2: basicIcon2 },
+  { name: '扩展字符', icon1: extendIcon1, icon2: extendIcon2 },
+  { name: '特殊字符', icon1: specialIcon1, icon2: specialIcon2 },
+  { name: '键盘控制', icon1: keyboardIcon1, icon2: keyboardIcon2 },
+  { name: '鼠标键', icon1: mouseIcon1, icon2: mouseIcon2 },
 ];
-const extend = [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29];
-const number = [30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98];
-const special = [45, 46, 47, 48, 49, 51, 52, 53, 54, 55, 56, 57];
-const basic = [40, 41, 42, 43, 44, 79, 80, 81, 82, 224, 225, 226, 227, 228, 229, 230, 231];
+const extend = [
+  41, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 43, 42, 73, 76, 74, 77, 75, 78, 131, 130, 40, 89, 90,
+  91, 92, 93, 94, 95, 96, 97, 98, 84, 85, 86, 87, 224, 225, 226, 227, 228, 229, 230, 231, 44, 118, 80, 81, 82, 79,
+];
+const special = [129, 128, 127, 173, 176, 174, 181, 183, 182];
+const basic = [
+  4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34,
+  35, 36, 37, 38, 39, 45, 46, 47, 48, 49, 51, 52, 53, 54, 55, 56,
+];
 const keyboard = [
-  61696, 61697, 61698, 61699, 61704, 61705, 61706, 61708, 61707, 62217, 62224, 62225, 62226, 62227, 62228, 62229, 62231,
-  62245, 62246, 62247, 62248, 62249, 62250, 62251, 62252, 62255,
+  61696, 61697, 61698, 61699, 62217, 62224, 62225, 62226, 62227, 62228, 62229, 62231, 62245, 62246, 62247, 62248, 62249,
+  62250, 62251, 62252, 62255,
 ];
 const mouse = [29441, 29442, 29443, 29444, 29445, 29446, 29447, 29448, 29449];
 

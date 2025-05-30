@@ -358,7 +358,14 @@ const changeKeyLightColor = async (key, isCustom = true) => {
 };
 
 const onChecked = async (key) => {
-  if (route.path !== '/lighting' || (route.path == '/lighting' && !lightSettingStore.enterCustom)) {
+  console.log(
+    'key onClick',
+    lightSettingStore.enterCustom,
+    route.path,
+    route.path !== '/lighting' || (route.path == '/lighting' && !lightSettingStore.enterCustom),
+  );
+  // if (route.path !== '/lighting' || (route.path == '/lighting' && !lightSettingStore.enterCustom)) {
+  if (route.path !== '/lighting') {
     emit('click');
   }
 };
