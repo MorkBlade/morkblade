@@ -1,38 +1,40 @@
 <template>
   <div class="light-luminance">
-    <div class="sleep-time-box">
-      <span class="title">休眠时间:</span>
-      <div
-        class="cover-list"
-        :class="selectedId === lingtingData.sleepTime ? 'is-selected' : ''"
-        @click="toggleDropdown"
-      >
-        <img
-          class="change-icon"
-          :src="selectedId === lingtingData.sleepTime ? changedSleepIcon : changeSleepIcon"
-          alt=""
-        />
-        <span>{{ getSleepDelayLabel(lingtingData?.sleepTime === -1 ? 0 : lingtingData?.sleepTime) }}</span>
-        <img
-          class="down-icon"
-          :src="selectedId === lingtingData.sleepTime ? downArrowed : downArrow"
-          :style="{ transform: `rotate(${rotate}deg)` }"
-        />
-        <div class="drop-list" :style="{ height: `${defaultHeight}px` }">
-          <ul>
-            <li
-              v-for="ite in LIGHT_SLEEP_DELAY"
-              :key="ite.id"
-              :class="{ 'checked-item': ite.id === lingtingData.sleepTime }"
-              @click.stop="changeLightSleepDelay(ite.id)"
-            >
-              {{ ite.label }}
-              <!-- {{ Number(ite.label.replace(' min', '')) === lingtingData.sleepTime }} -->
-            </li>
-          </ul>
+    <template v-if="!isVersion2">
+      <div class="sleep-time-box">
+        <span class="title">休眠时间:</span>
+        <div
+          class="cover-list"
+          :class="selectedId === lingtingData.sleepTime ? 'is-selected' : ''"
+          @click="toggleDropdown"
+        >
+          <img
+            class="change-icon"
+            :src="selectedId === lingtingData.sleepTime ? changedSleepIcon : changeSleepIcon"
+            alt=""
+          />
+          <span>{{ getSleepDelayLabel(lingtingData?.sleepTime === -1 ? 0 : lingtingData?.sleepTime) }}</span>
+          <img
+            class="down-icon"
+            :src="selectedId === lingtingData.sleepTime ? downArrowed : downArrow"
+            :style="{ transform: `rotate(${rotate}deg)` }"
+          />
+          <div class="drop-list" :style="{ height: `${defaultHeight}px` }">
+            <ul>
+              <li
+                v-for="ite in LIGHT_SLEEP_DELAY"
+                :key="ite.id"
+                :class="{ 'checked-item': ite.id === lingtingData.sleepTime }"
+                @click.stop="changeLightSleepDelay(ite.id)"
+              >
+                {{ ite.label }}
+                <!-- {{ Number(ite.label.replace(' min', '')) === lingtingData.sleepTime }} -->
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
-    </div>
+    </template>
     <div class="lumminance-box">
       <span class="title">亮度:</span>
       <horizontalSlider :sliderValue="lingtingData.luminance" :min="0" :max="max" @sendSliderVal="getLuminance" />
