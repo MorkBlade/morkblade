@@ -24,7 +24,7 @@
             <p class="single-travel" v-if="singleTravel !== null">{{ singleTravel }}</p>
           </template>
         </template>
-        <template v-else-if="currentModel === 'quickTrigger'">
+        <template v-else-if="currentModel === 'quickTrigger' || currentModel === 'preinstall'">
           <template v-if="isRT">
             <p class="rt-first-travel" v-if="rtPressTravel !== null">{{ rtFirstTravel }}</p>
             <p class="rt-press-travel" v-if="rtPressTravel !== null">{{ rtPressTravel }}</p>
@@ -358,12 +358,6 @@ const changeKeyLightColor = async (key, isCustom = true) => {
 };
 
 const onChecked = async (key) => {
-  console.log(
-    'key onClick',
-    lightSettingStore.enterCustom,
-    route.path,
-    route.path !== '/lighting' || (route.path == '/lighting' && !lightSettingStore.enterCustom),
-  );
   // if (route.path !== '/lighting' || (route.path == '/lighting' && !lightSettingStore.enterCustom)) {
   if (route.path !== '/lighting') {
     emit('click');

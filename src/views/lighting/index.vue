@@ -193,7 +193,7 @@ const changeMenu = (idx) => {
       inCustomLighting = true;
       lightSettingStore.updateEnterCustom(true);
       // 设置自定义灯光状态
-      if (isVersion2.value) setCustomLightingStatus(true);
+      // if (isVersion2.value) setCustomLightingStatus(true);
       break;
     default:
       if (lightSettingStore.light.mode) {
@@ -204,12 +204,12 @@ const changeMenu = (idx) => {
       inCustomLighting = false;
       lightSettingStore.updateEnterCustom(false);
       // 设置自定义灯光状态
-      if (isVersion2.value) setCustomLightingStatus(false);
+      // if (isVersion2.value) setCustomLightingStatus(false);
       break;
   }
   // 先取消自定义灯光
   // isVersion2.value ? initCustomLighting(inCustomLighting) : '';
-  changeKeyLight();
+  isVersion2.value ? '' : changeKeyLight();
 };
 
 // 切换灯光
@@ -225,6 +225,7 @@ const changeKeyLight = async () => {
     } else {
       await setLighting();
     }
+    if (isVersion2.value) setCustomLightingStatus(false);
   } else {
     await setLighting();
   }

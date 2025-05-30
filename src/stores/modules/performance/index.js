@@ -419,27 +419,37 @@ const usePerformanceStore = defineStore('performance', {
             }
             if (keyItem) {
               // console.log('keyItem: ', keyItem, travels[i][j]);
-              const { maxTravel, minTravel } = KEY_SHAFT.find((shaft) => shaft.id === keyItem.performance.axisID + 1);
+              const shaft = this.axisList.find((shaft, index) => index === keyItem.performance.axisID) || {
+                doctrine_range_left: 3.3,
+                doctrine_range_right: 0.3,
+              };
+              // console.log('shaft is: ', shaft, keyItem.performance.axisID);
+              const { doctrine_range_left, doctrine_range_right } = shaft;
+              // { doctrine_range_left, doctrine_range_right }
               // 使用 keyValue 作为属性名，设置为 true
               newVerifyKey[keyItem.keyValue] = {
                 res: true,
                 travel: travels[i][j] / 1000,
                 axisID: keyItem.performance.axisID,
-                maxTravel: maxTravel / 1000,
-                minTravel: minTravel / 1000,
+                maxTravel: doctrine_range_left,
+                minTravel: doctrine_range_right,
               };
             }
           }
           for (const key in this.veifyKey) {
             if (!newVerifyKey[key]) {
-              const { maxTravel, minTravel } = KEY_SHAFT.find((shaft) => shaft.id === this.veifyKey[key].axisID + 1);
+              const shaft = this.axisList.find((shaft, index) => index === this.veifyKey[key].axisID) || {
+                doctrine_range_left: 3.3,
+                doctrine_range_right: 0.3,
+              };
+              const { doctrine_range_left, doctrine_range_right } = shaft;
               // 如果新对象中没有这个键，则保留键但重置travel为0
               newVerifyKey[key] = {
                 res: this.veifyKey[key].res,
                 travel: 0,
                 axisID: this.veifyKey[key].axisID,
-                maxTravel: maxTravel / 1000,
-                minTravel: minTravel / 1000,
+                maxTravel: doctrine_range_left,
+                minTravel: doctrine_range_right,
               };
             }
           }
