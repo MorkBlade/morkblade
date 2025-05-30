@@ -162,11 +162,11 @@ const handleMatchLZ = (e) => {
 };
 
 const handleMatchTTC = (e) => {
-  const ttsAxis = axisList.value.filter((ite) => {
-    return ite.factory_name === 'tts';
+  const ttcAxis = axisList.value.filter((ite) => {
+    return ite.factory_name === 'TTC';
   });
-  axisBrandList.value = ttsAxis;
-  if (ttsAxis.length === 0) showMessage('该品牌暂无轴', 'warning');
+  axisBrandList.value = ttcAxis;
+  if (ttcAxis.length === 0) showMessage('该品牌暂无轴', 'warning');
 };
 
 const handleMatchOther = (e) => {

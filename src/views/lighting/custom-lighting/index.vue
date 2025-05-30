@@ -237,7 +237,6 @@ const changePreinstall = async (idx) => {
             };
             if (key.row === 5 && key.col === 6) {
               const { row, col, customLight } = key;
-              console.log('key custom is: ', row, col, customLight);
               keyboardStore.keyboards[row][col - 2].customLight = customLight;
               keyboardStore.keyboards[row][col - 1].customLight = customLight;
               keyboardStore.keyboards[row][col + 1].customLight = customLight;
