@@ -227,12 +227,14 @@ const urlList = ['/bin-data/update_esports.bin', '/bin-data/update_highlight.bin
 const keyboardName = computed(() => {
   if (!isVersion2.value) {
     const device = deviceStore.devices.find(
-      (item) => item.usagePage === 65440 && item.vendorId === 7331 && item.productId === 257,
+      // (item) => item.usagePage === 65440 && item.vendorId === 7331 && item.productId === 257,
+      (item) => item.usagePage === 65440,
     );
     return device?.productName || '--';
   } else {
     const device = deviceStore.devices.find(
-      (item) => item.usagePage === 65456 && item.vendorId === 7334 && item.productId === 5380,
+      // (item) => item.usagePage === 65456 && item.vendorId === 7334 && item.productId === 5380,
+      (item) => item.usagePage === 65456,
     );
     return device?.productName || '--';
   }
