@@ -56,7 +56,7 @@
               <span>在线升级:</span>
               <dropMenu :max-height="180" :items="firmwareVersionList" @sendSelectedIdx="handleSelectedVer" />
             </template> -->
-            <template v-if="isVersion2">
+            <!-- <template v-if="isVersion2">
               <span>在线升级:</span>
               <div class="online-upload" :class="{ loading }" @click="handleOnlineUpdate">
                 <span :class="{ hasFile: bindData.length > 0 && onlineUpload }">
@@ -69,8 +69,7 @@
                   <el-progress :percentage="progress.current" :color="'#91bc00'" />
                 </div>
               </div>
-            </template>
-            -->
+            </template> -->
             <template v-if="isVersion2">
               <span :style="{ marginLeft: `${scaleValue(20)}px` }">本地升级:</span>
               <el-upload
