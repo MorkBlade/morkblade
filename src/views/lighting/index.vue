@@ -83,6 +83,13 @@ emitter.on('versionChange', (flag) => {
   }
 });
 
+services.on('lightingBase', async (data) => {
+  const { area } = data;
+  if (lightSettingStore.area === area) {
+    lightSettingStore.updateLightingBaseData(data);
+  }
+});
+
 // 更新颜色的函数
 const updateColors = async () => {
   try {

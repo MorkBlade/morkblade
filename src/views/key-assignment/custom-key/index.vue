@@ -23,7 +23,12 @@
         <key v-for="ite in special" :key="ite" :key-value="ite" @select="selectItem" />
       </template>
       <template v-if="checkedIdx === 3">
-        <key v-for="ite in keyboard" :key="ite" :key-value="ite" @select="selectItem" />
+        <template v-if="isVersion2">
+          <key v-for="ite in keyboard2" :key="ite" :key-value="ite" @select="selectItem" />
+        </template>
+        <template v-else>
+          <key v-for="ite in keyboard" :key="ite" :key-value="ite" @select="selectItem" />
+        </template>
       </template>
       <template v-if="checkedIdx === 4">
         <key v-for="ite in mouse" :key="ite" :key-value="ite" @select="selectItem" />
@@ -103,7 +108,8 @@ const characterArr = [
 
 const extend = [
   41, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 43, 42, 73, 76, 74, 77, 75, 78, 131, 130, 40, 89, 90,
-  91, 92, 93, 94, 95, 96, 97, 98, 84, 85, 86, 87, 224, 225, 226, 227, 228, 229, 230, 231, 44, 118, 80, 81, 82, 79,
+  91, 92, 93, 94, 95, 96, 97, 98, 84, 85, 86, 87, 224, 225, 226, 227, 228, 229, 230, 231, 44, 118, 80, 81, 82, 79, 53,
+  54, 55, 56,
 ];
 const special = [129, 128, 127, 173, 176, 174, 181, 183, 182];
 const basic = [
@@ -113,6 +119,9 @@ const basic = [
 const keyboard = [
   61696, 61697, 61698, 61699, 62217, 62224, 62225, 62226, 62227, 62228, 62229, 62231, 62245, 62246, 62247, 62248, 62249,
   62250, 62251, 62252, 62255,
+];
+const keyboard2 = [
+  62208, 62209, 62210, 62211, 62212, 62213, 62214, 62215, 62216, 62217, 62218, 62219, 62220, 62221, 62222, 62223, 62224,
 ];
 const mouse = [29441, 29442, 29443, 29444, 29445, 29446, 29447, 29448, 29449];
 
@@ -206,12 +215,40 @@ const selectItem = async (keyVal) => {
 
   .keys-box {
     width: calc(var(--axis-width) + var(--size-190));
+    height: var(--keys-box-height);
     margin-left: var(--spacing-60);
     display: flex;
     flex-wrap: wrap;
+    overflow-y: scroll;
 
     .active {
       background-image: url('@/assets/images/key_bgC.svg');
+    }
+
+    /* 滚动条整体样式 */
+    &::-webkit-scrollbar {
+      height: var(--size-10);
+      width: var(--spacing-5);
+    }
+
+    /* 滚动条轨道 */
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    /* 滚动条手柄 */
+    &::-webkit-scrollbar-thumb {
+      background: rgb(37, 37, 37);
+    }
+
+    /* 隐藏滚动条 */
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* 当容器被悬停时显示滚动条 */
+    &:hover::-webkit-scrollbar {
+      display: block;
     }
   }
 }
