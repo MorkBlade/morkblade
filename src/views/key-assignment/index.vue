@@ -94,6 +94,7 @@
 import useSetAdvanced from './useSetAdvanced.js';
 import emitter from '@/utils/app-emitter';
 import { useAdvancedHook } from '@/hooks';
+import { showMessage } from '@/utils/message';
 
 import mt from './mt/index.vue';
 import dks from './dks/index.vue';
@@ -178,7 +179,7 @@ watch(
   (newVal) => {
     if (newVal.length > 0) {
       const [row, col] = newVal[0].split('-');
-      console.log('has new active key: ', newVal, row, col, hookKeyboardStore.keyboards[row][col]);
+      // console.log('has new active key: ', newVal, row, col, hookKeyboardStore.keyboards[row][col]);
       const { advancedKeys } = hookKeyboardStore.keyboards[row][col];
       let type = '';
       switch (advancedKeys.advancedType) {
@@ -187,7 +188,7 @@ watch(
           isExternalUpdate.value = true;
           const { dks: dksAll, trps, db, db2 } = advancedKeys.dks;
           Object.assign(dksInfo, { dks: [...dksAll], trps, db, db2 });
-          console.log('当前选中键是dks!', advancedKeys.dks);
+          // console.log('当前选中键是dks!', advancedKeys.dks);
           type = 'DKS';
           setTimeout(() => {
             isExternalUpdate.value = false;
@@ -197,13 +198,13 @@ watch(
           clickItem.value = 6;
           const { dbs, dks } = advancedKeys.mpt;
           Object.assign(mptInfo, { dks: [...dks], dbs: [...dbs] });
-          console.log('当前选中键是mpt!', advancedKeys.mpt, dbs, dks);
+          // console.log('当前选中键是mpt!', advancedKeys.mpt, dbs, dks);
           break;
         case 3:
           clickItem.value = 1;
           const { mt } = advancedKeys.mt;
           Object.assign(mtInfo, { dks: [mt.dksAll[0], mt.dksAll[1]], delay: mt.delay });
-          console.log('当前选中键是MT!', advancedKeys.mt);
+          // console.log('当前选中键是MT!', advancedKeys.mt);
           break;
         case 4:
           clickItem.value = 5;
@@ -215,7 +216,7 @@ watch(
           clickItem.value = 7;
           const { end } = advancedKeys.end;
           Object.assign(endInfo, { dks: end.dks[1], delay: end.delay });
-          console.log('当前选中键是end!', advancedKeys.end);
+          // console.log('当前选中键是end!', advancedKeys.end);
           break;
         case 6:
         case 8:
@@ -227,8 +228,8 @@ watch(
                 hookKeyboardStore.keyboards[row][col].keyValue === socd[0] ||
                 hookKeyboardStore.keyboards[row][col].keyValue === socd[1]
               ) {
-                console.log(hookKeyboardStore.keyboards[row][col]);
-                console.log('includes: ', hookKeyboardStore.activeKeys.includes(`${row}-${col}`));
+                // console.log(hookKeyboardStore.keyboards[row][col]);
+                // console.log('includes: ', hookKeyboardStore.activeKeys.includes(`${row}-${col}`));
                 if (!hookKeyboardStore.activeKeys.includes(`${row}-${col}`)) {
                   hookKeyboardStore.activeKeys.push(`${row}-${col}`);
                 }
@@ -236,7 +237,7 @@ watch(
             }
           }
           Object.assign(socdInfo, { pos: [...socd], key: [...socd], type: 0, mode: socdMode, delay });
-          console.log('当前选中键是socd!', advancedKeys.socd);
+          // console.log('当前选中键是socd!', advancedKeys.socd);
           break;
         case 7:
         case 9:
@@ -248,8 +249,8 @@ watch(
                 hookKeyboardStore.keyboards[row][col].keyValue === rs[0] ||
                 hookKeyboardStore.keyboards[row][col].keyValue === rs[1]
               ) {
-                console.log(hookKeyboardStore.keyboards[row][col]);
-                console.log('includes: ', hookKeyboardStore.activeKeys.includes(`${row}-${col}`));
+                // console.log(hookKeyboardStore.keyboards[row][col]);
+                // console.log('includes: ', hookKeyboardStore.activeKeys.includes(`${row}-${col}`));
                 if (!hookKeyboardStore.activeKeys.includes(`${row}-${col}`)) {
                   hookKeyboardStore.activeKeys.push(`${row}-${col}`);
                 }
@@ -257,7 +258,7 @@ watch(
             }
           }
           Object.assign(rsInfo, { dks: [...rs] });
-          console.log('当前选中键是rs!', advancedKeys.rs);
+          // console.log('当前选中键是rs!', advancedKeys.rs);
           break;
         default:
           resetDefaultValue();
@@ -277,8 +278,10 @@ const handleDeleteAdvanced = (item, type) => {
 
 const onSure = async () => {
   isShow.value = false;
-  console.log('del advanced: ', delAdvancedItem.value, delAdvancedType.value);
+  // console.log('del advanced: ', delAdvancedItem.value, delAdvancedType.value);
   delAdvancedConfig(delAdvancedItem.value, delAdvancedType.value);
+  resetDefaultValue();
+  showMessage('删除成功!');
   // emits('delConfig', advancedVal.value);
 };
 

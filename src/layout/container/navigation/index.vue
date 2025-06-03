@@ -121,7 +121,7 @@ onMounted(() => {
       if (res && res.firmware.firmware_version) {
         const bestVersion = res.firmware.firmware_version.replace('v', '');
         hasNewVersion.value = bestVersion > appStore.baseInfo?.appVersion;
-        console.log('onMounted log res: ', bestVersion > appStore.baseInfo?.appVersion);
+        // console.log('onMounted log res: ', bestVersion > appStore.baseInfo?.appVersion);
       }
     }, 200);
   }

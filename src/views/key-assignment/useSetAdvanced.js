@@ -71,7 +71,7 @@ const useSetAdvanced = () => {
 
   const handleKeyTypeChange = (type) => {
     // 初始化调用的
-    console.log('handleKeyTypeChange log11111');
+    // console.log('handleKeyTypeChange log11111');
     if (type === selectedKeyType.value) {
       selectedKeyType.value = '';
       return;
@@ -99,7 +99,7 @@ const useSetAdvanced = () => {
       Object.assign(macroInfo, { dks: 0, macroMode: 0, selectName: null, mode: 0, repeatCount: 1, repeatDelay: 1 });
     }
 
-    console.log('handleKeyTypeChange log22222');
+    // console.log('handleKeyTypeChange log22222');
     // 打开弹窗
     edit.value = false;
     editKey.value = 0;
@@ -169,7 +169,7 @@ const useSetAdvanced = () => {
   // 计算当前的高级键
   const advancedItems = computed(() => {
     const value = [];
-    console.log('xxxxxxxxxxxxxxxxxxxxxxxxxxx');
+    // console.log('xxxxxxxxxxxxxxxxxxxxxxxxxxx');
     // if (hasAdvancedData.value) {
     const keyboards = keyboardStore.keyboards;
     if (Array.isArray(keyboards)) {
@@ -204,7 +204,7 @@ const useSetAdvanced = () => {
       });
     }
     // }
-    console.log('advancedItems', value);
+    // console.log('advancedItems', value);
     return value;
   });
   // 计算当前选择的高级键
