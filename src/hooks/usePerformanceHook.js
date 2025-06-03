@@ -92,6 +92,8 @@ export const usePerformanceHook = () => {
         performance.rtReleaseValue = rtValue;
         performance.isRt = rtValue !== 0;
         performance.isSingle = rtValue === 0;
+        performance.mode = rtValue ? 1 : 0;
+        if (isVersion2) performance.rtFirstTouch = triggerValue;
         performance.row = row;
         performance.col = col;
 

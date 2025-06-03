@@ -355,11 +355,12 @@ export const useAdvancedHook = () => {
   const setDKS = async (params) => {
     let result = null;
     let dksData = null;
-    // console.log('setEND log params: ', params);
+    // console.log('setDKS log params: ', params);
     const { key, row, col, db, db2, dks, trps } = params;
     const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
     if (isVersion2) {
       const data = { kcs: [...dks], trps: [...trps], dbs: [db, db2] };
+      // console.log('set dks params v2: ', row, col, data);
       result = await services.setHigherKeyDKSV2({ row, col, data });
       // console.log('setDKS V2', result);
       dksData = {
@@ -567,7 +568,7 @@ export const useAdvancedHook = () => {
 
             try {
               const result = await services.getHigherKeyV2({ row, col });
-              // console.log('getHighLevelKeys result', result);
+              // console.log('getHighLevelKeysV2 result', result);
               const data = result;
               const advancedKeyMode = data.mode;
               await processKey(keyValue, data, row, col, advancedKeyMode);

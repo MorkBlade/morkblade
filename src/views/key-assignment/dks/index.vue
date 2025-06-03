@@ -718,7 +718,9 @@ const save = async () => {
     row = +rowIndex;
     col = +colIndex;
   }
+  // console.log('dks save log info: ', dksInfo.value);
   const res = await setDKS({ key, row, col, ...dksInfo.value });
+  reset();
   return res;
 };
 

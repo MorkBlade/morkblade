@@ -3,14 +3,14 @@
     <div class="left-config-box">
       <div class="key-group">
         <div class="click-box">
-          <span>长按:</span>
+          <span>{{ isVersion2 ? '单击:' : '长按:' }}</span>
           <div class="key-box" @mouseenter="onMouseEn('click')" @mouseleave="onMouseLe('click')">
             <p :class="{ 'hover-bg': !mtInfo.dks[0] }" @mouseup="KeydropKey(0)">{{ keyText[0] }}</p>
             <div class="del_btn" @click="onClick" v-show="mtInfo.dks[0] && clickDelIndex === 0"></div>
           </div>
         </div>
         <div class="hold-box">
-          <span>单击:</span>
+          <span>{{ isVersion2 ? '长按:' : '单击:' }}</span>
           <div class="key-box" @mouseenter="onMouseEn" @mouseleave="onMouseLe">
             <p :class="{ 'hover-bg': !mtInfo.dks[1] }" @mouseup="KeydropKey(1)">{{ keyText[1] }}</p>
             <div class="del_btn" @click="onLongPress" v-show="mtInfo.dks[1] && longDelIndex === 0"></div>
@@ -49,6 +49,7 @@ const keyboardStore = useKeyboardStore();
 const isShow = ref(false);
 const clickDelIndex = ref(-1);
 const longDelIndex = ref(-1);
+const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
 
 const mtInfo = defineModel('mtInfo', {
   type: Object,
