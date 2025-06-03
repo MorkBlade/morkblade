@@ -55,6 +55,7 @@ const usePerformanceStore = defineStore('performance', {
       const performanceMode = await services.getPerformanceMode(keyValue);
       if (performanceMode) {
         const { touchMode, advancedKeyMode } = performanceMode;
+        // console.log('getPerformanceValueV1 log performanceMode: ', performanceMode);
         if (touchMode === 'global') {
           keyboardItem.performance.isGlobalTriggering = true;
           keyboardItem.performance.isSingle = false;

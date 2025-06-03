@@ -4,8 +4,9 @@
       <div
         v-for="(item, idx) in performanceItem"
         :key="item"
-        class="key-assignment-item"
         :class="idx === clickItem ? 'is-active' : ''"
+        :style="{ display: isVersion2 && item === 'RS' ? 'none' : '' }"
+        class="key-assignment-item"
         @click="changeMenu(idx)"
       >
         {{ item }}
@@ -135,6 +136,7 @@ const delAdvancedType = ref('');
 const delAdvancedItem = ref(null);
 const isExternalUpdate = ref(false);
 const performanceItem = ['普通', '单击/长按', 'DKS', 'SOCD', 'RS', 'TGL', 'MPT', 'END'];
+const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
 
 const changeMenu = (idx) => {
   clickItem.value = idx;

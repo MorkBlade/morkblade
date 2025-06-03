@@ -16,26 +16,27 @@ export const useLightingHook = () => {
     if (isVersion2) {
       lightSettingStore.lamp = lightSettingStore.area === 'Keyboard' ? lampData : 'SingleLighting';
       const lightingBase = await services.getLightingBaseV2({ area: area, config: base }, lightSettingStore.lamp);
-      const { open, mode, luminance, speed, direction, selectStaticColor } = lightingBase[0];
-      // lightData.open = true;
-      lightData.open = open === 'Open' || open === 'OpenUp' || open === 'OpenDown';
-      lightData.mode = mode;
-      lightData.luminance = luminance;
-      lightData.speed = speed;
-      lightData.direction = direction === 'Forward';
-      lightData.selectStaticColor = selectStaticColor;
-      // console.log('lightData.openlightData.open', lightData.open);
-      if (open === 'Open') {
-        lightSettingStore.upOpen = true;
-        lightSettingStore.downOpen = true;
-      } else if (open === 'OpenUp') {
-        lightSettingStore.upOpen = true;
-      } else if (open === 'OpenDown') {
-        lightSettingStore.downOpen = true;
-      } else {
-        lightSettingStore.upOpen = false;
-        lightSettingStore.downOpen = false;
-      }
+      lightSettingStore.updateLightingBaseData(lightingBase[0]);
+      // const { open, mode, luminance, speed, direction, selectStaticColor } = lightingBase[0];
+      // // lightData.open = true;
+      // lightData.open = open === 'Open' || open === 'OpenUp' || open === 'OpenDown';
+      // lightData.mode = mode;
+      // lightData.luminance = luminance;
+      // lightData.speed = speed;
+      // lightData.direction = direction === 'Forward';
+      // lightData.selectStaticColor = selectStaticColor;
+      // // console.log('lightData.openlightData.open', lightData.open);
+      // if (open === 'Open') {
+      //   lightSettingStore.upOpen = true;
+      //   lightSettingStore.downOpen = true;
+      // } else if (open === 'OpenUp') {
+      //   lightSettingStore.upOpen = true;
+      // } else if (open === 'OpenDown') {
+      //   lightSettingStore.downOpen = true;
+      // } else {
+      //   lightSettingStore.upOpen = false;
+      //   lightSettingStore.downOpen = false;
+      // }
 
       const lightingPalette = await services.getLightingPaletteV2({ area: area, config: palette });
 

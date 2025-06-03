@@ -75,7 +75,7 @@ export const useAdvancedHook = () => {
   const getRS = async (params) => {
     const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
     if (isVersion2) {
-      // console.log('getRS V2 log params:>>>>>', params);
+      console.log('getRS V2 log params:>>>>>', params);
       const { keyValue, row, col, mode, data } = params;
       const { kcs, delay } = data.data;
       const rsData = { keyValue, type: 'rs', mode, rs: [...kcs], delay };
@@ -387,7 +387,7 @@ export const useAdvancedHook = () => {
   const getSocd = async (params) => {
     const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
     if (isVersion2) {
-      // console.log('getSocd V2:>>>>>>>>>', params);
+      console.log('getSocd V2:>>>>>>>>>', params);
       const { keyValue, data, row, col, mode } = params;
       const { socdMode, kcs, delay } = data.data;
       const socdData = { keyValue, type: 'socd', mode, socdMode, socd: [...kcs], delay };
@@ -400,9 +400,10 @@ export const useAdvancedHook = () => {
     } else {
       const { keyValue, row, col, mode } = params;
       const protocolVersion = typeof appStore.protocolVersion === 'string' ? appStore.protocolVersion : '1.0.7';
+      console.log('getSocd param: ', keyValue, protocolVersion);
       const result = await services.getSocd(keyValue, protocolVersion);
       const { mode: socdMode, key1, key2, pos1, pos2 } = result;
-      // console.log('getSocd v1', params, result);
+      console.log('getSocd v1', params, result);
       const socdData = { keyValue, type: 'socd', mode, socdMode, socd: [pos1, pos2], delay: 100 };
       const advancedKeys = {
         ...keyboardStore.keyboards[row][col].advancedKeys,

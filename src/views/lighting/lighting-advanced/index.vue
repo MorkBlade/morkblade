@@ -123,7 +123,7 @@ const appStore = useAppStore();
 const deviceStore = useDeviceStore();
 const lightSettingStore = useLightSettingStore();
 const { setLighting, setLightingSaturation } = useLightingHook();
-const { saturation: rgb, upOpen, downOpen } = storeToRefs(lightSettingStore);
+const { saturation: rgb, upOpen, downOpen, allLamp } = storeToRefs(lightSettingStore);
 const { isDoubleLighting } = storeToRefs(deviceStore);
 
 const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
@@ -131,7 +131,7 @@ const min = 0;
 const max = isVersion2 ? 50 : 100;
 const topLamp = ref(false);
 const bottomLamp = ref(false);
-const allLamp = ref(upOpen.value && downOpen.value);
+// const allLamp = ref(upOpen.value && downOpen.value);
 let timer = null;
 
 const updateFromRgb = () => {

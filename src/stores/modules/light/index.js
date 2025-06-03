@@ -45,6 +45,7 @@ const state = {
   lamp: 'SingleLighting', // 单双灯位 SingleLighting/DoubleLighting
   upOpen: false, // 上灯位状态
   downOpen: false, // 下灯位状态
+  allLamp: false, // 双灯位
 };
 
 export const useLightSettingStore = defineStore('lightSetting', {
@@ -99,6 +100,35 @@ export const useLightSettingStore = defineStore('lightSetting', {
 
     setCurrentPreset(idx) {
       this.currentPreset = idx;
+    },
+
+    // 设置灯效库的数据
+    updateLightingBaseData(data) {
+      // 单灯位使用的open的变量 双灯位使用的是upOpen、downOpen 全开是用open
+      const { open, mode, luminance, speed, direction, selectStaticColor } = data;
+      this.light.open = open === 'Open';
+      this.light.mode = mode;
+      this.light.luminance = luminance;
+      this.light.speed = speed;
+      this.light.direction = direction === 'Forward';
+      this.light.selectStaticColor = selectStaticColor;
+      if (open === 'Open') {
+        this.upOpen = true;
+        this.downOpen = true;
+        this.allLamp = true;
+      } else if (open === 'OpenUp') {
+        this.upOpen = true;
+        this.downOpen = false;
+        this.allLamp = false;
+      } else if (open === 'OpenDown') {
+        this.downOpen = true;
+        this.upOpen = false;
+        this.allLamp = false;
+      } else {
+        this.allLamp = false;
+        this.upOpen = false;
+        this.downOpen = false;
+      }
     },
   },
 });

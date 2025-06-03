@@ -372,7 +372,7 @@ const getFirmWarePack = async (url) => {
         try {
           emitter.emit('isUpdate', true);
           const result = await services.updateBin(resultArrayBuffer, ({ current, total }) => {
-            console.log('current: ', current);
+            // console.log('current: ', current);
             if (current === 100) {
               progress.current = 100;
             } else {
