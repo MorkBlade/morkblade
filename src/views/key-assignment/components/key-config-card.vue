@@ -14,68 +14,135 @@
         <p>{{ keyboard[ite.mt.mt?.dksAll?.[1]] }}</p>
       </template>
       <template v-else-if="TYPE_MAPPING[ite.advancedType] === 'socd' && ite.socd">
-        <!-- type === 0 的情况 -->
-        <template v-if="ite.socd.socdMode === 0">
-          <!-- 避免 获取socd是[0,0]不显示的情况，这里显示一个keyValue-->
-          <p :style="{ marginRight: '8px' }">
-            {{
-              ite.socd.socd[0] === 0 && ite.socd.socd[1] === 0
-                ? keyboard[ite.keyValue]
-                : ite.socd.socd[0] === ite.keyValue
-                  ? keyboard[ite.socd.kcs[0]]
-                  : keyboard[ite.socd.kcs[1]]
-            }}
-          </p>
-          <p>
-            {{
-              ite.socd.socd[0] === 0 && ite.socd.socd[1] === 0
-                ? keyboard[ite.keyValue]
-                : ite.socd.socd[0] === ite.keyValue
-                  ? keyboard[ite.socd.kcs[1]]
-                  : keyboard[ite.socd.kcs[0]]
-            }}
-          </p>
-        </template>
-        <!-- type === 1 的情况 -->
-        <template v-else-if="ite.socd.socdMode === 1">
-          <p :style="{ marginRight: '8px' }">
-            {{
-              ite.socd.socd[0] === 0 && ite.socd.socd[1] === 0
-                ? keyboard[ite.keyValue]
-                : ite.socd.socd[0] === ite.keyValue
-                  ? keyboard[ite.socd.kcs[0]]
-                  : keyboard[ite.socd.kcs[1]]
-            }}
-          </p>
-          <p>
-            {{
-              ite.socd.socd[0] === 0 && ite.socd.socd[1] === 0
-                ? keyboard[ite.keyValue]
-                : ite.socd.socd[0] === ite.keyValue
-                  ? keyboard[ite.socd.kcs[1]]
-                  : keyboard[ite.socd.kcs[0]]
-            }}
-          </p>
+        <template v-if="isVersion2">
+          <!-- type === 0 的情况 -->
+          <template v-if="ite.socd.socdMode === 0">
+            <!-- 避免 获取socd是[0,0]不显示的情况，这里显示一个keyValue-->
+            <p :style="{ marginRight: '8px' }">
+              {{
+                ite.socd.socd[0] === 0 && ite.socd.socd[1] === 0
+                  ? keyboard[ite.keyValue]
+                  : ite.socd.socd[0] === ite.keyValue
+                    ? keyboard[ite.socd.socd[0]]
+                    : keyboard[ite.socd.socd[1]]
+              }}
+            </p>
+            <p>
+              {{
+                ite.socd.socd[0] === 0 && ite.socd.socd[1] === 0
+                  ? keyboard[ite.keyValue]
+                  : ite.socd.socd[0] === ite.keyValue
+                    ? keyboard[ite.socd.socd[1]]
+                    : keyboard[ite.socd.socd[0]]
+              }}
+            </p>
+          </template>
+          <!-- type === 1 的情况 -->
+          <template v-else-if="ite.socd.socdMode === 1">
+            <p :style="{ marginRight: '8px' }">
+              {{
+                ite.socd.socd[0] === 0 && ite.socd.socd[1] === 0
+                  ? keyboard[ite.keyValue]
+                  : ite.socd.socd[0] === ite.keyValue
+                    ? keyboard[ite.socd.socd[0]]
+                    : keyboard[ite.socd.socd[1]]
+              }}
+            </p>
+            <p>
+              {{
+                ite.socd.socd[0] === 0 && ite.socd.socd[1] === 0
+                  ? keyboard[ite.keyValue]
+                  : ite.socd.socd[0] === ite.keyValue
+                    ? keyboard[ite.socd.socd[1]]
+                    : keyboard[ite.socd.socd[0]]
+              }}
+            </p>
+          </template>
+          <template v-else>
+            <p :style="{ marginRight: '8px' }">
+              {{
+                ite.socd.socd[0] === 0 && ite.socd.socd[1] === 0
+                  ? keyboard[ite.keyValue]
+                  : ite.socd.socd[0] === ite.keyValue
+                    ? keyboard[ite.socd.socd[0]]
+                    : keyboard[ite.socd.socd[1]]
+              }}
+            </p>
+            <p>
+              {{
+                ite.socd.socd[0] === 0 && ite.socd.socd[1] === 0
+                  ? keyboard[ite.keyValue]
+                  : ite.socd.socd[0] === ite.keyValue
+                    ? keyboard[ite.socd.socd[1]]
+                    : keyboard[ite.socd.socd[0]]
+              }}
+            </p>
+          </template>
         </template>
         <template v-else>
-          <p :style="{ marginRight: '8px' }">
-            {{
-              ite.socd.socd[0] === 0 && ite.socd.socd[1] === 0
-                ? keyboard[ite.keyValue]
-                : ite.socd.socd[0] === ite.keyValue
-                  ? keyboard[ite.socd.kcs[0]]
-                  : keyboard[ite.socd.kcs[1]]
-            }}
-          </p>
-          <p>
-            {{
-              ite.socd.socd[0] === 0 && ite.socd.socd[1] === 0
-                ? keyboard[ite.keyValue]
-                : ite.socd.socd[0] === ite.keyValue
-                  ? keyboard[ite.socd.kcs[1]]
-                  : keyboard[ite.socd.kcs[0]]
-            }}
-          </p>
+          <!-- type === 0 的情况 -->
+          <template v-if="ite.socd.socdMode === 0">
+            <!-- 避免 获取socd是[0,0]不显示的情况，这里显示一个keyValue-->
+            <p :style="{ marginRight: '8px' }">
+              {{
+                ite.socd.socd[0] === 0 && ite.socd.socd[1] === 0
+                  ? keyboard[ite.keyValue]
+                  : ite.socd.kcs[0] === ite.keyValue
+                    ? keyboard[ite.socd.kcs[0]]
+                    : keyboard[ite.socd.kcs[1]]
+              }}
+            </p>
+            <p>
+              {{
+                ite.socd.socd[0] === 0 && ite.socd.socd[1] === 0
+                  ? keyboard[ite.keyValue]
+                  : ite.socd.kcs[0] === ite.keyValue
+                    ? keyboard[ite.socd.kcs[1]]
+                    : keyboard[ite.socd.kcs[0]]
+              }}
+            </p>
+          </template>
+          <!-- type === 1 的情况 -->
+          <template v-else-if="ite.socd.socdMode === 1">
+            <p :style="{ marginRight: '8px' }">
+              {{
+                ite.socd.socd[0] === 0 && ite.socd.socd[1] === 0
+                  ? keyboard[ite.keyValue]
+                  : ite.socd.kcs[0] === ite.keyValue
+                    ? keyboard[ite.socd.kcs[0]]
+                    : keyboard[ite.socd.kcs[1]]
+              }}
+            </p>
+            <p>
+              {{
+                ite.socd.socd[0] === 0 && ite.socd.socd[1] === 0
+                  ? keyboard[ite.keyValue]
+                  : ite.socd.kcs[0] === ite.keyValue
+                    ? keyboard[ite.socd.kcs[1]]
+                    : keyboard[ite.socd.kcs[0]]
+              }}
+            </p>
+          </template>
+          <template v-else>
+            <p :style="{ marginRight: '8px' }">
+              {{
+                ite.socd.socd[0] === 0 && ite.socd.socd[1] === 0
+                  ? keyboard[ite.keyValue]
+                  : ite.socd.kcs[0] === ite.keyValue
+                    ? keyboard[ite.socd.kcs[0]]
+                    : keyboard[ite.socd.kcs[1]]
+              }}
+            </p>
+            <p>
+              {{
+                ite.socd.socd[0] === 0 && ite.socd.socd[1] === 0
+                  ? keyboard[ite.keyValue]
+                  : ite.socd.kcs[0] === ite.keyValue
+                    ? keyboard[ite.socd.kcs[1]]
+                    : keyboard[ite.socd.kcs[0]]
+              }}
+            </p>
+          </template>
         </template>
       </template>
       <template v-else-if="TYPE_MAPPING[ite.advancedType] === 'rs' && ite.rs">
@@ -117,48 +184,6 @@
 </template>
 
 <script setup>
-/*
-
-    <template v-else-if="TYPE_MAPPING[ite.advancedType] === 'socd'">
-        <!-- type === 0 的情况 -->
-        <template v-if="ite.socd.socdMode === 0">
-          <p :style="{ marginRight: '8px' }">{{ keyboard[ite.keyValue] }}</p>
-          <p>{{ keyboard[getNextSocdKeyId(idx)] }}</p>
-          <!-- v-if="isNextItemSocd(idx)" -->
-        </template>
-        <!-- type === 1 的情况 -->
-        <template v-else-if="ite.socd.socdMode === 1">
-          <p :style="{ marginRight: '8px' }">{{ keyboard[ite.keyValue] }}</p>
-          <p>{{ keyboard[getNextSocdKeyId(idx)] }}</p>
-        </template>
-        <template v-else>
-          <!-- <template v-if="ite.socd.direction === 1"> -->
-          <p :style="{ marginRight: '8px' }">{{ keyboard[ite.keyValue] }}</p>
-          <p>{{ keyboard[getNextSocdKeyId(idx)] }}</p>
-          <!-- </template> -->
-        </template>
-      </template>
-
-
-      <template v-else-if="TYPE_MAPPING[ite.advancedType] === 'end'">
-        <p>{{ keyboard[ite.end.end.dks[0]] }}</p>
-        <p>{{ keyboard[ite.end.end.dks[1]] }}</p>
-      </template>
-      <template v-else-if="TYPE_MAPPING[ite.advancedType] === 'tgl'">
-        <p>{{ keyboard[ite.keyValue] }}</p>
-        <p>{{ keyboard[ite.tgl.tgl.dksAll[0]] }}</p>
-      </template>
-      <template v-else-if="TYPE_MAPPING[ite.advancedType] === 'mpt'">
-        <p>{{ keyboard[ite.keyValue] }}</p>
-        <p>{{ keyboard[ite.mpt.dks[0]] }}</p>
-        <p>{{ keyboard[ite.mpt.dks[1]] }}</p>
-        <p>{{ keyboard[ite.mpt.dks[2]] }}</p>
-      </template>
-
-
-
-
-*/
 import keyboard from '@/configs/byte-to-key/keyboard';
 import { useKeyboardStore } from '@/stores';
 
