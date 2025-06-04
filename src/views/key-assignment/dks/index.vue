@@ -194,19 +194,36 @@ const maxWidths = {
 
 // 添加宽度映射配置
 const widthAdjustments = {
+  // 1: [
+  //   { threshold: scaleValue(60), width: scaleValue(20) },
+  //   { threshold: scaleValue(110), width: scaleValue(80) },
+  //   { threshold: scaleValue(165), width: scaleValue(130) },
+  //   { threshold: Infinity, width: scaleValue(185) },
+  // ],
   1: [
-    { threshold: scaleValue(60), width: scaleValue(20) },
-    { threshold: scaleValue(110), width: scaleValue(80) },
-    { threshold: scaleValue(165), width: scaleValue(130) },
+    { threshold: scaleValue(35), width: scaleValue(20) },
+    { threshold: scaleValue(65), width: scaleValue(40) },
+    { threshold: scaleValue(85), width: scaleValue(75) },
+    { threshold: scaleValue(95), width: scaleValue(75) },
+    { threshold: scaleValue(120), width: scaleValue(95) },
+    { threshold: scaleValue(150), width: scaleValue(130) },
+    { threshold: scaleValue(160), width: scaleValue(150) },
+    // { threshold: scaleValue(185), width: scaleValue(165) },
     { threshold: Infinity, width: scaleValue(185) },
   ],
   2: [
-    { threshold: scaleValue(60), width: scaleValue(20) },
-    { threshold: scaleValue(110), width: scaleValue(80) },
+    { threshold: scaleValue(35), width: scaleValue(20) },
+    { threshold: scaleValue(65), width: scaleValue(40) },
+    { threshold: scaleValue(85), width: scaleValue(75) },
+    { threshold: scaleValue(95), width: scaleValue(75) },
+    { threshold: scaleValue(120), width: scaleValue(95) },
+    { threshold: scaleValue(150), width: scaleValue(130) },
+    { threshold: scaleValue(160), width: scaleValue(150) },
     { threshold: Infinity, width: scaleValue(130) },
   ],
   3: [
-    { threshold: scaleValue(60), width: scaleValue(20) },
+    { threshold: scaleValue(35), width: scaleValue(20) },
+    { threshold: scaleValue(65), width: scaleValue(40) },
     { threshold: Infinity, width: scaleValue(80) },
   ],
 };
@@ -215,21 +232,27 @@ const widthAdjustments = {
 const clickDataMapping = {
   1: {
     [scaleValue(20)]: [[0]],
-    [scaleValue(80)]: [[0, 1, 2, 3]],
+    [scaleValue(40)]: [[0, 1]],
+    [scaleValue(75)]: [[0, 1, 2]],
+    [scaleValue(95)]: [[0, 1, 2, 3]],
     [scaleValue(130)]: [[0, 1, 2, 3, 4]],
-    [scaleValue(185)]: [[0, 1, 2, 3, 4, 5]],
+    [scaleValue(150)]: [[0, 1, 2, 3, 4, 5]],
+    [scaleValue(185)]: [[0, 1, 2, 3, 4, 5, 6]],
   },
   2: {
-    [scaleValue(20)]: [[1]],
-    [scaleValue(80)]: [[1, 2, 3]],
-    [scaleValue(130)]: [[1, 2, 3, 4, 5]],
+    [scaleValue(20)]: [[2]],
+    [scaleValue(40)]: [[2, 3]],
+    [scaleValue(75)]: [[2, 3, 4]],
+    [scaleValue(95)]: [[2, 3, 4, 5]],
+    [scaleValue(130)]: [[2, 3, 4, 5, 6]],
   },
   3: {
-    [scaleValue(20)]: [[3]],
-    [scaleValue(80)]: [[3, 4, 5]],
+    [scaleValue(20)]: [[4]],
+    [scaleValue(40)]: [[4, 5]],
+    [scaleValue(80)]: [[4, 5, 6]],
   },
   4: {
-    [scaleValue(20)]: [[5]],
+    [scaleValue(20)]: [[6]],
   },
 };
 
@@ -301,10 +324,16 @@ watch(clickData, () => {
     }
     dksInfo.value.trps[i] = buf;
   }
+  // console.log('watch clickData: ', dksInfo.value.trps);
 });
 
 const updateUIFromTrps = () => {
   if (!recoverDkSData.value) return;
+  // 重置宽度
+  Object.keys(widths).forEach((key) => {
+    widths[key] = 20;
+  });
+  // console.log('updateUIFromTrpsupdateUIFromTrpsupdateUIFromTrps');
   for (let row = 0; row < 4; row++) {
     // Reset current row state
     isDragStates[row] = false;
@@ -320,53 +349,78 @@ const updateUIFromTrps = () => {
     let targetSpan = null;
     let targetWidth = scaleValue(20);
 
+    // console.log('xxxxxxxxxxxxxxxxxxxxxxxxxx', rowData, rowData[0]);
     if (rowData[0]) {
       // First bit set - could be span 1 with various widths
-      if (rowData[5]) {
+      if (rowData[6]) {
         // Bits 0,1,2,3,4,5 set - span 1 with max width
         targetSpan = getKey(row, 1);
         targetWidth = scaleValue(185);
-      } else if (rowData[4]) {
+      } else if (rowData[5]) {
         // Bits 0,1,2,3,4 set - span 1 with large width
+        targetSpan = getKey(row, 1);
+        targetWidth = scaleValue(150);
+      } else if (rowData[4]) {
+        // Bits 0,1,2,3 set - span 1 with medium width
         targetSpan = getKey(row, 1);
         targetWidth = scaleValue(130);
       } else if (rowData[3]) {
         // Bits 0,1,2,3 set - span 1 with medium width
         targetSpan = getKey(row, 1);
-        targetWidth = scaleValue(80);
+        targetWidth = scaleValue(95);
+      } else if (rowData[2]) {
+        // Bits 0,1,2,3 set - span 1 with medium width
+        targetSpan = getKey(row, 1);
+        targetWidth = scaleValue(75);
+      } else if (rowData[1]) {
+        // Bits 0,1,2,3 set - span 1 with medium width
+        targetSpan = getKey(row, 1);
+        targetWidth = scaleValue(40);
       } else {
         // Only bit 0 set - span 1 with min width
         targetSpan = getKey(row, 1);
         targetWidth = scaleValue(20);
       }
-    } else if (rowData[1]) {
+    } else if (rowData[2]) {
       // Second bit set - span 2 with various widths
-      if (rowData[5]) {
-        // Bits 1,2,3,4,5 set - span 2 with max width
+      if (rowData[6]) {
+        // Bits 0,1,2,3,4,5 set - span 1 with max width
         targetSpan = getKey(row, 2);
         targetWidth = scaleValue(130);
+      } else if (rowData[5]) {
+        // Bits 0,1,2,3,4 set - span 1 with large width
+        targetSpan = getKey(row, 2);
+        targetWidth = scaleValue(95);
+      } else if (rowData[4]) {
+        // Bits 0,1,2,3 set - span 1 with medium width
+        targetSpan = getKey(row, 2);
+        targetWidth = scaleValue(75);
       } else if (rowData[3]) {
-        // Bits 1,2,3 set - span 2 with medium width
+        // Bits 0,1,2,3 set - span 1 with medium width
         targetSpan = getKey(row, 2);
-        targetWidth = scaleValue(80);
-      } else {
-        // Only bit 1 set - span 2 with min width
+        targetWidth = scaleValue(40);
+      } else if (rowData[2]) {
+        // Bits 0,1,2,3 set - span 1 with medium width
         targetSpan = getKey(row, 2);
         targetWidth = scaleValue(20);
       }
-    } else if (rowData[3]) {
+    } else if (rowData[4]) {
       // Fourth bit set - span 3 with various widths
-      if (rowData[5]) {
-        // Bits 3,4,5 set - span 3 with max width
+      if (rowData[6]) {
+        // Bits 0,1,2,3,4,5 set - span 1 with max width
         targetSpan = getKey(row, 3);
         targetWidth = scaleValue(80);
-      } else {
-        // Only bit 3 set - span 3 with min width
+      } else if (rowData[5]) {
+        // Bits 0,1,2,3,4 set - span 1 with large width
+        targetSpan = getKey(row, 3);
+        targetWidth = scaleValue(65);
+      } else if (rowData[4]) {
+        // Bits 0,1,2,3 set - span 1 with medium width
         targetSpan = getKey(row, 3);
         targetWidth = scaleValue(20);
       }
-    } else if (rowData[5]) {
-      // Sixth bit set - span 4 with fixed width
+    } else if (rowData[6]) {
+      // Bits 0,1,2,3,4,5 set - span 1 with max width
       targetSpan = getKey(row, 4);
       targetWidth = scaleValue(20);
     }
@@ -602,6 +656,7 @@ const stopDrag = () => {
       });
     });
   }
+  console.log('stop drag: ', clickData[0], mapping, widths[currentKey]);
 
   elements.value[currentKey].classList.remove('grabbing');
   document.removeEventListener('mousemove', onMouseMove);
@@ -657,39 +712,26 @@ const parse8BitToBooleans = (num) => {
 
   // 创建一个长度为7的数组来存储结果
   const result = [false, false, false, false, false, false, false];
-  const bits = [0, 0, 0, 0, 0, 0, 0];
+  const bits = new Array(8);
 
-  for (let i = 0; i < 7; i++) {
+  for (let i = 0; i < 8; i++) {
+    // eslint-disable-next-line no-bitwise
     bits[i] = !!(num & (1 << i));
   }
+  // eslint-disable-next-line prefer-destructuring
+  result[0] = bits[0];
+  // eslint-disable-next-line prefer-destructuring
+  result[1] = bits[1];
+  // eslint-disable-next-line prefer-destructuring
+  result[2] = bits[2];
+  result[3] = bits[3] && bits[4];
+  // eslint-disable-next-line prefer-destructuring
+  result[4] = bits[5];
+  // eslint-disable-next-line prefer-destructuring
+  result[5] = bits[6];
+  // eslint-disable-next-line prefer-destructuring
+  result[6] = bits[7];
 
-  if (Number(bits[0]) === 1) {
-    result[0] = true;
-  }
-
-  if (Number(bits[1]) === 1) {
-    result[1] = true;
-  }
-
-  if (Number(bits[2]) === 1) {
-    result[2] = true;
-  }
-
-  if (Number(bits[3]) === 1 && Number(bits[4]) === 1) {
-    result[3] = true;
-  }
-
-  if (Number(bits[5]) === 1) {
-    result[4] = true;
-  }
-
-  if (Number(bits[6]) === 1) {
-    result[5] = true;
-  }
-
-  if (Number(bits[7]) === 1) {
-    result[6] = true;
-  }
   return result;
 };
 
