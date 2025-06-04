@@ -6,6 +6,7 @@
         :key="item"
         class="key-assignment-item"
         :class="idx === clickItem ? 'is-active' : ''"
+        :style="{ display: isVersion2 && item === 'RS' ? 'none' : '' }"
         @click="changeMenu(idx)"
       >
         {{ item }}
@@ -43,7 +44,7 @@
         @handleDialoConfirm="handleDialoConfirm"
       />
       <rs
-        v-else-if="currentComponent === 'RS'"
+        v-else-if="currentComponent === 'RS' && !isVersion2"
         ref="childRef"
         v-model:rs-info="rsInfo"
         :edit="edit"

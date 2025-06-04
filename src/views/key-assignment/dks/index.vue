@@ -331,7 +331,7 @@ const updateUIFromTrps = () => {
   if (!recoverDkSData.value) return;
   // 重置宽度
   Object.keys(widths).forEach((key) => {
-    widths[key] = 20;
+    widths[key] = scaleValue(20);
   });
   // console.log('updateUIFromTrpsupdateUIFromTrpsupdateUIFromTrps');
   for (let row = 0; row < 4; row++) {
@@ -475,6 +475,12 @@ const onDelKey = (keyCode) => {
       if (dksInfo.value.dks[0]) {
         dksInfo.value.dks[0] = 0;
         dksInfo.value.trps[0] = 0;
+        console.log('widthswidths: ', widths);
+        widths['0-1'] = scaleValue(20);
+        widths['0-2'] = scaleValue(20);
+        widths['0-3'] = scaleValue(20);
+        widths['0-4'] = scaleValue(20);
+        isDragStates[0] = false;
         delKeyShow[0] = false;
       }
       break;
@@ -482,6 +488,11 @@ const onDelKey = (keyCode) => {
       if (dksInfo.value.dks[1]) {
         dksInfo.value.dks[1] = 0;
         dksInfo.value.trps[1] = 0;
+        widths['1-1'] = scaleValue(20);
+        widths['1-2'] = scaleValue(20);
+        widths['1-3'] = scaleValue(20);
+        widths['1-4'] = scaleValue(20);
+        isDragStates[1] = false;
         delKeyShow[1] = false;
       }
       break;
@@ -489,6 +500,11 @@ const onDelKey = (keyCode) => {
       if (dksInfo.value.dks[2]) {
         dksInfo.value.dks[2] = 0;
         dksInfo.value.trps[2] = 0;
+        widths['2-1'] = scaleValue(20);
+        widths['2-2'] = scaleValue(20);
+        widths['2-3'] = scaleValue(20);
+        widths['2-4'] = scaleValue(20);
+        isDragStates[2] = false;
         delKeyShow[2] = false;
       }
       break;
@@ -496,6 +512,11 @@ const onDelKey = (keyCode) => {
       if (dksInfo.value.dks[3]) {
         dksInfo.value.dks[3] = 0;
         dksInfo.value.trps[3] = 0;
+        widths['3-1'] = scaleValue(20);
+        widths['3-2'] = scaleValue(20);
+        widths['3-3'] = scaleValue(20);
+        widths['3-4'] = scaleValue(20);
+        isDragStates[3] = false;
         delKeyShow[3] = false;
       }
       break;
@@ -787,7 +808,7 @@ const reset = () => {
 
   // 重置宽度
   Object.keys(widths).forEach((key) => {
-    widths[key] = 20;
+    widths[key] = scaleValue(20);
   });
 };
 defineExpose({ save, reset });

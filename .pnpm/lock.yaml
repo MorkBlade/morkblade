@@ -15,7 +15,7 @@ importers:
         specifier: ^5.5.2
         version: 5.5.2
       '@sparklinkplayjoy/sdk-keyboard':
-        specifier: link:../../SDK/sdk/keyboard
+        specifier: 1.0.2
         version: link:../../SDK/sdk/keyboard
       axios:
         specifier: ^1.6.7
@@ -831,7 +831,7 @@ packages:
     resolution: {integrity: sha512-5WeXXAvTmitV1RqJFppT5QtUiz2p1mRSYU000Jkft5ZUCLJIk4uQriYNO50HknxKwM6jd8utNc66K1qGIwwWBQ==}
 
   boolbase@1.0.0:
-    resolution: {integrity: sha1-aN/1++YMUes3cl6p4+0xDcwed24=}
+    resolution: {integrity: sha512-JZOSA7Mo9sNGB8+UjSgzdLtokWAky1zbztM3WRLCbZ70/3cTANmQmOdR7y2g+J0e2WXywy1yS468tY+IruqEww==}
 
   brace-expansion@1.1.11:
     resolution: {integrity: sha512-iCuPHDFgrHX7H2vEI/5xpz07zSHB00TpugqhmYtVmMO6518mCuRMoOYFldEBl0g187ufozdaHgWKcYFb61qGiA==}
