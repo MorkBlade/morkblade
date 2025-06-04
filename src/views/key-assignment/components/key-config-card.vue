@@ -22,8 +22,8 @@
               ite.socd.socd[0] === 0 && ite.socd.socd[1] === 0
                 ? keyboard[ite.keyValue]
                 : ite.socd.socd[0] === ite.keyValue
-                  ? keyboard[ite.socd.socd[0]]
-                  : keyboard[ite.socd.socd[1]]
+                  ? keyboard[ite.socd.kcs[0]]
+                  : keyboard[ite.socd.kcs[1]]
             }}
           </p>
           <p>
@@ -31,8 +31,8 @@
               ite.socd.socd[0] === 0 && ite.socd.socd[1] === 0
                 ? keyboard[ite.keyValue]
                 : ite.socd.socd[0] === ite.keyValue
-                  ? keyboard[ite.socd.socd[1]]
-                  : keyboard[ite.socd.socd[0]]
+                  ? keyboard[ite.socd.kcs[1]]
+                  : keyboard[ite.socd.kcs[0]]
             }}
           </p>
         </template>
@@ -43,8 +43,8 @@
               ite.socd.socd[0] === 0 && ite.socd.socd[1] === 0
                 ? keyboard[ite.keyValue]
                 : ite.socd.socd[0] === ite.keyValue
-                  ? keyboard[ite.socd.socd[0]]
-                  : keyboard[ite.socd.socd[1]]
+                  ? keyboard[ite.socd.kcs[0]]
+                  : keyboard[ite.socd.kcs[1]]
             }}
           </p>
           <p>
@@ -52,8 +52,8 @@
               ite.socd.socd[0] === 0 && ite.socd.socd[1] === 0
                 ? keyboard[ite.keyValue]
                 : ite.socd.socd[0] === ite.keyValue
-                  ? keyboard[ite.socd.socd[1]]
-                  : keyboard[ite.socd.socd[0]]
+                  ? keyboard[ite.socd.kcs[1]]
+                  : keyboard[ite.socd.kcs[0]]
             }}
           </p>
         </template>
@@ -63,8 +63,8 @@
               ite.socd.socd[0] === 0 && ite.socd.socd[1] === 0
                 ? keyboard[ite.keyValue]
                 : ite.socd.socd[0] === ite.keyValue
-                  ? keyboard[ite.socd.socd[0]]
-                  : keyboard[ite.socd.socd[1]]
+                  ? keyboard[ite.socd.kcs[0]]
+                  : keyboard[ite.socd.kcs[1]]
             }}
           </p>
           <p>
@@ -72,8 +72,8 @@
               ite.socd.socd[0] === 0 && ite.socd.socd[1] === 0
                 ? keyboard[ite.keyValue]
                 : ite.socd.socd[0] === ite.keyValue
-                  ? keyboard[ite.socd.socd[1]]
-                  : keyboard[ite.socd.socd[0]]
+                  ? keyboard[ite.socd.kcs[1]]
+                  : keyboard[ite.socd.kcs[0]]
             }}
           </p>
         </template>

@@ -75,7 +75,7 @@ export const useAdvancedHook = () => {
   const getRS = async (params) => {
     const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
     if (isVersion2) {
-      console.log('getRS V2 log params:>>>>>', params);
+      // console.log('getRS V2 log params:>>>>>', params);
       const { keyValue, row, col, mode, data } = params;
       const { kcs, delay } = data.data;
       const rsData = { keyValue, type: 'rs', mode, rs: [...kcs], delay };
@@ -312,7 +312,7 @@ export const useAdvancedHook = () => {
   const getDKS = async (params) => {
     const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
     if (isVersion2) {
-      console.log('getDKS V2 log params:>>>>>', params);
+      // console.log('getDKS V2 log params:>>>>>', params);
       const { keyValue, row, col, mode, data } = params;
       const { kcs, trps, dbs } = data.data;
       const db = dbs[0];
@@ -387,7 +387,7 @@ export const useAdvancedHook = () => {
   const getSocd = async (params) => {
     const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
     if (isVersion2) {
-      console.log('getSocd V2:>>>>>>>>>', params);
+      // console.log('getSocd V2:>>>>>>>>>', params);
       const { keyValue, data, row, col, mode } = params;
       const { socdMode, kcs, delay } = data.data;
       const socdData = { keyValue, type: 'socd', mode, socdMode, socd: [...kcs], delay };
@@ -404,22 +404,22 @@ export const useAdvancedHook = () => {
       const { row1, row2, col1, col2, socdMode, pos1, pos2 } = result;
       const key1 = getKeyValue(row1, col1);
       const key2 = getKeyValue(row2, col2);
-      console.log('getSocd V1 result: ', result, key1, key2);
-      // const socdData = {
-      //   keyValue,
-      //   type: 'socd',
-      //   kcs: [key1, key2],
-      //   mode,
-      //   socdMode,
-      //   socd: [pos1, pos2],
-      //   delay: 100,
-      // };
-      // const advancedKeys = {
-      //   ...keyboardStore.keyboards[row][col].advancedKeys,
-      //   socd: socdData,
-      //   advancedType: mode,
-      // };
-      // keyboardStore.keyboards[row][col].advancedKeys = advancedKeys;
+      // console.log('getSocd V1 result: ', result, key1, key2);
+      const socdData = {
+        keyValue,
+        type: 'socd',
+        kcs: [key1, key2],
+        mode,
+        socdMode,
+        socd: [pos1, pos2],
+        delay: 100,
+      };
+      const advancedKeys = {
+        ...keyboardStore.keyboards[row][col].advancedKeys,
+        socd: socdData,
+        advancedType: mode,
+      };
+      keyboardStore.keyboards[row][col].advancedKeys = advancedKeys;
       return result;
     }
   };
@@ -448,8 +448,8 @@ export const useAdvancedHook = () => {
       const protocolVersion = typeof appStore.protocolVersion === 'string' ? appStore.protocolVersion : '1.0.7';
       // console.log('data:---------------- ', data);
       const result = await services.setSocd(data, protocolVersion);
-      // await getSocd({ keyValue: key[0], data: null, row: row, col: col, mode: 8 });
-      // await getSocd({ keyValue: key[1], data: null, row: row2, col: col2, mode: 8 });
+      await getSocd({ keyValue: key[0], data: null, row: row, col: col, mode: 8 });
+      await getSocd({ keyValue: key[1], data: null, row: row2, col: col2, mode: 8 });
       return result;
     }
   };
@@ -505,28 +505,32 @@ export const useAdvancedHook = () => {
     const keysToDelete = [];
 
     if (advancedType === 'socd') {
-      const { socd } = advanced.socd;
-      const socdKeyValid = socd.some((key) => key === 0);
-      const keysArray = getRowCol(socd);
+      const { kcs } = advanced.socd;
+      // const socdKeyValid = socd.some((key) => key === 0);
+      const keysArray = getRowCol(kcs);
       const [[row, col], [row2, col2]] = keysArray.map((item) => item.split('-').map(Number));
       const touchMode1 = matchTouchMode(keyboardStore.keyboards[row][col].performance);
       const touchMode2 = matchTouchMode(keyboardStore.keyboards[row2][col2].performance);
-      console.log('touchMode: ', touchMode1, touchMode2);
-      if (socdKeyValid) {
-        console.log('socdKeyValidsocdKeyValid');
-        keysToDelete.push(...socd);
-      } else {
-        console.log('has 111111111>>>>', socd);
-        keysToDelete.push({ key: socd[0], mode: touchMode1 });
-        keysToDelete.push({ key: socd[1], mode: touchMode2 });
-      }
-      // const storedSocdKeys = JSON.parse(localStorage.getItem('socdKeys') || '{}');
-      // const socdKeys = storedSocdKeys[advanced.keyValue] || [];
+      // if (socdKeyValid) {
+      //   console.log('socdKeyValidsocdKeyValid');
+      //   keysToDelete.push(...socd);
+      // } else {
+      //   console.log('has 111111111>>>>', socd);
+      keysToDelete.push({ key: kcs[0], mode: touchMode1 });
+      keysToDelete.push({ key: kcs[1], mode: touchMode2 });
+      // }
     } else if (advancedType === 'rs') {
-      const { rs } = advanced;
-      keysToDelete.push(...rs.rs);
+      const { rs } = advanced.rs;
+      const keysArray = getRowCol(rs);
+      const [[row, col], [row2, col2]] = keysArray.map((item) => item.split('-').map(Number));
+      const touchMode1 = matchTouchMode(keyboardStore.keyboards[row][col].performance);
+      const touchMode2 = matchTouchMode(keyboardStore.keyboards[row2][col2].performance);
+      keysToDelete.push({ key: rs[0], mode: touchMode1 });
+      keysToDelete.push({ key: rs[1], mode: touchMode2 });
     } else {
-      keysToDelete.push(advanced.keyValue);
+      const { keyValue, row, col } = advanced;
+      const touchMode = matchTouchMode(keyboardStore.keyboards[row][col].performance);
+      keysToDelete.push({ key: keyValue, mode: touchMode });
     }
 
     await Promise.all(keysToDelete.map((param) => services.deleteKey(param.key, param.mode)));
