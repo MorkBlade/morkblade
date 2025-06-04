@@ -312,7 +312,7 @@ export const useAdvancedHook = () => {
   const getDKS = async (params) => {
     const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
     if (isVersion2) {
-      // console.log('getDKS V2 log params:>>>>>', params);
+      console.log('getDKS V2 log params:>>>>>', params);
       const { keyValue, row, col, mode, data } = params;
       const { kcs, trps, dbs } = data.data;
       const db = dbs[0];
@@ -401,10 +401,10 @@ export const useAdvancedHook = () => {
       const { keyValue, row, col, mode } = params;
       const protocolVersion = typeof appStore.protocolVersion === 'string' ? appStore.protocolVersion : '1.0.7';
       const result = await services.getSocd(keyValue, protocolVersion);
-      const { row1, row2, col1, col2, socdMode, pos1, pos2 } = result;
+      const { row1, row2, col1, col2, socdMode, pos1, pos2, delay } = result;
       const key1 = getKeyValue(row1, col1);
       const key2 = getKeyValue(row2, col2);
-      // console.log('getSocd V1 result: ', result, key1, key2);
+      console.log('getSocd V1 result: ', result, key1, key2);
       const socdData = {
         keyValue,
         type: 'socd',
@@ -412,7 +412,7 @@ export const useAdvancedHook = () => {
         mode,
         socdMode,
         socd: [pos1, pos2],
-        delay: 100,
+        delay: delay ? delay : 100,
       };
       const advancedKeys = {
         ...keyboardStore.keyboards[row][col].advancedKeys,

@@ -34,6 +34,29 @@ export default defineConfig({
       },
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        // 用于从入口点创建的块的打包输出格式[name]表示文件名,[hash]表示该文件内容hash值
+        chunkFileNames: 'js/[name]-[hash].js',
+        // 用于命名代码拆分时创建的共享块的输出命名
+        entryFileNames: 'js/[name]-[hash].js',
+        // 用于输出静态资源的命名，[ext]表示文件扩展名
+        assetFileNames: (assetInfo) => {
+          const info = assetInfo.name.split('.');
+          let extType = info[info.length - 1];
+          if (/\.(mp4|webm|ogg|mp3|wav|flac|aac)(\?.*)?$/i.test(assetInfo.name)) {
+            extType = 'media';
+          } else if (/\.(png|jpe?g|gif|svg|bmp|webp)(\?.*)?$/i.test(assetInfo.name)) {
+            extType = 'img';
+          } else if (/\.(woff2?|eot|ttf|otf)(\?.*)?$/i.test(assetInfo.name)) {
+            extType = 'fonts';
+          }
+          return `assets/${extType}/[name]-[hash][extname]`;
+        },
+      },
+    },
+  },
   server: {
     proxy: {
       '/bin-data': {
