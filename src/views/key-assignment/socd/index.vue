@@ -5,14 +5,24 @@
         <div>
           <span>按键1:</span>
           <div class="key-box" @mouseenter="onMouseEn('key1')" @mouseleave="onMouseLe('key1')">
-            <p :class="{ 'hover-bg': !socdInfo.pos[0] }" @mouseup="KeydropKey(0)">{{ keyText[0] }}</p>
+            <template v-if="isVersion2">
+              <p :class="{ 'hover-bg': !socdInfo.pos[0] }" @mouseup="KeydropKey(0)">{{ keyText[0] }}</p>
+            </template>
+            <template v-else>
+              <p :class="{ 'hover-bg': !socdInfo.key[0] }" @mouseup="KeydropKey(0)">{{ keyText[2] }}</p>
+            </template>
             <div class="del_btn" @click="onClick('key1')" v-show="socdInfo.pos[0] && key1Index === 0"></div>
           </div>
         </div>
         <div>
           <span>按键2:</span>
           <div class="key-box" @mouseenter="onMouseEn" @mouseleave="onMouseLe">
-            <p :class="{ 'hover-bg': !socdInfo.pos[1] }" @mouseup="KeydropKey(1)">{{ keyText[1] }}</p>
+            <template v-if="isVersion2">
+              <p :class="{ 'hover-bg': !socdInfo.pos[1] }" @mouseup="KeydropKey(1)">{{ keyText[1] }}</p>
+            </template>
+            <template v-else>
+              <p :class="{ 'hover-bg': !socdInfo.key[1] }" @mouseup="KeydropKey(1)">{{ keyText[3] }}</p>
+            </template>
             <div class="del_btn" @click="onClick" v-show="socdInfo.pos[1] && key2Index === 0"></div>
           </div>
         </div>
@@ -79,6 +89,7 @@ const isShow = ref(false);
 const key1Index = ref(-1);
 const key2Index = ref(-1);
 const DKS_MODES = ['后覆盖', '第一个键优先', '第二个键优先', '中性'];
+const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
 
 const socdInfo = defineModel('socdInfo', {
   type: Object,
@@ -89,8 +100,8 @@ const keyText = computed(() => {
   return [
     keyboard[socdInfo.value.pos[0]] || '',
     keyboard[socdInfo.value.pos[1]] || '',
-    // keyboard[socdInfo.value.key[0]] || '',
-    // keyboard[socdInfo.value.key[1]] || '',
+    keyboard[socdInfo.value.key[0]] || '',
+    keyboard[socdInfo.value.key[1]] || '',
   ];
 });
 
@@ -155,6 +166,12 @@ const handleSocdKey = (keyVal) => {
     socdInfo.value.pos[0] = keyVal;
     socdInfo.value.key[0] = keyVal;
   } else if (!socdInfo.value.pos[1]) {
+    // if (socdInfo.value.key[0] === keyVal) {
+    //   showMessage('SOCD键值需不同，请重新选择', 'warning');
+    // } else {
+    //   socdInfo.value.pos[1] = keyVal;
+    //   socdInfo.value.key[1] = keyVal;
+    // }
     socdInfo.value.pos[1] = keyVal;
     socdInfo.value.key[1] = keyVal;
   }

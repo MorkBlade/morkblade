@@ -95,35 +95,42 @@ const updateColors = async () => {
   try {
     const customLighting = await services.getLightingCustomV2();
     const root = document.documentElement;
+    const changedKeys = new Set();
 
-    // 清除所有现有的颜色变量
-    for (let row = 1; row <= 6; row++) {
-      for (let col = 0; col <= 14; col++) {
-        root.style.removeProperty(`--key-color-${row}-${col}`);
-      }
-    }
-
-    // 设置新的颜色变量
+    // 只更新发生变化的颜色
     for (let row = 1; row <= 6; row++) {
       if (customLighting[row]) {
         for (let col = 0; col <= 14; col++) {
           if (customLighting[row][col]) {
             const { R, G, B } = customLighting[row][col];
-            root.style.setProperty(`--key-color-${row}-${col}`, `rgb(${R},${G},${B})`);
+            const currentColor = root.style.getPropertyValue(`--key-color-${row}-${col}`);
+            const newColor = `rgb(${R},${G},${B})`;
+
+            if (currentColor !== newColor) {
+              root.style.setProperty(`--key-color-${row}-${col}`, newColor);
+              changedKeys.add(`${row}-${col}`);
+            }
           }
         }
       }
     }
 
-    // 更新store数据
-    for (let row = 1; row <= 6; row++) {
-      if (customLighting[row] && keyboardStore.keyboards[row]) {
-        const newRow = keyboardStore.keyboards[row].map((key, i) => ({
-          ...key,
-          customLight: customLighting[row][i],
-        }));
-        keyboardStore.keyboards[row].length = 0;
-        keyboardStore.keyboards[row].push(...newRow);
+    // 只更新发生变化的store数据
+    if (changedKeys.size > 0) {
+      for (let row = 1; row <= 6; row++) {
+        if (customLighting[row] && keyboardStore.keyboards[row]) {
+          const newRow = keyboardStore.keyboards[row].map((key, i) => {
+            const keyId = `${row}-${i}`;
+            if (changedKeys.has(keyId)) {
+              return {
+                ...key,
+                customLight: customLighting[row][i],
+              };
+            }
+            return key;
+          });
+          keyboardStore.keyboards[row] = newRow;
+        }
       }
     }
   } catch (error) {

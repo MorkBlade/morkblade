@@ -4,9 +4,8 @@
       <div
         v-for="(item, idx) in performanceItem"
         :key="item"
-        :class="idx === clickItem ? 'is-active' : ''"
-        :style="{ display: isVersion2 && item === 'RS' ? 'none' : '' }"
         class="key-assignment-item"
+        :class="idx === clickItem ? 'is-active' : ''"
         @click="changeMenu(idx)"
       >
         {{ item }}
@@ -135,8 +134,8 @@ const isShow = ref(false);
 const delAdvancedType = ref('');
 const delAdvancedItem = ref(null);
 const isExternalUpdate = ref(false);
-const performanceItem = ['普通', '单击/长按', 'DKS', 'SOCD', 'RS', 'TGL', 'MPT', 'END'];
 const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
+const performanceItem = ['普通', '单击/长按', 'DKS', 'SOCD', 'RS', 'TGL', 'MPT', 'END'];
 
 const changeMenu = (idx) => {
   clickItem.value = idx;
@@ -223,22 +222,37 @@ watch(
         case 6:
         case 8:
           clickItem.value = 3;
-          const { socd, socdMode, delay } = advancedKeys.socd;
+          const { socd, socdMode, delay, kcs } = advancedKeys.socd;
           for (let row = 0; row < hookKeyboardStore.keyboards.length; row++) {
             for (let col = 0; col < hookKeyboardStore.keyboards[row].length; col++) {
-              if (
-                hookKeyboardStore.keyboards[row][col].keyValue === socd[0] ||
-                hookKeyboardStore.keyboards[row][col].keyValue === socd[1]
-              ) {
-                // console.log(hookKeyboardStore.keyboards[row][col]);
-                // console.log('includes: ', hookKeyboardStore.activeKeys.includes(`${row}-${col}`));
-                if (!hookKeyboardStore.activeKeys.includes(`${row}-${col}`)) {
-                  hookKeyboardStore.activeKeys.push(`${row}-${col}`);
+              if (isVersion2) {
+                if (
+                  hookKeyboardStore.keyboards[row][col].keyValue === socd[0] ||
+                  hookKeyboardStore.keyboards[row][col].keyValue === socd[1]
+                ) {
+                  // console.log(hookKeyboardStore.keyboards[row][col]);
+                  // console.log('includes: ', hookKeyboardStore.activeKeys.includes(`${row}-${col}`));
+                  if (!hookKeyboardStore.activeKeys.includes(`${row}-${col}`)) {
+                    hookKeyboardStore.activeKeys.push(`${row}-${col}`);
+                  }
+                }
+              } else {
+                if (
+                  hookKeyboardStore.keyboards[row][col].keyValue === kcs[0] ||
+                  hookKeyboardStore.keyboards[row][col].keyValue === kcs[1]
+                ) {
+                  if (!hookKeyboardStore.activeKeys.includes(`${row}-${col}`)) {
+                    hookKeyboardStore.activeKeys.push(`${row}-${col}`);
+                  }
                 }
               }
             }
           }
-          Object.assign(socdInfo, { pos: [...socd], key: [...socd], type: 0, mode: socdMode, delay });
+          if (isVersion2) {
+            Object.assign(socdInfo, { pos: [...socd], key: [...socd], type: 0, mode: socdMode, delay });
+          } else {
+            Object.assign(socdInfo, { pos: [...socd], key: [...kcs], type: 0, mode: socdMode, delay });
+          }
           // console.log('当前选中键是socd!', advancedKeys.socd);
           break;
         case 7:

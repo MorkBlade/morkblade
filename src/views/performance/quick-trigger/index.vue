@@ -232,7 +232,7 @@ const onLink = async () => {
 };
 
 const saveRtConfig = async () => {
-  console.log('saveconfig');
+  // console.log('saveconfig');
   const { setSingleTravel } = usePerformanceHook();
   const updates = [];
   activeKeys.value.forEach((keyLocation) => {
@@ -248,6 +248,7 @@ const saveRtConfig = async () => {
         mode: 1,
         isRt: true,
         isSingle: false,
+        isGlobalTriggering: false,
         rtPressValue: rtPress !== 0.1 ? rtPress : rtPressTravel.value,
         rtReleaseValue: rtRelease !== 0.1 ? rtRelease : rtReleaseTravel.value,
       },

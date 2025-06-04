@@ -31,7 +31,12 @@
         </template>
       </template>
       <template v-if="checkedIdx === 4">
-        <key v-for="ite in mouse" :key="ite" :key-value="ite" @select="selectItem" />
+        <template v-if="isVersion2">
+          <key v-for="ite in mouseV2" :key="ite" :key-value="ite" @select="selectItem" />
+        </template>
+        <template v-else>
+          <key v-for="ite in mouse" :key="ite" :key-value="ite" @select="selectItem" />
+        </template>
       </template>
       <template v-if="checkedIdx === 5">
         <key v-for="ite in macro" :key="ite.id || ite" :key-value="ite" @select="selectItem" />
@@ -42,7 +47,7 @@
 
 <script setup>
 import key from '@/components/key.vue';
-import emitter from '@/utils/app-emitter';
+
 import { KEYBOARD_MACRO } from '@/configs/constant';
 import { useKeyboardStore, usePerformanceStore } from '@/stores';
 
@@ -123,6 +128,7 @@ const keyboard2 = [
   62208, 62209, 62210, 62211, 62212, 62213, 62214, 62215, 62216, 62217, 62218, 62219, 62220, 62221, 62222, 62223, 62224,
 ];
 const mouse = [29441, 29442, 29443, 29444, 29445, 29446, 29447, 29448, 29449];
+const mouseV2 = [16384, 16640, 16896, 17152, 17408, 17664, 19978, 20214, 20234, 20470];
 
 const macro = computed(() => {
   if (isVersion2) {
@@ -132,13 +138,13 @@ const macro = computed(() => {
   }
 });
 
-const performanceValue = computed(() => {
-  return performanceStore.value;
-});
+// const performanceValue = computed(() => {
+//   return performanceStore.value;
+// });
 
-const hasCurrentKey = computed(() => {
-  return activeKeys.value.includes(`${rowIdx.value}-${colIdx.value}`);
-});
+// const hasCurrentKey = computed(() => {
+//   return activeKeys.value.includes(`${rowIdx.value}-${colIdx.value}`);
+// });
 
 const activeKeys = computed(() => {
   return keyboardStore.activeKeys;
@@ -153,7 +159,7 @@ const onCheck = (idx) => {
 };
 
 const selectItem = async (keyVal) => {
-  console.log('selectItem is', keyVal);
+  // console.log('selectItem is', keyVal);
   keyboardStore.updateSelectKeyCode(keyVal);
   // keyboardStore.updateKey({ colIndex: rowIdx.value, rowIndex: colIdx.value });
 };

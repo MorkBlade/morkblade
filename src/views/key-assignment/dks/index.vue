@@ -474,24 +474,28 @@ const onDelKey = (keyCode) => {
     case 'key1':
       if (dksInfo.value.dks[0]) {
         dksInfo.value.dks[0] = 0;
+        dksInfo.value.trps[0] = 0;
         delKeyShow[0] = false;
       }
       break;
     case 'key2':
       if (dksInfo.value.dks[1]) {
         dksInfo.value.dks[1] = 0;
+        dksInfo.value.trps[1] = 0;
         delKeyShow[1] = false;
       }
       break;
     case 'key3':
       if (dksInfo.value.dks[2]) {
         dksInfo.value.dks[2] = 0;
+        dksInfo.value.trps[2] = 0;
         delKeyShow[2] = false;
       }
       break;
     default:
       if (dksInfo.value.dks[3]) {
         dksInfo.value.dks[3] = 0;
+        dksInfo.value.trps[3] = 0;
         delKeyShow[3] = false;
       }
       break;

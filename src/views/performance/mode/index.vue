@@ -132,6 +132,7 @@ const saveSingleConfig = async () => {
         mode: 0,
         isRt: false,
         isSingle: true,
+        isGlobalTriggering: false,
         singleTriggeringValue,
       },
     });
