@@ -656,12 +656,12 @@ const getRowCol = (keys) => {
 const matchTouchMode = (performance) => {
   const { isGlobalTriggering, isRt, isSingle } = performance;
   let touchMode;
-  if (isGlobalTriggering) {
-    touchMode = 'global';
-  } else if (isRt) {
+  if (isRt) {
     touchMode = 'rt';
   } else if (isSingle) {
     touchMode = 'single';
+  } else if (isGlobalTriggering) {
+    touchMode = 'global';
   }
   return touchMode;
 };
