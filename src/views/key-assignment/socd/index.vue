@@ -171,6 +171,11 @@ const saveConfig = () => {
     showMessage('请先选择需要修改的按键', 'warning');
     return;
   }
+  // if (originalSocdInfo && originalSocdInfo.key[0] && originalSocdInfo.key[1]) {
+  //   showMessage('当前按键已绑定SOCD，请先手动删除后再试', 'warning');
+  //   keyboardStore.activeKeys = [];
+  //   return;
+  // }
   isShow.value = true;
 };
 
@@ -210,7 +215,7 @@ const handleSocdKey = (keyVal) => {
   }
 };
 
-const KeydropKey = (idx) => {
+const KeydropKey = async (idx) => {
   const keyVal = keyboardStore.selectKey.keyCode;
   const unBinding = filterSocdAndRsKey(keyboardStore.keyboards, keyVal);
   if (unBinding) {
@@ -227,6 +232,14 @@ const KeydropKey = (idx) => {
 
   socdInfo.value.pos[idx] = keyVal;
   socdInfo.value.key[idx] = keyVal;
+  // if (originalSocdInfo && originalSocdInfo.key[0] && originalSocdInfo.key[1]) {
+  //   const keysArray = getRowCol(originalSocdInfo.key);
+  //   const [[row, col], [row2, col2]] = keysArray.map((item) => item.split('-').map(Number));
+  //   const advancedInfo1 = keyboardStore.keyboards[row][col].advancedKeys;
+  //   const advancedInfo2 = keyboardStore.keyboards[row2][col2].advancedKeys;
+  //   await delAdvancedConfig(advancedInfo1, 'socd');
+  //   // await delAdvancedConfig(advancedInfo2, 'socd');
+  // }
 };
 
 const onClick = (keyCode) => {
@@ -249,6 +262,7 @@ const onClick = (keyCode) => {
 };
 
 const getRowCol = (keys) => {
+  console.log('keys: ', keys);
   const keysArray = [];
   const keyboardStore = useKeyboardStore();
   for (let row = 0; row < keyboardStore.keyboards.length; row++) {
@@ -275,15 +289,14 @@ const save = async () => {
     const currentSocdInfo = JSON.parse(JSON.stringify(socdInfo.value));
 
     if (originalSocdInfo && originalSocdInfo.key[0] && originalSocdInfo.key[1]) {
-      const keysArray = getRowCol(originalSocdInfo.key);
+      const keysArray = getRowCol(originalSocdInfo.pos);
       const [[row, col], [row2, col2]] = keysArray.map((item) => item.split('-').map(Number));
       const advancedInfo1 = keyboardStore.keyboards[row][col].advancedKeys;
       const advancedInfo2 = keyboardStore.keyboards[row2][col2].advancedKeys;
       await delAdvancedConfig(advancedInfo1, 'socd');
       await delAdvancedConfig(advancedInfo2, 'socd');
     }
-    console.log('save socd log:', currentSocdInfo);
-    await delayFunc(500);
+    // const res = await setSocd(socdInfo.value); // Use the saved data
     const res = await setSocd(currentSocdInfo); // Use the saved data
     keyboardStore.activeKeys = [];
     return res;

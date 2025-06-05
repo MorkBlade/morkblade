@@ -226,37 +226,22 @@ watch(
         case 8:
           if (!advancedKeys.socd) return;
           clickItem.value = 3;
-          const { socd, socdMode, delay, kcs } = advancedKeys.socd;
+          const { socd, socdMode, delay } = advancedKeys.socd;
           for (let row = 0; row < hookKeyboardStore.keyboards.length; row++) {
             for (let col = 0; col < hookKeyboardStore.keyboards[row].length; col++) {
-              if (isVersion2) {
-                if (
-                  hookKeyboardStore.keyboards[row][col].keyValue === socd[0] ||
-                  hookKeyboardStore.keyboards[row][col].keyValue === socd[1]
-                ) {
-                  // console.log(hookKeyboardStore.keyboards[row][col]);
-                  // console.log('includes: ', hookKeyboardStore.activeKeys.includes(`${row}-${col}`));
-                  if (!hookKeyboardStore.activeKeys.includes(`${row}-${col}`)) {
-                    hookKeyboardStore.activeKeys.push(`${row}-${col}`);
-                  }
-                }
-              } else {
-                if (
-                  hookKeyboardStore.keyboards[row][col].keyValue === kcs[0] ||
-                  hookKeyboardStore.keyboards[row][col].keyValue === kcs[1]
-                ) {
-                  if (!hookKeyboardStore.activeKeys.includes(`${row}-${col}`)) {
-                    hookKeyboardStore.activeKeys.push(`${row}-${col}`);
-                  }
+              if (
+                hookKeyboardStore.keyboards[row][col].keyValue === socd[0] ||
+                hookKeyboardStore.keyboards[row][col].keyValue === socd[1]
+              ) {
+                // console.log(hookKeyboardStore.keyboards[row][col]);
+                // console.log('includes: ', hookKeyboardStore.activeKeys.includes(`${row}-${col}`));
+                if (!hookKeyboardStore.activeKeys.includes(`${row}-${col}`)) {
+                  hookKeyboardStore.activeKeys.push(`${row}-${col}`);
                 }
               }
             }
           }
-          if (isVersion2) {
-            Object.assign(socdInfo, { pos: [...socd], key: [...socd], type: 0, mode: socdMode, delay });
-          } else {
-            Object.assign(socdInfo, { pos: [...socd], key: [...kcs], type: 0, mode: socdMode, delay });
-          }
+          Object.assign(socdInfo, { pos: [...socd], key: [...socd], type: 0, mode: socdMode, delay });
           originalSocdInfo.value = JSON.parse(JSON.stringify(socdInfo));
           // console.log('原始socd数据： ', originalSocdInfo.value);
           // console.log('当前选中键是socd!', advancedKeys.socd);
