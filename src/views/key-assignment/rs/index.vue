@@ -201,6 +201,7 @@ const save = async () => {
     }
     // const res = await setRS(rsInfo.value);
     const res = await setRS(currentRsInfo);
+    keyboardStore.activeKeys = [];
     return res;
   } catch (error) {
     console.log('error', error);

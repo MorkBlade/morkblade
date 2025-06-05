@@ -521,6 +521,8 @@ export const useAdvancedHook = () => {
 
     await Promise.all(keysToDelete.map((param) => services.deleteKey(param.key, param.mode)));
     await performanceStore.getKeyPerformanceV1(keyboardStore.keyboards);
+    const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
+    await getHighLevelKeys(keyboardStore.keyboards, isVersion2);
   };
 
   // 获取宏

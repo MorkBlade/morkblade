@@ -117,7 +117,7 @@ const delMacro = (id, idx) => {
   for (let row = 0; row < keyboardStore.keyboards.length; row++) {
     for (let col = 0; col < keyboardStore.keyboards[row].length; col++) {
       const advanced = keyboardStore.keyboards[row][col].advancedKeys;
-      if (advanced.macro && advanced.macro.macro.macro.id === idx) {
+      if (advanced.advancedType === 6 && advanced.macro && advanced.macro.macro.macro.id === idx) {
         showMessage('宏正在使用中，无法删除', 'warning');
         isDel = false;
       }
