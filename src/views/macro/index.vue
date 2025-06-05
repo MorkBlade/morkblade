@@ -95,6 +95,7 @@ const updateMacroData = async (data, settings) => {
       await setMacroV2({ macroId, data });
     }
   } else {
+    // TODO v1更新宏数据需要刷新已绑定的宏事件
     // 确保当前宏索引有效
     if (curMacroIdx.value >= 0 && curMacroIdx.value < localMacros.value.length) {
       // 如果当前宏不存在，则初始化它

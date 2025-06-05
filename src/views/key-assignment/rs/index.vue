@@ -191,7 +191,6 @@ const save = async () => {
   try {
     const currentRsInfo = JSON.parse(JSON.stringify(rsInfo.value));
 
-    console.log('originalRsInfooriginalRsInfo', originalRsInfo);
     if (originalRsInfo && originalRsInfo.dks[0] && originalRsInfo.dks[1]) {
       const keysArray = getRowCol(originalRsInfo.dks);
       const [[row, col], [row2, col2]] = keysArray.map((item) => item.split('-').map(Number));
