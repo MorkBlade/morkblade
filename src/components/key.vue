@@ -56,7 +56,10 @@ const startDrag = (e) => {
 
 const updatePosition = async (e) => {
   if (dragElement.value) {
-    if (keyboardStore.selectKey.value !== keyValue) keyboardStore.updateSelectKeyCode(keyValue);
+    if (keyboardStore.selectKey.value !== keyValue) {
+      keyboardStore.updateGrabStatus(true);
+      keyboardStore.updateSelectKeyCode(keyValue);
+    }
     dragElement.value.style.left = `${e.pageX - 10}px`;
     dragElement.value.style.top = `${e.pageY - 10}px`;
   } else {
@@ -75,6 +78,11 @@ const stopDrag = () => {
   keyboardStore.isDraging = false;
   document.body.style.cursor = 'default';
   document.removeEventListener('mousemove', updatePosition);
+  // 停止抓取后重置
+  setTimeout(() => {
+    keyboardStore.updateGrabStatus(false);
+    keyboardStore.updateSelectKeyCode(0);
+  }, 200);
 };
 </script>
 

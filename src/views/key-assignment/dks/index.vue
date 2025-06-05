@@ -13,7 +13,11 @@
         <div class="dks-key">
           <div class="key-box" @mouseenter="onMouseEn('key1')" @mouseleave="onMouseLe('key1')">
             <p @mouseup="KeydropKey(0)">{{ keyText[0] }}</p>
-            <div class="del_btn" @click="onDelKey('key1')" v-show="keyText[0] && delKeyShow[0]"></div>
+            <div
+              class="del_btn"
+              @click="onDelKey('key1')"
+              v-show="keyText[0] && delKeyShow[0] && !keyboardStore.grabStatus"
+            ></div>
           </div>
           <span
             v-for="idx in 4"
@@ -32,7 +36,11 @@
         <div class="dks-key">
           <div class="key-box" @mouseenter="onMouseEn('key2')" @mouseleave="onMouseLe('key2')">
             <p @mouseup="KeydropKey(1)">{{ keyText[1] }}</p>
-            <div class="del_btn" @click="onDelKey('key2')" v-show="keyText[1] && delKeyShow[1]"></div>
+            <div
+              class="del_btn"
+              @click="onDelKey('key2')"
+              v-show="keyText[1] && delKeyShow[1] && !keyboardStore.grabStatus"
+            ></div>
           </div>
           <span
             v-for="idx in 4"
@@ -51,7 +59,11 @@
         <div class="dks-key">
           <div class="key-box" @mouseenter="onMouseEn('key3')" @mouseleave="onMouseLe('key3')">
             <p @mouseup="KeydropKey(2)">{{ keyText[2] }}</p>
-            <div class="del_btn" @click="onDelKey('key3')" v-show="keyText[2] && delKeyShow[2]"></div>
+            <div
+              class="del_btn"
+              @click="onDelKey('key3')"
+              v-show="keyText[2] && delKeyShow[2] && !keyboardStore.grabStatus"
+            ></div>
           </div>
           <span
             v-for="idx in 4"
@@ -70,7 +82,11 @@
         <div class="dks-key">
           <div class="key-box" @mouseenter="onMouseEn" @mouseleave="onMouseLe">
             <p @mouseup="KeydropKey(3)">{{ keyText[3] }}</p>
-            <div class="del_btn" @click="onDelKey" v-show="keyText[3] && delKeyShow[3]"></div>
+            <div
+              class="del_btn"
+              @click="onDelKey"
+              v-show="keyText[3] && delKeyShow[3] && !keyboardStore.grabStatus"
+            ></div>
           </div>
           <span
             v-for="idx in 4"
@@ -797,6 +813,7 @@ const reset = () => {
   dksInfo.value.trps = [0, 0, 0, 0];
   dksInfo.value.db = 1.5;
   dksInfo.value.db2 = 3.0;
+  // dksInfo.value = { dks: [0, 0, 0, 0], trps: [0, 0, 0, 0], db: 1.5, db2: 3.0 };
 
   // 重置拖拽和点击状态
   for (let i = 0; i < 4; i++) {

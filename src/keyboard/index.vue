@@ -155,7 +155,6 @@ import { useAppStore, useKeyboardStore, useDeviceStore, usePerformanceStore } fr
 import { useAdvancedHook } from '@/hooks';
 
 import key from './key.vue';
-import { set } from 'vue-demi';
 
 const route = useRoute();
 const appStore = useAppStore();
@@ -225,19 +224,11 @@ onMounted(async () => {
     // First initialize keyboard
     await performanceStore.getGlobalTouchTravel();
     await keyboardStore.initKeyboard();
-
-    // Then initialize lighting
-    // await initCustomLighting();
+    // // Then initialize lighting
+    // // await initCustomLighting();
     if (isVersion2.value) await deviceStore.getDoubleLighting();
-
-    // Get protocol version
-
-    // Get system mode
     const data = await appStore.systemMode();
     formData.type = data.currentSystem;
-
-    // Only initialize high level keys if we're on the key-assignment route
-    // and ensure keyboard is initialized
     await appStore.getProtocolVersion();
     if (route.path === '/key-assignment' && keyboardStore.keyboards.length > 0) {
       // Add a small delay to ensure component is fully mounted
@@ -253,13 +244,22 @@ const handleKeyClick = (rowIndex, colIndex) => {
   // 当前类型
   if (route.path === '/key-assignment') {
     // 单选
-    console.log('handleKeyClick');
+    // if (advancedMenu.value === 'SOCD' || advancedMenu.value === 'RS') {
+    //   handleHighLevelKeyChange({ rowIndex, colIndex });
+    // } else {
+    //   keyboardStore.handleSelectKeyClick({ rowIndex, colIndex }, 'single');
+    // }
     keyboardStore.handleSelectKeyClick({ rowIndex, colIndex }, 'single');
   } else {
     // 多选
     keyboardStore.handleSelectKeyClick({ rowIndex, colIndex });
   }
   emitter.emit('key-click', { rowIndex, colIndex });
+};
+
+// 处理高级键的双键绑定
+const handleHighLevelKeyChange = ({ rowIndex, colIndex }) => {
+  keyboardStore.handleHighLevelKeyClick({ rowIndex, colIndex });
 };
 
 // 匹配布局，暂时用json文件来做

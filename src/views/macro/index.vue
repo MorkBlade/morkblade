@@ -13,6 +13,7 @@
       <macro-list v-model:macros="localMacros" @checkedMacroIdx="checkedMacroIdx" />
       <macro-data
         :macroData="currentMacroData"
+        :disabled="localMacros.length === 0"
         @updateMacro:data="updateMacroData"
         @updateMacro:mode="updateMacroMode"
         @updateMacro:clear="clearMacro"
@@ -43,10 +44,10 @@ const currentMacroData = computed(() => {
   if (isVersion2) {
     return macroStore.macroData[curMacroIdx.value];
   } else {
-    if (localMacros.value.length === 0 || !localMacros.value[curMacroIdx.value]) {
-      return [];
+    if (curMacroIdx.value === -1 || localMacros.value.length === 0) {
+      return { data: [] };
     }
-    return localMacros.value[curMacroIdx.value] || [];
+    return localMacros.value[curMacroIdx.value] || { data: [] };
   }
 });
 

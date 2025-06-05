@@ -5,7 +5,11 @@
         <span>按键1:</span>
         <div class="key-box" @mouseenter="onMouseEn('key1')" @mouseleave="onMouseLe('key1')">
           <p :class="{ 'hover-bg': !endInfo.dks }" @mouseup="KeydropFirst">{{ keyText }}</p>
-          <div class="del_btn" @click="onClick" v-show="endInfo.dks && keyIndex === 0"></div>
+          <div
+            class="del_btn"
+            @click="onClick"
+            v-show="endInfo.dks && keyIndex === 0 && !keyboardStore.grabStatus"
+          ></div>
         </div>
       </div>
       <div class="delay-slider">

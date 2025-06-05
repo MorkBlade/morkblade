@@ -85,8 +85,9 @@ import eventsIcon from '@/assets/images/events_icon.svg';
 import clearIcon from '@/assets/images/clear_icon.svg';
 import keyboardWord from '@/configs/byte-to-key/keyboard';
 
-const { macroData } = defineProps({
+const { macroData, disabled } = defineProps({
   macroData: { type: Object, default: () => ({}) },
+  disabled: { type: Boolean, default: false },
 });
 
 const emit = defineEmits(['updateMacro:data', 'updateMacro:mode', 'updateMacro:clear']);
@@ -276,6 +277,11 @@ const switchClass = (idx) => {
 };
 
 const onClick = (idx) => {
+  // console.log('aiushcnjiashfuiasbnjas', disabled);
+  if (disabled) {
+    showMessage('当前没有宏', 'warning');
+    return;
+  }
   BottomBtnIdx.value = idx;
 
   switch (idx) {

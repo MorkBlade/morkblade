@@ -40,6 +40,7 @@
         v-else-if="currentComponent === 'SOCD'"
         ref="childRef"
         v-model:socd-info="socdInfo"
+        :original-socd-info="originalSocdInfo"
         @handleKeyTypeChange="handleKeyTypeChange"
         @handleDialoConfirm="handleDialoConfirm"
       />
@@ -135,6 +136,7 @@ const isShow = ref(false);
 const delAdvancedType = ref('');
 const delAdvancedItem = ref(null);
 const isExternalUpdate = ref(false);
+const originalSocdInfo = ref(null);
 const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
 const performanceItem = ['普通', '单击/长按', 'DKS', 'SOCD', 'RS', 'TGL', 'MPT', 'END'];
 
@@ -190,7 +192,7 @@ watch(
           isExternalUpdate.value = true;
           const { dks: dksAll, trps, db, db2 } = advancedKeys.dks;
           Object.assign(dksInfo, { dks: [...dksAll], trps, db, db2 });
-          // console.log('当前选中键是dks!', advancedKeys.dks);
+          console.log('当前选中键是dks!', advancedKeys.dks);
           type = 'DKS';
           setTimeout(() => {
             isExternalUpdate.value = false;
@@ -222,6 +224,7 @@ watch(
           break;
         case 6:
         case 8:
+          if (!advancedKeys.socd) return;
           clickItem.value = 3;
           const { socd, socdMode, delay, kcs } = advancedKeys.socd;
           for (let row = 0; row < hookKeyboardStore.keyboards.length; row++) {
@@ -254,6 +257,8 @@ watch(
           } else {
             Object.assign(socdInfo, { pos: [...socd], key: [...kcs], type: 0, mode: socdMode, delay });
           }
+          originalSocdInfo.value = JSON.parse(JSON.stringify(socdInfo));
+          // console.log('原始socd数据： ', originalSocdInfo.value);
           // console.log('当前选中键是socd!', advancedKeys.socd);
           break;
         case 7:
@@ -278,10 +283,12 @@ watch(
           // console.log('当前选中键是rs!', advancedKeys.rs);
           break;
         default:
+          originalSocdInfo.value = null;
           resetDefaultValue();
           break;
       }
     } else {
+      originalSocdInfo.value = null;
       resetDefaultValue();
     }
   },

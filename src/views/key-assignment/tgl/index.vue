@@ -5,7 +5,11 @@
         <span>切换开关TGL:</span>
         <div class="key-box" @mouseenter="onMouseEn('key1')" @mouseleave="onMouseLe('key1')">
           <p :class="{ 'hover-bg': !tglInfo.dks }" @mouseup="KeydropFirst">{{ keyText }}</p>
-          <div class="del_btn" @click="onClick" v-show="tglInfo.dks && keyIndex === 0"></div>
+          <div
+            class="del_btn"
+            @click="onClick"
+            v-show="tglInfo.dks && keyIndex === 0 && !keyboardStore.grabStatus"
+          ></div>
         </div>
       </div>
       <div class="delay-slider">
@@ -127,6 +131,7 @@ const save = async () => {
     col = +colIndex;
   }
   const res = await setTGL({ key, row, col, ...tglInfo.value });
+  reset();
   return res;
 };
 

@@ -6,14 +6,22 @@
           <span>按键1:</span>
           <div class="key-box" @mouseenter="onMouseEn('key1')" @mouseleave="onMouseLe('key1')">
             <p :class="{ 'hover-bg': !rsInfo.dks[0] }" @mouseup="KeydropKey(0)">{{ keyText[0] }}</p>
-            <div class="del_btn" @click="onClick('key1')" v-show="rsInfo.dks[0] && key1Index === 0"></div>
+            <div
+              class="del_btn"
+              @click="onClick('key1')"
+              v-show="rsInfo.dks[0] && key1Index === 0 && !keyboardStore.grabStatus"
+            ></div>
           </div>
         </div>
         <div>
           <span>按键2:</span>
           <div class="key-box" @mouseenter="onMouseEn" @mouseleave="onMouseLe">
             <p :class="{ 'hover-bg': !rsInfo.dks[1] }" @mouseup="KeydropKey(1)">{{ keyText[1] }}</p>
-            <div class="del_btn" @click="onClick" v-show="rsInfo.dks[1] && key2Index === 0"></div>
+            <div
+              class="del_btn"
+              @click="onClick"
+              v-show="rsInfo.dks[1] && key2Index === 0 && !keyboardStore.grabStatus"
+            ></div>
           </div>
         </div>
       </div>
@@ -105,10 +113,25 @@ const handleRsKey = (keyVal) => {
     showMessage('该键已绑定高级键，请重新选择', 'warning');
     return;
   }
+  // if (!rsInfo.value.dks[0]) {
+  //   rsInfo.value.dks[0] = keyVal;
+  // } else if (!rsInfo.value.dks[1]) {
+  //   rsInfo.value.dks[1] = keyVal;
+  // }
   if (!rsInfo.value.dks[0]) {
-    rsInfo.value.dks[0] = keyVal;
+    if (rsInfo.value.dks[1] === keyVal) {
+      showMessage('RS键值需不同，请重新选择', 'warning');
+    } else {
+      rsInfo.value.dks[0] = keyVal;
+    }
+    // rsInfo.value.dks[0] = keyVal;
   } else if (!rsInfo.value.dks[1]) {
-    rsInfo.value.dks[1] = keyVal;
+    if (rsInfo.value.dks[0] === keyVal) {
+      showMessage('RS键值需不同，请重新选择', 'warning');
+    } else {
+      rsInfo.value.dks[1] = keyVal;
+    }
+    // rsInfo.value.dks[1] = keyVal;
   }
 };
 
@@ -117,6 +140,11 @@ const KeydropKey = (idx) => {
   const unBinding = filterSocdAndRsKey(keyboardStore.keyboards, keyVal);
   if (unBinding) {
     showMessage('该键已绑定高级键，请重新选择', 'warning');
+    return;
+  }
+  const otherIdx = idx === 0 ? 1 : 0;
+  if (rsInfo.value.dks[otherIdx] === keyVal) {
+    showMessage('SOCD键值需不同，请重新选择', 'warning');
     return;
   }
   rsInfo.value.dks[idx] = keyVal;

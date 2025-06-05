@@ -1,3 +1,4 @@
+import { showMessage } from '@/utils/message';
 import { useKeyboardStore, usePerformanceStore, useAppStore } from '@/stores';
 import services from '@/services/index';
 
@@ -168,7 +169,7 @@ export const useAdvancedHook = () => {
     const { key, row, col, delay, dks } = params;
     const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
     if (isVersion2) {
-      const data = { kcs: dks, delay };
+      const data = { kcs: dks, time: delay };
       result = await services.setHigherKeyTGLV2({ key, row, col, data });
       tglData = {
         keyValue: key,
@@ -434,6 +435,7 @@ export const useAdvancedHook = () => {
       const keysArray = getRowCol(key);
       const [[row, col], [row2, col2]] = keysArray.map((item) => item.split('-').map(Number));
       const data = { row, col, row2, col2, kcs: key, socdMode: mode, delay };
+      // console.log('set SOCD data: ', data);
       const results = await services.setHigherKeySOCDV2(data);
       const [resultA, resultB] = results;
       // console.log('setSocd', resultA, resultB);
@@ -444,10 +446,11 @@ export const useAdvancedHook = () => {
       const { pos, key, type, mode, delay } = params;
       const keysArray = getRowCol(key);
       const [[row, col], [row2, col2]] = keysArray.map((item) => item.split('-').map(Number));
-      const data = { pos1: pos[0], pos2: pos[1], key1: 0, key2: 0, type, mode, delay };
+      const data = { pos1: pos[0], pos2: pos[1], key1: key[0], key2: key[1], type, mode, delay };
       const protocolVersion = typeof appStore.protocolVersion === 'string' ? appStore.protocolVersion : '1.0.7';
-      // console.log('data:---------------- ', data);
+      console.log('setSocd data:---------------- ', data);
       const result = await services.setSocd(data, protocolVersion);
+
       await getSocd({ keyValue: key[0], data: null, row: row, col: col, mode: 8 });
       await getSocd({ keyValue: key[1], data: null, row: row2, col: col2, mode: 8 });
       return result;
@@ -518,6 +521,7 @@ export const useAdvancedHook = () => {
       //   console.log('has 111111111>>>>', socd);
       keysToDelete.push({ key: kcs[0], mode: touchMode1 });
       keysToDelete.push({ key: kcs[1], mode: touchMode2 });
+      console.log('keysToDeletekeysToDeletekeysToDeletekeysToDelete', keysToDelete);
       // }
     } else if (advancedType === 'rs') {
       const { rs } = advanced.rs;
@@ -539,6 +543,7 @@ export const useAdvancedHook = () => {
 
   // 获取宏
   const getMacro = async (params) => {
+    const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
     if (isVersion2) {
     } else {
       const { keyValue, row, col, mode } = params;
@@ -677,4 +682,23 @@ const getKeyValue = (rowIndex, colIndex) => {
     }
   }
   return keyValue;
+};
+
+const advancedVerify = async (rowIndex, colIndex) => {
+  let isAdvanced = false;
+  const keyboardStore = useKeyboardStore();
+  const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
+  for (let row = 0; row < keyboardStore.keyboards.length; row++) {
+    for (let col = 0; col < keyboardStore.keyboards[row].length; col++) {
+      if (keyboardStore.keyboards[row][col].row === rowIndex && keyboardStore.keyboards[row][col].col === colIndex) {
+        isAdvanced = keyboardStore.keyboards[row][col].advancedKeys;
+      }
+    }
+  }
+  console.log('advancedVerify log :', rowIndex, colIndex, isAdvanced);
+  if (isAdvanced.advancedType) {
+    console.log('当前是高级键', isAdvanced.advancedType);
+    await delAdvancedConfig(isAdvanced, isAdvanced.advancedType);
+  }
+  return isAdvanced;
 };
