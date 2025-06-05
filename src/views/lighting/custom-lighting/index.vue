@@ -33,7 +33,14 @@
         </div>
         <div class="scale-values">
           <div class="color-preview" :style="{ backgroundColor: selectedColor }"></div>
-          <input type="text" v-model="selectedColor" @input="updateColor" />
+          <input
+            type="text"
+            v-model="selectedColor"
+            @input="updateColor"
+            @keypress="validateHexInput"
+            maxlength="7"
+            pattern="^#[0-9A-Fa-f]{6}$"
+          />
         </div>
       </div>
       <div class="color-wheel-container">
@@ -166,6 +173,21 @@ const isValidColor = (color) => {
   }
 };
 
+// 验证十六进制输入
+const validateHexInput = (event) => {
+  const char = event.key;
+  // 允许输入 # 号
+  if (char === '#') {
+    return true;
+  }
+  // 只允许输入 0-9 和 a-f/A-F
+  if (!/^[0-9A-Fa-f]$/.test(char)) {
+    event.preventDefault();
+    return false;
+  }
+  return true;
+};
+
 // 更新手动输入的颜色值
 const updateColor = (event) => {
   let inputColor = event.target.value;
@@ -175,6 +197,21 @@ const updateColor = (event) => {
     inputColor = '#' + inputColor;
     selectedColor.value = inputColor; // 更新显示的值
   }
+
+  // 移除所有非十六进制字符
+  inputColor = inputColor.replace(/[^0-9A-Fa-f#]/g, '');
+
+  // 确保只有一个 # 号，并且它在开头
+  if (inputColor.indexOf('#') > 0) {
+    inputColor = '#' + inputColor.replace(/#/g, '');
+  }
+
+  // 限制长度为7（包括#号）
+  if (inputColor.length > 7) {
+    inputColor = inputColor.slice(0, 7);
+  }
+
+  selectedColor.value = inputColor;
 
   // 只有当输入是完整的颜色值时才更新色轮
   if (inputColor.length === 7 && isValidColor(inputColor)) {
@@ -271,6 +308,7 @@ const debounceApiCalls = (apiCalls) => {
   debounceTimer = setTimeout(async () => {
     console.log('设置自定义灯光');
     await Promise.all(apiCalls.map((params) => services.setCustomLighting(params)));
+    await services.saveCustomLighting();
     debounceTimer = null;
   }, 200);
 };

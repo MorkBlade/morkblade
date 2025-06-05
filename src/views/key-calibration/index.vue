@@ -151,11 +151,22 @@ onMounted(async () => {
 
   window.addEventListener('keydown', addKey);
   window.addEventListener('keyup', releaseKey);
+  window.addEventListener('blur', () => {
+    keys.value.forEach((key) => {
+      key.pressed = false;
+      setTimeout(() => {
+        if (!key.pressed) {
+          removeKey(key.id);
+        }
+      }, 1000);
+    });
+  });
 });
 
 onUnmounted(() => {
   window.removeEventListener('keydown', addKey);
   window.removeEventListener('keyup', releaseKey);
+  window.removeEventListener('blur', () => {});
 });
 </script>
 

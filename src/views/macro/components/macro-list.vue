@@ -14,7 +14,7 @@
         <p class="length">操作长度: {{ item.data.length }}</p>
         <div class="controls-group" @click.stop>
           <span class="copy-btn" @click="copyMacro(item)">复制</span>
-          <span class="del-btn" @click="delMacro(item.id)">删除</span>
+          <span class="del-btn" @click="delMacro(item.id, idx)">删除</span>
         </div>
       </div>
       <template v-if="macros.length < 15">
@@ -30,7 +30,8 @@
 </template>
 
 <script setup>
-import { useMacroStore } from '@/stores';
+import { showMessage } from '@/utils/message';
+import { useMacroStore, useKeyboardStore } from '@/stores';
 
 const macros = defineModel('macros', { default: () => [] });
 
@@ -38,6 +39,7 @@ const macros = defineModel('macros', { default: () => [] });
 const emit = defineEmits(['checkedMacroIdx']);
 
 const macroStore = useMacroStore();
+const keyboardStore = useKeyboardStore();
 const curMacroIdx = ref(0);
 
 const formatTimestamp = (timestamp) => {
@@ -102,13 +104,47 @@ const copyMacro = (macro) => {
   macros.value = [...macros.value, macroJSON];
 };
 
-const delMacro = (id) => {
-  if (macroStore.usedMacro.indexOf(id) > -1) {
-    console.log('宏正在使用中，无法删除');
+const delMacro = (id, idx) => {
+  // if (macroStore.usedMacro.indexOf(id) > -1) {
+  //   console.log('宏正在使用中，无法删除');
+  //   return;
+  // }
+  if (keyboardStore.keyboards.length === 0) {
+    showMessage('页面刷新后请重连获取最新数据', 'warning');
     return;
   }
+  let isDel = true;
+  for (let row = 0; row < keyboardStore.keyboards.length; row++) {
+    for (let col = 0; col < keyboardStore.keyboards[row].length; col++) {
+      const advanced = keyboardStore.keyboards[row][col].advancedKeys;
+      if (advanced.advancedType === 6 && advanced.macro && advanced.macro.macro.macro.id === idx) {
+        showMessage('宏正在使用中，无法删除', 'warning');
+        isDel = false;
+      }
+    }
+  }
   // 创建新数组以触发响应式更新
-  macros.value = macros.value.filter((item) => item.id !== id);
+  if (isDel) {
+    showMessage('宏删除成功');
+    macros.value = macros.value.filter((item) => item.id !== id);
+
+    // 如果删除的是当前选中的宏，重置选中状态
+    if (curMacroIdx.value === idx) {
+      // 如果删除后还有宏，选中第一个宏
+      if (macros.value.length > 0) {
+        curMacroIdx.value = 0;
+        emit('checkedMacroIdx', 0);
+      } else {
+        // 如果没有宏了，选中-1表示没有选中任何宏
+        curMacroIdx.value = -1;
+        emit('checkedMacroIdx', -1);
+      }
+    } else if (curMacroIdx.value > idx) {
+      // 如果删除的宏在当前选中宏之前，需要调整选中索引
+      curMacroIdx.value--;
+      emit('checkedMacroIdx', curMacroIdx.value);
+    }
+  }
 };
 </script>
 

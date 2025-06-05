@@ -6,14 +6,22 @@
           <span>按键1:</span>
           <div class="key-box" @mouseenter="onMouseEn('key1')" @mouseleave="onMouseLe('key1')">
             <p :class="{ 'hover-bg': !rsInfo.dks[0] }" @mouseup="KeydropKey(0)">{{ keyText[0] }}</p>
-            <div class="del_btn" @click="onClick('key1')" v-show="rsInfo.dks[0] && key1Index === 0"></div>
+            <div
+              class="del_btn"
+              @click="onClick('key1')"
+              v-show="rsInfo.dks[0] && key1Index === 0 && !keyboardStore.grabStatus"
+            ></div>
           </div>
         </div>
         <div>
           <span>按键2:</span>
           <div class="key-box" @mouseenter="onMouseEn" @mouseleave="onMouseLe">
             <p :class="{ 'hover-bg': !rsInfo.dks[1] }" @mouseup="KeydropKey(1)">{{ keyText[1] }}</p>
-            <div class="del_btn" @click="onClick" v-show="rsInfo.dks[1] && key2Index === 0"></div>
+            <div
+              class="del_btn"
+              @click="onClick"
+              v-show="rsInfo.dks[1] && key2Index === 0 && !keyboardStore.grabStatus"
+            ></div>
           </div>
         </div>
       </div>
@@ -42,14 +50,18 @@ const rsInfo = defineModel('rsInfo', {
   default: () => ({ dks: [0, 0], delay: 0 }),
 });
 
-const { edit, editKey } = defineProps({
+const { edit, editKey, originalRsInfo } = defineProps({
   edit: { type: Boolean, default: false },
   editKey: { type: [String, Number], default: '' },
+  originalRsInfo: {
+    type: Object,
+    default: null,
+  },
 });
 
 const emits = defineEmits(['handleDialoConfirm', 'handleKeyTypeChange']);
 
-const { setRS } = useAdvancedHook();
+const { setRS, delAdvancedConfig } = useAdvancedHook();
 const keyboardStore = useKeyboardStore();
 
 const isShow = ref(false);
@@ -105,10 +117,25 @@ const handleRsKey = (keyVal) => {
     showMessage('该键已绑定高级键，请重新选择', 'warning');
     return;
   }
+  // if (!rsInfo.value.dks[0]) {
+  //   rsInfo.value.dks[0] = keyVal;
+  // } else if (!rsInfo.value.dks[1]) {
+  //   rsInfo.value.dks[1] = keyVal;
+  // }
   if (!rsInfo.value.dks[0]) {
-    rsInfo.value.dks[0] = keyVal;
+    if (rsInfo.value.dks[1] === keyVal) {
+      showMessage('RS键值需不同，请重新选择', 'warning');
+    } else {
+      rsInfo.value.dks[0] = keyVal;
+    }
+    // rsInfo.value.dks[0] = keyVal;
   } else if (!rsInfo.value.dks[1]) {
-    rsInfo.value.dks[1] = keyVal;
+    if (rsInfo.value.dks[0] === keyVal) {
+      showMessage('RS键值需不同，请重新选择', 'warning');
+    } else {
+      rsInfo.value.dks[1] = keyVal;
+    }
+    // rsInfo.value.dks[1] = keyVal;
   }
 };
 
@@ -117,6 +144,11 @@ const KeydropKey = (idx) => {
   const unBinding = filterSocdAndRsKey(keyboardStore.keyboards, keyVal);
   if (unBinding) {
     showMessage('该键已绑定高级键，请重新选择', 'warning');
+    return;
+  }
+  const otherIdx = idx === 0 ? 1 : 0;
+  if (rsInfo.value.dks[otherIdx] === keyVal) {
+    showMessage('SOCD键值需不同，请重新选择', 'warning');
     return;
   }
   rsInfo.value.dks[idx] = keyVal;
@@ -139,9 +171,37 @@ const onClick = (keyCode) => {
   }
 };
 
+const getRowCol = (keys) => {
+  const keysArray = [];
+  const keyboardStore = useKeyboardStore();
+  for (let row = 0; row < keyboardStore.keyboards.length; row++) {
+    for (let col = 0; col < keyboardStore.keyboards[row].length; col++) {
+      if (keyboardStore.keyboards[row][col].keyValue === keys[0]) {
+        keysArray.push(`${row}-${col}`);
+      }
+      if (keyboardStore.keyboards[row][col].keyValue === keys[1]) {
+        keysArray.push(`${row}-${col}`);
+      }
+    }
+  }
+  return keysArray;
+};
+
 const save = async () => {
   try {
-    const res = await setRS(rsInfo.value);
+    const currentRsInfo = JSON.parse(JSON.stringify(rsInfo.value));
+
+    if (originalRsInfo && originalRsInfo.dks[0] && originalRsInfo.dks[1]) {
+      const keysArray = getRowCol(originalRsInfo.dks);
+      const [[row, col], [row2, col2]] = keysArray.map((item) => item.split('-').map(Number));
+      const advancedInfo1 = keyboardStore.keyboards[row][col].advancedKeys;
+      const advancedInfo2 = keyboardStore.keyboards[row2][col2].advancedKeys;
+      await delAdvancedConfig(advancedInfo1, 'rs');
+      await delAdvancedConfig(advancedInfo2, 'rs');
+    }
+    // const res = await setRS(rsInfo.value);
+    const res = await setRS(currentRsInfo);
+    keyboardStore.activeKeys = [];
     return res;
   } catch (error) {
     console.log('error', error);

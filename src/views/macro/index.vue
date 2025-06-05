@@ -13,6 +13,7 @@
       <macro-list v-model:macros="localMacros" @checkedMacroIdx="checkedMacroIdx" />
       <macro-data
         :macroData="currentMacroData"
+        :disabled="localMacros.length === 0"
         @updateMacro:data="updateMacroData"
         @updateMacro:mode="updateMacroMode"
         @updateMacro:clear="clearMacro"
@@ -43,10 +44,10 @@ const currentMacroData = computed(() => {
   if (isVersion2) {
     return macroStore.macroData[curMacroIdx.value];
   } else {
-    if (localMacros.value.length === 0 || !localMacros.value[curMacroIdx.value]) {
-      return [];
+    if (curMacroIdx.value === -1 || localMacros.value.length === 0) {
+      return { data: [] };
     }
-    return localMacros.value[curMacroIdx.value] || [];
+    return localMacros.value[curMacroIdx.value] || { data: [] };
   }
 });
 
@@ -94,6 +95,7 @@ const updateMacroData = async (data, settings) => {
       await setMacroV2({ macroId, data });
     }
   } else {
+    // TODO v1更新宏数据需要刷新已绑定的宏事件
     // 确保当前宏索引有效
     if (curMacroIdx.value >= 0 && curMacroIdx.value < localMacros.value.length) {
       // 如果当前宏不存在，则初始化它

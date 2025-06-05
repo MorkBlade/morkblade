@@ -17,6 +17,7 @@ const state = {
   activeKeys: [], // 存储当前选中的键帽值
   isDraging: false,
   inChangLight: false,
+  grabStatus: false,
 };
 
 const useKeyboardStore = defineStore('keyboard', {
@@ -175,6 +176,20 @@ const useKeyboardStore = defineStore('keyboard', {
       }
     },
 
+    // 选择两个按键
+    handleHighLevelKeyClick({ rowIndex, colIndex }) {
+      const keyId = `${rowIndex}-${colIndex}`;
+      const isKeySelected = this.activeKeys.includes(keyId);
+      if (this.activeKeys.length > 1 && !isKeySelected) {
+        this.activeKeys.shift();
+        this.activeKeys.push(keyId);
+      } else if (isKeySelected) {
+        this.activeKeys = this.activeKeys.filter((key) => key !== keyId);
+      } else {
+        this.activeKeys.push(keyId);
+      }
+    },
+
     // 全选所有按键
     selectAllKey() {
       const activeKeys = [];
@@ -245,6 +260,17 @@ const useKeyboardStore = defineStore('keyboard', {
       });
 
       this.activeKeys = allKeys.filter((key) => !this.activeKeys.includes(key));
+    },
+
+    // 更新抓取按键状态
+    updateGrabStatus(status) {
+      this.grabStatus = status;
+    },
+
+    async getKeyCode(params) {
+      console.log('xxxxxxxxxxxxxxxxxxxx');
+      const res = await services.getKeyCodeV2(params);
+      return res[0].keycode;
     },
   },
 });

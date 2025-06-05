@@ -11,7 +11,11 @@
             <template v-else>
               <p :class="{ 'hover-bg': !socdInfo.key[0] }" @mouseup="KeydropKey(0)">{{ keyText[2] }}</p>
             </template>
-            <div class="del_btn" @click="onClick('key1')" v-show="socdInfo.pos[0] && key1Index === 0"></div>
+            <div
+              class="del_btn"
+              @click="onClick('key1')"
+              v-show="socdInfo.pos[0] && key1Index === 0 && !keyboardStore.grabStatus"
+            ></div>
           </div>
         </div>
         <div>
@@ -23,7 +27,11 @@
             <template v-else>
               <p :class="{ 'hover-bg': !socdInfo.key[1] }" @mouseup="KeydropKey(1)">{{ keyText[3] }}</p>
             </template>
-            <div class="del_btn" @click="onClick" v-show="socdInfo.pos[1] && key2Index === 0"></div>
+            <div
+              class="del_btn"
+              @click="onClick"
+              v-show="socdInfo.pos[1] && key2Index === 0 && !keyboardStore.grabStatus"
+            ></div>
           </div>
         </div>
       </div>
@@ -79,7 +87,7 @@ import changedIcon from '@/assets/images/changed.svg';
 import downIcon1 from '/src/assets/images/down_icon.svg';
 import downIcon2 from '/src/assets/images/down_icon2.svg';
 
-const { setSocd } = useAdvancedHook();
+const { setSocd, delAdvancedConfig } = useAdvancedHook();
 const keyboardStore = useKeyboardStore();
 
 const defaultHeight = ref(0);
@@ -88,6 +96,7 @@ const rotate = ref(180);
 const isShow = ref(false);
 const key1Index = ref(-1);
 const key2Index = ref(-1);
+// const originalSocdInfo = ref(null);
 const DKS_MODES = ['后覆盖', '第一个键优先', '第二个键优先', '中性'];
 const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
 
@@ -95,6 +104,26 @@ const socdInfo = defineModel('socdInfo', {
   type: Object,
   default: () => ({ pos: [0, 0], key: [0, 0], type: 0, mode: 0, delay: 0 }),
 });
+
+const { originalSocdInfo } = defineProps({
+  originalSocdInfo: {
+    type: Object,
+    default: null,
+  },
+});
+
+const emits = defineEmits(['handleKeyTypeChange', 'handleDialoConfirm']);
+
+// watch(
+//   () => originalSocdInfo,
+//   (newVal) => {
+//     if (newVal) {
+//       // originalSocdInfo.value = JSON.parse(JSON.stringify(newVal));
+//       console.log('socd 源数据：', newVal);
+//     }
+//   },
+//   { deep: true },
+// );
 
 const keyText = computed(() => {
   return [
@@ -104,8 +133,6 @@ const keyText = computed(() => {
     keyboard[socdInfo.value.key[1]] || '',
   ];
 });
-
-const emits = defineEmits(['handleKeyTypeChange', 'handleDialoConfirm']);
 
 const toggleDropdown = () => {
   defaultHeight.value = defaultHeight.value ? 0 : scaleValue(200);
@@ -144,6 +171,11 @@ const saveConfig = () => {
     showMessage('请先选择需要修改的按键', 'warning');
     return;
   }
+  // if (originalSocdInfo && originalSocdInfo.key[0] && originalSocdInfo.key[1]) {
+  //   showMessage('当前按键已绑定SOCD，请先手动删除后再试', 'warning');
+  //   keyboardStore.activeKeys = [];
+  //   return;
+  // }
   isShow.value = true;
 };
 
@@ -163,30 +195,50 @@ const handleSocdKey = (keyVal) => {
     return;
   }
   if (!socdInfo.value.pos[0]) {
-    socdInfo.value.pos[0] = keyVal;
-    socdInfo.value.key[0] = keyVal;
+    if (socdInfo.value.key[1] === keyVal) {
+      showMessage('SOCD键值需不同，请重新选择', 'warning');
+    } else {
+      socdInfo.value.pos[0] = keyVal;
+      socdInfo.value.key[0] = keyVal;
+    }
+    // socdInfo.value.pos[0] = keyVal;
+    // socdInfo.value.key[0] = keyVal;
   } else if (!socdInfo.value.pos[1]) {
-    // if (socdInfo.value.key[0] === keyVal) {
-    //   showMessage('SOCD键值需不同，请重新选择', 'warning');
-    // } else {
-    //   socdInfo.value.pos[1] = keyVal;
-    //   socdInfo.value.key[1] = keyVal;
-    // }
-    socdInfo.value.pos[1] = keyVal;
-    socdInfo.value.key[1] = keyVal;
+    if (socdInfo.value.key[0] === keyVal) {
+      showMessage('SOCD键值需不同，请重新选择', 'warning');
+    } else {
+      socdInfo.value.pos[1] = keyVal;
+      socdInfo.value.key[1] = keyVal;
+    }
+    // socdInfo.value.pos[1] = keyVal;
+    // socdInfo.value.key[1] = keyVal;
   }
 };
 
-const KeydropKey = (idx) => {
+const KeydropKey = async (idx) => {
   const keyVal = keyboardStore.selectKey.keyCode;
   const unBinding = filterSocdAndRsKey(keyboardStore.keyboards, keyVal);
   if (unBinding) {
     showMessage('该键已绑定高级键，请重新选择', 'warning');
     return;
   }
-  // if (!socdInfo.value.pos[idx]) {
+
+  // Check if the key value already exists in the other position
+  const otherIdx = idx === 0 ? 1 : 0;
+  if (socdInfo.value.key[otherIdx] === keyVal) {
+    showMessage('SOCD键值需不同，请重新选择', 'warning');
+    return;
+  }
+
   socdInfo.value.pos[idx] = keyVal;
   socdInfo.value.key[idx] = keyVal;
+  // if (originalSocdInfo && originalSocdInfo.key[0] && originalSocdInfo.key[1]) {
+  //   const keysArray = getRowCol(originalSocdInfo.key);
+  //   const [[row, col], [row2, col2]] = keysArray.map((item) => item.split('-').map(Number));
+  //   const advancedInfo1 = keyboardStore.keyboards[row][col].advancedKeys;
+  //   const advancedInfo2 = keyboardStore.keyboards[row2][col2].advancedKeys;
+  //   await delAdvancedConfig(advancedInfo1, 'socd');
+  //   // await delAdvancedConfig(advancedInfo2, 'socd');
   // }
 };
 
@@ -209,9 +261,37 @@ const onClick = (keyCode) => {
   }
 };
 
+const getRowCol = (keys) => {
+  const keysArray = [];
+  const keyboardStore = useKeyboardStore();
+  for (let row = 0; row < keyboardStore.keyboards.length; row++) {
+    for (let col = 0; col < keyboardStore.keyboards[row].length; col++) {
+      if (keyboardStore.keyboards[row][col].keyValue === keys[0]) {
+        keysArray.push(`${row}-${col}`);
+      }
+      if (keyboardStore.keyboards[row][col].keyValue === keys[1]) {
+        keysArray.push(`${row}-${col}`);
+      }
+    }
+  }
+  return keysArray;
+};
+
 const save = async () => {
   try {
-    const res = await setSocd(socdInfo.value);
+    const currentSocdInfo = JSON.parse(JSON.stringify(socdInfo.value));
+
+    if (originalSocdInfo && originalSocdInfo.key[0] && originalSocdInfo.key[1]) {
+      const keysArray = getRowCol(originalSocdInfo.pos);
+      const [[row, col], [row2, col2]] = keysArray.map((item) => item.split('-').map(Number));
+      const advancedInfo1 = keyboardStore.keyboards[row][col].advancedKeys;
+      const advancedInfo2 = keyboardStore.keyboards[row2][col2].advancedKeys;
+      await delAdvancedConfig(advancedInfo1, 'socd');
+      await delAdvancedConfig(advancedInfo2, 'socd');
+    }
+    // const res = await setSocd(socdInfo.value); // Use the saved data
+    const res = await setSocd(currentSocdInfo); // Use the saved data
+    keyboardStore.activeKeys = [];
     return res;
   } catch (error) {
     console.log('error', error);
@@ -224,7 +304,7 @@ const reset = () => {
   socdInfo.value.type = 0;
   socdInfo.value.mode = 0;
   key1Index.value = -1;
-  key2Index.value = -2;
+  key2Index.value = -1;
 };
 defineExpose({ save, reset });
 </script>

@@ -40,6 +40,7 @@
         v-else-if="currentComponent === 'SOCD'"
         ref="childRef"
         v-model:socd-info="socdInfo"
+        :original-socd-info="originalSocdInfo"
         @handleKeyTypeChange="handleKeyTypeChange"
         @handleDialoConfirm="handleDialoConfirm"
       />
@@ -49,6 +50,7 @@
         v-model:rs-info="rsInfo"
         :edit="edit"
         :edit-key="editKey"
+        :original-rs-info="originalRsInfo"
         @handleKeyTypeChange="handleKeyTypeChange"
         @handleDialoConfirm="handleDialoConfirm"
       />
@@ -135,6 +137,8 @@ const isShow = ref(false);
 const delAdvancedType = ref('');
 const delAdvancedItem = ref(null);
 const isExternalUpdate = ref(false);
+const originalSocdInfo = ref(null);
+const originalRsInfo = ref(null);
 const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
 const performanceItem = ['普通', '单击/长按', 'DKS', 'SOCD', 'RS', 'TGL', 'MPT', 'END'];
 
@@ -190,7 +194,7 @@ watch(
           isExternalUpdate.value = true;
           const { dks: dksAll, trps, db, db2 } = advancedKeys.dks;
           Object.assign(dksInfo, { dks: [...dksAll], trps, db, db2 });
-          // console.log('当前选中键是dks!', advancedKeys.dks);
+          console.log('当前选中键是dks!', advancedKeys.dks);
           type = 'DKS';
           setTimeout(() => {
             isExternalUpdate.value = false;
@@ -222,38 +226,26 @@ watch(
           break;
         case 6:
         case 8:
+          if (!advancedKeys.socd) return;
           clickItem.value = 3;
-          const { socd, socdMode, delay, kcs } = advancedKeys.socd;
+          const { socd, socdMode, delay } = advancedKeys.socd;
           for (let row = 0; row < hookKeyboardStore.keyboards.length; row++) {
             for (let col = 0; col < hookKeyboardStore.keyboards[row].length; col++) {
-              if (isVersion2) {
-                if (
-                  hookKeyboardStore.keyboards[row][col].keyValue === socd[0] ||
-                  hookKeyboardStore.keyboards[row][col].keyValue === socd[1]
-                ) {
-                  // console.log(hookKeyboardStore.keyboards[row][col]);
-                  // console.log('includes: ', hookKeyboardStore.activeKeys.includes(`${row}-${col}`));
-                  if (!hookKeyboardStore.activeKeys.includes(`${row}-${col}`)) {
-                    hookKeyboardStore.activeKeys.push(`${row}-${col}`);
-                  }
-                }
-              } else {
-                if (
-                  hookKeyboardStore.keyboards[row][col].keyValue === kcs[0] ||
-                  hookKeyboardStore.keyboards[row][col].keyValue === kcs[1]
-                ) {
-                  if (!hookKeyboardStore.activeKeys.includes(`${row}-${col}`)) {
-                    hookKeyboardStore.activeKeys.push(`${row}-${col}`);
-                  }
+              if (
+                hookKeyboardStore.keyboards[row][col].keyValue === socd[0] ||
+                hookKeyboardStore.keyboards[row][col].keyValue === socd[1]
+              ) {
+                // console.log(hookKeyboardStore.keyboards[row][col]);
+                // console.log('includes: ', hookKeyboardStore.activeKeys.includes(`${row}-${col}`));
+                if (!hookKeyboardStore.activeKeys.includes(`${row}-${col}`)) {
+                  hookKeyboardStore.activeKeys.push(`${row}-${col}`);
                 }
               }
             }
           }
-          if (isVersion2) {
-            Object.assign(socdInfo, { pos: [...socd], key: [...socd], type: 0, mode: socdMode, delay });
-          } else {
-            Object.assign(socdInfo, { pos: [...socd], key: [...kcs], type: 0, mode: socdMode, delay });
-          }
+          Object.assign(socdInfo, { pos: [...socd], key: [...socd], type: 0, mode: socdMode, delay });
+          originalSocdInfo.value = JSON.parse(JSON.stringify(socdInfo));
+          // console.log('原始socd数据： ', originalSocdInfo.value);
           // console.log('当前选中键是socd!', advancedKeys.socd);
           break;
         case 7:
@@ -275,13 +267,16 @@ watch(
             }
           }
           Object.assign(rsInfo, { dks: [...rs] });
+          originalRsInfo.value = JSON.parse(JSON.stringify(rsInfo));
           // console.log('当前选中键是rs!', advancedKeys.rs);
           break;
         default:
+          originalSocdInfo.value = null;
           resetDefaultValue();
           break;
       }
     } else {
+      originalSocdInfo.value = null;
       resetDefaultValue();
     }
   },

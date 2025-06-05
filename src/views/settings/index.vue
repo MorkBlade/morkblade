@@ -543,6 +543,7 @@ const startUpdate = async () => {
     resetStates();
     regainKeyboardData();
   } finally {
+    console.log('upload finally');
     loading.value = false;
   }
 };
