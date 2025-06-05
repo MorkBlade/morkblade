@@ -262,7 +262,6 @@ const onClick = (keyCode) => {
 };
 
 const getRowCol = (keys) => {
-  console.log('keys: ', keys);
   const keysArray = [];
   const keyboardStore = useKeyboardStore();
   for (let row = 0; row < keyboardStore.keyboards.length; row++) {
@@ -276,12 +275,6 @@ const getRowCol = (keys) => {
     }
   }
   return keysArray;
-};
-
-const delayFunc = (ms) => {
-  return new Promise((resolve) => {
-    setTimeout(resolve, ms);
-  });
 };
 
 const save = async () => {

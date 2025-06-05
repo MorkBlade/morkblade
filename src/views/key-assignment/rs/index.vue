@@ -50,14 +50,18 @@ const rsInfo = defineModel('rsInfo', {
   default: () => ({ dks: [0, 0], delay: 0 }),
 });
 
-const { edit, editKey } = defineProps({
+const { edit, editKey, originalRsInfo } = defineProps({
   edit: { type: Boolean, default: false },
   editKey: { type: [String, Number], default: '' },
+  originalRsInfo: {
+    type: Object,
+    default: null,
+  },
 });
 
 const emits = defineEmits(['handleDialoConfirm', 'handleKeyTypeChange']);
 
-const { setRS } = useAdvancedHook();
+const { setRS, delAdvancedConfig } = useAdvancedHook();
 const keyboardStore = useKeyboardStore();
 
 const isShow = ref(false);
@@ -167,9 +171,37 @@ const onClick = (keyCode) => {
   }
 };
 
+const getRowCol = (keys) => {
+  const keysArray = [];
+  const keyboardStore = useKeyboardStore();
+  for (let row = 0; row < keyboardStore.keyboards.length; row++) {
+    for (let col = 0; col < keyboardStore.keyboards[row].length; col++) {
+      if (keyboardStore.keyboards[row][col].keyValue === keys[0]) {
+        keysArray.push(`${row}-${col}`);
+      }
+      if (keyboardStore.keyboards[row][col].keyValue === keys[1]) {
+        keysArray.push(`${row}-${col}`);
+      }
+    }
+  }
+  return keysArray;
+};
+
 const save = async () => {
   try {
-    const res = await setRS(rsInfo.value);
+    const currentRsInfo = JSON.parse(JSON.stringify(rsInfo.value));
+
+    console.log('originalRsInfooriginalRsInfo', originalRsInfo);
+    if (originalRsInfo && originalRsInfo.dks[0] && originalRsInfo.dks[1]) {
+      const keysArray = getRowCol(originalRsInfo.dks);
+      const [[row, col], [row2, col2]] = keysArray.map((item) => item.split('-').map(Number));
+      const advancedInfo1 = keyboardStore.keyboards[row][col].advancedKeys;
+      const advancedInfo2 = keyboardStore.keyboards[row2][col2].advancedKeys;
+      await delAdvancedConfig(advancedInfo1, 'rs');
+      await delAdvancedConfig(advancedInfo2, 'rs');
+    }
+    // const res = await setRS(rsInfo.value);
+    const res = await setRS(currentRsInfo);
     return res;
   } catch (error) {
     console.log('error', error);

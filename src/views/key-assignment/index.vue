@@ -50,6 +50,7 @@
         v-model:rs-info="rsInfo"
         :edit="edit"
         :edit-key="editKey"
+        :original-rs-info="originalRsInfo"
         @handleKeyTypeChange="handleKeyTypeChange"
         @handleDialoConfirm="handleDialoConfirm"
       />
@@ -137,6 +138,7 @@ const delAdvancedType = ref('');
 const delAdvancedItem = ref(null);
 const isExternalUpdate = ref(false);
 const originalSocdInfo = ref(null);
+const originalRsInfo = ref(null);
 const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
 const performanceItem = ['普通', '单击/长按', 'DKS', 'SOCD', 'RS', 'TGL', 'MPT', 'END'];
 
@@ -265,6 +267,7 @@ watch(
             }
           }
           Object.assign(rsInfo, { dks: [...rs] });
+          originalRsInfo.value = JSON.parse(JSON.stringify(rsInfo));
           // console.log('当前选中键是rs!', advancedKeys.rs);
           break;
         default:
