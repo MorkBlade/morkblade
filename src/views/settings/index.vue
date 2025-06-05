@@ -525,14 +525,13 @@ const startUpdate = async () => {
     // }
     // await showMessage('success', '更新成功');
     showMessage('升级成功');
+    resetStates();
+    regainKeyboardData();
+    emitter.emit('isUpdate', false);
+    await delay(1500);
     await deviceStore.getDoubleLighting();
     await appStore.getConfigID(isVersion2.value);
     await appStore.getBaseInfo(isVersion2.value);
-    emitter.emit('isUpdate', false);
-    await delay(1000);
-
-    resetStates();
-    regainKeyboardData();
   } catch (error) {
     console.error('更新失败:', error);
     // if (loadingId.value !== null) {
