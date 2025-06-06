@@ -33,7 +33,7 @@
           <el-slider v-model="mtInfo.delay" :min="0" :max="200" :step="1" />
         </div>
       </div>
-      <div class="save-btn" @click="handleKeyTypeChange">
+      <div class="save-btn" @click="saveConfig">
         <img src="@/assets/images/sure.svg" alt="" />
         <span>应用映射</span>
       </div>
@@ -111,11 +111,15 @@ const onMouseLe = (keyCode) => {
   }
 };
 
-const handleKeyTypeChange = () => {
+const saveConfig = () => {
   console.log(activeKeys.value);
   // console.log('handleKeyTypeChangehandleKeyTypeChangehandleKeyTypeChange', mtInfo.value.dks);
   if (!activeKeys.value.length) {
     showMessage('请先选择需要修改的按键', 'warning');
+    return;
+  }
+  if (!mtInfo.value.dks[0] && !mtInfo.value.dks[1]) {
+    showMessage('请选择需要关联的按键', 'warning');
     return;
   }
 
