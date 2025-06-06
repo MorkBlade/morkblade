@@ -8,9 +8,10 @@
         <p>更改延迟数值</p>
         <input
           type="number"
-          :value="itemData?.timeDifference.toFixed(2)"
+          :value="parseFloat(itemData?.timeDifference).toFixed(2)"
           :style="{ margin: `${scaleValue(10)}px 0 ${scaleValue(20)}px 0` }"
           @input="changeDelayVal"
+          @blur="verifyDelay"
         />
         <p>更改按键状态:</p>
         <div class="btn-group">
@@ -32,7 +33,7 @@
     <template v-else>
       <div class="outer-box">
         <p :style="{ marginTop: `${scaleValue(50)}px` }">更改延迟数值 单位(ms)</p>
-        <input type="number" :value="itemData?.timeDifference.toFixed(2)" @input="changeDelayVal" />
+        <input type="number" :value="itemData?.timeDifference.toFixed(2)" @input="changeDelayVal" @blur="verifyDelay" />
       </div>
     </template>
   </div>
@@ -158,7 +159,7 @@ watch(
     if (newValue && newValue.keyType === 'key') {
       // 根据传入的按键状态设置 isActive
       isActive.value = newValue.status ? 'down' : 'up';
-      console.log('watch itemData.value', newValue);
+      // console.log('watch itemData.value', newValue);
     } else {
       // 非按键项重置 isActive
       isActive.value = '';
@@ -182,9 +183,19 @@ const changeEventStatus = (status) => {
 };
 
 const changeDelayVal = (e) => {
-  const value = parseInt(e.target.value) || 0;
+  const value = parseFloat(e.target.value).toFixed(2) || 0;
+  // if (itemData.value) emit('update:delay', value);
+};
 
-  if (itemData.value) emit('update:delay', value);
+const verifyDelay = (e) => {
+  const inputVal = e.target.value;
+  let delay;
+  if (inputVal < 0 || !inputVal) {
+    delay = 0;
+  } else {
+    delay = inputVal;
+  }
+  emit('update:delay', delay);
 };
 
 const changeKey = () => {

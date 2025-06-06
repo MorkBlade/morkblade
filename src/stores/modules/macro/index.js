@@ -16,6 +16,7 @@ const useMacroStore = defineStore('macro', {
     },
     usedMacro: [],
     macroData: [],
+    recording: false,
   }),
 
   actions: {
@@ -77,6 +78,10 @@ const useMacroStore = defineStore('macro', {
       // resetKeys();
       this.selectMacro = null;
       return result;
+    },
+
+    updateMacroRecord(flag) {
+      this.recording = flag;
     },
 
     processDelays(data) {

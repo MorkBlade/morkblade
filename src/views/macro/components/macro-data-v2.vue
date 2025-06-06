@@ -10,7 +10,7 @@
             :class="[
               // item.keyType === 'key' ? 'key' : 'delay',
               item.keyCode ? 'key' : 'delay',
-              { 'selected-item': selectedCreateTime === i + item.delay },
+              { 'selected-item': selectedIdx === i },
               { dragging: draggingIndex === i },
             ]"
             :style="{
@@ -20,7 +20,7 @@
             }"
             @click="changeItemInfo($event, item, i)"
           >
-            <span class="handle" @mousedown="startDrag($event, i, item.delay)"></span>
+            <span class="handle" @mousedown="startDrag($event, i)"></span>
             <div class="content">
               <img :src="item.status === 0 ? keyupIcon : keydownIcon" alt="" v-if="item.keyCode" />
               <span :class="item.keyCode ? 'keyVal' : 'delayVal'">
@@ -50,6 +50,7 @@
               'is-active': BottomBtnIdx === idx,
               'is-pending': switchClass(idx),
               'clear-btn': idx === operationNameList.length - 1,
+              recording: idx !== 0 && macroStore.recording,
             }"
             @click="onClick(idx)"
             @mouseenter="onMouseEnter(idx)"
@@ -79,6 +80,7 @@
 <script setup>
 import { scaleValue } from '@/utils/responsive.js';
 import { showMessage } from '@/utils/message';
+import { useMacroStore } from '@/stores';
 
 import macroModeV2 from './macro-mode-v2.vue';
 import macroEventsV2 from './macro-events-v2.vue';
@@ -97,6 +99,7 @@ const { macroData } = defineProps({
 });
 
 const emit = defineEmits(['updateMacro:data', 'updateMacro:mode', 'updateMacro:clear']);
+const macroStore = useMacroStore();
 
 let lastKeyupEventTime = null; // 按键抬起时间戳
 let lastKeydownEventTime = null; // 按键按下时间戳
@@ -111,7 +114,7 @@ const macroDataItem = ref(null); // macro.data中某一项
 const curMacro = ref([]); // macro.data
 
 const selectedItemIndex = ref(null); // 当前选中macro.data的index
-const selectedCreateTime = ref(null); // macro.data高亮标识
+const selectedIdx = ref(null); // macro.data高亮标识
 const lastEventTime = ref(null);
 
 const operationNameList = [
@@ -298,6 +301,7 @@ const onClick = (idx) => {
   switch (idx) {
     case 0:
       isStart.value = !isStart.value;
+      macroStore.updateMacroRecord(isStart.value);
       // console.log('开始录制');
       if (isStart.value) {
         lastKeyupEventTime = Date.now();
@@ -463,7 +467,8 @@ const changeItemInfo = (e, item, index) => {
   e.stopPropagation();
   macroDataItem.value = JSON.parse(JSON.stringify(item));
   selectedItemIndex.value = index;
-  selectedCreateTime.value = index + item.delay;
+  // selectedIdx.value = index + item.delay;
+  selectedIdx.value = index;
 };
 
 const onMouseEnter = (idx) => {
@@ -473,9 +478,10 @@ const onMouseLeave = (idx) => {
   BottomBtnIdx.value = null;
 };
 
-const startDrag = (event, index, time) => {
+const startDrag = (event, index) => {
   draggingIndex.value = index;
-  selectedCreateTime.value = index + time;
+  // selectedIdx.value = index + time;
+  selectedIdx.value = index;
   // 记录鼠标开始拖动时的位置
   startY = event.clientY;
 
@@ -695,7 +701,6 @@ const updateMacroItemStatus = (newStatus) => {
 const macroModeSettings = computed(() => {
   // 查找当前选中宏的类型设置
   if (macroData) {
-    console.log('macroModeSettings', macroData, macroData.mode, macroData.repNum);
     return {
       mode: macroData.mode || 0,
       repeatCount: macroData.repNum || 0,
@@ -910,6 +915,7 @@ const updateMacroMode = (newSettings) => {
       }
 
       span {
+        transition: color 0.2s ease-in-out;
         font-size: var(--font-size-18);
         color: #fff;
         position: absolute;
@@ -917,14 +923,24 @@ const updateMacroMode = (newSettings) => {
         left: var(--spacing-65);
       }
     }
-    .is-active {
+    & .is-active {
       background-image: url('/src/assets/images/save_bgc.svg');
     }
-    .is-pending {
+    & .is-pending {
       background-image: url('/src/assets/images/pending_bg.svg');
     }
-    .clear-btn:hover {
+    & .clear-btn:hover {
       background-image: url('/src/assets/images/pending_bg.svg');
+    }
+    & .recording {
+      cursor: not-allowed;
+      &:hover {
+        background-image: url('/src/assets/images/save_bg.svg');
+      }
+
+      > span {
+        color: #ccc;
+      }
     }
   }
 }

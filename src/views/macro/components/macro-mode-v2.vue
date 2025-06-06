@@ -20,14 +20,14 @@
           <button
             class="decrement-btn"
             @click="decrementValue('repeatCount')"
-            :disabled="macroSettings.repeatCount <= 0"
+            :disabled="macroSettings.repeatCount <= 1"
           >
             -
           </button>
           <input
             class="value"
             type="number"
-            :min="0"
+            :min="1"
             v-model.number="macroSettings.repeatCount"
             @change="validateRepeatCount"
           />
@@ -129,10 +129,13 @@ const incrementValue = (key) => {
 
 // 向父组件发送更新的设置
 const emitSettingsUpdate = () => {
+  if (macroSettings.mode < 4 && macroMode >= 4) {
+    macroSettings.repeatCount = 1;
+  }
   timer && clearTimeout(timer);
   timer = setTimeout(() => {
     emit('update:settings', { ...macroSettings });
-  }, 500);
+  }, 100);
 };
 
 // 监听属性变化，更新设置
@@ -140,7 +143,7 @@ watch(
   () => [macroMode, macroRepeatCount],
   ([newMode, newCount, newInterval]) => {
     macroSettings.mode = newMode;
-    macroSettings.repeatCount = newCount;
+    macroSettings.repeatCount = newCount === 0 ? 1 : newCount;
   },
 );
 
