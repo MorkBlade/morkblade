@@ -178,13 +178,15 @@ import services from '@/services/index.js';
 import emitter from '@/utils/app-emitter';
 import { scaleValue } from '@/utils/responsive.js';
 import { showMessage } from '@/utils/message';
-import { genFileId } from 'element-plus';
+import { genFileId, ElLoading } from 'element-plus';
 import { useAppStore, useDeviceStore, usePerformanceStore, useKeyboardStore, useMacroStore } from '@/stores';
 import { useAdvancedHook, useLightingHook } from '@/hooks';
 import { httpService } from '@/http/api/index.js';
 
 import mDialog from '@/components/dialog.vue';
 import dropMenu from '@/components/drop-menu.vue';
+import { onBeforeMount } from 'vue';
+import { onBeforeUnmount } from 'vue';
 
 const router = useRouter();
 const appStore = useAppStore();
@@ -222,6 +224,7 @@ const progress = reactive({
   current: 0,
   total: 0,
 });
+const elLoading = ref(null);
 const isVersion2 = ref(localStorage.getItem('keyboardVersion') === 'v2');
 const urlList = ['/bin-data/update_esports.bin', '/bin-data/update_highlight.bin', '/bin-data/update_beta.bin'];
 
@@ -450,6 +453,7 @@ const handleFileChange = (files) => {
     if (file.name.toLowerCase().endsWith('.bin')) {
       console.log("file.name.toLowerCase().endsWith('.bin')", file.name.toLowerCase().endsWith('.bin'));
       const reader = new FileReader();
+      onlineUpload.value = false;
       selectedFile.value = file;
       fileList.value = files;
       reader.onload = (evt) => {
@@ -490,6 +494,15 @@ const startUpdate = async () => {
     loading.value = true;
     // updateProgress.value = 0;
     progress.value = 0;
+    elLoading.value = ElLoading.service({
+      lock: true,
+      text: '升级中...',
+      background: 'rgba(0, 0, 0, 0.5)',
+      customClass: 'custom-loading',
+    });
+    // setTimeout(() => {
+    //   elLoading.close();
+    // }, 2000);
 
     // await showMessage('loading', UPDATE_STEPS.ENTER_BOOT);
     // await deviceStore.appToBoot();
@@ -525,6 +538,7 @@ const startUpdate = async () => {
     // }
     // await showMessage('success', '更新成功');
     showMessage('升级成功');
+    elLoading.value.close();
     resetStates();
     regainKeyboardData();
     emitter.emit('isUpdate', false);
@@ -539,6 +553,7 @@ const startUpdate = async () => {
     //   await delay(100);
     // }
     // await showMessage('error', error.message || '更新失败，请重试');
+    elLoading.value.close();
     showMessage('升级失败，请重试', 'warning');
     resetStates();
     regainKeyboardData();
@@ -641,361 +656,397 @@ const getOnlineFirmWarePack = async (url) => {
       console.error('Error fetching the .bin file:', error);
     });
 };
+
+onBeforeUnmount(() => {
+  if (elLoading.value) {
+    elLoading.value.close();
+    elLoading.value = null;
+  }
+});
 </script>
 
 <style scoped lang="scss">
-.settings-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-  font-size: var(--font-size-15);
-  font-family: 'CN Heavy';
-  color: #cccccc;
-  position: absolute;
-  left: 0;
-  top: var(--spacing-150);
+// .settings-container {
+//   display: flex;
+//   flex-direction: column;
+//   align-items: center;
+//   width: 100%;
+//   font-size: var(--font-size-15);
+//   font-family: 'CN Heavy';
+//   color: #cccccc;
+//   position: absolute;
+//   left: 0;
+//   top: var(--spacing-150);
 
-  .settings-center {
-    width: var(--size-1500);
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    margin-top: var(--spacing-25);
-  }
+//   .settings-center {
+//     width: var(--size-1500);
+//     display: flex;
+//     flex-wrap: wrap;
+//     justify-content: space-between;
+//     margin-top: var(--spacing-25);
+//   }
 
-  .device-info,
-  .firmware-version,
-  .device-set,
-  .firmware-set {
-    width: var(--size-700);
-    height: var(--setting-item-height);
-    margin-bottom: var(--spacing-30);
-    background-image: url('@/assets/images/settings_bg1.svg');
-    background-size: cover;
-    background-repeat: no-repeat;
-    position: relative;
-    box-sizing: border-box;
-  }
+//   .device-info,
+//   .firmware-version,
+//   .device-set,
+//   .firmware-set {
+//     width: var(--size-700);
+//     height: var(--setting-item-height);
+//     margin-bottom: var(--spacing-30);
+//     background-image: url('@/assets/images/settings_bg1.svg');
+//     background-size: cover;
+//     background-repeat: no-repeat;
+//     position: relative;
+//     box-sizing: border-box;
+//   }
 
-  .update-log {
-    width: var(--size-1500);
-    height: var(--size-200);
-    border-radius: var(--size-20);
-    border: var(--spacing-3) solid rgb(37, 37, 37);
-    box-sizing: border-box;
-    background-color: #000000;
-  }
+//   .update-log {
+//     width: var(--size-1500);
+//     height: var(--size-200);
+//     border-radius: var(--size-20);
+//     border: var(--spacing-3) solid rgb(37, 37, 37);
+//     box-sizing: border-box;
+//     background-color: #000000;
+//   }
 
-  p {
-    margin: var(--spacing-20) 0 var(--spacing-15) var(--spacing-30);
-    font-size: var(--font-size-15);
-    font-family: 'CN Heavy';
-    color: #cccccc;
-  }
+//   p {
+//     margin: var(--spacing-20) 0 var(--spacing-15) var(--spacing-30);
+//     font-size: var(--font-size-15);
+//     font-family: 'CN Heavy';
+//     color: #cccccc;
+//   }
 
-  .reset-box {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: var(--spacing-20);
-    font-family: 'CN Heavy';
-    color: #ffffff;
+//   .reset-box {
+//     display: flex;
+//     align-items: center;
+//     justify-content: center;
+//     margin-top: var(--spacing-20);
+//     font-family: 'CN Heavy';
+//     color: #ffffff;
 
-    & span {
-      font-size: var(--font-size-16);
+//     & span {
+//       font-size: var(--font-size-16);
+//     }
+//   }
+
+//   .content-box {
+//     display: flex;
+//     justify-content: center;
+//     font-size: var(--font-size-16);
+//     font-family: 'CN Heavy';
+//     color: #ffffff;
+
+//     & span {
+//       margin-top: var(--spacing-20);
+//     }
+//     & span:first-child {
+//       margin-right: var(--spacing-10);
+//     }
+//   }
+
+//   .firmware-update {
+//     margin-top: var(--spacing-20);
+//     font-family: 'CN Heavy';
+//     color: #ffffff;
+
+//     &__choose-version {
+//       display: flex;
+//       align-items: center;
+//       justify-content: center;
+
+//       > span {
+//         font-size: var(--font-size-16);
+//       }
+
+//       & .online-upload {
+//         width: var(--size-200);
+//         height: var(--size-40);
+//         box-sizing: border-box;
+//         margin: 0 var(--spacing-10);
+//         text-align: center;
+//         // line-height: var(--size-40);
+//         border-radius: var(--spacing-10);
+//         border: var(--spacing-2) solid rgb(37, 37, 37);
+//         cursor: pointer;
+//         position: relative;
+
+//         > span {
+//           display: inline-block;
+//           margin-top: var(--spacing-6);
+//           transition: all 0.2s ease-in-out;
+//           &.hasFile {
+//             margin-top: 0;
+//           }
+//         }
+
+//         & .online-pack-name {
+//           color: #ccc;
+//           font-size: 10px;
+//           margin: 0;
+//         }
+
+//         ::v-deep(.el-progress__text) {
+//           text-align: left;
+//         }
+//       }
+//     }
+
+//     & div + div {
+//       display: flex;
+//       align-items: center;
+//       justify-content: center;
+//       margin-top: var(--spacing-20);
+//     }
+//     .loading {
+//       color: rgba(255, 255, 255, 0.5);
+//       cursor: not-allowed;
+//     }
+
+//     .uploader {
+//       width: var(--size-200);
+//       height: var(--size-40);
+//       margin: 0 var(--spacing-10);
+//       display: flex;
+//       align-items: center;
+//       flex-direction: column;
+//       box-sizing: border-box;
+//       border-radius: var(--spacing-10);
+//       border: var(--spacing-2) solid rgb(37, 37, 37);
+//       position: relative;
+
+//       &-text {
+//         margin-top: var(--spacing-6);
+//         transition: all 0.2s ease-in-out;
+//         &.hasFile {
+//           margin-top: 0;
+//         }
+//       }
+
+//       &-progress {
+//         width: 100%;
+//         margin-left: var(--spacing-18);
+//         position: absolute;
+//         bottom: 0;
+
+//         ::v-deep(.el-progress-bar) {
+//           width: var(--size-120);
+//         }
+//       }
+//     }
+//     ::v-deep(.el-upload:focus) {
+//       // display: none;
+//       color: rgb(255, 255, 255);
+//     }
+//     ::v-deep(.el-upload-list) {
+//       // display: none;
+//       width: var(--size-200);
+//       margin-top: calc(var(--spacing-8) * -1);
+//     }
+//     ::v-deep(.el-icon) {
+//       display: none;
+//     }
+//     ::v-deep(.el-upload-list__item:hover) {
+//       background: none;
+//     }
+//     ::v-deep(.el-upload-list__item-file-name) {
+//       font-size: var(--font-size-10);
+//     }
+//   }
+
+//   .rate-of-return {
+//     display: flex;
+//     align-items: center;
+//     justify-content: center;
+//     font-family: 'CN Heavy';
+//     color: #ffffff;
+
+//     & span {
+//       font-size: var(--font-size-16);
+//     }
+//   }
+//   .cover-list {
+//     width: var(--size-170);
+//     height: var(--size-40);
+//     margin-left: var(--spacing-10);
+//     display: flex;
+//     align-items: center;
+//     background-image: url('@/assets/images/select_bg.svg');
+//     background-size: cover;
+//     background-repeat: no-repeat;
+//     position: relative;
+//     cursor: pointer;
+
+//     .change-icon {
+//       width: var(--size-20);
+//       height: var(--size-20);
+//       object-fit: fill;
+//       margin-left: calc(var(--spacing-10) + var(--spacing-1));
+//     }
+//     .down-icon {
+//       width: var(--size-13);
+//       height: var(--size-8);
+//       object-fit: fill;
+//       transition: transform 0.3s ease-in-out;
+//     }
+
+//     span {
+//       border: none;
+//       color: #fff;
+//       display: inline-block;
+//       margin: var(--spacing-8) 0 0 var(--spacing-16);
+//       height: calc(var(--spacing-30) + var(--spacing-1));
+//       font-size: var(--font-size-18);
+//       font-family: 'CN Heavy';
+//       margin: var(--spacing-5) var(--spacing-10) 0 var(--spacing-40);
+//     }
+
+//     .drop-list {
+//       position: absolute;
+//       top: var(--spacing-45);
+//       left: var(--spacing-4);
+//       z-index: 2;
+//       box-sizing: border-box;
+//       padding-right: var(--spacing-5);
+//       overflow-y: scroll;
+//       transition: height 0.3s ease;
+//       background-color: #000;
+
+//       ul {
+//         list-style-type: none;
+//         li {
+//           width: var(--size-160);
+//           height: var(--size-40);
+//           padding: var(--spacing-10);
+//           text-align: center;
+//           margin-bottom: var(--spacing-5);
+//           color: #fff;
+//           font-family: 'CN Heavy';
+//           background-image: url('@/assets/images/item_bg.svg');
+//           background-size: cover;
+//           background-position: center;
+//           background-repeat: no-repeat;
+//         }
+
+//         .checked-item {
+//           background-image: url('@/assets/images/item_bg_checked.gif');
+//         }
+//       }
+//     }
+
+//     /* 滚动条整体样式 */
+//     .drop-list::-webkit-scrollbar {
+//       height: var(--spacing-10);
+//       width: var(--spacing-5);
+//     }
+
+//     /* 滚动条轨道 */
+//     .drop-list::-webkit-scrollbar-track {
+//       background: transparent;
+//     }
+
+//     /* 滚动条手柄 */
+//     .drop-list::-webkit-scrollbar-thumb {
+//       background: rgb(37, 37, 37);
+//     }
+
+//     /* 隐藏滚动条 */
+//     .drop-list::-webkit-scrollbar {
+//       display: none;
+//     }
+
+//     /* 当容器被悬停时显示滚动条 */
+//     .drop-list:hover::-webkit-scrollbar {
+//       display: block;
+//     }
+//   }
+//   .is-selected {
+//     background-image: url('@/assets/images/selected_bg.gif');
+
+//     span {
+//       color: #000 !important;
+//     }
+//   }
+
+//   .save-btn,
+//   .update-btn {
+//     width: var(--size-170);
+//     height: var(--size-40);
+//     margin-left: var(--spacing-10);
+//     background-image: url('/src/assets/images/save_bg.svg');
+//     background-size: cover;
+//     background-repeat: no-repeat;
+//     position: relative;
+//     cursor: pointer;
+
+//     img {
+//       width: var(--size-20);
+//       height: var(--size-20);
+//       object-fit: fill;
+//       position: absolute;
+//       top: var(--spacing-10);
+//       left: var(--spacing-10);
+//     }
+
+//     span {
+//       width: calc(var(--size-100) + var(--spacing-9));
+//       text-align: center;
+//       font-size: var(--font-size-18);
+//       color: #fff;
+//       position: absolute;
+//       top: var(--spacing-6);
+//       left: var(--spacing-50);
+//     }
+//   }
+//   .is-active {
+//     background-image: url('/src/assets/images/save_bgc.svg');
+//   }
+
+//   .outer-box {
+//     display: flex;
+
+//     .inter-box {
+//       flex: 1;
+//       display: flex;
+//       flex-direction: column;
+//       align-items: center;
+//       margin-top: var(--spacing-10);
+//       font-size: var(--font-size-16);
+//       font-family: 'CN Heavy';
+//       color: #ffffff;
+
+//       div {
+//         margin-bottom: var(--spacing-10);
+//       }
+//     }
+//   }
+// }
+@use './index.scss';
+</style>
+
+<style lang="scss">
+.custom-loading {
+  .el-loading-spinner {
+    .circular {
+      width: 42px;
+      height: 42px;
+      animation: loading-rotate 2s linear infinite;
     }
-  }
 
-  .content-box {
-    display: flex;
-    justify-content: center;
-    font-size: var(--font-size-16);
-    font-family: 'CN Heavy';
-    color: #ffffff;
-
-    & span {
-      margin-top: var(--spacing-20);
-    }
-    & span:first-child {
-      margin-right: var(--spacing-10);
-    }
-  }
-
-  .firmware-update {
-    margin-top: var(--spacing-20);
-    font-family: 'CN Heavy';
-    color: #ffffff;
-
-    &__choose-version {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      > span {
-        font-size: var(--font-size-16);
-      }
-
-      & .online-upload {
-        width: var(--size-200);
-        height: var(--size-40);
-        box-sizing: border-box;
-        margin: 0 var(--spacing-10);
-        text-align: center;
-        // line-height: var(--size-40);
-        border-radius: var(--spacing-10);
-        border: var(--spacing-2) solid rgb(37, 37, 37);
-        cursor: pointer;
-        position: relative;
-
-        > span {
-          display: inline-block;
-          margin-top: var(--spacing-6);
-          transition: all 0.2s ease-in-out;
-          &.hasFile {
-            margin-top: 0;
-          }
-        }
-
-        & .online-pack-name {
-          color: #ccc;
-          font-size: 10px;
-          margin: 0;
-        }
-
-        ::v-deep(.el-progress__text) {
-          text-align: left;
-        }
-      }
-    }
-
-    & div + div {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-top: var(--spacing-20);
-    }
-    .loading {
-      color: rgba(255, 255, 255, 0.5);
-      cursor: not-allowed;
-    }
-
-    .uploader {
-      width: var(--size-200);
-      height: var(--size-40);
-      margin: 0 var(--spacing-10);
-      display: flex;
-      align-items: center;
-      flex-direction: column;
-      box-sizing: border-box;
-      border-radius: var(--spacing-10);
-      border: var(--spacing-2) solid rgb(37, 37, 37);
-      position: relative;
-
-      &-text {
-        margin-top: var(--spacing-6);
-        transition: all 0.2s ease-in-out;
-        &.hasFile {
-          margin-top: 0;
-        }
-      }
-
-      &-progress {
-        width: 100%;
-        margin-left: var(--spacing-18);
-        position: absolute;
-        bottom: 0;
-
-        ::v-deep(.el-progress-bar) {
-          width: var(--size-120);
-        }
-      }
-    }
-    ::v-deep(.el-upload:focus) {
-      // display: none;
-      color: rgb(255, 255, 255);
-    }
-    ::v-deep(.el-upload-list) {
-      // display: none;
-      width: var(--size-200);
-      margin-top: calc(var(--spacing-8) * -1);
-    }
-    ::v-deep(.el-icon) {
-      display: none;
-    }
-    ::v-deep(.el-upload-list__item:hover) {
-      background: none;
-    }
-    ::v-deep(.el-upload-list__item-file-name) {
-      font-size: var(--font-size-10);
-    }
-  }
-
-  .rate-of-return {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'CN Heavy';
-    color: #ffffff;
-
-    & span {
-      font-size: var(--font-size-16);
-    }
-  }
-  .cover-list {
-    width: var(--size-170);
-    height: var(--size-40);
-    margin-left: var(--spacing-10);
-    display: flex;
-    align-items: center;
-    background-image: url('@/assets/images/select_bg.svg');
-    background-size: cover;
-    background-repeat: no-repeat;
-    position: relative;
-    cursor: pointer;
-
-    .change-icon {
-      width: var(--size-20);
-      height: var(--size-20);
-      object-fit: fill;
-      margin-left: calc(var(--spacing-10) + var(--spacing-1));
-    }
-    .down-icon {
-      width: var(--size-13);
-      height: var(--size-8);
-      object-fit: fill;
-      transition: transform 0.3s ease-in-out;
-    }
-
-    span {
-      border: none;
-      color: #fff;
-      display: inline-block;
-      margin: var(--spacing-8) 0 0 var(--spacing-16);
-      height: calc(var(--spacing-30) + var(--spacing-1));
-      font-size: var(--font-size-18);
+    .el-loading-text {
+      color: #91bc00;
+      font-size: 16px;
       font-family: 'CN Heavy';
-      margin: var(--spacing-5) var(--spacing-10) 0 var(--spacing-40);
-    }
-
-    .drop-list {
-      position: absolute;
-      top: var(--spacing-45);
-      left: var(--spacing-4);
-      z-index: 2;
-      box-sizing: border-box;
-      padding-right: var(--spacing-5);
-      overflow-y: scroll;
-      transition: height 0.3s ease;
-      background-color: #000;
-
-      ul {
-        list-style-type: none;
-        li {
-          width: var(--size-160);
-          height: var(--size-40);
-          padding: var(--spacing-10);
-          text-align: center;
-          margin-bottom: var(--spacing-5);
-          color: #fff;
-          font-family: 'CN Heavy';
-          background-image: url('@/assets/images/item_bg.svg');
-          background-size: cover;
-          background-position: center;
-          background-repeat: no-repeat;
-        }
-
-        .checked-item {
-          background-image: url('@/assets/images/item_bg_checked.gif');
-        }
-      }
-    }
-
-    /* 滚动条整体样式 */
-    .drop-list::-webkit-scrollbar {
-      height: var(--spacing-10);
-      width: var(--spacing-5);
-    }
-
-    /* 滚动条轨道 */
-    .drop-list::-webkit-scrollbar-track {
-      background: transparent;
-    }
-
-    /* 滚动条手柄 */
-    .drop-list::-webkit-scrollbar-thumb {
-      background: rgb(37, 37, 37);
-    }
-
-    /* 隐藏滚动条 */
-    .drop-list::-webkit-scrollbar {
-      display: none;
-    }
-
-    /* 当容器被悬停时显示滚动条 */
-    .drop-list:hover::-webkit-scrollbar {
-      display: block;
-    }
-  }
-  .is-selected {
-    background-image: url('@/assets/images/selected_bg.gif');
-
-    span {
-      color: #000 !important;
     }
   }
 
-  .save-btn,
-  .update-btn {
-    width: var(--size-170);
-    height: var(--size-40);
-    margin-left: var(--spacing-10);
-    background-image: url('/src/assets/images/save_bg.svg');
-    background-size: cover;
-    background-repeat: no-repeat;
-    position: relative;
-    cursor: pointer;
-
-    img {
-      width: var(--size-20);
-      height: var(--size-20);
-      object-fit: fill;
-      position: absolute;
-      top: var(--spacing-10);
-      left: var(--spacing-10);
-    }
-
-    span {
-      width: calc(var(--size-100) + var(--spacing-9));
-      text-align: center;
-      font-size: var(--font-size-18);
-      color: #fff;
-      position: absolute;
-      top: var(--spacing-6);
-      left: var(--spacing-50);
-    }
+  .el-loading-spinner .path {
+    stroke: #91bc00;
   }
-  .is-active {
-    background-image: url('/src/assets/images/save_bgc.svg');
-  }
+}
 
-  .outer-box {
-    display: flex;
-
-    .inter-box {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin-top: var(--spacing-10);
-      font-size: var(--font-size-16);
-      font-family: 'CN Heavy';
-      color: #ffffff;
-
-      div {
-        margin-bottom: var(--spacing-10);
-      }
-    }
+@keyframes loading-rotate {
+  100% {
+    transform: rotate(360deg);
   }
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
   <div class="navbar-container">
-    <el-menu mode="horizontal" :default-active="defaultActive" :ellipsis="false" router>
+    <el-menu mode="horizontal" :default-active="defaultActive" :ellipsis="false">
       <el-menu-item
         class="menu-item"
         v-for="(ite, idx) in routesInfo"
@@ -8,7 +8,7 @@
         :index="ite.path"
         background-color="#000000"
         @click="handleClick(ite, idx)"
-        :class="getNavItemClass(ite, idx)"
+        :class="[getNavItemClass(ite, idx), { recording: macroStore.recording }]"
       >
         <template v-slot:title>
           <span :class="{ 'active-text': defaultActive === ite.path }">{{ ite.name }}</span>
@@ -16,13 +16,13 @@
         </template>
       </el-menu-item>
     </el-menu>
-    <div class="best-version" v-if="hasNewVersion"></div>
+    <div class="best-version" :style="{ opacity: hasNewVersion ? 1 : 0 }"></div>
   </div>
 </template>
 
 <script setup>
 import emitter from '@/utils/app-emitter';
-import { useAppStore, useDeviceStore, useKeyboardStore } from '@/stores';
+import { useAppStore, useMacroStore, useDeviceStore, useKeyboardStore } from '@/stores';
 import { httpService } from '@/http/api/index.js';
 
 import performanceW from '@/assets/images/performance-w.svg';
@@ -79,9 +79,11 @@ const route = useRoute();
 const router = useRouter();
 const defaultActive = ref('/performance');
 const appStore = useAppStore();
+const macroStore = useMacroStore();
 const deviceStore = useDeviceStore();
 const keyboardStore = useKeyboardStore();
-const hasNewVersion = ref(false);
+// const hasNewVersion = ref(false);
+const bestVersion = ref(null);
 const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
 
 const getNavItemClass = computed(() => {
@@ -101,6 +103,8 @@ const getNavItemClass = computed(() => {
   };
 });
 
+const hasNewVersion = computed(() => bestVersion.value > appStore.baseInfo?.appVersion);
+
 watch(
   () => route.path,
   (newPath) => {
@@ -119,8 +123,8 @@ onMounted(() => {
       // const res = await httpService.getFirmwarePack({ board_id: '00150004', vid: '1CA6', pid: '1504' });
       const res = await httpService.getFirmwarePack(params);
       if (res && res.firmware.firmware_version) {
-        const bestVersion = res.firmware.firmware_version.replace('v', '');
-        hasNewVersion.value = bestVersion > appStore.baseInfo?.appVersion;
+        bestVersion.value = res.firmware.firmware_version.replace('v', '');
+        // hasNewVersion.value = bestVersion > appStore.baseInfo?.appVersion;
         // console.log('onMounted log res: ', bestVersion > appStore.baseInfo?.appVersion);
       }
     }, 200);
@@ -134,6 +138,7 @@ const getIconSrc = (ite) => {
 };
 
 const handleClick = async (ite) => {
+  if (macroStore.recording) return;
   if (defaultActive.value !== ite.path) {
     // 确保只有当路径改变时才进行更新
     defaultActive.value = ite.path; // 更新默认激活的菜单项
@@ -187,7 +192,19 @@ const handleClick = async (ite) => {
 
     // 默认状态下的文本颜色
     span {
+      transition: color 0.2s ease-in-out;
       color: #ffffff;
+    }
+
+    &.recording {
+      cursor: not-allowed;
+      span {
+        color: rgba(255, 255, 255, 0.5);
+      }
+
+      .active-text {
+        color: rgba(0, 0, 0, 0.7);
+      }
     }
 
     // 激活状态下的文本颜色
@@ -273,9 +290,14 @@ const handleClick = async (ite) => {
     height: var(--size-10);
     border-radius: 50%;
     background-color: red;
+    transition: opacity 0.2s linear;
     position: absolute;
     top: var(--spacing-8);
     right: var(--spacing-5);
+  }
+
+  .recording {
+    color: red !important;
   }
 }
 </style>

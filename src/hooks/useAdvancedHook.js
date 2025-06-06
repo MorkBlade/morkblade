@@ -313,7 +313,7 @@ export const useAdvancedHook = () => {
   const getDKS = async (params) => {
     const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
     if (isVersion2) {
-      console.log('getDKS V2 log params:>>>>>', params);
+      // console.log('getDKS V2 log params:>>>>>', params);
       const { keyValue, row, col, mode, data } = params;
       const { kcs, trps, dbs } = data.data;
       const db = dbs[0];
@@ -402,15 +402,29 @@ export const useAdvancedHook = () => {
       const { keyValue, row, col, mode } = params;
       const protocolVersion = typeof appStore.protocolVersion === 'string' ? appStore.protocolVersion : '1.0.7';
       const result = await services.getSocd(keyValue, protocolVersion);
-      const { mode: socdMode, key1, key2, pos1, pos2 } = result;
-      console.log('getSocd v1', params, result);
-      const socdData = { keyValue, type: 'socd', mode, socdMode, socd: [pos1, pos2], delay: 100 };
-      const advancedKeys = {
-        ...keyboardStore.keyboards[row][col].advancedKeys,
-        socd: socdData,
-        advancedType: mode,
-      };
-      keyboardStore.keyboards[row][col].advancedKeys = advancedKeys;
+      if (result && result.fromLayout) {
+        // console.info('socd获取数据来自层');
+        const { mode: socdMode, row1, col1, row2, col2 } = result;
+        const pos1 = getKeyValue(row1, col1);
+        const pos2 = getKeyValue(row2, col2);
+        const socdData = { keyValue, type: 'socd', mode, socdMode, socd: [pos1, pos2], delay: 100 };
+        const advancedKeys = {
+          ...keyboardStore.keyboards[row][col].advancedKeys,
+          socd: socdData,
+          advancedType: mode,
+        };
+        keyboardStore.keyboards[row][col].advancedKeys = advancedKeys;
+      } else {
+        const { mode: socdMode, pos1, pos2, delay } = result;
+        // console.log('getSocd v1', params, result);
+        const socdData = { keyValue, type: 'socd', mode, socdMode, socd: [pos1, pos2], delay };
+        const advancedKeys = {
+          ...keyboardStore.keyboards[row][col].advancedKeys,
+          socd: socdData,
+          advancedType: mode,
+        };
+        keyboardStore.keyboards[row][col].advancedKeys = advancedKeys;
+      }
     }
   };
 
@@ -437,7 +451,7 @@ export const useAdvancedHook = () => {
       const [[row, col], [row2, col2]] = keysArray.map((item) => item.split('-').map(Number));
       const data = { pos1: pos[0], pos2: pos[1], key1: 0, key2: 0, type, mode, delay };
       const protocolVersion = typeof appStore.protocolVersion === 'string' ? appStore.protocolVersion : '1.0.7';
-      console.log('setSocd data:---------------- ', data);
+      // console.log('setSocd data:---------------- ', data);
       const result = await services.setSocd(data, protocolVersion);
 
       await getSocd({ keyValue: key[0], data: null, row: row, col: col, mode: 8 });
@@ -679,7 +693,6 @@ const advancedVerify = async (rowIndex, colIndex) => {
       }
     }
   }
-  console.log('advancedVerify log :', rowIndex, colIndex, isAdvanced);
   if (isAdvanced.advancedType) {
     console.log('当前是高级键', isAdvanced.advancedType);
     await delAdvancedConfig(isAdvanced, isAdvanced.advancedType);

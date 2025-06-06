@@ -38,6 +38,7 @@
             v-model="selectedColor"
             @input="updateColor"
             @keypress="validateHexInput"
+            @blur="blurUpdateColor"
             maxlength="7"
             pattern="^#[0-9A-Fa-f]{6}$"
           />
@@ -212,6 +213,7 @@ const updateColor = (event) => {
   }
 
   selectedColor.value = inputColor;
+  console.log('inputColor', inputColor);
 
   // 只有当输入是完整的颜色值时才更新色轮
   if (inputColor.length === 7 && isValidColor(inputColor)) {
@@ -222,6 +224,12 @@ const updateColor = (event) => {
       g: Math.round(color.rgb.g),
       b: Math.round(color.rgb.b),
     };
+  }
+};
+
+const blurUpdateColor = () => {
+  if (selectedColor.value.length < 6) {
+    selectedColor.value = '#000000';
   }
 };
 

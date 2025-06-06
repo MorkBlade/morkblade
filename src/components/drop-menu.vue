@@ -54,7 +54,6 @@ watch(
   () => specialIndex,
   (newVal) => {
     if (newVal !== undefined) selectedIdx.value = newVal;
-    console.log('specialIndexspecialIndex', newVal, selectedIdx.value);
   },
 );
 

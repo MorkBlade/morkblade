@@ -133,13 +133,18 @@ const updateMacroData = async (data, settings) => {
 const updateMacroMode = async ({ mode, repeatCount, repeatInterval }) => {
   if (isVersion2) {
     macroStore.macroData[curMacroIdx.value].mode = mode;
+    if (mode < 4) macroStore.macroData[curMacroIdx.value].repNum = 1;
     if (mode === 4 || mode === 5) {
       macroStore.macroData[curMacroIdx.value].repNum = 0xffff;
     } else {
       macroStore.macroData[curMacroIdx.value].repNum = repeatCount;
     }
     const { macroId, actNum, repNum, mode: marcoMode } = macroStore.macroData[curMacroIdx.value];
-    await setMacroModeV2({ actNum, repNum, mode: marcoMode, macroId, valid: 1 });
+    const res = await setMacroModeV2({ actNum, repNum, mode: marcoMode, macroId, valid: 1 });
+    // if (res && res?.mode < 4) {
+    //   macroStore.macroData[curMacroIdx.value].repNum = 1;
+    // }
+    // console.log('set macro mode: ', res);
   } else {
     localMacros.value[curMacroIdx.value].mode = mode;
     localMacros.value[curMacroIdx.value].repeatCount = repeatCount;

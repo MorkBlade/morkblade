@@ -156,8 +156,12 @@ watch(keyPressTestCount, async () => {
     keyPressTestCount.value++;
   }
 });
+
 onUnmounted(() => {
   enabled.value = false;
+  if (isStart) {
+    isVersion2.value ? performanceStore.calibrationEndV2() : performanceStore.calibrationEnd();
+  }
 });
 </script>
 

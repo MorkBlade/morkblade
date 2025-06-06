@@ -24,7 +24,9 @@
           <span :class="item.keyType === 'key' ? 'keyVal' : 'delayVal'">
             {{ item.keyType === 'key' ? keyboardWord[item.keyCode] : item.timeDifference + 'ms' }}
           </span>
-          <span class="time-diff" v-if="item.keyType === 'key'">{{ item.timeDifference.toFixed(2) + 'ms' }}</span>
+          <span class="time-diff" v-if="item.keyType === 'key'">{{
+            parseFloat(item.timeDifference).toFixed(2) + 'ms'
+          }}</span>
           <img class="copy-icon" src="@/assets/images/copy_icon.svg" alt="" @click="copyItem(item, i)" />
           <img class="del-icon" src="@/assets/images/del_btn.svg" alt="" @click="deleteItem(item)" />
         </div>
@@ -45,6 +47,7 @@
           'is-active': BottomBtnIdx === idx,
           'is-pending': switchClass(idx),
           'clear-btn': idx === operationNameList.length - 1,
+          recording: idx !== 0 && macroStore.recording,
         }"
         @click="onClick(idx)"
         @mouseenter="onMouseEnter(idx)"
@@ -73,6 +76,7 @@
 <script setup>
 import { scaleValue } from '@/utils/responsive.js';
 import { showMessage } from '@/utils/message';
+import { useMacroStore } from '@/stores';
 
 import macroEvents from './macro-events.vue';
 import macroMode from './macro-mode.vue';
@@ -95,6 +99,8 @@ const emit = defineEmits(['updateMacro:data', 'updateMacro:mode', 'updateMacro:c
 let lastKeyupEventTime = null;
 let lastKeydownEventTime = null;
 let startY = 0;
+
+const macroStore = useMacroStore();
 
 const curMacro = ref([]);
 const positions = ref([]);
@@ -287,6 +293,7 @@ const onClick = (idx) => {
   switch (idx) {
     case 0:
       isStart.value = !isStart.value;
+      macroStore.updateMacroRecord(isStart.value);
       // console.log('开始录制');
       if (isStart.value) {
         lastKeyupEventTime = Date.now();
@@ -952,6 +959,7 @@ const updateMacroTypeSettings = (newSettings) => {
       }
 
       span {
+        transition: color 0.2s ease-in-out;
         font-size: var(--font-size-18);
         color: #fff;
         position: absolute;
@@ -959,14 +967,24 @@ const updateMacroTypeSettings = (newSettings) => {
         left: var(--spacing-65);
       }
     }
-    .is-active {
+    & .is-active {
       background-image: url('/src/assets/images/save_bgc.svg');
     }
-    .is-pending {
+    & .is-pending {
       background-image: url('/src/assets/images/pending_bg.svg');
     }
-    .clear-btn:hover {
+    & .clear-btn:hover {
       background-image: url('/src/assets/images/pending_bg.svg');
+    }
+    & .recording {
+      cursor: not-allowed;
+      &:hover {
+        background-image: url('/src/assets/images/save_bg.svg');
+      }
+
+      > span {
+        color: #ccc;
+      }
     }
   }
 }
