@@ -38,12 +38,12 @@
     <div class="lumminance-box">
       <span class="title">亮度:</span>
       <horizontalSlider :sliderValue="lingtingData.luminance" :min="0" :max="max" @sendSliderVal="getLuminance" />
-      <span>{{ lingtingData.luminance || 0 }}</span>
+      <span class="show-value">{{ lingtingData.luminance || 0 }}</span>
     </div>
     <div class="speed-box">
       <span class="title">速度:</span>
       <horizontalSlider :sliderValue="lingtingData.speed" :min="0" :max="max" @sendSliderVal="getSpeed" />
-      <span>{{ lingtingData.speed || 0 }}</span>
+      <span class="show-value">{{ lingtingData.speed || 0 }}</span>
     </div>
   </div>
 </template>
@@ -264,6 +264,11 @@ const getSpeed = (val) => {
   .lumminance-box,
   .speed-box {
     margin: var(--spacing-50) var(--spacing-20) 0 var(--spacing-10);
+
+    .show-value {
+      display: inline-block;
+      width: var(--size-30);
+    }
   }
   .sleep-time-box,
   .lumminance-box,

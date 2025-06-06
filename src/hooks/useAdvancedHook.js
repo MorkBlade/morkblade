@@ -449,6 +449,7 @@ export const useAdvancedHook = () => {
       const { pos, key, type, mode, delay } = params;
       const keysArray = getRowCol(key);
       const [[row, col], [row2, col2]] = keysArray.map((item) => item.split('-').map(Number));
+      // TODO 这里不需要key，故写0
       const data = { pos1: pos[0], pos2: pos[1], key1: 0, key2: 0, type, mode, delay };
       const protocolVersion = typeof appStore.protocolVersion === 'string' ? appStore.protocolVersion : '1.0.7';
       // console.log('setSocd data:---------------- ', data);

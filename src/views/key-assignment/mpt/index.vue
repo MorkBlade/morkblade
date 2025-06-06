@@ -95,6 +95,11 @@ const saveConfig = () => {
     showMessage('请先选择需要修改的按键', 'warning');
     return;
   }
+  console.log('saveConfig mpt: ', mptInfo.value);
+  if (!mptInfo.value.dks[0] && !mptInfo.value.dks[1] && !mptInfo.value.dks[2]) {
+    showMessage('请选择需要关联的按键', 'warning');
+    return;
+  }
   isShow.value = true;
 };
 

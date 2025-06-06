@@ -168,7 +168,7 @@ const onMouseLe = (keyCode) => {
 
 const saveConfig = () => {
   if (!socdInfo.value.pos[0] || !socdInfo.value.pos[1]) {
-    showMessage('请先选择需要修改的按键', 'warning');
+    showMessage('请先选择需要绑定的按键', 'warning');
     return;
   }
   // if (originalSocdInfo && originalSocdInfo.key[0] && originalSocdInfo.key[1]) {

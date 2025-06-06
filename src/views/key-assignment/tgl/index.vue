@@ -69,6 +69,10 @@ const saveConfig = () => {
     showMessage('请先选择需要修改的按键', 'warning');
     return;
   }
+  if (!tglInfo.value.dks) {
+    showMessage('请选择需要关联的按键', 'warning');
+    return;
+  }
   isShow.value = true;
 };
 
