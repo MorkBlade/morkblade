@@ -153,7 +153,7 @@ onMounted(async () => {
   await initLighting(lampData);
   await getLightingSaturation();
   if (isVersion2.value) {
-    // animationFrameId = requestAnimationFrame(animationLoop);
+    animationFrameId = requestAnimationFrame(animationLoop);
   }
 });
 
