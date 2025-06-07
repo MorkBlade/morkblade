@@ -402,6 +402,7 @@ export const useAdvancedHook = () => {
       const { keyValue, row, col, mode } = params;
       const protocolVersion = typeof appStore.protocolVersion === 'string' ? appStore.protocolVersion : '1.0.7';
       const result = await services.getSocd(keyValue, protocolVersion);
+      // TODO 设置single/rt值后再设置socd获取不到数据，需要从层获取，但mode和delay获取不到
       if (result && result.fromLayout) {
         // console.info('socd获取数据来自层');
         const { mode: socdMode, row1, col1, row2, col2 } = result;

@@ -277,12 +277,10 @@ const handleBlur = (e) => {
     }
   } else if (inputValue >= max) {
     sendTravel = max;
-  } else if (inputValue < 0.005 && !deadZone) {
-    if (isVersion2) {
-      sendTravel = 0.001;
-    } else {
-      sendTravel = 0.005;
-    }
+  } else if (inputValue < 0.001 && !deadZone && isVersion2) {
+    sendTravel = 0.001;
+  } else if (inputValue < 0.005 && !deadZone && !isVersion2) {
+    sendTravel = 0.005;
   } else {
     sendTravel = inputValue;
   }
