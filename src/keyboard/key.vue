@@ -526,9 +526,9 @@ const changeKeyCustomLight = async (e, isCustom = true) => {
   top: -0.0313rem;
   left: -0.0323rem;
   z-index: 5;
-  transform: translateZ(0);
   will-change: background-color;
   transition: background-color 0.1s linear;
+  transform: translateZ(0); /* 开启硬件加速 */
   contain: strict;
 }
 
