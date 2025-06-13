@@ -213,7 +213,6 @@ const updateColor = (event) => {
   }
 
   selectedColor.value = inputColor;
-  console.log('inputColor', inputColor);
 
   // 只有当输入是完整的颜色值时才更新色轮
   if (inputColor.length === 7 && isValidColor(inputColor)) {
@@ -314,7 +313,6 @@ const debounceApiCalls = (apiCalls) => {
 
   // 设置新的定时器，延迟500ms执行
   debounceTimer = setTimeout(async () => {
-    console.log('设置自定义灯光');
     await Promise.all(apiCalls.map((params) => services.setCustomLighting(params)));
     await services.saveCustomLighting();
     debounceTimer = null;

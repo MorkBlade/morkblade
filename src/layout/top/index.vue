@@ -32,7 +32,7 @@ const delay = (ms) => {
 };
 
 const connectMk = async () => {
-  console.log('切换设备前先断连', deviceStore.devices);
+  // console.log('切换设备前先断连', deviceStore.devices);
   await services.closeDevice();
   localStorage.setItem('keyboardVersion', 'v1');
   emitter.emit('versionChange', true);

@@ -118,7 +118,7 @@ const getFirmWarePack = async (url) => {
           const result = await services.updateBin(resultArrayBuffer, (data) => {
             const { current, total } = data;
             const curProgress = parseInt((current / total) * 100);
-            console.log('current and total:>>>', curProgress);
+            // console.log('current and total:>>>', curProgress);
             if (updateSuc) return;
             progress.value = curProgress;
             if (curProgress === 100) updateSuc = true;

@@ -115,7 +115,6 @@ onMounted(() => {
 const renderRtValue = (rowIndex, colIndex) => {
   const { deadBandPressValue, deadBandReleaseValue, axisID } = keyboards.value[rowIndex][colIndex].performance;
   const axisItem = performanceStore.axisList.find((item) => item.id === axisID);
-  console.log('轴体信息', axisItem);
   maxTravel.value = axisItem ? (axisItem.maxTravel / 1000).toFixed(2) : null;
   const releaseHeight = (deadBandPressValue / max) * maxKeyDeadHeight.value;
   releaseDeadHeight.value = Math.round(releaseHeight);

@@ -52,7 +52,7 @@ export const useKeyboardPageHook = () => {
 
   // 换层
   const handleFnChange = async (event, isVersion2) => {
-    console.log('handleFnChange', event, isVersion2);
+    // console.log('handleFnChange', event, isVersion2);
     const fnVal = event.target.dataset.idx;
     checkedFn.value = Number(fnVal);
     formData.fn = fnVal;

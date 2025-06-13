@@ -280,7 +280,6 @@ const RateOfReturnList = computed(() => {
 });
 
 const handleSelectedRate = (idx, ite) => {
-  console.log('handleSelectedRate:', idx, ite);
   performanceStore.setRateOfReturn(idx, ite, isVersion2.value);
 };
 
@@ -451,7 +450,7 @@ const handleFileChange = (files) => {
   if (files) {
     const file = files.raw;
     if (file.name.toLowerCase().endsWith('.bin')) {
-      console.log("file.name.toLowerCase().endsWith('.bin')", file.name.toLowerCase().endsWith('.bin'));
+      // console.log("file.name.toLowerCase().endsWith('.bin')", file.name.toLowerCase().endsWith('.bin'));
       const reader = new FileReader();
       onlineUpload.value = false;
       selectedFile.value = file;
@@ -605,7 +604,6 @@ const regainKeyboardData = async () => {
     // 获取宏数据
     await macroStore.getMacroAllData();
   } else {
-    console.log('remove macro data');
     localStorage.removeItem('localMacros');
   }
 };
@@ -621,7 +619,7 @@ const handleOnlineUpdate = async () => {
     const res = await httpService.getFirmwarePack(params);
     resetStates();
     onlineUpload.value = true;
-    console.log('handleOnlineUpdate', res, params);
+    // console.log('handleOnlineUpdate', res, params);
     if (res && res.firmware.firmware_name.toLowerCase().endsWith('.bin')) {
       selectedFile.value = res;
       await getOnlineFirmWarePack(res.firmware.firmware_file);
@@ -646,9 +644,9 @@ const getOnlineFirmWarePack = async (url) => {
       const reader = new FileReader();
       reader.onload = (e) => {
         const arrayBuffer = e.target.result;
-        console.log('arrayBuffer: ', arrayBuffer);
+        // console.log('arrayBuffer: ', arrayBuffer);
         bindData.value = new Uint8Array(arrayBuffer);
-        console.log('arrayBuffer: ', bindData.value);
+        // console.log('arrayBuffer: ', bindData.value);
       };
       reader.readAsArrayBuffer(blob);
     })

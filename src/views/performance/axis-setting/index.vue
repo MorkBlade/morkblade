@@ -129,7 +129,7 @@ const travelRange = computed(() => {
 const handleSaveAxis = async () => {
   if (activeKeys.value.length !== 0) {
     const { setAxis } = usePerformanceHook();
-    console.log('set axis:', activeKeys.value, checkAixsId.value);
+    // console.log('set axis:', keyboards.value, activeKeys.value, checkAixsId.value);
     const res = setAxis(keyboards.value, activeKeys.value, checkAixsId.value);
     if (res) {
       showMessage('修改成功');

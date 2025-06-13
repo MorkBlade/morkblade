@@ -194,7 +194,7 @@ watch(
           isExternalUpdate.value = true;
           const { dks: dksAll, trps, db, db2 } = advancedKeys.dks;
           Object.assign(dksInfo, { dks: [...dksAll], trps, db, db2 });
-          console.log('当前选中键是dks!', advancedKeys.dks);
+          // console.log('当前选中键是dks!', advancedKeys.dks);
           type = 'DKS';
           setTimeout(() => {
             isExternalUpdate.value = false;

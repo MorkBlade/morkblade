@@ -147,7 +147,6 @@ const handleBlur = () => {
     if (rgb.value.G > 50) rgb.value.G = 50;
     if (rgb.value.B > 50) rgb.value.B = 50;
   } else {
-    console.log(rgb.value);
     if (rgb.value.R > 100) rgb.value.R = 100;
     if (rgb.value.G > 100) rgb.value.G = 100;
     if (rgb.value.B > 100) rgb.value.B = 100;

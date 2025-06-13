@@ -58,7 +58,6 @@ export const useLightSettingStore = defineStore('lightSetting', {
         area: this.area,
         config: this.base,
       });
-      console.log('getLightingBaseV2', res[0]);
 
       const { mode, luminance, speed, direction, selectStaticColor } = res[0];
       // 注意: open变量未使用但保留在响应中，因为服务端可能会在将来修改此字段
@@ -79,7 +78,6 @@ export const useLightSettingStore = defineStore('lightSetting', {
         area: this.area,
         config: this.palette,
       });
-      console.log('getLightingPaletteV2', res[0]);
       // this.light.staticColors = res[0].staticColors;
       // this.staticColors = res[0].staticColors;
       return res;
