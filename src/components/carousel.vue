@@ -1,46 +1,107 @@
 <template>
   <div class="carousel-box" :style="{ marginLeft: `${offset}px`, width: `${width}px` }">
-    <div class="left-arrow" @click="prevClickSlide"></div>
-    <div class="shadow" @mousedown="startDrag" @mousemove="onDrag" @mouseup="endDrag" @mouseleave="endDrag">
-      <div
-        class="carousel"
-        :class="noTransition ? 'no-transition' : ''"
-        :style="{ transform: `translateX(${offsetVal}px)` }"
-      >
-        <div
-          v-for="(item, index) in localCarouselData"
-          :key="item.src"
-          :class="{ selected: currentIdx === index }"
-          :data-id="item.id"
-          class="slide"
-        >
-          <template v-if="item.image_url === '#'">
-            <img :src="axisIcon1" alt="" draggable="false" />
-          </template>
-          <template v-else>
-            <img :src="item.src || item.image_url" alt="" draggable="false" />
-          </template>
+    <template v-if="carouselData.length === 1">
+      <div class="single-axis">
+        <template v-if="carouselData[0].image_url === '#'">
+          <img :src="axisIcon1" alt="" draggable="false" />
+        </template>
+        <template v-else>
+          <img :src="carouselData[0].src || carouselData[0].image_url" alt="" draggable="false" />
+        </template>
+      </div>
+      <div class="bottom-taskbar">
+        <div class="bottom-taskbar__text" v-if="showText">
+          <span
+            :style="{
+              backgroundColor: carouselData[0]?.color || carouselData[0]?.axis_color || '#fff',
+            }"
+          >
+            {{ carouselData[0]?.name || carouselData[0]?.axis_name || '磁轴' }}
+          </span>
         </div>
       </div>
-    </div>
-    <div class="right-arrow" @click="nextClick"></div>
-    <div class="bottom-taskbar">
-      <div class="bottom-taskbar__text" v-if="showText">
-        <span
-          :style="{
-            backgroundColor:
-              localCarouselData[currentIdx]?.color || localCarouselData[currentIdx]?.axis_color || '#fff',
-          }"
+    </template>
+    <template v-else-if="carouselData.length < 3">
+      <div class="left-arrow" @click="prevClickAlone"></div>
+      <div class="shadow" :style="{ cursor: 'auto' }">
+        <div
+          class="carousel"
+          :class="noTransition ? 'no-transition' : ''"
+          :style="{ transform: `translateX(${offsetVal}px)` }"
         >
-          {{ localCarouselData[currentIdx]?.name || localCarouselData[currentIdx]?.axis_name || '磁轴' }}
-        </span>
+          <div
+            v-for="(item, index) in carouselData"
+            :key="item.src"
+            :class="{ selected: currentIdx === index }"
+            :data-id="item.id"
+            class="slide"
+          >
+            <template v-if="item.image_url === '#'">
+              <img :src="axisIcon1" alt="" draggable="false" />
+            </template>
+            <template v-else>
+              <img :src="item.src || item.image_url" alt="" draggable="false" />
+            </template>
+          </div>
+        </div>
       </div>
-    </div>
+      <div class="right-arrow" @click="nextClickAlone"></div>
+      <div class="bottom-taskbar">
+        <div class="bottom-taskbar__text" v-if="showText">
+          <span
+            :style="{
+              backgroundColor: carouselData[currentIdx]?.color || carouselData[currentIdx]?.axis_color || '#fff',
+            }"
+          >
+            {{ carouselData[currentIdx]?.name || carouselData[currentIdx]?.axis_name || '磁轴' }}
+          </span>
+        </div>
+      </div>
+    </template>
+    <template v-else>
+      <div class="left-arrow" @click="prevClickSlide"></div>
+      <div class="shadow" @mousedown="startDrag" @mousemove="onDrag" @mouseup="endDrag" @mouseleave="endDrag">
+        <div
+          class="carousel"
+          :class="noTransition ? 'no-transition' : ''"
+          :style="{ transform: `translateX(${offsetVal}px)` }"
+        >
+          <div
+            v-for="(item, index) in localCarouselData"
+            :key="item.src"
+            :class="{ selected: currentIdx === index }"
+            :data-id="item.id"
+            class="slide"
+          >
+            <template v-if="item.image_url === '#'">
+              <img :src="axisIcon1" alt="" draggable="false" />
+            </template>
+            <template v-else>
+              <img :src="item.src || item.image_url" alt="" draggable="false" />
+            </template>
+          </div>
+        </div>
+      </div>
+      <div class="right-arrow" @click="nextClickSlide"></div>
+      <div class="bottom-taskbar">
+        <div class="bottom-taskbar__text" v-if="showText">
+          <span
+            :style="{
+              backgroundColor:
+                localCarouselData[currentIdx]?.color || localCarouselData[currentIdx]?.axis_color || '#fff',
+            }"
+          >
+            {{ localCarouselData[currentIdx]?.name || localCarouselData[currentIdx]?.axis_name || '磁轴' }}
+          </span>
+        </div>
+      </div>
+    </template>
   </div>
 </template>
 
 <script setup>
 import { scaleValue } from '@/utils/responsive.js';
+import { showMessage } from '@/utils/message';
 import axisIcon1 from '@/assets/images/wanciwang.webp';
 
 const { carouselData, offset, selectedId } = defineProps({
@@ -52,10 +113,11 @@ const { carouselData, offset, selectedId } = defineProps({
 });
 const emits = defineEmits(['handleSave', 'handleChangeItem']);
 
-const SLIDE_WIDTH = computed(() => {
-  const value = getComputedStyle(document.documentElement).getPropertyValue('--carousel-offset-x').trim();
-  return parseInt(value, 10);
-});
+// const SLIDE_WIDTH = computed(() => {
+//   const value = getComputedStyle(document.documentElement).getPropertyValue('--carousel-offset-x').trim();
+//   return parseInt(value, 10);
+// });
+const SLIDE_WIDTH = ref(scaleValue(175));
 const currentIdx = ref(6);
 const offsetVal = ref(0);
 const noTransition = ref(false);
@@ -92,7 +154,7 @@ const prevClickSlide = () => {
   // console.log('prev Click', currentIdx.value);
 };
 
-const nextClick = () => {
+const nextClickSlide = () => {
   if (flag) return;
   flag = true;
   currentIdx.value++;
@@ -121,19 +183,100 @@ const nextClick = () => {
   // console.log('next click', currentIdx.value, localCarouselData.value[currentIdx.value]);
 };
 
+const prevClickAlone = () => {
+  console.log('prevClickAlone log: ', currentIdx.value);
+  if (!currentIdx.value) {
+    showMessage('当前是第一个', 'warning');
+    return;
+  }
+  if (flag) return;
+  flag = true;
+  currentIdx.value--;
+  offsetVal.value += SLIDE_WIDTH.value + 30;
+  noTransition.value = false;
+
+  // 当到达前面添加的项时需要跳转
+  // if (currentIdx.value === 2) {
+  //   setTimeout(() => {
+  //     noTransition.value = true;
+  //     // 跳转到原数组的最后一项（位置在 原数组长度+3-1）
+  //     currentIdx.value = originalLength.value + 2;
+  //     // 计算对应的偏移量
+  //     offsetVal.value = -(SLIDE_WIDTH.value * (originalLength.value - 1));
+  //     // console.log('prev click', currentIdx.value, offsetVal.value, SLIDE_WIDTH.value, originalLength.value - 1);
+  //   }, 500);
+  // }
+  console.log('handleChangeItem', carouselData, currentIdx.value, carouselData[currentIdx.value]);
+  emits('handleChangeItem', carouselData[currentIdx.value].id || carouselData[currentIdx.value].axis_id);
+  setTimeout(() => {
+    flag = false;
+  }, 300);
+  // console.log('prev Click', currentIdx.value);
+};
+
+const nextClickAlone = () => {
+  console.log('nextClickAlone log: ', currentIdx.value);
+  if (currentIdx.value) {
+    showMessage('当前是最后一个', 'warning');
+    return;
+  }
+  if (flag) return;
+  flag = true;
+  currentIdx.value++;
+  offsetVal.value -= SLIDE_WIDTH.value + 30;
+  noTransition.value = false;
+
+  // 当到达后面添加的项时需要跳转
+  // if (currentIdx.value === originalLength.value + 3) {
+  //   setTimeout(() => {
+  //     noTransition.value = true;
+  //     // 跳转回到原数组的第一项（位置在索引3）
+  //     currentIdx.value = 3;
+  //     // 重置偏移量
+  //     // offsetVal.value = -(SLIDE_WIDTH * 3);
+  //     offsetVal.value = 0;
+  //   }, 500);
+  // }
+  console.log('handleChangeItem', carouselData, currentIdx.value, carouselData[currentIdx.value]);
+  emits('handleChangeItem', carouselData[currentIdx.value].id || carouselData[currentIdx.value].axis_id);
+  setTimeout(() => {
+    flag = false;
+  }, 300);
+  // console.log('next click', currentIdx.value, localCarouselData.value[currentIdx.value]);
+};
+
 // 初始化
 onMounted(() => {
   // 设置初始位置
-  currentIdx.value = 6;
-  offsetVal.value = -(SLIDE_WIDTH.value * 3);
+  if (carouselData.length < 5 && carouselData.length > 2) {
+    currentIdx.value = 3;
+    offsetVal.value = 0;
+  } else if (carouselData.length < 3) {
+    console.log('less than 3');
+    SLIDE_WIDTH.value = 150;
+    currentIdx.value = 0;
+    offsetVal.value = SLIDE_WIDTH.value * 2;
+  } else {
+    currentIdx.value = 6;
+    offsetVal.value = -(SLIDE_WIDTH.value * 3);
+  }
+  if (carouselData.length === 1) {
+    emits('handleChangeItem', carouselData[0].id || carouselData[0].axis_id);
+  } else {
+    // console.log('onMounted log: ', localCarouselData.value[currentIdx.value]);
+    emits(
+      'handleChangeItem',
+      localCarouselData.value[currentIdx.value].id || localCarouselData.value[currentIdx.value].axis_id,
+    );
+  }
 });
 
-watch(
-  () => selectedId,
-  (newVal) => {
-    // console.log('new selcet axis id', newVal);
-  },
-);
+// watch(
+//   () => selectedId,
+//   (newVal) => {
+//     // console.log('new selcet axis id', newVal);
+//   },
+// );
 
 const isDragging = ref(false);
 const startX = ref(0);
@@ -164,7 +307,7 @@ const endDrag = () => {
     if (dragOffset.value > 0) {
       prevClickSlide();
     } else {
-      nextClick();
+      nextClickSlide();
     }
   }
   dragOffset.value = 0;
@@ -180,6 +323,8 @@ const saveConfig = () => {
   width: var(--carousel-outer-width);
   height: var(--size-230);
   display: flex;
+  justify-content: center;
+  // align-items: center;
   // margin-left: 160px;
   position: relative;
 
@@ -255,6 +400,29 @@ const saveConfig = () => {
 
     .no-transition {
       transition: none;
+    }
+  }
+
+  .single-axis {
+    width: var(--size-150);
+    height: var(--size-150);
+    overflow: hidden;
+    // margin-left: var(--spacing-15);
+    margin-top: var(--spacing-40);
+    flex-shrink: 0;
+    // transition: transform 0.5s ease;
+    background-image: url('@/assets/images/check_item.svg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    // transition: all 0.3s;
+
+    img {
+      width: var(--size-50);
+      height: var(--size-50);
+      object-fit: fill;
     }
   }
 

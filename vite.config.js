@@ -64,6 +64,11 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/bin-data/, '/bin-data/'),
       },
+      '/fw': {
+        target: 'https://hub.sparklinkplayjoy.com',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/fw/, '/fw/'),
+      },
       '/api/v1': {
         target: 'https://api.sparklinkplayjoy.com',
         changeOrigin: true,
