@@ -46,7 +46,6 @@ const quickTrigger = ref(false);
 const triggerTravel = ref(0);
 
 const onSure = () => {
-  console.log('xxxxxxxxxxxx');
   emit('saveRtConfig', true);
 };
 </script>

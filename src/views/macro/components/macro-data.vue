@@ -400,7 +400,7 @@ const handleKeysAction = (event) => {
     const diff = timeStamp - lastKeydownEventTime;
     // 确保时间差为非负数
     value.timeDifference = diff > 0 ? diff : 0;
-    console.log('handleKeysAction diff: ', diff, timeStamp, lastKeyupEventTime);
+    // console.log('handleKeysAction diff: ', diff, timeStamp, lastKeyupEventTime);
   }
 
   // 更新上次按键时间戳
@@ -441,7 +441,7 @@ const handleKeyup = (event) => {
   } else {
     // 非首次按键释放，计算实际时间差
     const diff = timeStamp - lastKeyupEventTime;
-    console.log('handleKeyup diff: ', diff, timeStamp, lastKeyupEventTime);
+    // console.log('handleKeyup diff: ', diff, timeStamp, lastKeyupEventTime);
     // 确保时间差为非负数
     value.timeDifference = diff > 0 ? diff : 0;
   }

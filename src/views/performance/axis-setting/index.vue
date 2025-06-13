@@ -69,7 +69,7 @@ const travelRange = computed(() => {
 const handleSaveAxis = async () => {
   if (activeKeys.value.length !== 0) {
     const { setAxis } = usePerformanceHook();
-    console.log('set axis:', keyboards.value, activeKeys.value, checkAixsId.value);
+    // console.log('set axis:', keyboards.value, activeKeys.value, checkAixsId.value);
     const res = setAxis(keyboards.value, activeKeys.value, checkAixsId.value);
     if (res) {
       ElMessage({
@@ -91,7 +91,7 @@ const changeAxis = (axisID) => {
   // }
   const axisList = performanceStore.axisList;
   checkAixsId.value = axisList.findIndex((ite) => ite.axis_id === axisID);
-  console.log('changeAxis', axisID, checkAixsId.value);
+  // console.log('changeAxis', axisID, checkAixsId.value);
 };
 </script>
 

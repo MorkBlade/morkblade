@@ -268,7 +268,6 @@ const useKeyboardStore = defineStore('keyboard', {
     },
 
     async getKeyCode(params) {
-      console.log('xxxxxxxxxxxxxxxxxxxx');
       const res = await services.getKeyCodeV2(params);
       return res[0].keycode;
     },

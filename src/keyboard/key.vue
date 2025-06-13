@@ -197,7 +197,7 @@ const currentKeyColor = computed(() => {
 });
 
 const dynamicKeyColor = computed(() => {
-  console.log(keyboardStore.customLighting, keyItem.row, keyItem.col);
+  // console.log(keyboardStore.customLighting, keyItem.row, keyItem.col);
   const { R, G, B } = keyboardStore.customLighting[keyItem.row][keyItem.col] || { R: 100, G: 100, B: 255 };
   if (!R && !G && !B) {
     return 'rgba(255, 255, 255,0)';
@@ -272,7 +272,7 @@ const advancedTag = computed(() => {
 // 显示rtFirstTravel
 const rtFirstTravel = computed(() => {
   if (currentModel !== 'deadZone' && currentModel !== 'axis' && PerformanceData.value?.rtFirstTouch) {
-    console.log('rtrtFirstTravel: ', PerformanceData.value?.rtFirstTouch);
+    // console.log('rtrtFirstTravel: ', PerformanceData.value?.rtFirstTouch);
     return PerformanceData.value?.rtFirstTouch;
   }
   return null;
@@ -387,7 +387,7 @@ const Keydrop = async (e, rowIndex, colIndex, key) => {
   if (!keyboardStore.isDraging) return;
   e.preventDefault();
   if (macroStore.selectMacro) {
-    console.log('拖拽的是宏按键');
+    // console.log('拖拽的是宏按键');
 
     if (macroStore && macroStore.macroInfo) {
       macroStore.macroInfo.dks = key;

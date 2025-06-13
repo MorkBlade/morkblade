@@ -696,7 +696,7 @@ const advancedVerify = async (rowIndex, colIndex) => {
     }
   }
   if (isAdvanced.advancedType) {
-    console.log('当前是高级键', isAdvanced.advancedType);
+    // console.log('当前是高级键', isAdvanced.advancedType);
     await delAdvancedConfig(isAdvanced, isAdvanced.advancedType);
   }
   return isAdvanced;

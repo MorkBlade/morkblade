@@ -225,8 +225,6 @@ const selectItem = async (keyVal) => {
 };
 
 const saveConfig = async (action) => {
-  console.log('saveConfig', action);
-
   if (action === 'cancel') {
     // 取消操作，不发送更新
     showCharacter.value = false;
