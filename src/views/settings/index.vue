@@ -226,7 +226,12 @@ const progress = reactive({
 });
 const elLoading = ref(null);
 const isVersion2 = ref(localStorage.getItem('keyboardVersion') === 'v2');
-const urlList = ['/bin-data/update_esports.bin', '/bin-data/update_highlight.bin', '/bin-data/update_beta.bin'];
+// const urlList = ['/bin-data/update_esports.bin', '/bin-data/update_highlight.bin', '/bin-data/update_beta.bin'];
+const urlList = [
+  '/fw/XS117_KB987_App_v1.1.3.1_20250421a.bin',
+  '/fw/XS117_KB987_App_v1.1.3.1_20250421a.bin',
+  '/fw/XS117_KB987_App_v1.1.3.1_20250421a.bin',
+];
 
 const keyboardName = computed(() => {
   if (!isVersion2.value) {

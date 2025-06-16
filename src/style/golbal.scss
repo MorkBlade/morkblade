@@ -188,4 +188,21 @@ body {
     margin-right: var(--spacing-10);
     vertical-align: middle;
   }
+  .t-color-picker__swatches-wrap,.t-color-picker__format {
+    display: none;
+  }
+  .t-color-picker__body {
+    padding: 0;
+
+  }
+  .t-color-picker__saturation {
+    height: var(--size-150);
+    border-radius: var(--spacing-4) var(--spacing-4) 0 0;
+    border-bottom: var(--spacing-2) solid #242424;
+  }
+  .t-color-picker__panel {
+    width: var(--t-color-picker-width);
+    background-color: transparent;
+    box-shadow: none;
+  }
 }

@@ -161,7 +161,7 @@
   --slider-height: 192px;
   --slider-point-left: 0;
   --dead-zone-height: 60;
-  --axis-width: 980px;
+  --axis-width: 984px;
   --carousel-outer-width: 1030px;
   --carousel-inner-width: 1275px;
   --carousel-shadow-width: 925px;
@@ -251,6 +251,7 @@
   --saturation-width: 324px;
   --lamp-item-gap: 66px;
   --keys-box-height: 179px;
+  --t-color-picker-width:256px;
 }
 
 /* 2K 分辨率 (1440p) 2560*1440 
@@ -516,6 +517,7 @@
     --saturation-width: 372px;
     --lamp-item-gap: 76px;
     --keys-box-height: 205px;
+    --t-color-picker-width:294px;
   }
 }
 
@@ -688,7 +690,7 @@
     --slider-height: 384px;
     --slider-point-left: 2px;
     --dead-zone-height: 120;
-    --axis-width: 1960px;
+    --axis-width: 1968px;
     --carousel-outer-width: 2060px;
     --carousel-inner-width: 2550px;
     --carousel-shadow-width: 1850px;
@@ -777,5 +779,6 @@
     --saturation-width: 648px;
     --lamp-item-gap: 132px;
     --keys-box-height: 358px;
+    --t-color-picker-width:512px;
   }
 }

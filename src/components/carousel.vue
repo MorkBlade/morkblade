@@ -64,6 +64,7 @@
 
 <script setup>
 import { scaleValue } from '@/utils/responsive.js';
+import { showMessage } from '@/utils/message';
 import axisIcon1 from '@/assets/images/wanciwang.webp';
 
 const { carouselData, offset, selectedId } = defineProps({
@@ -75,10 +76,11 @@ const { carouselData, offset, selectedId } = defineProps({
 });
 const emits = defineEmits(['handleSave', 'handleChangeItem']);
 
-const SLIDE_WIDTH = computed(() => {
-  const value = getComputedStyle(document.documentElement).getPropertyValue('--carousel-offset-x').trim();
-  return parseInt(value, 10);
-});
+// const SLIDE_WIDTH = computed(() => {
+//   const value = getComputedStyle(document.documentElement).getPropertyValue('--carousel-offset-x').trim();
+//   return parseInt(value, 10);
+// });
+const SLIDE_WIDTH = ref(scaleValue(175));
 const currentIdx = ref(6);
 const offsetVal = ref(0);
 const noTransition = ref(false);
@@ -115,7 +117,7 @@ const prevClickSlide = () => {
   // console.log('prev Click', currentIdx.value);
 };
 
-const nextClick = () => {
+const nextClickSlide = () => {
   if (flag) return;
   flag = true;
   currentIdx.value++;
@@ -138,6 +140,68 @@ const nextClick = () => {
     'handleChangeItem',
     localCarouselData.value[currentIdx.value].id || localCarouselData.value[currentIdx.value].axis_id,
   );
+  setTimeout(() => {
+    flag = false;
+  }, 300);
+  // console.log('next click', currentIdx.value, localCarouselData.value[currentIdx.value]);
+};
+
+const prevClickAlone = () => {
+  console.log('prevClickAlone log: ', currentIdx.value);
+  if (!currentIdx.value) {
+    showMessage('当前是第一个', 'warning');
+    return;
+  }
+  if (flag) return;
+  flag = true;
+  currentIdx.value--;
+  offsetVal.value += SLIDE_WIDTH.value + 30;
+  noTransition.value = false;
+
+  // 当到达前面添加的项时需要跳转
+  // if (currentIdx.value === 2) {
+  //   setTimeout(() => {
+  //     noTransition.value = true;
+  //     // 跳转到原数组的最后一项（位置在 原数组长度+3-1）
+  //     currentIdx.value = originalLength.value + 2;
+  //     // 计算对应的偏移量
+  //     offsetVal.value = -(SLIDE_WIDTH.value * (originalLength.value - 1));
+  //     // console.log('prev click', currentIdx.value, offsetVal.value, SLIDE_WIDTH.value, originalLength.value - 1);
+  //   }, 500);
+  // }
+  console.log('handleChangeItem', carouselData, currentIdx.value, carouselData[currentIdx.value]);
+  emits('handleChangeItem', carouselData[currentIdx.value].id || carouselData[currentIdx.value].axis_id);
+  setTimeout(() => {
+    flag = false;
+  }, 300);
+  // console.log('prev Click', currentIdx.value);
+};
+
+const nextClickAlone = () => {
+  console.log('nextClickAlone log: ', currentIdx.value);
+  if (currentIdx.value) {
+    showMessage('当前是最后一个', 'warning');
+    return;
+  }
+  if (flag) return;
+  flag = true;
+  currentIdx.value++;
+  offsetVal.value -= SLIDE_WIDTH.value + 30;
+  noTransition.value = false;
+
+  // 当到达后面添加的项时需要跳转
+  // if (currentIdx.value === originalLength.value + 3) {
+  //   setTimeout(() => {
+  //     noTransition.value = true;
+  //     // 跳转回到原数组的第一项（位置在索引3）
+  //     currentIdx.value = 3;
+  //     // 重置偏移量
+  //     // offsetVal.value = -(SLIDE_WIDTH * 3);
+  //     offsetVal.value = 0;
+  //   }, 500);
+  // }
+  console.log('handleChangeItem', carouselData, currentIdx.value, carouselData[currentIdx.value]);
+  emits('handleChangeItem', carouselData[currentIdx.value].id || carouselData[currentIdx.value].axis_id);
   setTimeout(() => {
     flag = false;
   }, 300);
@@ -201,7 +265,7 @@ const endDrag = () => {
     if (dragOffset.value > 0) {
       prevClickSlide();
     } else {
-      nextClick();
+      nextClickSlide();
     }
   }
   dragOffset.value = 0;

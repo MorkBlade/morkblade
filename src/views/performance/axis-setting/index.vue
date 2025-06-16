@@ -1,7 +1,10 @@
 <template>
   <div class="axis-container">
     <template v-if="isVersion2">
-      <div class="axis-container__axis-brand" :style="{ marginTop: axisBrandList.length === 0 ? '0' : '-360px' }">
+      <div
+        class="axis-container__axis-brand"
+        :style="{ marginTop: axisBrandList.length === 0 ? '0' : `${scaleValue(-360)}px` }"
+      >
         <!-- :style="{ transform: axisBrandList.length === 0 ? 'scale(1)' : 'scale(0)' }" -->
         <h4>选择轴体品牌</h4>
         <div class="brand-list">
@@ -22,7 +25,10 @@
           </div> -->
         </div>
       </div>
-      <div class="axis-container__axis-list" :style="{ marginTop: axisBrandList.length === 0 ? '360px' : '0' }">
+      <div
+        class="axis-container__axis-list"
+        :style="{ marginTop: axisBrandList.length === 0 ? `${scaleValue(360)}px` : '0' }"
+      >
         <!-- :style="{ transform: axisBrandList.length === 0 ? 'scale(0)' : 'scale(1)' }" -->
         <template v-if="axisBrandList.length > 0">
           <div class="axis-setting">
