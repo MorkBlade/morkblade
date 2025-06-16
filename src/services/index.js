@@ -11,7 +11,7 @@ const service = new XDKeyboard({
   ],
   // configs: [],
   usage: [0x01],
-  usagePage: [65440, 65456, 0xff80],
+  usagePage: [65440, 65456],
 });
 
 export default service;

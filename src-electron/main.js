@@ -25,7 +25,7 @@ const createWindow = () => {
     //transparent: true,// 允许窗口透明
     //title: '星闪悦动键盘量产工具',
     title: 'MORKBLADE',
-    icon: path.join(__dirname, '../public/logo.svg'),
+    icon: path.join(__dirname, '../public/logo.ico'),
     webPreferences: {
       //preload: path.join(__dirname, 'preload.js'),
       devTools: true, // 是否打开调试模式
@@ -41,7 +41,7 @@ const createWindow = () => {
   win.setMenu(null);
 
   // 打开开发者工具
-  win.webContents.openDevTools();
+  // win.webContents.openDevTools();
 
   // 忽略DevTools错误
   win.webContents.on('console-message', (event, level, message) => {
