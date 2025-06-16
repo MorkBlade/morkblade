@@ -2,13 +2,15 @@
   "name": "newkeyboard",
   "version": "0.0.0",
   "private": true,
+  "main": "./src-electron/main.js",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite && electron .",
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint . --fix",
-    "format": "prettier --write src/"
+    "format": "prettier --write src/",
+    "electron:build": "vite build && electron-builder"
   },
   "dependencies": {
     "@jaames/iro": "^5.5.2",
@@ -28,6 +30,9 @@
     "@eslint/js": "^9.20.0",
     "@vitejs/plugin-vue": "^5.2.1",
     "@vue/eslint-config-prettier": "^10.2.0",
+    "electron": "^32.3.3",
+    "electron-builder": "^25.0.5",
+    "electron-devtools-installer": "^3.2.0",
     "eslint": "^9.20.1",
     "eslint-plugin-vue": "^9.32.0",
     "prettier": "^3.5.1",
@@ -36,7 +41,44 @@
     "unplugin-auto-import": "^19.1.0",
     "unplugin-vue-components": "^28.4.0",
     "vite": "^6.1.0",
-    "vite-plugin-vue-devtools": "^7.7.2"
+    "vite-plugin-vue-devtools": "^7.7.2",
+    "vite-plugin-electron": "^0.28.7"
+  },
+  "build": {
+    "productName": "morkblade",
+    "appId": "morkblade.electronapp",
+    "copyright": "morkblade © 2025",
+    "compression": "maximum",
+    "asar": true,
+    "directories": {
+      "output": "release/"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "perMachine": true,
+      "deleteAppDataOnUninstall": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "morkblade"
+    },
+    "win": {
+      "icon": "./public/logo.ico",
+      "artifactName": "${productName}-v${version}-${platform}-setup.${ext}",
+      "target": [
+        {
+          "target": "nsis"
+        }
+      ]
+    },
+    "mac": {
+      "icon": "./public/logo.ico",
+      "artifactName": "${productName}-v${version}-${platform}-setup.${ext}"
+    },
+    "linux": {
+      "icon": "./public/logo.ico",
+      "artifactName": "${productName}-v${version}-${platform}-setup.${ext}"
+    }
   },
   "pnpm": {
     "overrides": {

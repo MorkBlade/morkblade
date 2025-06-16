@@ -229,9 +229,9 @@ const elLoading = ref(null);
 const isVersion2 = ref(localStorage.getItem('keyboardVersion') === 'v2');
 // const urlList = ['/bin-data/update_esports.bin', '/bin-data/update_highlight.bin', '/bin-data/update_beta.bin'];
 const urlList = [
-  '/fw/XS117_KB987_App_v1.1.3.1_20250421a.bin',
-  '/fw/XS117_KB987_App_v1.1.3.1_20250421a.bin',
-  '/fw/XS117_KB987_App_v1.1.3.1_20250421a.bin',
+  'https://hub.sparklinkplayjoy.com/fw/XS117_KB987_App_v1.1.3.1_20250421a.bin',
+  'https://hub.sparklinkplayjoy.com/fw/XS117_KB987_App_v1.1.3.1_20250421a.bin',
+  'https://hub.sparklinkplayjoy.com/fw/XS117_KB987_App_v1.1.3.1_20250421a.bin',
 ];
 
 const keyboardName = computed(() => {
@@ -363,7 +363,10 @@ const reconnect = async () => {
 };
 
 const getFirmWarePack = async (url) => {
-  fetch(url)
+  // 如果是相对路径，转换为完整URL
+  const fullUrl = url.startsWith('http') ? url : `https://hub.sparklinkplayjoy.com${url}`;
+
+  fetch(fullUrl)
     .then((response) => {
       if (!response.ok) {
         throw new Error('Network response was not ok');
@@ -379,14 +382,12 @@ const getFirmWarePack = async (url) => {
         try {
           emitter.emit('isUpdate', true);
           const result = await services.updateBin(resultArrayBuffer, ({ current, total }) => {
-            // console.log('current: ', current);
             if (current === 100) {
               progress.current = 100;
             } else {
               progress.current = parseInt((current / total) * 100);
             }
             progress.total = total;
-            // updateStatus.value = status;
           });
           console.log('update suc-------------> ', result);
           if (result.success === true) {
@@ -394,20 +395,8 @@ const getFirmWarePack = async (url) => {
             updateRes.value = true;
             deviceStore.updateSuc = true;
             progress.current = 0;
-            // isShow.value = false;
             showMessage('升级成功！');
           }
-
-          // setTimeout(() => {
-          //   // 10s后检查是否在进行
-          //   if (!progress.value) {
-          //     isShow.value = false;
-          //     router.push({
-          //       path: '/',
-          //       replace: true,
-          //     });
-          //   }
-          // }, 10000);
         } catch (error) {
           console.log('update failed----------->', error);
           progress.current = 0;
@@ -421,14 +410,12 @@ const getFirmWarePack = async (url) => {
             });
           }, 1000);
         }
-        // 假设 updateFile.raw 是一个 Blob 对象
-        // updateFile = { raw: blob };
-        // console.log(updateFile.raw);
       };
       reader.readAsArrayBuffer(blob);
     })
     .catch((error) => {
       console.error('Error fetching the .bin file:', error);
+      showMessage('获取固件包失败，请检查网络连接', 'error');
     });
 };
 
@@ -636,8 +623,10 @@ const handleOnlineUpdate = async () => {
 };
 
 const getOnlineFirmWarePack = async (url) => {
-  const relativeUrl = url.replace('https://api.sparklinkplayjoy.com', '');
-  fetch(relativeUrl)
+  // 确保使用完整URL
+  const fullUrl = url.startsWith('http') ? url : `https://api.sparklinkplayjoy.com${url}`;
+
+  fetch(fullUrl)
     .then((response) => {
       if (!response.ok) {
         throw new Error('Network response was not ok');
@@ -650,14 +639,13 @@ const getOnlineFirmWarePack = async (url) => {
       const reader = new FileReader();
       reader.onload = (e) => {
         const arrayBuffer = e.target.result;
-        // console.log('arrayBuffer: ', arrayBuffer);
         bindData.value = new Uint8Array(arrayBuffer);
-        // console.log('arrayBuffer: ', bindData.value);
       };
       reader.readAsArrayBuffer(blob);
     })
     .catch((error) => {
       console.error('Error fetching the .bin file:', error);
+      showMessage('获取固件包失败，请检查网络连接', 'error');
     });
 };
 
