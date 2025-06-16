@@ -307,7 +307,7 @@ const clearLightingColor = () => {
         position: relative;
 
         > div {
-          // width: 250px;
+          width: var(--size-260);
           height: var(--size-220);
           background-color: #000;
           border-radius: var(--spacing-5);
@@ -375,6 +375,7 @@ const clearLightingColor = () => {
           }
         }
       }
+      // .t-color-picker__slider-wrapper
       ::v-deep(.t-color-picker__sliders-wrapper) {
         width: var(--size-200);
         height: var(--size-15);
@@ -386,6 +387,10 @@ const clearLightingColor = () => {
 
         > .t-color-picker__sliders {
           height: var(--size-10);
+        }
+
+        & .t-color-picker__slider-wrapper {
+          border-radius: var(--size-8);
         }
         & .t-color-picker__slider {
           height: var(--size-10);

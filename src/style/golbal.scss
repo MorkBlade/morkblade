@@ -201,6 +201,7 @@ body {
     border-bottom: var(--spacing-2) solid #242424;
   }
   .t-color-picker__panel {
+    width: var(--t-color-picker-width);
     background-color: transparent;
     box-shadow: none;
   }
