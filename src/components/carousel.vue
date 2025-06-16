@@ -24,7 +24,7 @@
           </div>
         </div>
       </div>
-      <div class="right-arrow" @click="nextClick"></div>
+      <div class="right-arrow" @click="nextClickSlide"></div>
       <div class="bottom-taskbar">
         <div class="bottom-taskbar__text" v-if="showText">
           <span
