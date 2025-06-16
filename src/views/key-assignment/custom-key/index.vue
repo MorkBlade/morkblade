@@ -126,6 +126,7 @@ const keyboard = [
 ];
 const keyboard2 = [
   62208, 62209, 62210, 62211, 62212, 62213, 62214, 62215, 62216, 62217, 62218, 62219, 62220, 62221, 62222, 62223, 62224,
+  61696, 61697, 61698, 61699,
 ];
 const mouse = [29441, 29442, 29443, 29444, 29445, 29446, 29447, 29448, 29449];
 const mouseV2 = [16384, 16640, 16896, 17152, 17408, 17664, 19978, 20214, 20234, 20470];
@@ -224,6 +225,7 @@ const selectItem = async (keyVal) => {
     margin-left: var(--spacing-60);
     display: flex;
     flex-wrap: wrap;
+    align-content: baseline;
     overflow-y: scroll;
 
     .active {

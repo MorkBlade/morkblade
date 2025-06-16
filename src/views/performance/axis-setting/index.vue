@@ -184,6 +184,7 @@ const handleMatchOther = (e) => {
   const otherAxis = axisList.value.filter((ite) => {
     return ite.factory_name === '';
   });
+  console.log('otherAxis: ', otherAxis);
   if (otherAxis.length === 0) showMessage('暂无更多轴', 'warning');
   axisBrandList.value = otherAxis;
 };
