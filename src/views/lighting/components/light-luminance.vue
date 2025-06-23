@@ -1,6 +1,6 @@
 <template>
   <div class="light-luminance">
-    <template v-if="!isVersion2">
+    <template v-if="!isVersion2 || (isVersion2 && isCheckVersion)">
       <div class="sleep-time-box">
         <span class="title">休眠时间:</span>
         <div
@@ -50,6 +50,7 @@
 
 <script setup>
 import { scaleValue } from '@/utils/responsive.js';
+import { useVersionHook } from '@/hooks';
 import { LIGHT_SLEEP_DELAY } from '@/configs/constant/index.js';
 import emitter from '@/utils/app-emitter';
 
@@ -63,6 +64,7 @@ import horizontalSlider from '@/components/horizontal-slider.vue';
 const lingtingData = defineModel();
 const emits = defineEmits(['changeSleepDelay', 'changeLuminance', 'changeSpeed']);
 
+const { isCheckVersion } = useVersionHook('1.0.4.0');
 const defaultHeight = ref(0);
 const rotate = ref(180);
 const isVersion2 = ref(localStorage.getItem('keyboardVersion') === 'v2');
@@ -172,14 +174,18 @@ const getSpeed = (val) => {
       }
 
       span {
+        width: var(--spacing-110);
         border: none;
         color: #fff;
         display: inline-block;
-        margin: var(--spacing-8) 0 0 var(--spacing-16);
+        // margin: var(--spacing-8) 0 0 var(--spacing-16);
         height: var(--size-31);
         font-size: var(--font-size-18);
         font-family: 'CN Heavy';
-        margin: var(--spacing-5) var(--spacing-10) 0 var(--spacing-40);
+        // margin: var(--spacing-5) var(--spacing-10) 0 var(--spacing-40);
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
 
       .drop-list {

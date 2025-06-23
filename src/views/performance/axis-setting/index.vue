@@ -56,7 +56,7 @@
         </div>
       </template>
       <div class="clear-axis-btn" @click="handleClearAxis">
-        <img src="@/assets/images/cancel_icon.svg" alt="" />
+        <img src="@/assets/images/back.png" alt="" />
       </div>
     </div>
     <!-- </template> -->
@@ -238,12 +238,16 @@ const handleClearAxis = () => {
 
     & .clear-axis-btn {
       position: absolute;
-      top: calc(var(--spacing-10) * -1);
-      left: calc(var(--spacing-10) * -1);
+      top: calc(var(--spacing-20));
+      left: calc(var(--spacing-20));
+      transition: transform 0.2s ease-in-out;
       cursor: pointer;
+      &:hover {
+        transform: scale(0.96);
+      }
 
       > img {
-        width: var(--spacing-30);
+        width: var(--spacing-55);
         height: var(--spacing-30);
       }
     }

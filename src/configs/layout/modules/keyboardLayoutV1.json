@@ -362,7 +362,7 @@
     },
     {
       "shapeScale": { "w": 1, "h": 1 },
-      "location": { "x": 18.75, "y": 0 },
+      "location": { "x": 17.65, "y": 0 },
       "legendTop": {
         "left": { "value": "", "style": { "color": "", "fontSize": "" } },
         "center": { "value": "", "style": { "color": "", "fontSize": "" } },
@@ -386,7 +386,7 @@
     },
     {
       "shapeScale": { "w": 1, "h": 1 },
-      "location": { "x": 17.65, "y": 0 },
+      "location": { "x": 18.75, "y": 0 },
       "legendTop": {
         "left": { "value": "", "style": { "color": "", "fontSize": "" } },
         "center": { "value": "", "style": { "color": "", "fontSize": "" } },

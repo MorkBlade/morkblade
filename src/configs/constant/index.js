@@ -258,4 +258,9 @@ export const ICON_MAP = {
   TTC: {
     69: new URL('@/assets/images/wcw.png', import.meta.url).href,
   },
+  佳达隆: {
+    1: new URL('@/assets/images/ciyupro.png', import.meta.url).href,
+    // 4: new URL('@/assets/images/wcw.png', import.meta.url).href,
+    // 78: new URL('@/assets/images/wcw.png', import.meta.url).href,
+  },
 };
