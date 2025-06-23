@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 
 import services from '@/services/index';
 import { useKeyboardStore } from '@/stores';
-import { KEY_SHAFT } from '@/configs/constant';
+import { ICON_MAP } from '@/configs/constant';
 
 const state = {
   precision: 0.1, // 键盘行程精度
@@ -596,6 +596,11 @@ const usePerformanceStore = defineStore('performance', {
           const index = allAxisList.findIndex((axis) => axis.axis_id === item);
           if (index !== -1) {
             const item = allAxisList[index];
+            const icon_obj = ICON_MAP[item.factory_name];
+            if (icon_obj && icon_obj[item.axis_id]) {
+              console.log('change axis pic----------------->');
+              item.image_url = icon_obj[item.axis_id];
+            }
             this.axisList.push(item);
           }
         });

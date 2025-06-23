@@ -29,7 +29,11 @@ let dragStartTime = 0;
 
 const keyText = computed(() => {
   if (isVersion2) {
-    return typeof keyValue === 'object' && keyValue.macroName ? keyValue.macroName : keyboardV2[keyValue] || '';
+    return typeof keyValue === 'object' && keyValue.macroName
+      ? keyValue.macroName
+      : keyValue === 61697
+        ? 'Fn'
+        : keyboardV2[keyValue] || '';
   } else {
     return typeof keyValue === 'object' && keyValue.macroName ? keyValue.macroName : keyboard[keyValue] || '';
   }

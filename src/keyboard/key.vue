@@ -221,7 +221,7 @@ const showKeyCode = computed(() => {
     const customKeysKeyName = `fn${layout.value}`;
     // console.log('currentKey.value', currentKey.value, customKeysKeyName);
     const { bindKeyValue } = currentKey.value.customKeys[customKeysKeyName];
-    return isVersion2.value ? keyboardV2[bindKeyValue] : keyboard[bindKeyValue];
+    return !isVersion2.value ? keyboard[bindKeyValue] : bindKeyValue === 61697 ? 'Fn' : keyboardV2[bindKeyValue];
   }
 
   return isVersion2.value ? keyboardV2[0] : keyboard[0];

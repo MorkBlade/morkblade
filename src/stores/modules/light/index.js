@@ -83,6 +83,11 @@ export const useLightSettingStore = defineStore('lightSetting', {
       return res;
     },
 
+    // v2 更新灯光睡眠时间
+    async updateSleepTime(delay) {
+      this.light.sleepTime = delay;
+    },
+
     // 当前选中自定义颜色
     updateCurrentColor(color) {
       this.currentColor = color;

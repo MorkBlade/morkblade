@@ -22,6 +22,12 @@ const useAppStore = defineStore('app', {
     keyboardName: '',
     changeConfig: false,
     protocolVersion: '',
+    version: {
+      mainVersion: 0,
+      subVersion: 0,
+      hardwareVersion: 0,
+      softwareVersion: 0,
+    },
     // keyboardVersion: '', // 键盘版本v1 v2
   }),
 
@@ -113,11 +119,18 @@ const useAppStore = defineStore('app', {
     },
 
     // 获取协议版本
-    async getProtocolVersion() {
-      const protocolVersion = await services.getApi({ type: 'ORDER_TYPE_PROTOCOL_VERSION' });
-      // console.log('getProtocolVersion: ', protocolVersion);
-      this.protocolVersion = protocolVersion;
-      return protocolVersion;
+    async getProtocolVersion(isVersion2) {
+      if (isVersion2) {
+        const version = await services.getProtocolVersionV2();
+        // console.log('getProtocolVersion version: ', version);
+        this.version = version[0];
+        return version;
+      } else {
+        const protocolVersion = await services.getApi({ type: 'ORDER_TYPE_PROTOCOL_VERSION' });
+        // console.log('getProtocolVersion: ', protocolVersion);
+        this.protocolVersion = protocolVersion;
+        return protocolVersion;
+      }
     },
   },
 });

@@ -229,7 +229,7 @@ onMounted(async () => {
     if (isVersion2.value) await deviceStore.getDoubleLighting();
     const data = await appStore.systemMode();
     formData.type = data.currentSystem;
-    await appStore.getProtocolVersion();
+    await appStore.getProtocolVersion(isVersion2.value);
     if (route.path === '/key-assignment' && keyboardStore.keyboards.length > 0) {
       // Add a small delay to ensure component is fully mounted
       await new Promise((resolve) => setTimeout(resolve, 100));

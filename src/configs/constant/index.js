@@ -253,3 +253,14 @@ export const CONFIG_OPTIONS = [
   { value: CONFIG_MAP.Config3, name: 'Config3', label: '我的配置3' },
   { value: CONFIG_MAP.Config4, name: 'Config4', label: '我的配置4' },
 ];
+
+export const ICON_MAP = {
+  TTC: {
+    69: new URL('@/assets/images/wcw.png', import.meta.url).href,
+  },
+  佳达隆: {
+    1: new URL('@/assets/images/ciyupro.png', import.meta.url).href,
+    // 4: new URL('@/assets/images/wcw.png', import.meta.url).href,
+    // 78: new URL('@/assets/images/wcw.png', import.meta.url).href,
+  },
+};
