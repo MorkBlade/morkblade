@@ -25,7 +25,7 @@ export const UPDATE_LOG_V1 = [
   {
     version: '1.0.7',
     date: '20250222',
-    changes: ['修复了已知的问题', '修复了已知的问题'],
+    changes: ['修复了已知的问题'],
   },
   {
     version: '1.0.3',

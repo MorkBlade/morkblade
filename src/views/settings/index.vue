@@ -136,7 +136,7 @@
             class="inter-box"
             v-for="item in UPDATE_LOG_V2"
             :key="item.version"
-            @click="handleSelectedVerInfo(item.version)"
+            @click.stop="handleSelectedVerInfo(item.version)"
           >
             <div>
               <span>固件版本号：</span>
@@ -316,6 +316,7 @@ const handleSelectedSubVer = (idx) => {
 
 const handleSelectedVerInfo = (version, event) => {
   showVersion.value = showVersion.value === version ? '' : version;
+  // console.log('handleSelectedVerInfo version: ', version, showVersion.value);
 };
 
 const handleGlobalClick = () => {
