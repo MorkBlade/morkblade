@@ -20,7 +20,12 @@
         <key v-for="ite in extend" :key="ite" :key-value="ite" @select="selectItem" />
       </template>
       <template v-if="checkedIdx === 2">
-        <key v-for="ite in special" :key="ite" :key-value="ite" @select="selectItem" />
+        <template v-if="isVersion2">
+          <key v-for="ite in special2" :key="ite" :key-value="ite" @select="selectItem" />
+        </template>
+        <template v-else>
+          <key v-for="ite in special" :key="ite" :key-value="ite" @select="selectItem" />
+        </template>
       </template>
       <template v-if="checkedIdx === 3">
         <template v-if="isVersion2">
@@ -49,7 +54,7 @@
 import key from '@/components/key.vue';
 
 import { KEYBOARD_MACRO } from '@/configs/constant';
-import { useKeyboardStore, usePerformanceStore } from '@/stores';
+import { useKeyboardStore } from '@/stores';
 
 // 导入所有需要的图标
 import basicIcon from '@/assets/images/basic.svg';
@@ -96,10 +101,6 @@ const iconMap = {
 const checkedIdx = ref(0);
 
 const keyboardStore = useKeyboardStore();
-const performanceStore = usePerformanceStore();
-
-const rowIdx = ref(null);
-const colIdx = ref(null);
 const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
 
 const characterArr = [
@@ -115,21 +116,21 @@ const extend = [
   41, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 43, 42, 73, 76, 74, 77, 75, 78, 131, 130, 40, 89, 90,
   91, 92, 93, 94, 95, 96, 97, 98, 84, 85, 86, 87, 224, 225, 226, 227, 228, 229, 230, 231, 44, 118, 80, 81, 82, 79,
 ];
-const special = [129, 128, 127, 173, 176, 174, 181, 183, 182];
+const special = [129, 128, 127, 173, 176, 174, 181, 183, 182, 61696, 61697, 61698, 61699];
+const special2 = [0, 1, 61696, 61697, 61698, 61699];
 const basic = [
   4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34,
-  35, 36, 37, 38, 39, 45, 46, 47, 48, 49, 51, 52, 53, 54, 55, 56, 1,
+  35, 36, 37, 38, 39, 45, 46, 47, 48, 49, 51, 52, 53, 54, 55, 56,
 ];
 const keyboard = [
-  61696, 61697, 61698, 61699, 62217, 62224, 62225, 62226, 62227, 62228, 62229, 62231, 62245, 62246, 62247, 62248, 62249,
-  62250, 62251, 62252, 62255,
+  62217, 62224, 62225, 62226, 62227, 62228, 62229, 62231, 62245, 62246, 62247, 62248, 62249, 62250, 62251, 62252, 62255,
 ];
 const keyboard2 = [
   62208, 62209, 62210, 62211, 62212, 62213, 62214, 62215, 62216, 62217, 62218, 62219, 62220, 62221, 62222, 62223, 62224,
-  61696, 61697, 61698, 61699,
 ];
 const mouse = [29441, 29442, 29443, 29444, 29445, 29446, 29447, 29448, 29449];
-const mouseV2 = [16384, 16640, 16896, 17152, 17408, 17664, 19978, 20214, 20234, 20470];
+// const mouseV2 = [16384, 16640, 16896, 17152, 17408, 17664, 19978, 20214, 20234, 20470];
+const mouseV2 = [];
 
 const macro = computed(() => {
   if (isVersion2) {

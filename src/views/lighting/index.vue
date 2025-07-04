@@ -54,8 +54,15 @@ const deviceStore = useDeviceStore();
 const lightSettingStore = useLightSettingStore();
 const { upOpen, downOpen } = storeToRefs(lightSettingStore);
 const { isDoubleLighting } = storeToRefs(deviceStore);
-const { initLighting, setLighting, setLightingPalette, initCustomLighting, setCustomLighting, getLightingSaturation } =
-  useLightingHook();
+const {
+  initLighting,
+  setLighting,
+  setLightingPalette,
+  initCustomLighting,
+  setCustomLighting,
+  getLightingSaturation,
+  setLightingSleepTime,
+} = useLightingHook();
 
 // 防抖
 const debounce = (fn, delay) => {
@@ -295,9 +302,13 @@ const debouncedChangeSpeed = debounce(changeSpeed, 200);
 
 const changeSleepDelay = async (delay) => {
   lightSettingStore.light.sleepTime = delay;
-  lightSettingStore.logo.sleepTime = delay;
-  await setLighting();
-  await setLighting('logo');
+  if (isVersion2) {
+    await setLightingSleepTime(delay);
+  } else {
+    lightSettingStore.logo.sleepTime = delay;
+    await setLighting();
+    await setLighting('logo');
+  }
 };
 
 const changeLogoLight = async () => {

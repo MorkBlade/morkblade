@@ -17,6 +17,8 @@ export const useLightingHook = () => {
       lightSettingStore.lamp = lightSettingStore.area === 'Keyboard' ? lampData : 'SingleLighting';
       const lightingBase = await services.getLightingBaseV2({ area: area, config: base }, lightSettingStore.lamp);
       lightSettingStore.updateLightingBaseData(lightingBase[0]);
+      const lightSleepTime = await services.getLightingSleepTimeV2();
+      lightSettingStore.updateSleepTime(lightSleepTime);
       // const { open, mode, luminance, speed, direction, selectStaticColor } = lightingBase[0];
       // // lightData.open = true;
       // lightData.open = open === 'Open' || open === 'OpenUp' || open === 'OpenDown';
@@ -163,6 +165,13 @@ export const useLightingHook = () => {
     }
   };
 
+  // v2 灯光休眠时间
+  const setLightingSleepTime = async (delay) => {
+    const res = await services.setLightingSleepTimeV2(delay);
+    console.log('setLightingSleepTime res: ', res);
+    return res;
+  };
+
   const setLightingSaturation = async () => {
     if (isVersion2) {
       const res = await services.setLightingColorCorrectionV2({
@@ -185,6 +194,7 @@ export const useLightingHook = () => {
     modifyCustomLightingData,
     getLightingSaturation,
     setLightingSaturation,
+    setLightingSleepTime,
   };
 };
 

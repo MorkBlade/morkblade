@@ -9,7 +9,10 @@
         :style="{ display: isVersion2 && item === 'RS' ? 'none' : '' }"
         @click="changeMenu(idx)"
       >
-        {{ item }}
+        <span>{{ item }}</span>
+        <template v-if="idx === clickItem && (item === 'DKS' || item === 'SOCD')">
+          <explain :type="item" />
+        </template>
       </div>
     </div>
     <div class="display-area">
@@ -109,6 +112,7 @@ import end from './end/index.vue';
 import customKey from './custom-key/index.vue';
 import mDialog from '@/components/dialog.vue';
 import keyConfigCard from './components/key-config-card.vue';
+import explain from '@/components/explain.vue';
 
 const {
   edit,
@@ -360,6 +364,7 @@ const onCancel = () => {
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: var(--spacing-10);
     font-family: 'CN oblique';
     background-image: url('@/assets/images/performance_item_bg.svg');
     background-size: cover;
@@ -369,7 +374,7 @@ const onCancel = () => {
   }
 
   .display-area {
-    width: calc(var(--axis-width) + var(--size-10));
+    width: var(--assignment-displayeara-width);
     height: var(--size-290);
   }
   .is-active {

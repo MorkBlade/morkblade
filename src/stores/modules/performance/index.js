@@ -597,7 +597,10 @@ const usePerformanceStore = defineStore('performance', {
           const index = allAxisList.findIndex((axis) => axis.axis_id === item);
           if (index !== -1) {
             const item = allAxisList[index];
-            const icon_obj = ICON_MAP[item.factory_name];
+            const factory_name =
+              item.factory_name !== 'TTC' && item.factory_name !== '佳达隆' ? 'other' : item.factory_name;
+            console.log('xxxxxx', factory_name);
+            const icon_obj = ICON_MAP[factory_name];
             if (icon_obj && icon_obj[item.axis_id]) {
               console.log('change axis pic----------------->');
               item.image_url = icon_obj[item.axis_id];
