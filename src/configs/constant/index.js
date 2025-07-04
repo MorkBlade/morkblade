@@ -256,11 +256,26 @@ export const CONFIG_OPTIONS = [
 
 export const ICON_MAP = {
   TTC: {
-    69: new URL('@/assets/images/wcw.png', import.meta.url).href,
+    69: new URL('@/assets/images/TTC_wcw.png', import.meta.url).href,
+    111: new URL('@/assets/images/RGB_wcw.png', import.meta.url).href,
+    112: new URL('@/assets/images/gs.png', import.meta.url).href,
+    113: new URL('@/assets/images/LOVE_wcw.png', import.meta.url).href,
+    115: new URL('@/assets/images/ws.png', import.meta.url).href,
+    116: new URL('@/assets/images/E_sport_wcw.png', import.meta.url).href,
   },
   佳达隆: {
-    1: new URL('@/assets/images/ciyupro.png', import.meta.url).href,
+    58: new URL('@/assets/images/ciyupro.png', import.meta.url).href,
+    106: new URL('@/assets/images/gd.png', import.meta.url).href,
     // 4: new URL('@/assets/images/wcw.png', import.meta.url).href,
     // 78: new URL('@/assets/images/wcw.png', import.meta.url).href,
+  },
+  other: {
+    26: new URL('@/assets/images/ts.png', import.meta.url).href,
+    64: new URL('@/assets/images/sl.png', import.meta.url).href,
+    70: new URL('@/assets/images/ti.png', import.meta.url).href,
+    85: new URL('@/assets/images/ice.png', import.meta.url).href,
+    118: new URL('@/assets/images/ds.png', import.meta.url).href,
+    121: new URL('@/assets/images/wk.png', import.meta.url).href,
+    123: new URL('@/assets/images/jicipro.png', import.meta.url).href,
   },
 };
