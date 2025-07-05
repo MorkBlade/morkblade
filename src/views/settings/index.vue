@@ -130,34 +130,54 @@
     <div class="update-log">
       <p>固件更新日志</p>
       <div class="outer-box">
-        <div class="inter-box">
-          <div>
-            <span>版本号:</span>
-            <span>{{ '--' }}</span>
+        <template v-if="isVersion2">
+          <div
+            class="inter-box"
+            v-for="item in UPDATE_LOG_V2"
+            :key="item.version"
+            @click.stop="handleSelectedVerInfo(item.version)"
+          >
+            <div>
+              <span>固件版本号：</span>
+              <span>{{ item.version }}</span>
+            </div>
+            <div>
+              <span>发布日期：</span>
+              <span>{{ item.date }}</span>
+            </div>
+            <img src="@/assets/images/right_expand.svg" alt="" />
+            <div class="update-changes" v-if="item.version === showVersion">
+              <h4>更新内容</h4>
+              <ul>
+                <li v-for="(item, index) in item.changes" :key="index">{{ item }}</li>
+              </ul>
+            </div>
           </div>
-          <div>
-            <span>发布日期:</span>
-            <span>{{ '--' }}</span>
+        </template>
+        <template v-else>
+          <div
+            class="inter-box"
+            v-for="item in UPDATE_LOG_V1"
+            :key="item.version"
+            @click.stop="handleSelectedVerInfo(item.version)"
+          >
+            <div>
+              <span>固件版本号：</span>
+              <span>{{ item.version }}</span>
+            </div>
+            <div>
+              <span>发布日期：</span>
+              <span>{{ item.date }}</span>
+            </div>
+            <img src="@/assets/images/right_expand.svg" alt="" />
+            <div class="update-changes" v-if="item.version === showVersion">
+              <h4>更新内容</h4>
+              <ul>
+                <li v-for="(item, index) in item.changes" :key="index">{{ item }}</li>
+              </ul>
+            </div>
           </div>
-          <div>
-            <span>升级日志:</span>
-            <span>{{ '--' }}</span>
-          </div>
-        </div>
-        <div class="inter-box">
-          <div>
-            <span>版本号:</span>
-            <span>{{ '--' }}</span>
-          </div>
-          <div>
-            <span>发布日期:</span>
-            <span>{{ '--' }}</span>
-          </div>
-          <div>
-            <span>升级日志:</span>
-            <span>{{ '--' }}</span>
-          </div>
-        </div>
+        </template>
       </div>
     </div>
   </div>
@@ -179,14 +199,13 @@ import emitter from '@/utils/app-emitter';
 import { scaleValue } from '@/utils/responsive.js';
 import { showMessage } from '@/utils/message';
 import { genFileId, ElLoading } from 'element-plus';
+import { UPDATE_LOG_V1, UPDATE_LOG_V2 } from '@/configs/update-log';
 import { useAppStore, useDeviceStore, usePerformanceStore, useKeyboardStore, useMacroStore } from '@/stores';
 import { useAdvancedHook, useLightingHook } from '@/hooks';
 import { httpService } from '@/http/api/index.js';
 
 import mDialog from '@/components/dialog.vue';
 import dropMenu from '@/components/drop-menu.vue';
-import { onBeforeMount } from 'vue';
-import { onBeforeUnmount } from 'vue';
 
 const router = useRouter();
 const appStore = useAppStore();
@@ -211,6 +230,7 @@ const selectedRateIdx = ref(null); // 回报率index
 const restBtnStatus = ref(false);
 const updateBtnStatus = ref(false);
 const updateRes = ref(null);
+const showVersion = ref(''); // 显示的版本号
 
 const uploadRef = ref(null);
 const fileList = ref([]);
@@ -270,6 +290,7 @@ emitter.on('versionChange', (flag) => {
 onMounted(async () => {
   const rate = await performanceStore.getRateOfReturn(isVersion2.value);
   selectedRateIdx.value = rate;
+  window.addEventListener('click', handleGlobalClick);
 });
 
 const subVersionList = computed(() => {
@@ -290,6 +311,15 @@ const handleSelectedRate = (idx, ite) => {
 
 const handleSelectedSubVer = (idx) => {
   subVersionIdx.value = idx;
+};
+
+const handleSelectedVerInfo = (version, event) => {
+  showVersion.value = showVersion.value === version ? '' : version;
+  // console.log('handleSelectedVerInfo version: ', version, showVersion.value);
+};
+
+const handleGlobalClick = () => {
+  showVersion.value = '';
 };
 
 const handleRecover = () => {
@@ -665,6 +695,7 @@ onBeforeUnmount(() => {
     elLoading.value.close();
     elLoading.value = null;
   }
+  window.removeEventListener('click', handleGlobalClick);
 });
 </script>
 
