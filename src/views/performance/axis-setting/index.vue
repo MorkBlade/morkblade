@@ -45,7 +45,7 @@
         <div class="axis-info">
           <div class="axis-name">
             <span>轴体名称:</span>
-            <span>{{ axisBrandList[checkAixsId]?.axis_name || axisBrandList[0]?.axis_name }}</span>
+            <span>{{ axisName }}</span>
           </div>
           <div class="axis-travel">
             <span>轴体行程:</span>
@@ -132,6 +132,11 @@ const axisID = computed(() => {
 const travelRange = computed(() => {
   if (checkAixsId.value === null) return '';
   return `${axisList.value[checkAixsId.value]?.doctrine_range_right}mm-${axisList.value[checkAixsId.value]?.doctrine_range_left}mm`;
+});
+
+const axisName = computed(() => {
+  if (checkAixsId.value === null) return '';
+  return axisList.value[checkAixsId.value]?.axis_name;
 });
 
 const handleSaveAxis = async () => {
