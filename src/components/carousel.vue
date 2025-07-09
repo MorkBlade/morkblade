@@ -1,6 +1,64 @@
 <template>
   <div class="carousel-box" :style="{ marginLeft: `${offset}px`, width: `${width}px` }">
-    <template v-if="carouselData.length > 1">
+    <template v-if="carouselData.length === 1">
+      <div class="single-axis">
+        <template v-if="carouselData[0].image_url === '#'">
+          <img :src="axisIcon1" alt="" draggable="false" />
+        </template>
+        <template v-else>
+          <img :src="carouselData[0].src || carouselData[0].image_url" alt="" draggable="false" />
+        </template>
+      </div>
+      <div class="bottom-taskbar">
+        <div class="bottom-taskbar__text" v-if="showText">
+          <span
+            :style="{
+              backgroundColor: carouselData[0]?.color || carouselData[0]?.axis_color || '#fff',
+            }"
+          >
+            {{ carouselData[0]?.name || carouselData[0]?.axis_name || '磁轴' }}
+          </span>
+        </div>
+      </div>
+    </template>
+    <template v-else-if="carouselData.length < 3">
+      <div class="left-arrow" @click="prevClickAlone"></div>
+      <div class="shadow" :style="{ cursor: 'auto' }">
+        <div
+          class="carousel"
+          :class="noTransition ? 'no-transition' : ''"
+          :style="{ transform: `translateX(${offsetVal}px)` }"
+        >
+          <div
+            v-for="(item, index) in carouselData"
+            :key="item.src"
+            :class="{ selected: currentIdx === index }"
+            :data-id="item.id"
+            class="slide"
+          >
+            <template v-if="item.image_url === '#'">
+              <img :src="axisIcon1" alt="" draggable="false" />
+            </template>
+            <template v-else>
+              <img :src="item.src || item.image_url" alt="" draggable="false" />
+            </template>
+          </div>
+        </div>
+      </div>
+      <div class="right-arrow" @click="nextClickAlone"></div>
+      <div class="bottom-taskbar">
+        <div class="bottom-taskbar__text" v-if="showText">
+          <span
+            :style="{
+              backgroundColor: carouselData[currentIdx]?.color || carouselData[currentIdx]?.axis_color || '#fff',
+            }"
+          >
+            {{ carouselData[currentIdx]?.name || carouselData[currentIdx]?.axis_name || '磁轴' }}
+          </span>
+        </div>
+      </div>
+    </template>
+    <template v-else>
       <div class="left-arrow" @click="prevClickSlide"></div>
       <div class="shadow" @mousedown="startDrag" @mousemove="onDrag" @mouseup="endDrag" @mouseleave="endDrag">
         <div
@@ -34,27 +92,6 @@
             }"
           >
             {{ localCarouselData[currentIdx]?.name || localCarouselData[currentIdx]?.axis_name || '磁轴' }}
-          </span>
-        </div>
-      </div>
-    </template>
-    <template v-else>
-      <div class="single-axis">
-        <template v-if="carouselData[0].image_url === '#'">
-          <img :src="axisIcon1" alt="" draggable="false" />
-        </template>
-        <template v-else>
-          <img :src="carouselData[0].src || carouselData[0].image_url" alt="" draggable="false" />
-        </template>
-      </div>
-      <div class="bottom-taskbar">
-        <div class="bottom-taskbar__text" v-if="showText">
-          <span
-            :style="{
-              backgroundColor: carouselData[0]?.color || carouselData[0]?.axis_color || '#fff',
-            }"
-          >
-            {{ carouselData[0]?.name || carouselData[0]?.axis_name || '磁轴' }}
           </span>
         </div>
       </div>
@@ -211,9 +248,14 @@ const nextClickAlone = () => {
 // 初始化
 onMounted(() => {
   // 设置初始位置
-  if (carouselData.length < 5) {
+  if (carouselData.length < 5 && carouselData.length > 2) {
     currentIdx.value = 3;
     offsetVal.value = 0;
+  } else if (carouselData.length < 3) {
+    console.log('less than 3');
+    SLIDE_WIDTH.value = 150;
+    currentIdx.value = 0;
+    offsetVal.value = SLIDE_WIDTH.value * 2;
   } else {
     currentIdx.value = 6;
     offsetVal.value = -(SLIDE_WIDTH.value * 3);
