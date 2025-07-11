@@ -592,17 +592,17 @@ const usePerformanceStore = defineStore('performance', {
       if (isVersion2) {
         const result = await services.getAxisListV2();
         const { list } = result[0];
-        console.log('getAxisListV2: ', result);
+        // console.log('getAxisListV2: ', result);
         list.forEach((item) => {
           const index = allAxisList.findIndex((axis) => axis.axis_id === item);
           if (index !== -1) {
             const item = allAxisList[index];
             const factory_name =
               item.factory_name !== 'TTC' && item.factory_name !== '佳达隆' ? 'other' : item.factory_name;
-            console.log('xxxxxx', factory_name);
+            // console.log('xxxxxx', factory_name);
             const icon_obj = ICON_MAP[factory_name];
             if (icon_obj && icon_obj[item.axis_id]) {
-              console.log('change axis pic----------------->');
+              // console.log('change axis pic----------------->');
               item.image_url = icon_obj[item.axis_id];
             }
             this.axisList.push(item);

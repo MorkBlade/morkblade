@@ -105,13 +105,14 @@ const delays = [1, 2, 3, 5, 10, 15, 20, 25, 30, 45, 60, 120, 0];
 const changeLightSleepDelay = async (id) => {
   selectedId.value = id;
   defaultHeight.value = 0;
-  emits('changeSleepDelay', id);
+  emits('changeSleepDelay', id, isVersion2.value);
 };
 
 const getSleepDelayLabel = (delay) => {
   if (!LIGHT_SLEEP_DELAY?.length) return '未设置';
   if (delay === 0 || !delay) return LIGHT_SLEEP_DELAY[LIGHT_SLEEP_DELAY.length - 1]?.label || '未设置';
-  const index = delay - 1;
+  const index = LIGHT_SLEEP_DELAY.findIndex((ite) => ite.id === lingtingData.value.sleepTime);
+
   if (index < 0 || index >= LIGHT_SLEEP_DELAY.length) return LIGHT_SLEEP_DELAY[0]?.label || '未设置';
   return LIGHT_SLEEP_DELAY[index]?.label || '未设置';
 };
