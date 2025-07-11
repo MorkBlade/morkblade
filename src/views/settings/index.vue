@@ -244,7 +244,9 @@ const progress = reactive({
   current: 0,
   total: 0,
 });
+const config = ref(null);
 const elLoading = ref(null);
+const firmwareList = ref([]);
 const isVersion2 = ref(localStorage.getItem('keyboardVersion') === 'v2');
 // const urlList = ['/bin-data/update_esports.bin', '/bin-data/update_highlight.bin', '/bin-data/update_beta.bin'];
 const urlList = [
@@ -291,6 +293,7 @@ onMounted(async () => {
   const rate = await performanceStore.getRateOfReturn(isVersion2.value);
   selectedRateIdx.value = rate;
   window.addEventListener('click', handleGlobalClick);
+  getConfig();
 });
 
 const subVersionList = computed(() => {
@@ -304,6 +307,22 @@ const firmwareVersionList = computed(() => {
 const RateOfReturnList = computed(() => {
   return ['8KHz', '4KHz', '2KHz', '1KHz', '500Hz', '250Hz', '125Hz'];
 });
+
+const getConfig = async () => {
+  try {
+    const response = await fetch('/config.json');
+    if (!response.ok) throw new Error('Network response was not ok');
+    const data = await response.json();
+    config.value = data;
+    if (data.firmwareList) {
+      firmwareList.value = JSON.parse(data.firmwareList.replace(/'/g, '"'));
+    }
+    console.log('config: ', config.value.firmwareList, firmwareList.value.length);
+    // 你可以在这里处理 data，比如 data.firmwareList
+  } catch (error) {
+    console.error('Error fetching config.json:', error);
+  }
+};
 
 const handleSelectedRate = (idx, ite) => {
   performanceStore.setRateOfReturn(idx, ite, isVersion2.value);
@@ -365,7 +384,10 @@ const updateFirware = () => {
 
 const onSure = async (keyCode) => {
   if (eventType.value === 'rest') {
-    await deviceStore.factoryDataReset(isVersion2.value);
+    const res = await deviceStore.factoryDataReset(isVersion2.value);
+    if (res) {
+      showMessage('恢复出厂完成！');
+    }
   } else {
     // console.log('asdasdasd', keyCode);
     // if (keyCode === 'enterBoot') {

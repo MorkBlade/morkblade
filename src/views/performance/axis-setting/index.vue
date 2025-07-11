@@ -77,7 +77,7 @@
         <div class="axis-info">
           <div class="axis-name">
             <span>轴体名称:</span>
-            <span>{{ axisList[checkAixsId]?.axis_name }}</span>
+            <span>{{ axisName }}</span>
           </div>
           <div class="axis-travel">
             <span>轴体行程:</span>

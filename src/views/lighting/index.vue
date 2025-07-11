@@ -300,7 +300,7 @@ const changeSpeed = async (speed, isVersion2) => {
 const debouncedChangeLuminance = debounce(changeLuminance, 200);
 const debouncedChangeSpeed = debounce(changeSpeed, 200);
 
-const changeSleepDelay = async (delay) => {
+const changeSleepDelay = async (delay, isVersion2) => {
   lightSettingStore.light.sleepTime = delay;
   if (isVersion2) {
     await setLightingSleepTime(delay);
