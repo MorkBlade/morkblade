@@ -396,7 +396,7 @@ const onSure = async (keyCode) => {
     // } else if (keyCode === 'reconnect') {
     //   reconnect();
     // } else if (keyCode === 'update' && keyboardRunMode.value !== 255) {
-    getFirmWarePack(urlList[subVersionIdx.value]);
+    getFirmWarePack(firmwareList.value[subVersionIdx.value]);
     // }
   }
   eventType.value = null;
