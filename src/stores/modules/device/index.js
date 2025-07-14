@@ -1,4 +1,4 @@
-import { UsbDetect } from '@sparklinkplayjoy/sdk-keyboard';
+import { UsbDetect } from '@sparklinkplayjoy/morkblade-sdk-keyboard';
 import { defineStore } from 'pinia';
 
 import services from '@/services/index.js';

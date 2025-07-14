@@ -1,4 +1,4 @@
-import XDKeyboard from '@sparklinkplayjoy/sdk-keyboard';
+import XDKeyboard from '@sparklinkplayjoy/morkblade-sdk-keyboard';
 
 const service = new XDKeyboard({
   configs: [
