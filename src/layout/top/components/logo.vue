@@ -1,13 +1,13 @@
 <template>
   <div class="logo-box">
-    <img class="logo-img" src="/src/assets/images/logo.png" alt="" />
-    <img class="bar-img" src="/src/assets/images/green_bar.svg" alt="" />
+    <img class="logo-img" :src="logoIcon" alt="" />
+    <!-- <img class="bar-img" src="/src/assets/images/green_bar.svg" alt="" />
     <template v-if="isVersion2">
       <span>M K 6 0</span>
     </template>
     <template v-else>
       <span>BOLD TKL</span>
-    </template>
+    </template> -->
     <!-- <el-select v-model="selectVersion" placeholder="Select" @change="changeKeyboardVersion">
       <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
     </el-select> -->
@@ -19,6 +19,7 @@ import services from '@/services';
 import emitter from '@/utils/app-emitter';
 import { useAppStore, useDeviceStore, useKeyboardStore, usePerformanceStore } from '@/stores';
 import { useAdvancedHook, useLightingHook } from '@/hooks';
+import logoIcon from '@/assets/images/LOGO.svg';
 
 const appStore = useAppStore();
 const deviceStore = useDeviceStore();
@@ -116,12 +117,13 @@ const changeKeyboardVersion = async (version) => {
   justify-content: center;
   align-content: center;
   margin-left: calc(var(--spacing-100) * -1);
-  flex: 2;
+  // flex: 1;
 
   .logo-img {
     width: calc(var(--size-200) + var(--size-7));
     height: var(--size-22);
-    margin-top: var(--spacing-26);
+    margin-top: var(--spacing-20);
+    margin-left: var(--spacing-30);
   }
 
   .bar-img {

@@ -1,8 +1,11 @@
 <template>
   <div class="top-box">
-    <dropdownMenu />
-    <logo />
-    <checkLng />
+    <Logo />
+    <Navigation />
+    <div class="top-right">
+      <Setting />
+      <checkLng />
+    </div>
     <!-- <div class="test-change-connect" @click="connectMk">连接mork blade tkl</div>
     <div class="test-change-connect">连接mk60</div> -->
   </div>
@@ -15,8 +18,9 @@ import { useAppStore, useDeviceStore, useKeyboardStore, usePerformanceStore } fr
 import { useAdvancedHook, useLightingHook } from '@/hooks';
 
 import checkLng from './components/check-lng.vue';
-import dropdownMenu from './components/dropdown-menu.vue';
-import logo from './components/logo.vue';
+import Logo from './components/logo.vue';
+import Setting from './components/setting.vue';
+import Navigation from './components/navigation.vue';
 
 const appStore = useAppStore();
 const deviceStore = useDeviceStore();
@@ -56,9 +60,10 @@ const connectMk = async () => {
 <style scoped>
 .top-box {
   width: 100%;
-  height: calc(var(--spacing-70) + var(--spacing-4));
-  background-color: #000000;
+  height: var(--spacing-60);
+  background-color: #262626;
   display: flex;
+  justify-content: space-between;
   position: relative;
   top: 0;
   left: 0;
@@ -67,6 +72,12 @@ const connectMk = async () => {
     background-color: skyblue;
     margin-right: 10px;
     cursor: pointer;
+  }
+
+  & .top-right {
+    display: flex;
+    align-items: center;
+    
   }
 }
 </style>

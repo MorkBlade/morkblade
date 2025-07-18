@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <Navigation />
+    <!-- <Navigation /> -->
     <Transition name="fade" mode="out-in">
       <div class="content-wrapper">
         <Transition name="fade">

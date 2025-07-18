@@ -76,8 +76,8 @@ const selectLanguage = (language) => {
   .language-btn {
     width: var(--spacing-38);
     height: var(--spacing-38);
-    margin-top: calc(var(--spacing-16) + var(--spacing-1));
-    margin-right: var(--spacing-50);
+    // margin-top: var(--spacing-20);
+    margin-right: var(--spacing-30);
     display: flex;
     align-items: center;
     padding: var(--spacing-10);
@@ -86,7 +86,7 @@ const selectLanguage = (language) => {
     /* background: transparent; */
     border-radius: var(--spacing-5);
     background: transparent;
-    background-image: url('@/assets/images/bg-default.svg');
+    // background-image: url('@/assets/images/bg-default.svg');
     background-size: cover;
     background-repeat: no-repeat;
 
@@ -99,7 +99,7 @@ const selectLanguage = (language) => {
   }
 
   .is-checked {
-    background-image: url('@/assets/images/bg-choose.gif');
+    // background-image: url('@/assets/images/bg-choose.gif');
   }
 
   .language-list {
