@@ -1,13 +1,8 @@
 <template>
   <div class="performance-container">
-    <div class="left-menu">
-      <div
-        v-for="(item, idx) in performanceItem"
-        :key="item"
-        class="performance-item"
-        :class="idx === clickItem ? 'is-active' : ''"
-        @click="changeMenu(idx)"
-      >
+    <div class="top-menu">
+      <div v-for="(item, idx) in performanceItem" :key="item" class="performance-item"
+        :class="idx === clickItem ? 'is-active' : ''" @click="changeMenu(idx)">
         {{ item }}
       </div>
     </div>
@@ -73,43 +68,90 @@ onMounted(() => {
 
 <style scoped lang="scss">
 .performance-container {
-  width: var(--size-1600);
-  height: var(--size-350);
-  margin-top: var(--spacing-25);
   display: flex;
-  background-image: url('@/assets/images/performance_bg.svg');
-  background-size: cover;
-  background-repeat: no-repeat;
-  position: relative;
-  box-sizing: border-box;
-  padding-top: var(--spacing-30);
-  overflow: hidden;
+  flex-direction: column;
+  width: 100%;
 
-  .performance-item {
-    width: var(--menu-item-width);
-    height: var(--menu-item-height);
-    font-size: var(--font-size-20);
-    color: #fff;
-    margin: 0 var(--spacing-30);
-    line-height: var(--size-36);
-    font-family: 'CN oblique';
+  // background-color: #000;
+  .top-menu {
+    position: relative;
+    width: 100%;
+    height: var(--size-60);
     display: flex;
-    justify-content: center;
+    flex-direction: row;
+    justify-content: flex-start;
     align-items: center;
-    background-image: url('@/assets/images/performance_item_bg.svg');
-    background-size: cover;
-    background-repeat: no-repeat;
-    margin-bottom: var(--spacing-20);
-    cursor: pointer;
+    margin-left: var(--spacing-120);
+
+    // background-color: #fff;
+    .performance-item {
+      width: var(--size-150);
+      height: var(--size-40);
+      font-size: var(--font-size-16);
+      background-image: url('@/assets/images/unselect.png');
+      background-size: contain;
+      color: #fff;
+      margin: 0 var(--spacing-10);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      &:hover {
+        background-image: url('@/assets/images/select_hover.png');
+      }
+    }
+    .is-active {
+      background-image: url('@/assets/images/mysetting_bg.png');
+      &:hover {
+        background-image: url('@/assets/images/mysetting_bg.png');
+      }
+    }
   }
 
   .display-area {
-    width: var(--size-1310);
-    height: var(--size-290);
-  }
-  .is-active {
-    background-image: url('@/assets/images/performance_item_bgC.gif');
-    color: #000;
+    width: 100%;
+    padding: 30px 120px;
   }
 }
-</style>
+
+// .performance-container {
+//   width: var(--size-1600);
+//   height: var(--size-350);
+//   margin-top: var(--spacing-25);
+//   display: flex;
+//   background-image: url('@/assets/images/performance_bg.svg');
+//   background-size: cover;
+//   background-repeat: no-repeat;
+//   position: relative;
+//   box-sizing: border-box;
+//   padding-top: var(--spacing-30);
+//   overflow: hidden;
+
+//   .performance-item {
+//     width: var(--menu-item-width);
+//     height: var(--menu-item-height);
+//     font-size: var(--font-size-20);
+//     color: #fff;
+//     margin: 0 var(--spacing-30);
+//     line-height: var(--size-36);
+//     font-family: 'CN oblique';
+//     display: flex;
+//     flex-direction: row;
+//     justify-content: center;
+//     align-items: center;
+//     // background-image: url('@/assets/images/performance_item_bg.svg');
+//     background-size: cover;
+//     background-repeat: no-repeat;
+//     margin-bottom: var(--spacing-20);
+//     cursor: pointer;
+//   }
+
+//   .display-area {
+//     width: var(--size-1310);
+//     height: var(--size-290);
+//   }
+//   .is-active {
+//     background-image: url('@/assets/images/performance_item_bgC.gif');
+//     color: #000;
+//   }
+// }</style>

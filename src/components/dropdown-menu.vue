@@ -4,21 +4,19 @@
     @click="toggleDropdown"
     :class="{ 'is-checked': appStore.activeConfigIndex !== null }"
   >
-    <img class="change-icon" :src="appStore.activeConfigIndex !== null ? changedIcon : changeIcon" />
+  
     <span class="dropdown-text">
-      <!-- {{ appStore.configList[appStore.activeConfigIndex]?.title }} -->
       {{ $t(`messages.keyboardConfig${appStore.activeConfigIndex}`) }}
     </span>
     <img
       class="down-icon"
-      :src="appStore.activeConfigIndex !== null ? downArrowed : downArrow"
+      :src="appStore.activeConfigIndex !== null ? downArrowed : downArrowed"
       :style="{ transform: `rotate(${rotate}deg)` }"
     />
   </div>
+
   <div class="dropdown-list" :style="{ height: `${defaultHeight}px` }">
-    <p>板载配置</p>
     <ul>
-      <!-- <ul class="dropdown-list"> -->
       <li
         v-for="(item, index) in appStore.configList"
         :key="index"
@@ -49,10 +47,8 @@ import { useAppStore, useKeyboardStore, usePerformanceStore } from '@/stores';
 import { useAdvancedHook } from '@/hooks';
 import emitter from '@/utils/app-emitter';
 
-import changedIcon from '@/assets/images/changed.svg';
-import changeIcon from '@/assets/images/change.svg';
-import downArrowed from '@/assets/images/down_icon.svg';
-import downArrow from '@/assets/images/down_icon2.svg';
+import downArrowed from '@/assets/images/arrow_up.png';
+// import downArrow from '@/assets/images/down_icon2.svg';
 
 const appStore = useAppStore();
 const keyboardStore = useKeyboardStore();
@@ -119,14 +115,15 @@ const delConfig = (configInfo) => {
 
 <style scoped lang="scss">
 .dropdown-menu-container {
-  position: relative;
-  width: var(--size-170);
+  // position: relative;
+  width: var(--size-150);
   height: var(--size-40);
-  top: calc(var(--spacing-15) + var(--spacing-2));
+  // bottom: var(--spacing-240);  
+  right: var(--spacing-50);
   display: flex;
   align-content: center;
-  margin-left: var(--spacing-50);
-  background-image: url('@/assets/images/config_bg.svg');
+  // margin-left: var(--spacing-50);
+  // background-image: url('@/assets/images/mysetting_bg.png');
   background-size: cover;
   background-repeat: no-repeat;
   overflow: hidden;
@@ -162,20 +159,21 @@ const delConfig = (configInfo) => {
 }
 
 .is-checked {
-  background-image: url('@/assets/images/config_bg_checked.gif');
+  background-image: url('@/assets/images/mysetting_bg.png');
   .dropdown-text {
-    color: #000;
+    color: #ffffff;
   }
 }
 
 .dropdown-list {
   list-style-type: none;
   padding: 0;
-  margin: 0;
+  // margin-top: var(--spacing-8);
   position: absolute;
-  top: calc(var(--spacing-60) - var(--spacing-3));
-  left: var(--spacing-50);
-  width: var(--size-170);
+  top: var(--spacing-120);
+  // top: var(--size-40);
+  // left: 0;
+  width: var(--size-150);
   z-index: 10;
   /* display: none; */
   background-color: transparent;
@@ -190,30 +188,34 @@ const delConfig = (configInfo) => {
   }
 
   ul {
-    background-color: #000;
+    // background-color: #000;
   }
 
   li {
-    width: var(--size-160);
+    width: var(--size-150);
     height: var(--size-40);
     padding: var(--spacing-10);
-    margin-left: var(--spacing-5);
+    // margin-left: var(--spacing-5);
     // font-weight: 600;
-    margin-bottom: var(--spacing-5);
+    margin-bottom: var(--spacing-4);
     text-align: center;
     font-family: 'CN Heavy';
-    background-image: url('@/assets/images/item_bg.svg');
-    background-size: cover;
-    background-position: center;
+    // background-color: #ffffff;
+    background-image: url('@/assets/images/unselect.png');
+    background-size: contain;
     background-repeat: no-repeat;
     color: #ffffff;
     cursor: pointer;
     box-sizing: border-box;
+    &:hover {
+        background-image: url('@/assets/images/select_hover.png');
+      }
   }
 
   &.show {
     display: block;
   }
+  
 
   .del_btn {
     display: inline-block;
@@ -226,8 +228,8 @@ const delConfig = (configInfo) => {
   }
 
   .checked {
-    background-image: url('@/assets/images/item_bg_checked.gif');
-    color: #000;
+    // background-image: url('@/assets/images/select.png');
+    // color: #000;
   }
 }
 </style>

@@ -5,8 +5,9 @@
       width: `${containerDimensions.width}px`,
     }"
   >
-    <div class="side-left-container" v-if="route.path === '/performance'">
-      <div
+    <div class="side-left-container">
+      <DropdownMenu />
+      <!-- <div
         class="select-box"
         :class="{ 'is-checked': selectedKey == 'all-key' }"
         @click="handleAllSelect"
@@ -32,7 +33,7 @@
         @mouseleave="selectedKey = ''"
       >
         反选
-      </div>
+      </div> -->
     </div>
     <!-- v1 keyboard -->
     <template v-if="!isVersion2">
@@ -131,6 +132,7 @@
         仅字母
       </div>
     </div>
+
     <template v-if="route.path === '/key-assignment'">
       <div
         class="layer-container"
@@ -155,6 +157,7 @@ import { useAppStore, useKeyboardStore, useDeviceStore, usePerformanceStore } fr
 import { useAdvancedHook } from '@/hooks';
 
 import key from './key.vue';
+import DropdownMenu from '@/components/dropdown-menu.vue';
 
 const route = useRoute();
 const appStore = useAppStore();
@@ -352,13 +355,13 @@ const containerDimensions = computed(() => {
   if (validKeysCount === 0 || (maxX === 0 && maxY === 0)) {
     return defaultDimensions;
   }
-
+  console.log('maxY: ', maxY);
   // 计算最终尺寸并添加内边距
   return {
     // width: maxX + scaleValue(13),
     // height: maxY + scaleValue(31),
     width: maxX + scaleValue(52),
-    height: maxY + scaleValue(65),
+    height: maxY + scaleValue(62),
   };
 });
 </script>
@@ -372,14 +375,14 @@ const containerDimensions = computed(() => {
 
   .side-left-container,
   .side-right-container {
-    margin-top: var(--spacing-280);
+    margin-top: var(--spacing-60);
   }
 
   .keyboard-container {
     width: var(--size-1040);
     height: var(--size-380);
     box-sizing: border-box;
-    margin: var(--spacing-25) var(--spacing-20) 0 var(--spacing-20);
+    margin: var(--spacing-40) var(--spacing-20) 0 var(--spacing-20);
     // border-radius: var(--spacing-15);
     // border: var(--spacing-3) solid rgb(37, 37, 37);
     position: relative;
@@ -406,17 +409,17 @@ const containerDimensions = computed(() => {
         position: absolute;
         top: var(--keyboard-pseudo-element-top);
         left: var(--keyboard-pseudo-element-left);
-        border: var(--spacing-3) solid rgb(37, 37, 37);
+        border: var(--spacing-3) solid #616161;
       }
     }
 
     .keyboard {
       border-radius: var(--spacing-15);
-      border: var(--spacing-3) solid rgb(37, 37, 37);
+      border: var(--spacing-3) solid #616161;
       position: relative;
       box-sizing: border-box;
       padding: var(--spacing-21) var(--spacing-24);
-      background-color: #000;
+      // background-color: #616161;
       transition: width 0.3s ease-in-out;
       &::after {
         content: '';
@@ -425,7 +428,7 @@ const containerDimensions = computed(() => {
         box-sizing: border-box;
         position: absolute;
         border-radius: var(--spacing-10);
-        border: var(--spacing-3) solid rgb(37, 37, 37);
+        border: var(--spacing-3) solid #616161;
         position: absolute;
         top: var(--spacing-4);
         left: var(--spacing-4);

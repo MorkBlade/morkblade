@@ -6,8 +6,6 @@
       <Setting />
       <checkLng />
     </div>
-    <!-- <div class="test-change-connect" @click="connectMk">连接mork blade tkl</div>
-    <div class="test-change-connect">连接mk60</div> -->
   </div>
 </template>
 
@@ -77,7 +75,14 @@ const connectMk = async () => {
   & .top-right {
     display: flex;
     align-items: center;
-    
+    position: relative;
+  }
+  
+  & .dropdown-container {
+    position: relative;
+    height: 100%;
+    display: flex;
+    align-items: center;
   }
 }
 </style>

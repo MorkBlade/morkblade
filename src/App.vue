@@ -4,7 +4,7 @@
       <div class="bg-layer"></div>
       <div class="bg-layer second-layer"></div>
     </div>
-    <img src="@/assets/images/bg_shadow.png" alt="" />
+    <!-- <img src="@/assets/images/bg_shadow.png" alt="" /> -->
     <div class="app-content" :class="{ 'content-ready': isContentReady }">
       <Transition name="fade" mode="out-in">
         <component :is="currentPage" />
@@ -41,7 +41,7 @@ onMounted(() => {
 }
 
 .background {
-  background-image: url('@/assets/images/newbg.png');
+  background-image: url('@/assets/images/bg.png');
   background-size: cover;
   background-repeat: repeat-x;
   position: fixed;
@@ -54,7 +54,7 @@ onMounted(() => {
 }
 
 .bg-layer {
-  background-image: url('@/assets/images/newbg.png');
+  background-image: url('@/assets/images/bg.png');
   background-size: cover;
   background-repeat: repeat-x;
   background-size: 100% 100%;
@@ -63,7 +63,7 @@ onMounted(() => {
   left: 0;
   width: 100%;
   height: 100%;
-  animation: slideBackAndForth 20s linear infinite;
+  // animation: slideBackAndForth 20s linear infinite;
 }
 
 .second-layer {

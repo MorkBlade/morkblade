@@ -447,8 +447,8 @@ const changeKeyCustomLight = async (e, isCustom = true) => {
   flex-direction: column;
   align-items: center;
   box-sizing: border-box;
-  background-color: rgba(24, 24, 24);
-  border: var(--spacing-2) solid rgb(37, 37, 37);
+  background-color: #383838;
+  border: var(--spacing-2) solid #616161;
   // margin-right: var(--key-default-right);
   position: absolute;
   top: 0;

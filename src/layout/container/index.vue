@@ -5,7 +5,9 @@
       <div class="content-wrapper">
         <Transition name="fade">
           <KeepAlive>
-            <Keyboard v-if="!isNotShow" key="keyboard" />
+            <div class="keyboard-container" :style="{ height: `${keyboardHeight}px` }">
+              <Keyboard v-if="!isNotShow" key="keyboard" />
+            </div>
           </KeepAlive>
         </Transition>
         <!-- 路由视图的过渡 -->
@@ -54,10 +56,20 @@ onMounted(async () => {
 
   .content-wrapper {
     width: 100%;
+    height: calc(100vh - 60px);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+
+    .keyboard-container {
+      height: var(--size-550);
+    }
+
+    .view-wrapper {
+      width: 100%;
+      flex: 1;
+    }
   }
 }
 

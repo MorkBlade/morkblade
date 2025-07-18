@@ -6,8 +6,8 @@ import vueDevTools from 'vite-plugin-vue-devtools';
 import AutoImport from 'unplugin-auto-import/vite';
 import Components from 'unplugin-vue-components/vite';
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
+import postCssPxToRem from 'postcss-pxtorem';
 
-// https://vite.dev/config/
 export default defineConfig({
   plugins: [
     vue(),
@@ -33,6 +33,14 @@ export default defineConfig({
         additionalData: `@import "@/assets/main.scss";`,
       },
     },
+    // postcss: {
+    //   plugins: [
+    //     postCssPxToRem({
+    //       rootValue: 192,
+    //       propList: ['*'],
+    //     })
+    //   ]
+    // }
   },
   build: {
     rollupOptions: {
