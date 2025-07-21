@@ -1,16 +1,18 @@
 <template>
   <div class="mode-container">
-    <travelTestCard />
+    <travelTestCard 
+      :sliderVal="singleTravel" 
+    />
+    <div class="line">
+      <img src="@/assets/images/line.svg" alt="">
+    </div>
     <div class="keystroke">
-      <setTravelCard
-        :sliderVal="singleTravel"
-        :min="option.min"
-        :max="option.max"
-        :title="title"
-        :offsetX="scaleValue(280)"
-        :disabled="disabled"
-        @sendKeyVal="handleTriggerPointChange"
-      />
+      <setTravelCard 
+      :sliderVal="singleTravel" 
+      :min="option.min" 
+      :max="option.max" 
+      :title="title"
+        :offsetX="scaleValue(280)" :disabled="disabled" @sendKeyVal="handleTriggerPointChange" />
     </div>
     <saveConfig :travelVal="singleTravel" @saveSingleTravel="saveSingleConfig" />
   </div>

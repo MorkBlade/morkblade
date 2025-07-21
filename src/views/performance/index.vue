@@ -9,7 +9,7 @@
     <div class="display-area">
       <mode v-if="!clickItem" />
       <quickTrigger v-if="clickItem == 1" />
-      <deadZone v-if="clickItem == 2" />
+      <!-- <deadZone v-if="clickItem == 2" /> -->
       <preinstall v-if="clickItem == 3" />
       <axisSetting v-if="clickItem == 4" />
     </div>
@@ -21,15 +21,15 @@ import { useAppStore } from '@/stores';
 
 import mode from './mode/index.vue';
 import quickTrigger from './quick-trigger/index.vue';
-import deadZone from './dead-zone/index.vue';
+// import deadZone from './dead-zone/index.vue';
 import preinstall from './preinstall/index.vue';
 import axisSetting from './axis-setting/index.vue';
 import emitter from '@/utils/app-emitter';
 
 const appStore = useAppStore();
 const clickItem = ref(0);
-const performanceItem = ['机械模式', '快速触发', '死区', '性能预设', '轴体切换'];
-const modulesName = ['mechanicalMode', 'quickTrigger', 'deadZone', 'preinstall', 'axis'];
+const performanceItem = ['机械模式', '快速触发', '性能预设', '轴体切换'];
+const modulesName = ['mechanicalMode', 'quickTrigger', 'preinstall', 'axis'];
 
 const changeMenu = (idx) => {
   clickItem.value = idx;
@@ -75,13 +75,13 @@ onMounted(() => {
   // background-color: #000;
   .top-menu {
     position: relative;
-    width: 100%;
-    height: var(--size-60);
+    // width: 100%;
+    height: 60px;
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
     align-items: center;
-    margin-left: var(--spacing-120);
+    margin-left: 120px;
 
     // background-color: #fff;
     .performance-item {
@@ -110,7 +110,7 @@ onMounted(() => {
 
   .display-area {
     width: 100%;
-    padding: 30px 120px;
+    padding: 30px 128px;
   }
 }
 

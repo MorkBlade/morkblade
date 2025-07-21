@@ -3,19 +3,6 @@
     <div class="slider_box">
       <img class="slider-img" src="/src/assets/images/keystroke_scale_bg.svg" alt="" />
       <div class="progress-bar" ref="sliderContainer">
-        <!-- <div
-          class="slider-btn"
-          :class="{ disabled: disabled }"
-          :style="{ top: handleStyle.top }"
-          v-on="
-            !disabled
-              ? {
-                  mousedown: startDrag,
-                  // touchstart: startDrag,
-                }
-              : {}
-          "
-        ></div> -->
         <div class="my-slider" :style="{ height: handleStyle.sliderHeight }">
           <div
             class="slider-btn"

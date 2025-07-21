@@ -1,73 +1,62 @@
 <template>
-  <div class="travel-test-card">
-    <div class="scale-box">
-      <img class="scale-img isreverse" src="@/assets/images/scale.svg" alt="" />
-      <div class="progress-bar">
-        <div>
-          <img
-            class="progress"
-            src="@/assets/images/progress.png"
-            :style="{ transform: `translateY(${testEnabled ? dynamicHeight : -400}px)` }"
-          />
+  <div class="travel-test-card-container">
+    <div class="travel-test-card-header">
+      <p>触发效果演示：</p>
+    </div>
+    <div class="travel-test-card-content">
+      <div class="shaft-img">
+        <img :src="shaftImg" alt="" />
+      </div>
+
+      <div class="travel-test-card">
+        <div class="scale-box">
+          <div class="progress-bar">
+            <div>
+              <img class="progress" src="@/assets/images/progress.svg"
+                :style="{ transform: `translateY(${testEnabled ? dynamicHeight : -400}px)` }" />
+            </div>
+          </div>
+          <div class="arrow-nums" 
+            :style="{ transform: `translateY(${currentSingleTravel * 70}px)` }"
+          >
+            <img class="arrow-left" src="@/assets/images/arrow_left.svg" alt="">
+            <p>{{ currentSingleTravel }}mm</p>
+          </div>
+
         </div>
       </div>
-      <img class="scale-img" src="@/assets/images/scale.svg" alt="" />
-      <div class="nums">
-        <p class="scale_0">0.00</p>
-        <p class="scale_1">1.00</p>
-        <p class="scale_2">2.00</p>
-        <p class="scale_3">3.00</p>
-        <p class="scale_3_3">3.30</p>
-      </div>
-    </div>
-    <div class="switch-box">
-      <span>行程测试</span>
-      <el-switch
-        v-model="testEnabled"
-        :width="getSwitchWidth()"
-        inline-prompt
-        active-text="ON"
-        inactive-text="OFF"
-        @change="handleSwitchChange"
-      >
-        <template #active-action>
-          <img class="custom-active-action" src="@/assets/images/sliding_block.svg" />
-        </template>
-        <template #inactive-action>
-          <img class="custom-active-action" src="@/assets/images/sliding_block.svg" />
-        </template>
-      </el-switch>
     </div>
   </div>
 </template>
 
 <script setup>
 import { usePerformanceStore, useKeyboardStore } from '@/stores';
+import shaftImg from '@/assets/images/shaft_img.svg';
 
 const keyboardStore = useKeyboardStore();
 const performanceStore = usePerformanceStore();
 
-const testEnabled = ref(false);
+const props = defineProps({
+  sliderVal: {
+    type: Number,
+    default: 0
+  }
+});
+
+const testEnabled = ref(true); // 默认开启
 const maxMM = ref(0);
 const keyPressTestCount = ref(0);
+const currentSingleTravel = ref(props.sliderVal);
+console.log(currentSingleTravel.value)
 const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
+// const sliderHeight = computed(() => {
+//   return getComputedStyle(document.documentElement).getPropertyValue('--slider-height').trim();
+// }); 
 
-const handleSwitchChange = async (value) => {
-  if (isVersion2) {
-    // if (value) {
-    //   await performanceStore.calibrationStartV2();
-    // } else {
-    //   setTimeout(async () => {
-    //     await performanceStore.calibrationEndV2();
-    //   }, 50);
-    // }
-  } else {
-    if (!value) {
-      maxMM.value = 0;
-    }
-  }
+// 组件挂载时自动开始数据获取
+onMounted(() => {
   keyPressTestCount.value++;
-};
+});
 
 watch(keyPressTestCount, async () => {
   if (testEnabled.value) {
@@ -105,19 +94,44 @@ const withTimeout = (promise, ms) => {
   return Promise.race([promise, timeout]);
 };
 
-// 添加一个获取开关宽度的函数
-const getSwitchWidth = () => {
-  const switchWidthValue = getComputedStyle(document.documentElement).getPropertyValue('--switch-width');
-  return parseInt(switchWidthValue) || 73; // 提供一个默认值以防 CSS 变量未定义
-};
+
 </script>
 
 <style scoped lang="scss">
+.travel-test-card-container {
+  // width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  .travel-test-card-header {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    color: #fff;
+    font-size: 16px;
+    flex-direction: column;
+  }
+  .travel-test-card-content {
+    display: flex;
+    .shaft-img {
+      width: 175px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin-left: -26px;
+      img {
+        width: 100%;
+        height: 100%;
+      }
+    }
+  }
+}
 .travel-test-card {
   width: var(--size-260);
   height: var(--size-290);
   // display: flex;
-  background-image: url('@/assets/images/formation_test_bg.svg');
+  // background-image: url('@/assets/images/formation_test_bg.svg');
   background-size: cover;
   background-repeat: no-repeat;
   overflow: hidden;
@@ -127,9 +141,6 @@ const getSwitchWidth = () => {
     display: flex;
     position: relative;
 
-    &:first-child {
-      margin-left: var(--spacing-60);
-    }
 
     .scale-img {
       width: var(--spacing-25);
@@ -138,10 +149,10 @@ const getSwitchWidth = () => {
     }
 
     .progress-bar {
-      width: var(--spacing-30);
-      height: var(--size-200);
-      margin: 0 var(--spacing-10);
-      padding-top: var(--spacing-5);
+      width: 80px;
+      height: 240px;
+      margin: 0 10px;
+      padding-top: 5px;
       box-sizing: border-box;
       position: relative;
       background-image: url('@/assets/images/progress_bar.svg');
@@ -149,15 +160,14 @@ const getSwitchWidth = () => {
       background-repeat: no-repeat;
 
       div {
-        width: var(--spacing-20);
-        height: var(--size-190);
-        display: block;
-        // height: 0;
-        position: absolute;
-        border-radius: var(--spacing-5);
-        top: var(--spacing-5);
-        left: var(--spacing-5);
-        overflow: hidden;
+        width: 40px;
+          height: 226px;
+          display: block;
+          // height: 0;
+          position: absolute;
+          top: 8px;
+          left: 33px;
+          overflow: hidden;
       }
 
       .progress {
@@ -179,30 +189,24 @@ const getSwitchWidth = () => {
       transform: rotateY(180deg) rotateZ(0deg);
     }
 
-    .nums {
+    .arrow-nums {
       position: absolute;
-      height: var(--size-200);
-      top: calc(var(--spacing-5) - var(--spacing-10));
-      left: var(--spacing-110);
-      background-color: pink;
-
+      height: 10px;
+      left: 80px;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      .arrow-left {
+        width: 4px;
+        height: 10px;
+        margin: 0 4px 0 14px;
+      }
       p {
-        color: #ccc;
-        font-size: var(--font-size-13);
-        position: absolute;
+        width: 30px;
+        color: #fff;
+        font-size: 10px;
         font-family: 'CN Regular';
-      }
-      .scale_1 {
-        top: var(--scale-54);
-      }
-      .scale_2 {
-        top: var(--scale-114);
-      }
-      .scale_3 {
-        top: var(--scale-172);
-      }
-      .scale_3_3 {
-        top: var(--scale-191);
       }
     }
   }
