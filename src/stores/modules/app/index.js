@@ -70,6 +70,7 @@ const useAppStore = defineStore('app', {
       if (isVersion2) {
         const result = await services.getConfigListV2();
         const result2 = await services.getConfigV2();
+     
         const curConfig = result2[0].key;
         // this.activeConfigIndex = result[0]?.list.findIndex((item) => item === curConfig);
         this.activeConfigIndex = result2[0].value;
@@ -82,9 +83,32 @@ const useAppStore = defineStore('app', {
         this.configList = configList;
         // this.activeConfigIndex = (result && result[0]?.value) || 0;
       } else {
-        const res = await services.getApi({ type: 'ORDER_TYPE_CONFIG' });
+        const res = await services.getApi({ type: 'ORDER_TYPE_CONFIG'});
+        console.log('当前设备配置：', res);
         const { configID } = res || {};
         this.activeConfigIndex = configID || 0;
+
+        const light = await handleLightingData();
+        const system = await handleSystemData();
+        // const keyboards = await handleKeyboardData();  
+        const { keyboards } = keyboardStore;
+        console.log('keyboards: ', keyboards);
+        await keyboardStore.getLayoutKeyInfo(0, false);
+        await keyboardStore.getLayoutKeyInfo(1, false);
+        await keyboardStore.getLayoutKeyInfo(2, false);
+        await keyboardStore.getLayoutKeyInfo(3, false);
+        const macro = handleMacroData();
+        const data = {
+          light,
+          keyboards,
+          system,
+          macro,
+        };
+        console.log('data: ', data);
+        services.exportConfig(data); 
+
+
+
       }
     },
     // 模式查询

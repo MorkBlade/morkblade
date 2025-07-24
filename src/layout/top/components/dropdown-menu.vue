@@ -89,6 +89,7 @@ const selectItem = async (index) => {
   if (index === appStore.activeConfigIndex) {
     return;
   }
+
   const res = await appStore.setActiveConfig(index, isVersion2.value);
   if (res) {
     if (!isVersion2.value) {

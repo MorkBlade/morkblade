@@ -5,6 +5,7 @@
         <h3>{{ dialogTitle }}</h3>
         <template v-if="!isUpdate">
           <p>{{ textContent }}</p>
+          <slot></slot>
           <div class="btn-group">
             <div class="sure-btn" @click="onSure">
               <img src="@/assets/images/sure_icon.svg" alt="" />
