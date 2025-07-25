@@ -14,6 +14,12 @@ const useAppStore = defineStore('app', {
       { leftImage: '', title: '我的配置3' },
       { leftImage: '', title: '我的配置4' },
     ],
+    unActiveConfigList: [
+      { leftImage: '', title: '未激活1' },
+      { leftImage: '', title: '未激活2' },
+      { leftImage: '', title: '未激活3' },
+      { leftImage: '', title: '未激活4' },
+    ],
     activeConfigIndex: 0,
     activeMenu: 'keyboard',
     activeSubMenu: 'performance',

@@ -15,21 +15,22 @@
                         <p class="description">要加载配置到键盘上的话，请将拖放配置到此区域。要替换配置的话，请将配置拖放到要替换的配置上面。
                         </p>
                         <div class="box">
-                            <div class="item-list" v-for="(item, index) in activeItemList" :key="index">
-                                <div class="item" :class="{ 'is-active': appStore.activeConfigIndex === index }" @click="handleActiveItem(index)">
+                            <div class="item-list" v-for="(item, index) in appStore.configList" :key="index">
+                                <div class="item" :class="{ 'is-active': appStore.activeConfigIndex === index }"
+                                    @click="handleActiveItem(index)">
                                     <span class="item-title">{{ item.title }}</span>
                                     <span class="more-icon" @click.stop="showEdit(item)"></span>
                                 </div>
                                 <div class="item-edit" v-if="editingItemId === item">
                                     <span class="item-edit-text" @click.stop="handleRename(item)">重命名</span>
-                                    <span class="item-edit-text">复制</span>
-                                    <span class="item-edit-text">移至未激活的配置</span>
+                                    <span class="item-edit-text" @click.stop="handleCopy(item)">复制</span>
+                                    <span class="item-edit-text" @click.stop="handleMoveToUnActive(item)">移至未激活的配置</span>
                                     <span class="item-edit-text">分享配置</span>
                                     <span class="item-edit-text">导出配置至本地</span>
                                     <span class="item-edit-text delete-btn">删除</span>
                                 </div>
                             </div>
-                            <div class="item-list-empty" v-if="activeItemList && activeItemList.length < 4">
+                            <div class="item-list-empty" v-if="appStore.configList && appStore.configList.length < 4">
                                 <span class="item-title">拖放配置至此处</span>
                             </div>
                         </div>
@@ -38,13 +39,13 @@
                     <div class="un-active-configuration">
                         <p class="title">未激活的配置</p>
                         <div class="box">
-                            <div class="item-list" v-for="(item, index) in unActiveItemList" :key="index">
+                            <div class="item-list" v-for="(item, index) in appStore.unActiveConfigList" :key="index">
                                 <div class="item">
                                     <span class="item-title">{{ item.title }}</span>
                                     <span class="more-icon" @click.stop="showEdit(item)"></span>
                                 </div>
                                 <div class="un-active-item-edit" v-if="editingItemId === item">
-                                    <span class="item-edit-text">重命名</span>
+                                    <span class="item-edit-text" @click.stop="handleRename(item)">重命名</span>
                                     <span class="item-edit-text">复制</span>
                                     <span class="item-edit-text">移至板载配置</span>
                                     <span class="item-edit-text">分享配置</span>
@@ -72,26 +73,15 @@
             </div>
         </div>
     </div>
-    <Dialog
-      v-if="showRenameDialog"
-      :isShow="showRenameDialog"
-      dialogTitle="重命名配置"
-      :textContent="''"
-      @cancel="handleRenameCancel"
-      @sure="handleRenameConfirm"
-      @update:isShow="val => showRenameDialog = val"
-    >
-      <template #default>
-        <div class="rename-input-container">
-            <p>请修改配置名称</p>
-          <input
-            class="rename-input"
-            v-model="renameInput"
-            placeholder="请输入配置名称"
-            @keyup.enter="handleRenameConfirm"
-          />
-        </div>
-      </template>
+    <Dialog v-if="showRenameDialog" :isShow="showRenameDialog" dialogTitle="重命名配置" :textContent="''"
+        @cancel="handleRenameCancel" @sure="handleRenameConfirm" @update:isShow="val => showRenameDialog = val">
+        <template #default>
+            <div class="rename-input-container">
+                <p>请修改配置名称</p>
+                <input class="rename-input" v-model="renameInput" placeholder="请输入配置名称"
+                    @keyup.enter="handleRenameConfirm" />
+            </div>
+        </template>
     </Dialog>
 </template>
 
@@ -100,9 +90,17 @@ import { onMounted } from 'vue';
 import { onBeforeUnmount, ref, watch } from 'vue';
 import { useAppStore, useKeyboardStore } from '@/stores';
 import { useAdvancedHook } from '@/hooks';
+import { showMessage } from '@/utils/message';
 import Dialog from './dialog.vue';
 
+let timer = null;
+
 const emits = defineEmits(['cancel', 'sure', 'cancel']);
+const { dialogTitle, isShow } = defineProps({
+    dialogTitle: String,
+    isShow: { type: Boolean, default: false },
+
+});
 
 const appStore = useAppStore();
 const isVersion2 = ref(localStorage.getItem('keyboardVersion') === 'v2');
@@ -120,6 +118,43 @@ const showEdit = (item) => {
     editingItemId.value = item;
 };
 
+const handleCopy = (item) => {
+    // 复制 item 的 title 到剪贴板
+    if (item && item.title) {
+        // 兼容性处理
+        if (navigator && navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(item.title).then(() => {
+                // 可选：提示用户复制成功
+                showMessage('已复制配置名称', 'success');
+                editingItemId.value = null;
+            }).catch(err => {
+                // 可选：提示用户复制失败
+                showMessage('复制失败', 'warning');
+            });
+        } else {
+            // 旧版浏览器兼容
+            const textarea = document.createElement('textarea');
+            textarea.value = item.title;
+            textarea.setAttribute('readonly', '');
+            textarea.style.position = 'absolute';
+            textarea.style.left = '-9999px';
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                showMessage('已复制配置名称', 'success');
+                editingItemId.value = null;
+            } catch (err) {
+                showMessage('复制失败', 'warning');
+            }
+            document.body.removeChild(textarea);
+        }
+    }
+
+    // TODO 请求后端接口
+    console.log(item);
+};
+
 const handleActiveItem = async (index) => {
     if (index === appStore.activeConfigIndex) {
         return;
@@ -129,8 +164,8 @@ const handleActiveItem = async (index) => {
 
     if (res) {
         if (!isVersion2.value) {
-            clearTimeout(timer);
-            const timer = setTimeout(async () => {
+            clearTimeout(timer); 
+            timer = setTimeout(async () => {
                 // TODO v2 配置切换之后获取的数据是一样的
                 // await keyboardStore.getLayoutKeyInfo(keyboardStore.layout, keyboardStore.keyboards);
                 // await performanceStore.getKeyPerformanceV1(keyboardStore.keyboards);
@@ -149,6 +184,8 @@ const handleActiveItem = async (index) => {
 };
 
 const handleRename = (item) => {
+    // TODO 请求后端接口
+
     renameItem.value = item;
     renameInput.value = item.title;
     showRenameDialog.value = true;
@@ -167,41 +204,20 @@ const handleRenameCancel = () => {
     showRenameDialog.value = false;
 };
 
-const { dialogTitle, isShow } = defineProps({
-    dialogTitle: String,
-    isShow: { type: Boolean, default: false },
+const handleMoveToUnActive = (item) => {
+    // TODO 请求后端接口
+    appStore.unActiveConfigList.push(item);
+    appStore.configList = appStore.configList.filter(i => i.title !== item.title);
+    editingItemId.value = null;
+};
 
-});
+
 
 
 const handleCancel = () => {
     emits('cancel');
 };
 
-const unActiveItemList = ref([
-    {
-        id: 1345,
-        title: '新建配置1',
-    },
-    {
-        id: 2567,
-        title: 'Aspas',
-    },
-    {
-        id: 324,
-        title: '导入配置1',
-    },
-    {
-        id: 4768,
-        title: 'XX的配置',
-    }
-]);
-
-
-// 获取板载配置
-const activeItemList = ref(appStore.configList);
-// 获取未激活的配置
-const unActiveItemList_ = ref(appStore.configList);
 
 const preventBackgroundScroll = (event) => {
     event.preventDefault();
@@ -322,9 +338,8 @@ onBeforeUnmount(() => {
                 }
 
                 .box {
-                    display: flex;
-                    justify-content: space-between;
-                    flex-wrap: wrap;
+                    display: grid;
+                    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
                     gap: 10px;
                     margin-top: 10px;
 
@@ -347,6 +362,7 @@ onBeforeUnmount(() => {
                         letter-spacing: 0%;
                         color: #ffffff;
                         white-space: nowrap;
+                        overflow: hidden;
 
                         &:hover {
                             background-image: url('@/assets/images/setting_btn_bg_hover.svg');
@@ -373,10 +389,13 @@ onBeforeUnmount(() => {
                             background-image: url('@/assets/images/more_white.svg');
                         }
                     }
+
                     .item-list {
                         position: relative;
                     }
-                    .item-edit, .un-active-item-edit {
+
+                    .item-edit,
+                    .un-active-item-edit {
                         width: 133px;
                         height: auto;
                         cursor: pointer;
@@ -391,25 +410,30 @@ onBeforeUnmount(() => {
                         flex-direction: column;
                         z-index: 10;
                         overflow: hidden;
+
                         .item-edit-text {
                             height: 30px;
                             padding: 0px 20px;
-                            line-height: 30px;       
-                            font-family: "CN Regular";    
-                            font-size: 10px;                
+                            line-height: 30px;
+                            font-family: "CN Regular";
+                            font-size: 10px;
+
                             &:hover {
                                 background-color: #91bc00;
                                 color: #000;
                             }
                         }
+
                         .delete-btn {
                             color: #ff0000;
+
                             &:hover {
                                 background-color: #ff0000;
                                 color: #000;
                             }
                         }
                     }
+
                     .un-active-item-edit {
                         position: absolute;
                     }
@@ -417,6 +441,9 @@ onBeforeUnmount(() => {
                     .is-active {
                         color: #000000;
                         background-image: url('@/assets/images/connect.gif');
+                        background-size: contain;
+                        background-position: center;
+                        background-repeat: no-repeat;
 
                         .more-icon {
                             background-image: url('@/assets/images/more.svg');
@@ -432,7 +459,6 @@ onBeforeUnmount(() => {
                     .item-list-empty {
                         width: 160px;
                         height: 40px;
-                        // background-color: #1a1a1a;
                         border: 3px dashed #242424;
                         color: #242424;
                         border-radius: 10px;
@@ -519,6 +545,7 @@ onBeforeUnmount(() => {
             }
         }
     }
+
     .rename-input-container {
         display: flex;
         flex-direction: column;
@@ -527,6 +554,7 @@ onBeforeUnmount(() => {
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
+
         p {
             font-size: 22px;
             font-weight: 500;
@@ -534,6 +562,7 @@ onBeforeUnmount(() => {
             font-family: "CN Heavy";
         }
     }
+
     .rename-input {
         width: 400px;
         height: 50px;
@@ -550,7 +579,7 @@ onBeforeUnmount(() => {
         outline: none;
 
         &::placeholder {
-            color: #ffffff;
+            color: #494848;
             font-family: "CN Regular";
         }
 

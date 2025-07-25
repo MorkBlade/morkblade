@@ -6,8 +6,8 @@
   >
     <img class="change-icon" :src="appStore.activeConfigIndex !== null ? changedIcon : changeIcon" />
     <span class="dropdown-text">
-      <!-- {{ appStore.configList[appStore.activeConfigIndex]?.title }} -->
-      {{ $t(`messages.keyboardConfig${appStore.activeConfigIndex}`) }}
+      {{ appStore.configList[appStore.activeConfigIndex]?.title }}
+      <!-- {{ $t(`messages.keyboardConfig${appStore.activeConfigIndex}`) }} -->
     </span>
     <img
       class="down-icon"
