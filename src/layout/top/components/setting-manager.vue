@@ -1,15 +1,15 @@
 <template>
-    <div class="setting-manager-container" @click="handleClick">
-        <img class="setting-icon" src="@/assets/images/share.svg" />
-        <span class="setting-text">设置管理</span>
-    </div>
-    <DialogSetting
+  <div class="setting-manager-container" @click="handleClick">
+    <img class="setting-icon" src="@/assets/images/share.svg" />
+    <span class="setting-text">设置管理</span>
+  </div>
+  <Dialog :textContent="'暂未开放，敬请期待'" :isShow="showDialog" @sure="handleSure" @cancel="handleCancel">
+  </Dialog>
+  <!-- <DialogSetting
         :isShow="showDialog"
-        :dialogTitle="dialogTitle"
-        :dialogContent="dialogContent"
         @sure="handleSure"
         @cancel="handleCancel"
-    />
+    /> -->
 </template>
 
 <script setup>
@@ -17,11 +17,10 @@ import { ref } from 'vue';
 import DialogSetting from '@/components/dialog-setting.vue';
 
 const showDialog = ref(false);
-const dialogTitle = ref('设置管理');
-const dialogContent = ref('是否确认进行设置管理操作？');
 
-const handleClick = () => {
-    // 点击设置管理按钮的处理逻辑
+
+const handleClick = async () => {
+  // 点击设置管理按钮的处理逻辑
     showDialog.value = true;
 };
 

@@ -87,6 +87,7 @@
           <input
             class="rename-input"
             v-model="renameInput"
+            placeholder="请输入配置名称"
             @keyup.enter="handleRenameConfirm"
           />
         </div>
@@ -101,6 +102,8 @@ import { useAppStore, useKeyboardStore } from '@/stores';
 import { useAdvancedHook } from '@/hooks';
 import Dialog from './dialog.vue';
 
+const emits = defineEmits(['cancel', 'sure', 'cancel']);
+
 const appStore = useAppStore();
 const isVersion2 = ref(localStorage.getItem('keyboardVersion') === 'v2');
 const keyboardStore = useKeyboardStore();
@@ -114,7 +117,6 @@ const renameItem = ref(null);
 const renameInput = ref('');
 
 const showEdit = (item) => {
-    console.log('item: ', item);
     editingItemId.value = item;
 };
 
@@ -124,8 +126,10 @@ const handleActiveItem = async (index) => {
     }
     const res = await appStore.setActiveConfig(index, isVersion2.value);
 
+
     if (res) {
         if (!isVersion2.value) {
+            clearTimeout(timer);
             const timer = setTimeout(async () => {
                 // TODO v2 配置切换之后获取的数据是一样的
                 // await keyboardStore.getLayoutKeyInfo(keyboardStore.layout, keyboardStore.keyboards);
@@ -136,7 +140,6 @@ const handleActiveItem = async (index) => {
                     appStore.changeConfig = true;
                     appStore.activeConfigIndex = index;
                 }
-                clearTimeout(timer);
             }, 1000);
         } else {
             await keyboardStore.initKeyboard();
@@ -146,7 +149,6 @@ const handleActiveItem = async (index) => {
 };
 
 const handleRename = (item) => {
-    console.log('item: ', item);
     renameItem.value = item;
     renameInput.value = item.title;
     showRenameDialog.value = true;
@@ -170,7 +172,7 @@ const { dialogTitle, isShow } = defineProps({
     isShow: { type: Boolean, default: false },
 
 });
-const emits = defineEmits(['cancel']);
+
 
 const handleCancel = () => {
     emits('cancel');
@@ -234,8 +236,6 @@ onMounted(async () => {
     document.addEventListener('click', handleClickOutside);
     await appStore.getConfigID(isVersion2.value);
     await appStore.getBaseInfo(isVersion2.value);
-    console.log('appStore.configList: ', appStore.configList);
-    console.log('appStore.activeConfigIndex: ', appStore.activeConfigIndex);
 });
 
 // 组件卸载时确保移除事件监听
@@ -546,6 +546,17 @@ onBeforeUnmount(() => {
         color: #ffffff;
         font-family: "CN Regular";
         font-size: 22px;
+        border: none;
+        outline: none;
+
+        &::placeholder {
+            color: #ffffff;
+            font-family: "CN Regular";
+        }
+
+        &:focus {
+            border: 1px solid #91bc00;
+        }
     }
 }
 </style>
