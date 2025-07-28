@@ -5,7 +5,7 @@
       <div class="content-wrapper">
         <Transition name="fade">
           <KeepAlive>
-            <div class="keyboard-container" :style="{ height: `${keyboardHeight}px` }">
+            <div class="keyboard-container">
               <Keyboard v-if="!isNotShow" key="keyboard" />
             </div>
           </KeepAlive>
@@ -49,26 +49,43 @@ onMounted(async () => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 100%; // Ensure consistent width
-  height: 100%; // Ensure consistent height
-  // overflow: hidden; // Prevent overflow issues
-  transition: all 0.3s ease; // Smooth transition for all properties
+  width: 100%;
+  height: calc(100vh - 60px);
+  transition: all 0.3s ease;
 
   .content-wrapper {
     width: 100%;
-    height: calc(100vh - 160px);
+    height: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
 
     .keyboard-container {
-      height: var(--size-550);
+      min-height: 540px;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      // min-height: 0; // 允许flex子项收缩
+      padding-bottom: 80px;
+      padding-top: 40px;
     }
 
     .view-wrapper {
-      width: 100%;
       flex: 1;
+      width: 100%;
+      position: relative;
+      background-image: url('@/assets/images/bg.png');
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+      padding-top: 20px;
+      // min-height: 0; // 允许flex子项收缩
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
     }
   }
 }
