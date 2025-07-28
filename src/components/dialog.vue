@@ -7,11 +7,11 @@
           <p>{{ textContent }}</p>
           <slot></slot>
           <div class="btn-group">
-            <div class="sure-btn" @click="onSure">
+            <div class="sure-btn" @click="onSure" v-if="showConfirmBtn">
               <img src="@/assets/images/sure_icon.svg" alt="" />
               <span>确认</span>
             </div>
-            <div class="cancel-btn" @click="onCancel">
+            <div class="cancel-btn" @click="onCancel" v-if="showCancelBtn">
               <img src="@/assets/images/cancel_icon.svg" alt="" />
               <span>取消</span>
             </div>
@@ -30,12 +30,12 @@
           <!-- </div> -->
           <div class="btn-group">
             <p>{{ textContent }}</p>
-            <div class="update-btn" :style="enterUpdate ? { left: '215px' } : ''" @click="onSure">
+            <div class="update-btn" :style="enterUpdate ? { left: '215px' } : ''" @click="onSure" v-if="showConfirmBtn">
               <img class="update-img" src="@/assets/images/sure_icon.svg" alt="" />
               <!-- <span class="update-text">{{ text[updateStep] }}</span> -->
               <span class="update-text">{{ updateSuc ? '确认' : enterUpdate ? '升级中..' : '升级' }}</span>
             </div>
-            <div class="cancel-btn" @click="onCancel" v-if="!enterUpdate">
+            <div class="cancel-btn" @click="onCancel" v-if="!enterUpdate && showCancelBtn">
               <img src="@/assets/images/cancel_icon.svg" alt="" />
               <span>取消升级</span>
             </div>
@@ -50,13 +50,15 @@
 import { onMounted } from 'vue';
 import { onBeforeUnmount, ref, watch } from 'vue';
 
-const { dialogTitle, textContent, isShow, isUpdate, progress, updateRes } = defineProps({
+const { dialogTitle, textContent, isShow, isUpdate, progress, updateRes, showConfirmBtn, showCancelBtn } = defineProps({
   dialogTitle: String,
   textContent: { type: String, default: '是否应用修改？' },
   isShow: { type: Boolean, default: false },
   isUpdate: { type: Boolean, default: false },
   progress: { type: Number, default: 0 },
   updateRes: Boolean,
+  showConfirmBtn: { type: Boolean, default: true },
+  showCancelBtn: { type: Boolean, default: true },
 });
 
 const emits = defineEmits(['update:isShow', 'sure', 'cancel']);

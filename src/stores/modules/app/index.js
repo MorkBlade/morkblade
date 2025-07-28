@@ -19,6 +19,30 @@ const useAppStore = defineStore('app', {
       { leftImage: '', title: '未激活2' },
       { leftImage: '', title: '未激活3' },
       { leftImage: '', title: '未激活4' },
+      { leftImage: '', title: '未激活1' },
+      { leftImage: '', title: '未激活2' },
+      { leftImage: '', title: '未激活3' },
+      { leftImage: '', title: '未激活4' },
+      { leftImage: '', title: '未激活1' },
+      { leftImage: '', title: '未激活2' },
+      { leftImage: '', title: '未激活3' },
+      { leftImage: '', title: '未激活4' },
+      { leftImage: '', title: '未激活1' },
+      { leftImage: '', title: '未激活2' },
+      { leftImage: '', title: '未激活3' },
+      { leftImage: '', title: '未激活4' },
+      { leftImage: '', title: '未激活1' },
+      { leftImage: '', title: '未激活2' },
+      { leftImage: '', title: '未激活3' },
+      { leftImage: '', title: '未激活4' },
+      { leftImage: '', title: '未激活1' },
+      { leftImage: '', title: '未激活2' },
+      { leftImage: '', title: '未激活3' },
+      { leftImage: '', title: '未激活3' },
+      { leftImage: '', title: '未激活2' },
+      { leftImage: '', title: '未激活3' },
+      { leftImage: '', title: '未激活3' },
+  
     ],
     activeConfigIndex: 0,
     activeMenu: 'keyboard',
@@ -91,6 +115,7 @@ const useAppStore = defineStore('app', {
       } else {
         const res = await services.getApi({ type: 'ORDER_TYPE_CONFIG'});
         const { configID } = res || {};
+        console.log('configID: ', configID);
         this.activeConfigIndex = configID || 0;
       }
     },
