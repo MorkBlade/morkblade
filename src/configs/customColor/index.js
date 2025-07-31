@@ -1,3 +1,4 @@
+
 const preInstallColorList = [
   // 彩虹
   {

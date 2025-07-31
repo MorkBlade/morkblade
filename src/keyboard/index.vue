@@ -12,27 +12,21 @@
         @click="handleAllSelect"
         @mouseenter="selectedKey = 'all-key'"
         @mouseleave="selectedKey = ''"
-      >
-        全选
-      </div>
+      >全选</div>
       <div
         class="select-box"
         :class="{ 'is-checked': selectedKey == 'cancel-all' }"
         @click="handleCancelSelect"
         @mouseenter="selectedKey = 'cancel-all'"
         @mouseleave="selectedKey = ''"
-      >
-        全不选
-      </div>
+      >全不选</div>
       <div
         class="select-box"
         :class="{ 'is-checked': selectedKey == 'reverse-key' }"
         @click="handleReverseSelect"
         @mouseenter="selectedKey = 'reverse-key'"
         @mouseleave="selectedKey = ''"
-      >
-        反选
-      </div>
+      >反选</div>
     </div>
     <!-- v1 keyboard -->
     <template v-if="!isVersion2">
@@ -118,18 +112,14 @@
         @click="handleNumSelect"
         @mouseenter="selectedKey = 'num-key'"
         @mouseleave="selectedKey = ''"
-      >
-        仅数字
-      </div>
+      >仅数字</div>
       <div
         class="select-box"
         :class="{ 'is-checked': selectedKey == 'letter-key' }"
         @click="handleLetterSelect"
         @mouseenter="selectedKey = 'letter-key'"
         @mouseleave="selectedKey = ''"
-      >
-        仅字母
-      </div>
+      >仅字母</div>
     </div>
     <template v-if="route.path === '/key-assignment'">
       <div

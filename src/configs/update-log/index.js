@@ -1,3 +1,4 @@
+
 export const UPDATE_LOG_V2 = [
   {
     version: '1.0.7',

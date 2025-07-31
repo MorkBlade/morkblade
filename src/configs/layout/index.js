@@ -1,3 +1,4 @@
+
 const files = import.meta.glob('./modules/*.json', { eager: true });
 
 const modules = {};

@@ -1,3 +1,4 @@
+
 import { defineStore } from 'pinia';
 
 import services from '@/services/index';
@@ -121,6 +122,59 @@ const useMacroStore = defineStore('macro', {
           // 清除当前 delay 项的 timeDifference
           data[i].timeDifference = 0;
         }
+      }
+    },
+
+    // 导入宏数据
+    async importMacroData(macroData) {
+      try {
+        if (!macroData || !Array.isArray(macroData)) {
+          console.error('Invalid macro data format');
+          return false;
+        }
+
+        // 清空现有宏数据
+        this.macroData = [];
+        
+        // 导入新的宏数据
+        const maxMacros = 16; // 最多支持16个宏
+        
+        // 逐个处理宏配置
+        for (let i = 0; i < Math.min(macroData.length, maxMacros); i++) {
+          const macro = macroData[i];
+          
+          // 设置宏模式
+          await services.setMacroModeV2({
+            macroId: i,
+            actNum: macro.actNum || macro.data?.length || 0,
+            mode: macro.mode || 0,
+            repeat: macro.repeat || 1,
+            valid: 1 // 设置为有效
+          });
+          
+          // 设置宏数据
+          if (macro.data && macro.data.length > 0) {
+            // 每次最多发送15条数据，分批处理
+            const batchSize = 15;
+            for (let j = 0; j < macro.data.length; j += batchSize) {
+              const batch = macro.data.slice(j, j + batchSize);
+              const offset = Math.floor(j / batchSize);
+              
+              await services.setMacroDataV2({
+                macroId: i,
+                offset,
+                macros: batch // 使用原始的字段名
+              });
+            }
+          }
+        }
+        
+        // 重新加载宏数据
+        await this.getMacroAllData();
+        return true;
+      } catch (error) {
+        console.error('Import macro data error:', error);
+        return false;
       }
     },
   },

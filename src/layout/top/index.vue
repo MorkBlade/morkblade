@@ -1,7 +1,7 @@
 <template>
   <div class="top-box">
     <dropdownMenu />
-    <settingManager />
+    <configManager />
     <logo />
     <checkLng />
     <!-- <div class="test-change-connect" @click="connectMk">连接mork blade tkl</div>
@@ -18,7 +18,7 @@ import { useAdvancedHook, useLightingHook } from '@/hooks';
 import checkLng from './components/check-lng.vue';
 import dropdownMenu from './components/dropdown-menu.vue';
 import logo from './components/logo.vue';
-import settingManager from './components/setting-manager.vue';
+import configManager from './components/config-manager.vue';
 
 const appStore = useAppStore();
 const deviceStore = useDeviceStore();

@@ -374,7 +374,7 @@ const onMouseLeave = (keyCode) => {
 };
 
 const updateFirware = () => {
-  textContent.value = `1.点击开始升级后键盘会进入BOOT模式，\n连接BOOT设备后开始升级。\n2.升级过程中请不要关闭窗口\n3.升级完成后点击确认会重新连接键盘`;
+  textContent.value = '1.点击开始升级后键盘会进入BOOT模式，\n连接BOOT设备后开始升级。\n2.升级过程中请不要关闭窗口\n3.升级完成后点击确认会重新连接键盘';
   updateTitle.value = '固件升级';
   updateRes.value = null;
   isUpdate.value = true;

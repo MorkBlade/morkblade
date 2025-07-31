@@ -1,3 +1,4 @@
+
 /**
  * RGB对象转HEX字符串
  * @param {Object} rgb - RGB对象 {R: number, G: number, B: number} 或 {r: number, g: number, b: number}

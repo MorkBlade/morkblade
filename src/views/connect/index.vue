@@ -47,8 +47,8 @@
     <div class="update-box" v-if="isUpdate">
       <!-- <div class="update-box">   -->
       <div>
-        <p>升级模式</p>
-        <span>正在升级中...</span>
+        <p>{{ $t('messages.upgradeMode') }}</p>
+        <span>{{ $t('messages.upgradeing') }}</span>
         <el-progress
           :percentage="progress"
           :color="'#91bc00'"
@@ -125,12 +125,12 @@ const getFirmWarePack = async (url) => {
           });
           console.log('update suc-------------> ', result);
           if (result && result.success) {
-            showMessage('升级成功');
+            showMessage($t('messages.upgradeSuccess'));
           }
           await deviceStore.connectDevice();
         } catch (error) {
           console.log('update failed----------->', error);
-          showMessage('升级失败，请重试', 'warning');
+          showMessage($t('messages.upgradeFailed'), 'warning');
         }
         isUpdate.value = false;
       };

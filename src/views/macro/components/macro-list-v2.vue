@@ -6,8 +6,8 @@
         <!-- <template v-if="item.valid"> -->
         <div class="macro" :class="{ 'is-checked': curMacroIdx === idx }" @click="checkMacro(idx)">
           <h4>{{ `宏${idx + 1}` }}</h4>
-          <p class="create-time">创建时间: {{ formatTimestamp(item.createTime || Date.now()) }}</p>
-          <p class="length">操作长度: {{ getMacroValidCount(item.data) }}</p>
+          <p class="create-time">创建时间:{{ formatTimestamp(item.createTime || Date.now()) }}</p>
+          <p class="length">操作长度:{{ getMacroValidCount(item.data) }}</p>
           <div class="controls-group" @click.stop>
             <!-- <span class="copy-btn" @click="copyMacro(item)">复制</span>
             <span class="del-btn" @click="delMacro(item.id)">删除</span> -->
@@ -18,9 +18,7 @@
       <template v-if="macroData.length < 16">
         <div class="add-macro">
           <div @click="addMacro">
-            <span></span>
-            新建宏
-          </div>
+            <span></span>新建宏</div>
         </div>
       </template>
     </div>

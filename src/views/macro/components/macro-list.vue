@@ -10,8 +10,8 @@
         @click="checkMacro(idx)"
       >
         <h4>{{ item.macroName }}</h4>
-        <p class="create-time">创建时间: {{ formatTimestamp(item.createTime) }}</p>
-        <p class="length">操作长度: {{ item.data.length }}</p>
+        <p class="create-time">创建时间:{{ formatTimestamp(item.createTime) }}</p>
+        <p class="length">操作长度:{{ item.data.length }}</p>
         <div class="controls-group" @click.stop>
           <span class="copy-btn" @click="copyMacro(item)">复制</span>
           <span class="del-btn" @click="delMacro(item.id, idx)">删除</span>
@@ -20,9 +20,7 @@
       <template v-if="macros.length < 15">
         <div class="add-macro">
           <div @click="addMacro">
-            <span></span>
-            新建宏
-          </div>
+            <span></span>新建宏</div>
         </div>
       </template>
     </div>

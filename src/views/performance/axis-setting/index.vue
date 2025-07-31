@@ -35,7 +35,7 @@
           <mCarousel
             showText
             :carouselData="axisBrandList"
-            :btnText="'应用轴体'"
+            btnText="应用轴体"
             :offset="scaleValue(25)"
             :width="scaleValue(920)"
             :selected-id="axisID"
@@ -71,7 +71,7 @@
       <mCarousel
         showText
         :carouselData="axisList"
-        :btnText="'应用轴体'"
+        btnText="应用轴体"
         :offset="scaleValue(25)"
         :width="scaleValue(920)"
         :selected-id="axisID"

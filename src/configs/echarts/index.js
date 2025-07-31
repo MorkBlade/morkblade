@@ -1,3 +1,4 @@
+
 // 引入图表类型，后缀都为Chart
 import { LineChart } from 'echarts/charts';
 // 引入内置组件，组件后缀都为Component

@@ -12,33 +12,38 @@
                 <div class="content">
                     <div class="on-board-configuration">
                         <p class="title">板载配置(3/4)</p>
-                        <p class="description">要加载配置到键盘上的话，请将拖放配置到此区域。要替换配置的话，请将配置拖放到要替换的配置上面。
-                        </p>
-                        <div class="box" @dragover="handleDragOver" @drop="handleDrop('active', $event)"
-                            @dragenter="handleDragEnter" @dragleave="handleDragLeave">
+                        <p class="description">要加载配置到键盘上的话，请将拖放配置到此区域。要替换配置的话，请将配置拖放到要替换的配置上面。</p>
+                        <div class="box" @dragover="dragState.handleDragOver"
+                            @drop="dragState.handleDrop('active', $event)" @dragenter="dragState.handleDragEnter"
+                            @dragleave="dragState.handleDragLeave">
                             <div class="item-list" v-for="(item, index) in appStore.configList" :key="index">
                                 <div class="item" :class="{ 
                                          'is-active': appStore.activeConfigIndex === index,
-                                         'dragging': draggedItem === item,
-                                         'drag-over': dragOverItem === item
+                                         'dragging': dragState.draggedItem === item,
+                                         'drag-over': dragState.dragOverItem === item
                                      }" :draggable="appStore.activeConfigIndex !== index"
-                                    @dragstart="handleDragStart($event, item, 'active')" @dragend="handleDragEnd"
-                                    @click="handleActiveItem(index)">
+                                    @dragstart="dragState.handleDragStart($event, item, 'active')"
+                                    @dragend="dragState.handleDragEnd" @click="handleActiveItem(index)">
                                     <span class="item-title">{{ item.title }}</span>
-                                    <span class="more-icon" @click.stop="showEdit(item)"></span>
+                                    <span class="more-icon" @click.stop="editState.showEdit(item)"></span>
                                 </div>
-                                <div class="item-edit" v-if="editingItemId === item">
-                                    <span class="item-edit-text" @click.stop="handleRename(item)">重命名</span>
-                                    <span class="item-edit-text" @click.stop="handleCopy(item)">复制</span>
-                                    <span class="item-edit-text" @click.stop="handleMove('active',item)">移至未激活的配置</span>
-                                    <span class="item-edit-text share-btn">分享配置</span>
-                                    <span class="item-edit-text">导出配置至本地</span>
-                                    <span class="item-edit-text delete-btn"
-                                        @click.stop="handleDelete('active',item)">删除</span>
+                                <div class="item-edit" v-if="editState.editingItemId === item">
+                                    <span style="color: gray;" class="item-edit-text"
+                                        @click.stop="editState.handleRename(item)">重命名</span>
+                                    <span style="color: gray;"  class="item-edit-text"
+                                        @click.stop="editState.handleCopy(item)">复制</span>
+                                    <span style="color: gray;" class="item-edit-text"
+                                        @click.stop="editState.handleMove('active',item)">移至未激活的配置</span>
+                                    <span style="color: gray;" class="item-edit-text share-btn"
+                                        @click.stop="editState.handleShare(item)">分享配置</span>
+                                    <span  class="item-edit-text"
+                                        @click.stop="editState.handleExport(item)">导出配置至本地</span>
+                                    <span style="color: gray;" class="item-edit-text delete-btn"
+                                        @click.stop="editState.handleDelete('active',item)">删除</span>
                                 </div>
                             </div>
                             <div class="item-list-empty" v-if="appStore.configList && appStore.configList.length < 4"
-                                :class="{ 'drag-over': isDragOverEmptyActive }">
+                                :class="{ 'drag-over': dragState.isDragOverEmptyActive }">
                                 <span class="item-title">拖放配置至此处</span>
                             </div>
                         </div>
@@ -46,28 +51,33 @@
 
                     <div class="un-active-configuration">
                         <p class="title">未激活的配置</p>
-                        <div class="box" @dragover="handleDragOver" @drop="handleDrop('unActive', $event)"
-                            @dragenter="handleDragEnter" @dragleave="handleDragLeave">
+                        <p class="no-tips">目前仅支持配置本地导入/导出配置<br>其它功能暂未开放，敬请期待</p>
+                        <div class="box" @dragover="dragState.handleDragOver"
+                            @drop="dragState.handleDrop('unActive', $event)" @dragenter="dragState.handleDragEnter"
+                            @dragleave="dragState.handleDragLeave">
                             <div class="item-list" v-for="(item, index) in appStore.unActiveConfigList" :key="index">
                                 <div class="item" :class="{ 
-                                         'dragging': draggedItem === item,
-                                         'drag-over': dragOverItem === item
-                                     }" draggable="true" @dragstart="handleDragStart($event, item, 'unActive')"
-                                    @dragend="handleDragEnd">
+                                         'dragging': dragState.draggedItem === item,
+                                         'drag-over': dragState.dragOverItem === item
+                                     }" draggable="true"
+                                    @dragstart="dragState.handleDragStart($event, item, 'unActive')"
+                                    @dragend="dragState.handleDragEnd">
                                     <span class="item-title">{{ item.title }}</span>
-                                    <span class="more-icon" @click.stop="showEdit(item)"></span>
+                                    <span class="more-icon" @click.stop="editState.showEdit(item)"></span>
                                 </div>
-                                <div class="un-active-item-edit" v-if="editingItemId === item">
-                                    <span class="item-edit-text" @click.stop="handleRename(item)">重命名</span>
-                                    <span class="item-edit-text" @click.stop="handleCopy(item)">复制</span>
-                                    <span class="item-edit-text" @click.stop="handleMove('unActive',item)">移至板载配置</span>
+                                <div class="un-active-item-edit" v-if="editState.editingItemId === item">
+                                    <span class="item-edit-text" @click.stop="editState.handleRename(item)">重命名</span>
+                                    <span class="item-edit-text" @click.stop="editState.handleCopy(item)">复制</span>
+                                    <span class="item-edit-text"
+                                        @click.stop="editState.handleMove('unActive',item)">移至板载配置</span>
                                     <span class="item-edit-text share-btn">分享配置</span>
-                                    <span class="item-edit-text">导出配置至本地</span>
+                                    <span class="item-edit-text"
+                                        @click.stop="editState.handleExport(item)">导出配置至本地</span>
                                     <span class="item-edit-text delete-btn"
-                                        @click.stop="handleDelete('unActive',item)">删除</span>
+                                        @click.stop="editState.handleDelete('unActive',item)">删除</span>
                                 </div>
                             </div>
-                            <div class="item-list-empty" :class="{ 'drag-over': isDragOverEmptyUnActive }"
+                            <div class="item-list-empty" :class="{ 'drag-over': dragState.isDragOverEmptyUnActive }"
                                 v-if="appStore.unActiveConfigList && appStore.unActiveConfigList.length < 28">
                                 <span class="item-title">拖放配置至此处</span>
                             </div>
@@ -76,7 +86,7 @@
                 </div>
 
                 <div class="btn-group">
-                    <div class="update-btn">
+                    <div class="update-btn" @click="handleNewConfig">
                         <img class="update-img" src="@/assets/images/events_icon.svg" alt="" />
                         <span class="update-text">新建配置</span>
                     </div>
@@ -89,12 +99,13 @@
         </div>
     </div>
     <Dialog v-if="showRenameDialog" :isShow="showRenameDialog" dialogTitle="重命名配置" :textContent="''"
-        @cancel="handleRenameCancel" @sure="handleRenameConfirm" @update:isShow="val => showRenameDialog = val">
+        @cancel="editState.handleRenameCancel" @sure="editState.handleRenameConfirm"
+        @update:isShow="val => showRenameDialog = val">
         <template #default>
             <div class="rename-input-container">
                 <p>请修改配置名称</p>
                 <input class="rename-input" v-model="renameInput" placeholder="请输入配置名称"
-                    @keyup.enter="handleRenameConfirm" />
+                    @keyup.enter="editState.handleRenameConfirm" />
             </div>
         </template>
     </Dialog>
@@ -117,25 +128,31 @@
         </template>
     </Dialog>
 
-    <Dialog v-if="showShareDialog" :isShow="showShareDialog"  :textContent="''"
-        @cancel="handleShareCancel" @sure="handleShareConfirm" @update:isShow="val => showShareDialog = val">
+    <Dialog v-if="showShareDialog" :isShow="showShareDialog" :textContent="''" @cancel="editState.handleShareCancel"
+        @sure="editState.handleShareConfirm" @update:isShow="val => showShareDialog = val">
         <template #default>
             <div class="share-input-container">
                 <p>请在下方输入分享码以加载配置</p>
-                <input class="share-input" v-model="shareInput" 
-                    @keyup.enter="handleShareConfirm" />
+                <input class="share-input" v-model="shareInput" @keyup.enter="editState.handleShareConfirm" />
             </div>
         </template>
     </Dialog>
+
+    <div class="loading-dialog" v-if="isLoading">
+        <div class="loading-dialog-content">
+            <div class="loading-dialog-content-icon"></div>
+            <div class="loading-dialog-content-text">正在导入配置，请稍候...</div>
+        </div>
+    </div>
 </template>
 
 <script setup>
 import { onMounted } from 'vue';
-import { onBeforeUnmount, ref, watch } from 'vue';
+import { onBeforeUnmount, ref, watch, reactive } from 'vue';
 import { useAppStore, useKeyboardStore } from '@/stores';
-import { useAdvancedHook } from '@/hooks';
+import { useAdvancedHook, useSettingHook } from '@/hooks';
 import { showMessage } from '@/utils/message';
-import Dialog from './dialog.vue';
+import Dialog from '@/components/dialog.vue';
 
 let timer = null;
 
@@ -143,14 +160,12 @@ const emits = defineEmits(['cancel', 'sure', 'cancel']);
 const { dialogTitle, isShow } = defineProps({
     dialogTitle: String,
     isShow: { type: Boolean, default: false },
-
 });
 
 const appStore = useAppStore();
 const isVersion2 = ref(localStorage.getItem('keyboardVersion') === 'v2');
 const keyboardStore = useKeyboardStore();
-
-const editingItemId = ref(null);
+const { exportConfig } = useSettingHook();
 const { getHighLevelKeys } = useAdvancedHook();
 
 // 重命名弹窗相关
@@ -162,71 +177,323 @@ const renameInput = ref('');
 const showShareDialog = ref(false);
 const shareInput = ref('');
 
-const handleShareCancel = () => {
-    shareInput.value = '';
-    showShareDialog.value = false;
-};
+// 导入配置
+const showImportDialog = ref(false);
+const isLoading = ref(false);
 
-const handleShareConfirm = () => {
-    if (shareInput.value.trim()) {
-        // TODO 请求后端接口
-        console.log(shareInput.value);
-        showShareDialog.value = false;
-        showImportDialog.value = false;
-        showMessage('导入成功', 'success');
-    }else{
-        showMessage('请输入分享码', 'warning');
-        return;
-    }
-};
 
-// 拖拽相关状态
-const draggedItem = ref(null);
-const draggedItemType = ref(null);
-const dragOverItem = ref(null);
-const isDragOverEmptyActive = ref(false);
-const isDragOverEmptyUnActive = ref(false);
 
-const showEdit = (item) => {
-    editingItemId.value = item;
-};
-
-const handleCopy = (item) => {
-    // 复制 item 的 title 到剪贴板
-    if (item && item.title) {
-        // 兼容性处理
-        if (navigator && navigator.clipboard && navigator.clipboard.writeText) {
-            navigator.clipboard.writeText(item.title).then(() => {
-                // 可选：提示用户复制成功
-                showMessage('已复制配置名称', 'success');
-                editingItemId.value = null;
-            }).catch(err => {
-                // 可选：提示用户复制失败
-                showMessage('复制失败', 'warning');
-            });
-        } else {
-            // 旧版浏览器兼容
-            const textarea = document.createElement('textarea');
-            textarea.value = item.title;
-            textarea.setAttribute('readonly', '');
-            textarea.style.position = 'absolute';
-            textarea.style.left = '-9999px';
-            document.body.appendChild(textarea);
-            textarea.select();
-            try {
-                document.execCommand('copy');
-                showMessage('已复制配置名称', 'success');
-                editingItemId.value = null;
-            } catch (err) {
-                showMessage('复制失败', 'warning');
+// 使用组合式函数处理拖拽相关逻辑
+const useDragState = () => {
+    const state = reactive({
+        draggedItem: null,
+        draggedItemType: null,
+        dragOverItem: null,
+        isDragOverEmptyActive: false,
+        isDragOverEmptyUnActive: false,
+        
+        // 拖拽开始
+        handleDragStart(event, item, type) {
+            state.draggedItem = item;
+            state.draggedItemType = type;
+            event.dataTransfer.effectAllowed = 'move';
+            event.dataTransfer.setData('text/plain', JSON.stringify({ item, type }));
+            event.target.style.opacity = '0.5';
+        },
+        
+        // 拖拽结束
+        handleDragEnd(event) {
+            // 重置所有拖拽状态
+            state.draggedItem = null;
+            state.draggedItemType = null;
+            state.dragOverItem = null;
+            state.isDragOverEmptyActive = false;
+            state.isDragOverEmptyUnActive = false;
+            event.target.style.opacity = '1';
+        },
+        
+        // 拖拽悬停
+        handleDragOver(event) {
+            event.preventDefault();
+            event.dataTransfer.dropEffect = 'move';
+        },
+        
+        // 拖拽进入
+        handleDragEnter(event) {
+            event.preventDefault();
+            
+            const target = event.target.closest('.item');
+            const emptyTarget = event.target.closest('.item-list-empty');
+            
+            if (target) {
+                // 进入 item 区域
+                state.dragOverItem = state.draggedItem;
+                state.isDragOverEmptyActive = false;
+                state.isDragOverEmptyUnActive = false;
+            } else if (emptyTarget) {
+                // 进入空区域
+                state.dragOverItem = null;
+                const isActiveContainer = emptyTarget.closest('.on-board-configuration');
+                
+                state.isDragOverEmptyActive = isActiveContainer;
+                state.isDragOverEmptyUnActive = !isActiveContainer;
             }
-            document.body.removeChild(textarea);
-        }
-    }
+        },
+        
+        // 拖拽离开
+        handleDragLeave(event) {
+            const relatedTarget = event.relatedTarget;
+            const currentContainer = event.target.closest('.box');
+            const relatedContainer = relatedTarget?.closest('.box');
+            
+            // 只有真正离开容器时才清除状态
+            if (currentContainer && currentContainer !== relatedContainer) {
+                state.dragOverItem = null;
+                state.isDragOverEmptyActive = false;
+                state.isDragOverEmptyUnActive = false;
+            }
+        },
+        
+        // 拖拽放置
+        handleDrop(targetType, event) {
+            if (!state.draggedItem || state.draggedItemType === targetType) {
+                return;
+            }
+        
+            // 只有拖拽到空区域才有效
+            const emptyTarget = event.target.closest('.item-list-empty');
+            if (!emptyTarget) return;
 
-    // TODO 请求后端接口
-    console.log(item);
+            showMessage('功能暂未开放', 'warning');
+            return
+
+            // 执行移动操作
+            if (targetType === 'active') {
+                if (appStore.configList.length >= 4) {
+                    showMessage('板载配置已满，无法添加更多配置', 'warning');
+                    return;
+                }
+                appStore.configList.push(state.draggedItem);
+                appStore.unActiveConfigList = appStore.unActiveConfigList.filter(i => i.title !== state.draggedItem.title);
+                showMessage('配置已移至板载配置', 'success');
+            } else {
+                appStore.unActiveConfigList.push(state.draggedItem);
+                appStore.configList = appStore.configList.filter(i => i.title !== state.draggedItem.title);
+                showMessage('配置已移至未激活配置', 'success');
+            }
+        
+            // 重置拖拽状态
+            state.draggedItem = null;
+            state.draggedItemType = null;
+            state.dragOverItem = null;
+            state.isDragOverEmptyActive = false;
+            state.isDragOverEmptyUnActive = false;
+        }
+    });
+    
+    return state;
 };
+
+// 使用组合式函数处理编辑操作
+const useEditState = () => {
+    const editingItemId = ref(null);
+    
+    return {
+        get editingItemId() {
+            return editingItemId.value;
+        },
+        set editingItemId(value) {
+            editingItemId.value = value;
+        },
+        
+        // 显示编辑选项
+        showEdit(item) {
+            editingItemId.value = item;
+        },
+        
+        // 分享配置
+        handleShare(item) {
+
+            showMessage('功能暂未开放', 'warning');
+            return
+
+            // 复制 item 的 title 到剪贴板
+            if (item && item.title) {
+                // 兼容性处理
+                if (navigator && navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(item.title).then(() => {
+                        // 可选：提示用户复制成功
+                        showMessage('已复制配置名称', 'success');
+                        editingItemId.value = null;
+                    }).catch(err => {
+                        // 可选：提示用户复制失败
+                        showMessage('复制失败', 'warning');
+                    });
+                } else {
+                    // 旧版浏览器兼容
+                    const textarea = document.createElement('textarea');
+                    textarea.value = item.title;
+                    textarea.setAttribute('readonly', '');
+                    textarea.style.position = 'absolute';
+                    textarea.style.left = '-9999px';
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    try {
+                        document.execCommand('copy');
+                        showMessage('已复制配置名称', 'success');
+                        editingItemId.value = null;
+                    } catch (err) {
+                        showMessage('复制失败', 'warning');
+                    }
+                    document.body.removeChild(textarea);
+                }
+            }
+        
+            // TODO 请求后端接口
+        },
+        
+        // 复制配置
+        handleCopy(item) {
+
+            showMessage('功能暂未开放', 'warning');
+            return
+
+            // 复制配置，将其添加到未激活配置列表
+            if (item && appStore && Array.isArray(appStore.unActiveConfigList)) {
+                // 深拷贝 item，避免引用同一个对象
+                const newItem = JSON.parse(JSON.stringify(item));
+                // 配置名称加上"副本"后缀
+                newItem.title = '副本'+ item.title ;
+                // 设为未激活
+                newItem.active = false;
+                // 计算插入位置
+                appStore.unActiveConfigList.push(newItem);
+                editingItemId.value = null;
+                showMessage('已复制到未激活配置', 'success');
+            } else {
+                showMessage('复制失败，配置列表不存在', 'warning');
+            }
+        },
+        
+        // 重命名配置
+        handleRename(item) {
+            // TODO 请求后端接口
+
+            showMessage('功能暂未开放', 'warning');
+            return
+
+            renameItem.value = item;
+            renameInput.value = item.title;
+            showRenameDialog.value = true;
+            editingItemId.value = null;
+        },
+        
+        // 确认重命名
+        handleRenameConfirm() {
+            if (renameItem.value && renameInput.value.trim()) {
+                renameItem.value.title = renameInput.value.trim();
+                // 这里可以加上同步到store或后端的逻辑
+            }
+            showRenameDialog.value = false;
+        },
+        
+        // 取消重命名
+        handleRenameCancel() {
+            showRenameDialog.value = false;
+        },
+        
+        // 移动配置
+        handleMove(type, item) {
+
+            showMessage('功能暂未开放', 'warning');
+            return
+
+            // TODO 请求后端接口
+            if (type === 'active') {
+                if(appStore.unActiveConfigList.length >= 28){
+                    showMessage('未激活配置已满，无法添加更多配置', 'warning');
+                    return;
+                }
+                appStore.unActiveConfigList.push(item);
+                appStore.configList = appStore.configList.filter(i => i.title !== item.title);
+            } else {
+                appStore.configList.push(item);
+                appStore.unActiveConfigList = appStore.unActiveConfigList.filter(i => i.title !== item.title);
+            }
+            editingItemId.value = null;
+        },
+        
+        // 删除配置
+        handleDelete(type, item) {
+
+            showMessage('功能暂未开放', 'warning');
+            return
+
+            // TODO 请求后端接口
+            // 删除逻辑
+            // 判断 item 在哪个列表，进行删除
+            if (type === 'active') {
+                // 判断是否是当前使用配置，若是则提示不能删除
+                if (type === 'active' && appStore.activeConfigIndex !== undefined) {
+                    const activeItem = appStore.configList[appStore.activeConfigIndex];
+                    if (activeItem && activeItem.title === item.title) {
+                        showMessage('当前使用的配置无法删除', 'warning');
+                        return;
+                    }
+                }
+                appStore.configList = appStore.configList.filter(i => i.title !== item.title);
+            } else {
+                appStore.unActiveConfigList = appStore.unActiveConfigList.filter(i => i.title !== item.title);
+            }
+            // 关闭编辑框
+            editingItemId.value = null;
+        },
+        
+        // 导出配置
+        handleExport(item) {
+            // 判断是否是激活状态，只有在激活状态才能导出
+            if (appStore.activeConfigIndex !== undefined) {
+                const activeItem = appStore.configList[appStore.activeConfigIndex];
+                if (activeItem && activeItem.title !== item.title) {
+                    showMessage('请先切换到要导出的配置', 'warning');
+                    return;
+                }
+            }
+            exportConfig(item);
+        },
+        
+        // 分享取消
+        handleShareCancel() {
+            shareInput.value = '';
+            showShareDialog.value = false;
+        },
+        
+        // 分享确认
+        handleShareConfirm() {
+            if (shareInput.value.trim()) {
+                // isLoading.value = true;
+                // TODO 请求后端接口
+
+                showMessage('功能暂未开放', 'warning');
+                return
+                
+                // 模拟请求延迟
+                setTimeout(() => {
+                    isLoading.value = false;
+                    showShareDialog.value = false;
+                    showImportDialog.value = false;
+                    showMessage('导入成功', 'success');
+                }, 1500);
+            } else {
+                showMessage('请输入分享码', 'warning');
+                return;
+            }
+        }
+    };
+};
+
+const dragState = useDragState();
+const editState = useEditState();
 
 const handleActiveItem = async (index) => {
     if (index === appStore.activeConfigIndex) {
@@ -239,183 +506,26 @@ const handleActiveItem = async (index) => {
         if (!isVersion2.value) {
             clearTimeout(timer); 
             timer = setTimeout(async () => {
-                // TODO v2 配置切换之后获取的数据是一样的
-                // await keyboardStore.getLayoutKeyInfo(keyboardStore.layout, keyboardStore.keyboards);
-                // await performanceStore.getKeyPerformanceV1(keyboardStore.keyboards);
-                if (res) {
-                    await keyboardStore.initKeyboard();
-                    await getHighLevelKeys(keyboardStore.keyboards, isVersion2.value);
-                    appStore.changeConfig = true;
-                    appStore.activeConfigIndex = index;
-                }
+                // 对于非v2版本，延迟执行以确保配置切换完成
+                await keyboardStore.initKeyboard();
+                await getHighLevelKeys(keyboardStore.keyboards, isVersion2.value);
+                appStore.changeConfig = true;
+                appStore.activeConfigIndex = index;
             }, 1000);
         } else {
+            // v2版本可以立即执行
             await keyboardStore.initKeyboard();
             await getHighLevelKeys(keyboardStore.keyboards, isVersion2.value);
+            // 确保v2版本也更新activeConfigIndex
+            appStore.activeConfigIndex = index;
         }
     }
-};
-
-const handleRename = (item) => {
-    // TODO 请求后端接口
-
-    renameItem.value = item;
-    renameInput.value = item.title;
-    showRenameDialog.value = true;
-    editingItemId.value = null;
-};
-
-const handleRenameConfirm = () => {
-    if (renameItem.value && renameInput.value.trim()) {
-        renameItem.value.title = renameInput.value.trim();
-        // 这里可以加上同步到store或后端的逻辑
-    }
-    showRenameDialog.value = false;
-};
-
-const handleRenameCancel = () => {
-    showRenameDialog.value = false;
-};
-
-const handleMove = (type,item) => {
-    // TODO 请求后端接口
-    if (type === 'active') {
-        if(appStore.unActiveConfigList.length >= 28){
-            showMessage('未激活配置已满，无法添加更多配置', 'warning');
-            return;
-        }
-        appStore.unActiveConfigList.push(item);
-        appStore.configList = appStore.configList.filter(i => i.title !== item.title);
-    }else{
-        appStore.configList.push(item);
-        appStore.unActiveConfigList = appStore.unActiveConfigList.filter(i => i.title !== item.title);
-    }
-    editingItemId.value = null;
-};
-
-// 拖拽开始
-const handleDragStart = (event, item, type) => {
-    draggedItem.value = item;
-    draggedItemType.value = type;
-    event.dataTransfer.effectAllowed = 'move';
-    event.dataTransfer.setData('text/plain', JSON.stringify({ item, type }));
-    event.target.style.opacity = '0.5';
-};
-
-// 拖拽结束
-const handleDragEnd = (event) => {
-    // 重置所有拖拽状态
-    draggedItem.value = null;
-    draggedItemType.value = null;
-    dragOverItem.value = null;
-    isDragOverEmptyActive.value = false;
-    isDragOverEmptyUnActive.value = false;
-    event.target.style.opacity = '1';
-};
-
-// 拖拽悬停
-const handleDragOver = (event) => {
-    event.preventDefault();
-    event.dataTransfer.dropEffect = 'move';
-};
-
-// 拖拽进入
-const handleDragEnter = (event) => {
-    event.preventDefault();
-    
-    const target = event.target.closest('.item');
-    const emptyTarget = event.target.closest('.item-list-empty');
-    
-    if (target) {
-        // 进入 item 区域
-        dragOverItem.value = draggedItem.value;
-        isDragOverEmptyActive.value = false;
-        isDragOverEmptyUnActive.value = false;
-    } else if (emptyTarget) {
-        // 进入空区域
-        dragOverItem.value = null;
-        const isActiveContainer = emptyTarget.closest('.on-board-configuration');
-        
-        isDragOverEmptyActive.value = isActiveContainer;
-        isDragOverEmptyUnActive.value = !isActiveContainer;
-    }
-};
-
-// 拖拽离开
-const handleDragLeave = (event) => {
-    const relatedTarget = event.relatedTarget;
-    const currentContainer = event.target.closest('.box');
-    const relatedContainer = relatedTarget?.closest('.box');
-    
-    // 只有真正离开容器时才清除状态
-    if (currentContainer && currentContainer !== relatedContainer) {
-        dragOverItem.value = null;
-        isDragOverEmptyActive.value = false;
-        isDragOverEmptyUnActive.value = false;
-    }
-};
-
-// 拖拽放置
-const handleDrop = (targetType, event) => {
-    if (!draggedItem.value || draggedItemType.value === targetType) {
-        return;
-    }
-
-    // 只有拖拽到空区域才有效
-    const emptyTarget = event.target.closest('.item-list-empty');
-    if (!emptyTarget) return;
-
-    // 执行移动操作
-    if (targetType === 'active') {
-        if (appStore.configList.length >= 4) {
-            showMessage('板载配置已满，无法添加更多配置', 'warning');
-            return;
-        }
-        appStore.configList.push(draggedItem.value);
-        appStore.unActiveConfigList = appStore.unActiveConfigList.filter(i => i.title !== draggedItem.value.title);
-        showMessage('配置已移至板载配置', 'success');
-    } else {
-        appStore.unActiveConfigList.push(draggedItem.value);
-        appStore.configList = appStore.configList.filter(i => i.title !== draggedItem.value.title);
-        showMessage('配置已移至未激活配置', 'success');
-    }
-
-    // 重置拖拽状态
-    draggedItem.value = null;
-    draggedItemType.value = null;
-    dragOverItem.value = null;
-    isDragOverEmptyActive.value = false;
-    isDragOverEmptyUnActive.value = false;
-};
-
-const handleDelete = (type,item) => {
-    // TODO 请求后端接口
-    console.log(item);
-    // 删除逻辑
-    // 判断 item 在哪个列表，进行删除
-    if (type === 'active') {
-        // 判断是否是当前使用配置，若是则提示不能删除
-        if (type === 'active' && appStore.activeConfigIndex !== undefined) {
-            const activeItem = appStore.configList[appStore.activeConfigIndex];
-            if (activeItem && activeItem.title === item.title) {
-                showMessage('当前使用的配置无法删除', 'warning');
-                return;
-            }
-        }
-        appStore.configList = appStore.configList.filter(i => i.title !== item.title);
-    }else{
-        appStore.unActiveConfigList = appStore.unActiveConfigList.filter(i => i.title !== item.title);
-    }
-    // 关闭编辑框
-    editingItemId.value = null;
 };
 
 const handleCancel = () => {
     emits('cancel');
 };
 
-// 导入配置
-const showImportDialog = ref(false);
 const handleImportCancel = () => {
     showImportDialog.value = false;
 };
@@ -425,12 +535,52 @@ const handleImportConfirm = () => {
 };
 
 const handleLocalImport = () => {
-    // showShareDialog.value = true;
+    // 创建一个隐藏的文件输入框用于选择json文件
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json,application/json';
+    input.style.display = 'none';
+    document.body.appendChild(input);
+
+    input.onchange = async (event) => { 
+        const file = event.target.files[0];
+        if (!file) {
+            document.body.removeChild(input);
+            return;
+        }
+        
+        try {
+            isLoading.value = true;
+            const { importConfig } = useSettingHook();
+            const result = await importConfig(file);
+            
+            if (result) {
+                showMessage('配置导入成功', 'success');
+                showImportDialog.value = false;
+            } else {
+                showMessage('配置导入失败', 'warning');
+            }
+        } catch (error) {
+            console.error('Import error:', error);
+            showMessage('配置导入失败:' + error.message, 'warning');
+        } finally {
+            isLoading.value = false;
+            document.body.removeChild(input);
+        }
+    };
+
+    input.click();
 };
 
 const handleCodeImport = () => {
     showShareDialog.value = true;
 };
+
+// 新建配置
+const handleNewConfig = () => {
+    showMessage('功能暂未开放', 'warning');
+    return
+}
 
 const preventBackgroundScroll = (event) => {
     // 检查事件目标是否在对话框内部
@@ -439,6 +589,7 @@ const preventBackgroundScroll = (event) => {
         event.preventDefault();
     }
 };
+
 // 监听 isShow 变化来添加/移除事件监听
 watch(
     () => isShow,
@@ -460,10 +611,9 @@ const handleClickOutside = (e) => {
         !e.target.closest('.item-edit') &&
         !e.target.closest('.more-icon')
     ) {
-        editingItemId.value = null;
+        editState.editingItemId = null;
     }
 };
-
 
 onMounted(async () => {
     document.addEventListener('click', handleClickOutside);
@@ -475,6 +625,7 @@ onMounted(async () => {
 onBeforeUnmount(() => {
     document.removeEventListener('click', handleClickOutside);
     window.removeEventListener('wheel', preventBackgroundScroll);
+    timer && clearTimeout(timer);
 });
 </script>
 
@@ -687,11 +838,11 @@ onBeforeUnmount(() => {
                             }
                         }
 
-                        .share-btn {
-                            &:hover {
-                            cursor: not-allowed;
-                            }
-                        }
+                        // .share-btn {
+                        //     &:hover {
+                        //     cursor: not-allowed;
+                        //     }
+                        // }
                     }
 
                     .un-active-item-edit {
@@ -770,7 +921,6 @@ onBeforeUnmount(() => {
                 background-image: url('@/assets/images/save_bg.svg');
                 background-size: contain;
                 background-repeat: no-repeat;
-
 
                 img {
                     width: var(--size-20);
@@ -914,6 +1064,9 @@ onBeforeUnmount(() => {
             background-repeat: no-repeat;
             position: absolute;
             bottom: var(--spacing-20);
+            &:hover {
+                    background-image: url('@/assets/images/pending_bg.svg');
+                }
     
             img {
                 width: var(--size-20);
@@ -928,6 +1081,71 @@ onBeforeUnmount(() => {
                 text-align: center;
             }
         }
+    }
+}
+.loading-dialog {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    &-content {
+        width: 300px;
+        height: 150px;
+        background-color: #0d0d0d;
+        border-radius: 20px;
+        border: 1px solid #242424;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+
+        &-icon {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(145, 188, 0, 0.3);
+            border-top: 4px solid #91bc00;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        &-text {
+            font-family: "CN Heavy";
+            font-size: 18px;
+            color: #ffffff;
+            text-align: center;
+        }
+    }
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.un-active-configuration{
+    width: 100%;
+    height: 100%;
+    position: relative;
+    // background-color: pink !important;
+    .no-tips{
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 22px;
+        color: #ffffff;
+        font-family: "CN Heavy";
+        z-index: 10;
+        text-align: center;
     }
 }
 </style>

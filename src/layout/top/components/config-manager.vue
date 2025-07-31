@@ -14,7 +14,7 @@
 
 <script setup>
 import { ref } from 'vue';
-import DialogSetting from '@/components/dialog-setting.vue';
+import DialogSetting from '@/layout/top/components/dialog-config.vue';
 
 const showDialog = ref(false);
 

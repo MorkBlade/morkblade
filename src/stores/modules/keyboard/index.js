@@ -1,3 +1,4 @@
+
 import { defineStore } from 'pinia';
 
 import services from '@/services/index';
@@ -275,6 +276,86 @@ const useKeyboardStore = defineStore('keyboard', {
     handleKeyboardData() {
       const { keyboards } = this;
       return keyboards;
+    },
+
+    // 导入键盘配置
+    async importKeyboardConfig(keyboardData) {
+      try {
+        if (!keyboardData || !Array.isArray(keyboardData)) {
+          console.error('Invalid keyboard data format');
+          return false;
+        }
+
+        // 保存键盘数据到store
+        this.keyboards = keyboardData;
+        
+        // 获取键盘版本
+        const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
+        
+        // 应用键盘配置到设备
+        if (isVersion2) {
+          // v2版本: 使用批量设置API
+          const keysToUpdate = [];
+          
+          // 收集所有层的按键数据
+          for (let layer = 0; layer < 4; layer++) {
+            for (let row = 0; row < keyboardData.length; row++) {
+              if (!keyboardData[row]) continue;
+              
+              for (let col = 0; col < keyboardData[row].length; col++) {
+                if (!keyboardData[row][col]) continue;
+                
+                const { customKeys } = keyboardData[row][col];
+                const customKeysKeyName = `fn${layer}`;
+                
+                if (customKeys && customKeys[customKeysKeyName]) {
+                  const keyCode = customKeys[customKeysKeyName].bindKeyValue;
+                  keysToUpdate.push({ layer, row, col, keycode: keyCode });
+                }
+              }
+            }
+          }
+          
+          // 批量设置键位 - 使用单个API调用
+          if (keysToUpdate.length > 0) {
+            // 由于可能没有批量API，使用循环单个设置
+            for (const keyData of keysToUpdate) {
+              await services.setKeyCodeV2(keyData);
+            }
+          }
+        } else {
+          // v1版本: 按层设置
+          for (let layout = 0; layout < 4; layout++) {
+            const keysToUpdate = [];
+            
+            for (let row = 0; row < keyboardData.length; row++) {
+              if (!keyboardData[row]) continue;
+              
+              for (let col = 0; col < keyboardData[row].length; col++) {
+                if (!keyboardData[row][col]) continue;
+                
+                const { keyValue, customKeys } = keyboardData[row][col];
+                const customKeysKeyName = `fn${layout}`;
+                
+                if (customKeys && customKeys[customKeysKeyName]) {
+                  const value = customKeys[customKeysKeyName].bindKeyValue;
+                  keysToUpdate.push({ key: keyValue, layout, value });
+                }
+              }
+            }
+            
+            // 批量设置当前层的键位
+            if (keysToUpdate.length > 0) {
+              await services.setKey(keysToUpdate);
+            }
+          }
+        }
+        
+        return true;
+      } catch (error) {
+        console.error('Import keyboard config error:', error);
+        return false;
+      }
     },
   },
 });

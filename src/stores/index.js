@@ -1,3 +1,4 @@
+
 // import { createPinia } from 'pinia';
 
 import { useLightSettingStore } from './modules/light/index.js';
