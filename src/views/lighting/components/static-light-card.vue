@@ -1,10 +1,9 @@
 <template>
   <div class="static-light">
-    <p>静态灯光</p>
     <div class="light-box">
       <div
         class="light"
-        v-for="(ite, idx) in staticLightColorList"
+        v-for="(ite, idx) in newStaticLightColorList"
         :key="idx"
         :class="{ 'is-checked': currentChecked(idx) }"
         @click="onClick(idx)"
@@ -12,6 +11,9 @@
         <template v-if="isVersion2">
           <template v-if="!idx">
             <img src="@/assets/images/colorful.png" alt="" />
+          </template>
+          <template v-else-if="idx === newStaticLightColorList.length -1 ">
+            <img src="@/assets/images/add.svg" alt="" />
           </template>
           <template v-else>
             <div class="show-color" :style="{ backgroundColor: ite.color }" @click="showColorPicker(idx)">
@@ -36,7 +38,9 @@
               </div>
             </div>
           </template>
-          <span class="color-text">{{ !idx ? '彩色' : `灯光${idx}` }}</span>
+          <span class="color-text" v-if="!idx">{{ '彩色' }}</span>
+          <span class="color-text" v-else-if="idx === newStaticLightColorList.length -1 ">{{ '新建' }}</span>
+          <span class="color-text" v-else>{{ `灯光${idx}` }}</span>
         </template>
         <template v-else>
           <div class="show-color" :style="{ backgroundColor: ite.color }" @click="showColorPicker(idx)">
@@ -70,6 +74,7 @@
 <script setup>
 import { useLightSettingStore } from '@/stores';
 import emitter from '@/utils/app-emitter';
+import { color } from 'echarts';
 
 const { staticLightColorList, staticType } = defineProps({
   staticLightColorList: {
@@ -80,6 +85,16 @@ const { staticLightColorList, staticType } = defineProps({
   },
 });
 
+/* const newStaticLightColorList = reactive(staticLightColorList.map((item, index) => {
+  return {
+    ...item,
+    color: item.color || '#fff', // 确保每个颜色都有默认值
+    id: index, // 添加一个唯一的id
+  };
+})); */
+const newStaticLightColorList = ref(staticLightColorList);
+newStaticLightColorList.value.push({color: '#000000', id: newStaticLightColorList.value.length}); // 添加一个默认的黑色灯光选项
+console.log(newStaticLightColorList)
 const lightSettingStore = useLightSettingStore();
 const checkedLight = ref(0);
 const checkedColor = ref(null);
@@ -109,10 +124,9 @@ const currentChecked = computed(() => {
 
 // TODO 灯光初始化
 const onClick = (idx) => {
-  console.log('onClick-----------------------');
   checkedLight.value = idx;
   checkedColor.value = staticLightColorList[idx].color;
-  // console.log('checkedColor.value', checkedColor.value);
+  
   if (staticType === 'keyLight') {
     emits('checkStaticLight', checkedColor.value, idx);
   } else {
@@ -252,22 +266,16 @@ const clearLightingColor = () => {
 
 <style scoped lang="scss">
 .static-light {
-  width: var(--lighting-static-width);
-  height: var(--size-290);
+  width: 440px;
+  height: 330px;
   box-sizing: border-box;
-  padding: 0 var(--spacing-10) 0 var(--spacing-20);
-  background-image: url('@/assets/images/static_light_bg.svg');
+  padding: 0 32px 0 45px;
+  background-image: none;
+  //background-image: url('@/assets/images/static_light_bg.svg');
   background-size: cover;
   background-repeat: no-repeat;
   // overflow: hidden;
-
-  p {
-    font-size: var(--font-size-15);
-    font-family: 'CN Heavy';
-    color: #ccc;
-    text-align: center;
-    margin: var(--spacing-15) 0 var(--spacing-10) 0;
-  }
+  border-right: #666 1px solid;
 
   .light-box {
     display: flex;

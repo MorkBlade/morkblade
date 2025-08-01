@@ -108,8 +108,11 @@ const withTimeout = (promise, ms) => {
     height: 100%;
     display: flex;
     color: #fff;
-    font-size: 16px;
+    font-size: 18px;
+    font-weight: bold;
+    padding-left: 8px;
     flex-direction: column;
+    margin-bottom: 25px;
   }
   .travel-test-card-content {
     display: flex;
@@ -119,7 +122,7 @@ const withTimeout = (promise, ms) => {
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      margin-left: -26px;
+      margin-left: -18px;
       img {
         width: 100%;
         height: 100%;
@@ -128,16 +131,18 @@ const withTimeout = (promise, ms) => {
   }
 }
 .travel-test-card {
-  width: var(--size-260);
-  height: var(--size-290);
+  width: 252px;
+  height: 342px;
   // display: flex;
   // background-image: url('@/assets/images/formation_test_bg.svg');
   background-size: cover;
   background-repeat: no-repeat;
   overflow: hidden;
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
 
   .scale-box {
     margin-top: var(--spacing-20);
+    margin-left: 46px;
     display: flex;
     position: relative;
 
@@ -151,7 +156,7 @@ const withTimeout = (promise, ms) => {
     .progress-bar {
       width: 80px;
       height: 240px;
-      margin: 0 10px;
+      margin: 30px 5px;
       padding-top: 5px;
       box-sizing: border-box;
       position: relative;
@@ -193,6 +198,7 @@ const withTimeout = (promise, ms) => {
       position: absolute;
       height: 10px;
       left: 80px;
+      top: 30px;
       display: flex;
       flex-direction: row;
       justify-content: space-between;

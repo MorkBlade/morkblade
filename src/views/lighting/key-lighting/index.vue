@@ -1,5 +1,6 @@
 <template>
   <div class="key-light">
+    <div class="light-title">颜色预设:</div>
     <staticLightCard
       staticType="keyLight"
       :staticLightColorList="keyLighting.staticColors"
@@ -62,5 +63,11 @@ const changeColorPicker = async (color, idx, isVersion2) => {
 <style scoped lang="scss">
 .key-light {
   display: flex;
+}
+.light-title{
+    color: #fff;
+    font-size: var(--font-size-20);
+    font-weight: bold;
+    margin: var(--spacing-10) 0;
 }
 </style>

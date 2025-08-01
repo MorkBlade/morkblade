@@ -1,6 +1,6 @@
 <template>
   <div class="lighting-box">
-    <div class="left-menu">
+    <div class="top-menu">
       <div
         v-for="(item, idx) in lightingItem"
         :key="item"
@@ -12,6 +12,23 @@
         {{ item }}
       </div>
     </div>
+    <div class="lighting-title">
+      <ul>
+        <li class="li-1">灯效设定:</li>
+        <li class="li-2">颜色预设:</li>
+        <li class="li-3">灯光效果:</li>
+        <li class="li-4">自定义颜色:</li>
+      </ul>
+    </div>
+    <div class="lighting-content">
+      <lightLuminance
+        v-if="clickItem !== 3"
+        @changeSleepDelay="changeSleepDelay"
+        @changeLuminance="debouncedChangeLuminance"
+        @changeSpeed="debouncedChangeSpeed"
+        v-model="lightSettingStore.light"
+      />
+      <!-- <div class="left-menu"></div> -->
     <div class="display-area">
       <keyLighting
         v-if="!clickItem"
@@ -27,13 +44,8 @@
       <customLighting v-if="clickItem === 2" />
       <lightingAdvanced v-if="clickItem === 3" />
     </div>
-    <lightLuminance
-      v-if="clickItem !== 3"
-      @changeSleepDelay="changeSleepDelay"
-      @changeLuminance="debouncedChangeLuminance"
-      @changeSpeed="debouncedChangeSpeed"
-      v-model="lightSettingStore.light"
-    />
+      <div></div>
+    </div>
   </div>
 </template>
 <script setup>
@@ -318,37 +330,202 @@ const changeLogoLight = async () => {
 
 <style scoped lang="scss">
 .lighting-box {
-  width: var(--size-1600);
+  width: 2000px;
   height: var(--size-350);
-  margin-top: var(--spacing-25);
   display: flex;
-  background-image: url('@/assets/images/performance_bg.svg');
+  //background-image: url('@/assets/images/performance_bg.svg');
   background-size: cover;
   background-repeat: no-repeat;
   position: relative;
   box-sizing: border-box;
   padding-top: var(--spacing-30);
   // overflow: hidden;
-
-  .lighting-item {
-    width: var(--lighting-item-width);
-    height: var(--lighting-item-height);
-    font-size: var(--font-size-20);
+  .top-menu {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: var(--size-60);
+    .lighting-item {
+      float: left;
+    }
+  }
+  .lighting-title{
+    position: absolute;
+    top: 50px;
+    left: 0;
+    width: 100%;
+    height: var(--size-60);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: var(--font-size-18);
     color: #fff;
-    margin: 0 var(--spacing-30);
+    font-weight: bold;
+    ul li {
+      float: left;
+      list-style: none;
+    }
+    .li-1 {
+      width: 425px;
+    }
+    .li-2 {
+      width: 440px;
+    }
+    .li-3 {
+      width: 700px;
+    }
+    .li-4 {
+      width: 425px;
+    }
+  }
+  .lighting-content {
+    position: absolute;
+    left: 0;
+    top: 120px;
+    width: 100%;
+    display: flex;
+    height: auto;
+  }
+  .lighting-item {
+    width: var(--size-130);
+    height: var(--size-36);
+    //width: var(--lighting-item-width);
+    //height: var(--lighting-item-height);
+    font-size: var(--font-size-16);
+    color: #fff;
+    margin-right:  var(--spacing-30);
+    //margin: 0 var(--spacing-30);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: 'CN oblique';
-    background-image: url('@/assets/images/performance_item_bg.svg');
-    background-size: cover;
+    font-weight: bold;
+    //font-family: 'CN oblique';
+    background-image: url('@/assets/images/unselect.png');
+    //background-size: cover;
     background-repeat: no-repeat;
     margin-bottom: var(--spacing-20);
     cursor: pointer;
   }
   .is-active {
-    background-image: url('@/assets/images/performance_item_bgC.gif');
-    color: #000;
+    background-image: url('@/assets/images/mysetting_bg.png');
+  }
+  .color-picker-box {
+    width: var(--lighting-dynamic-width);
+    height: var(--size-290);
+    margin: 0 var(--spacing-30);
+    padding: 0 var(--spacing-10) 0 var(--spacing-15);
+    display: flex;
+    flex-wrap: wrap;
+    box-sizing: border-box;
+    font-family: 'CN Heavy';
+    background-image: url('@/assets/images/dynamic_bg.svg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    overflow: hidden;
+
+    .color-info {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .rgb-values {
+      margin: var(--spacing-60) 0 0 var(--spacing-70);
+
+      .rgb-input {
+        width: var(--size-100);
+        height: var(--size-36);
+        display: flex;
+        margin-bottom: var(--spacing-10);
+        align-items: center;
+        background-image: url('@/assets/images/rgb.svg');
+        background-size: cover;
+        background-repeat: no-repeat;
+
+        span {
+          margin: 0 var(--spacing-18);
+          font-size: var(--font-size-13);
+          color: #ffffff;
+          font-family: 'CN Heavy';
+        }
+        input {
+          width: var(--size-25);
+          font-size: var(--font-size-10);
+          margin-left: var(--spacing-12);
+          color: #cccccc;
+          text-align: center;
+          font-family: 'CN Heavy';
+          background-color: transparent;
+          border: none;
+          outline: none;
+        }
+        /* For Webkit browsers (Chrome, Safari) */
+        input[type='number']::-webkit-inner-spin-button,
+        input[type='number']::-webkit-outer-spin-button {
+          -webkit-appearance: none;
+          margin: 0;
+        }
+
+        /* For Firefox */
+        input[type='number'] {
+          -moz-appearance: textfield; /* Firefox */
+        }
+      }
+    }
+
+    .scale-values {
+      width: var(--size-120);
+      height: var(--size-36);
+      margin-left: var(--spacing-50);
+      display: flex;
+      align-items: center;
+      background-image: url('@/assets/images/scale_values.svg');
+      background-size: cover;
+      background-repeat: no-repeat;
+
+      .color-preview {
+        width: var(--size-15);
+        height: var(--size-15);
+        margin: 0 var(--spacing-15);
+        border-radius: 50%;
+      }
+      input {
+        width: var(--size-50);
+        font-size: var(--font-size-10);
+        margin-left: var(--spacing-10);
+        color: #ffffff;
+        text-align: center;
+        font-family: 'CN Heavy';
+        background-color: transparent;
+        border: none;
+        outline: none;
+      }
+    }
+
+    .color-wheel-container {
+      width: calc(var(--spacing-150) + var(--spacing-2));
+      margin: var(--spacing-38) var(--spacing-50) 0 var(--spacing-50);
+    }
+
+    .color-blocks {
+      width: var(--size-120);
+      margin-top: var(--spacing-50);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      align-content: flex-start;
+
+      div {
+        width: var(--size-20);
+        height: var(--size-20);
+        margin-right: var(--spacing-20);
+        margin-bottom: var(--spacing-20);
+        border-radius: 50%;
+        cursor: pointer;
+      }
+    }
   }
 }
 </style>

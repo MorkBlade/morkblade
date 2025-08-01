@@ -8,11 +8,11 @@
           :class="selectedId === lingtingData.sleepTime ? 'is-selected' : ''"
           @click="toggleDropdown"
         >
-          <img
+          <!-- <img
             class="change-icon"
             :src="selectedId === lingtingData.sleepTime ? changedSleepIcon : changeSleepIcon"
             alt=""
-          />
+          /> -->
           <span>{{ getSleepDelayLabel(lingtingData?.sleepTime === -1 ? 0 : lingtingData?.sleepTime) }}</span>
           <img
             class="down-icon"
@@ -36,14 +36,20 @@
       </div>
     </template>
     <div class="lumminance-box">
-      <span class="title">亮度:</span>
-      <horizontalSlider :sliderValue="lingtingData.luminance" :min="0" :max="max" @sendSliderVal="getLuminance" />
-      <span class="show-value">{{ lingtingData.luminance || 0 }}</span>
+      <span class="title">亮度: </span>
+      <div style="width: 232px;">
+        <ELSlider/>
+      </div>
+      <!-- <horizontalSlider :sliderValue="lingtingData.luminance" :min="0" :max="max" @sendSliderVal="getLuminance" />
+      <span class="show-value">{{ lingtingData.luminance || 0 }}</span> -->
     </div>
     <div class="speed-box">
-      <span class="title">速度:</span>
-      <horizontalSlider :sliderValue="lingtingData.speed" :min="0" :max="max" @sendSliderVal="getSpeed" />
-      <span class="show-value">{{ lingtingData.speed || 0 }}</span>
+      <span class="title">速度: </span>
+      <div style="width: 232px;">
+        <ELSlider/>
+      </div>
+      <!-- <horizontalSlider :sliderValue="lingtingData.speed" :min="0" :max="max" @sendSliderVal="getSpeed" />
+      <span class="show-value">{{ lingtingData.speed || 0 }}</span> -->
     </div>
   </div>
 </template>
@@ -56,10 +62,11 @@ import emitter from '@/utils/app-emitter';
 
 import changedSleepIcon from '@/assets/images/changed.svg';
 import changeSleepIcon from '@/assets/images/change.svg';
-import downArrowed from '@/assets/images/down_icon.svg';
+import downArrowed from '@/assets/images/arrow_up.png';
 import downArrow from '@/assets/images/down_icon2.svg';
 
 import horizontalSlider from '@/components/horizontal-slider.vue';
+import ELSlider from '@/components/el-slider.vue';
 
 const lingtingData = defineModel();
 const emits = defineEmits(['changeSleepDelay', 'changeLuminance', 'changeSpeed']);
@@ -138,14 +145,16 @@ const getSpeed = (val) => {
 
 <style scoped lang="scss">
 .light-luminance {
-  width: var(--lighting-set-width);
+  width:375px;
   height: var(--size-290);
   display: flex;
   flex-direction: column;
-  align-items: center;
-  background-image: url('@/assets/images/luminance_bg.svg');
+  //align-items: center;
+  background-image: none;
+  //background-image: url('@/assets/images/luminance_bg.svg');
   background-size: cover;
   background-repeat: no-repeat;
+  border-right: #666 1px solid;
 
   .sleep-time-box {
     margin-top: var(--spacing-30);
@@ -222,7 +231,7 @@ const getSpeed = (val) => {
             background-repeat: no-repeat;
           }
           .checked-item {
-            background-image: url('@/assets/images/item_bg_checked.gif');
+            background-image: url('@/assets/images/mysetting_bg.png');
           }
         }
       }
@@ -255,10 +264,10 @@ const getSpeed = (val) => {
     }
 
     .is-selected {
-      background-image: url('@/assets/images/selected_bg.gif');
+      background-image: url('@/assets/images/mysetting_bg.png');
 
       span {
-        color: #000 !important;
+        color: #fff !important;
       }
 
       //li {
@@ -285,6 +294,7 @@ const getSpeed = (val) => {
   }
 
   .title {
+    margin-right: 5px;
     color: #fff;
   }
 }

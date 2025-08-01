@@ -58,7 +58,7 @@ const onSure = () => {
   text-align: center;
   flex-direction: column;
   align-content: center;
-  background-image: url('@/assets/images/formation_test_bg.svg');
+  //background-image: url('@/assets/images/formation_test_bg.svg');
   background-size: cover;
   background-repeat: no-repeat;
   font-size: var(--font-size-15);

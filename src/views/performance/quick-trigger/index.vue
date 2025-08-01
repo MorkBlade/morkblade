@@ -8,10 +8,9 @@
         :min="option.min"
         :max="option.max"
         :disabled="disabled"
-        title="首次触发行程"
         @sendKeyVal="handleTriggerPointChange"
       />
-      <setTravelCard
+      <!-- <setTravelCard
         :sliderVal="rtPressTravel"
         :offsetX="scaleValue(40)"
         :min="option.min"
@@ -28,17 +27,39 @@
         :disabled="disabled"
         title="RT抬起行程"
         @sendKeyVal="setRtReleaseTravel"
-      />
-      <div class="link-btn" @click="onLink" :class="{ linking: rtPressLinkRelease }">
+      /> -->
+      <!-- <div class="link-btn" @click="onLink" :class="{ linking: rtPressLinkRelease }">
         <img alt="" :src="rtPressLinkRelease ? linkedIcon : linkIcon" />
+      </div> -->
+    </div>
+    <div class="link-box">
+      <div class="link-rt">
+        <div class="link-rt-title">
+          <p>快速触发RT：</p>
+          <el-switch v-model="switchValue" />
+        </div>
+        <span>在行程中任意位置动态识别按下与抬起动作，极大提升响应速度，又简称RT。</span>
+        <div class="link-rt-item">
+          <span>按下（触发）:</span>
+          <ELSlider/>
+        </div>
+        <div class="link-rt-item" style="margin-top: 25px;">
+          <span>抬起（重置）:</span>
+          <ELSlider/>
+        </div>
+        <div class="link-rt-title" style="margin-top: 35px;">
+          <p>连续快速触发RT：</p>
+          <el-switch v-model="switchValue1" />
+        </div>
+        <span>启用时，快速触发在完全松开按键时才会终止。禁用时，松开按键到轴体发行程终止快速触发。</span>
       </div>
     </div>
-    <saveConfig
+    <!-- <saveConfig
       :travelVal="singleTravel"
       :RTKeyDown="rtPressTravel"
       :RTKeyUp="rtReleaseTravel"
       @saveRtConfig="saveRtConfig"
-    />
+    /> -->
   </div>
 </template>
 
@@ -51,11 +72,13 @@ import { usePerformanceHook } from '@/hooks';
 import { usePerformancePageHook } from '../usePerformancePageHook';
 
 import travelTestCard from '@/components/travel-test-card.vue';
-import setTravelCard from '@/components/set-travel-card.vue';
+import setTravelCard from '@/components/set-travel-test-card.vue';
+import setTravelTestCard from '@/components/set-travel-test-card.vue';
 import saveConfig from './components/save-config.vue';
 import sureIcon from '@/assets/images/sure.svg';
 import linkIcon from '@/assets/images/link1.svg';
 import linkedIcon from '@/assets/images/link2.svg';
+import ELSlider from '@/components/el-slider.vue';
 import { watch } from 'vue';
 
 const keyboardStore = useKeyboardStore();
@@ -66,6 +89,8 @@ const { keyboards } = storeToRefs(keyboardStore);
 const { rowIdx, colIdx, option, activeKeys, disabled, debounce, hasCurrentKey } = usePerformancePageHook();
 
 const travelVal = ref(0);
+const switchValue = ref(true)
+const switchValue1 = ref(true)
 const rtEnabled = ref(true);
 const rtPressTravel = ref(performanceStore.rtPressTravel);
 const rtReleaseTravel = ref(performanceStore.rtReleaseTravel);
@@ -273,10 +298,10 @@ const saveRtConfig = async () => {
 
   .key-setting-box {
     display: flex;
-    height: var(--size-290);
-    width: var(--performance-center-box-width);
+    //height: var(--size-290);
+    width: 600px;
     margin: 0 var(--spacing-25);
-    background-image: url('@/assets/images/keystroke_bg.svg');
+    //background-image: url('@/assets/images/keystroke_bg.svg');
     background-size: cover;
     background-repeat: no-repeat;
     position: relative;
@@ -307,6 +332,34 @@ const saveRtConfig = async () => {
   }
   .linking {
     background-image: url('@/assets/images/link_icon2.svg');
+  }
+  .link-box {
+    width: 1120px;
+    margin-left: 45px;
+    height: 100%;
+    .link-rt {
+      color: #8d8b8b;
+      font-size: 16px;
+      font-weight: bold;
+      .link-rt-title {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        color: #fff;
+        font-size: 18px;
+        font-weight: bold;
+      }
+      .link-rt-item {
+        color: #fff;
+        margin-top: 15px;
+        span {
+          margin-bottom: 5px;
+          display: inline-block;
+        }
+      }
+    }
+    
   }
 }
 </style>

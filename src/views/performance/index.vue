@@ -81,7 +81,7 @@ onMounted(() => {
     flex-direction: row;
     justify-content: flex-start;
     align-items: center;
-    margin-left: 120px;
+    margin-left: 140px;
 
     // background-color: #fff;
     .performance-item {
@@ -91,7 +91,7 @@ onMounted(() => {
       background-image: url('@/assets/images/unselect.png');
       background-size: contain;
       color: #fff;
-      margin: 0 var(--spacing-10);
+      margin: 0 15px;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -110,7 +110,7 @@ onMounted(() => {
 
   .display-area {
     width: 100%;
-    padding: 30px 128px;
+    padding: 30px 147px;
   }
 }
 

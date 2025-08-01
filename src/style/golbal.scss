@@ -85,7 +85,15 @@ body {
     background-color: transparent;
   }
   .el-slider__button {
-    display: none;
+    display: block;
+    position: absolute;
+    top: 10px;
+    left: 5px;
+    background-image: url('@/assets/images/progress_touch.svg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-color: transparent;
+    border: none;
   }
   .el-slider__button.hover,
   .el-slider__button:hover,
@@ -95,12 +103,16 @@ body {
     cursor: default;
   }
   .el-slider__runway {
+    height: 15px !important;
     background-color: transparent !important;
   }
   .el-slider__bar {
-    background-color: rgb(145, 188, 0) !important;
-    border-radius: var(--spacing-20) !important;
-    transition: all 0.1s linear;
+    height: 15px !important;
+    background-image: url('@/assets/images/progress_v2.svg');
+    background-color: transparent;
+    background-repeat: no-repeat;
+    //background-color: rgb(145, 188, 0) !important;
+    //border-radius: var(--spacing-20) !important;
   }
   .el-color-picker__trigger {
     width: var(--size-30);

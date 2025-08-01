@@ -1,6 +1,6 @@
 <template>
   <div class="dynamic-light">
-    <p>动态灯光</p>
+    <!-- <p>动态灯光</p> -->
     <div class="dynamic-light-style">
       <!-- v2 -->
       <template v-if="isVersion2">
@@ -157,14 +157,15 @@ const changelightingMode = (idx) => {
 
 <style scoped lang="scss">
 .dynamic-light {
-  width: var(--lighting-dynamic-width);
-  height: var(--size-290);
-  margin: 0 var(--spacing-30);
-  padding: 0px var(--spacing-10) 0 var(--spacing-20);
+  width: 665px;
+  height: 330px;
+  margin: 0 40px 0 45px;
   box-sizing: border-box;
-  background-image: url('@/assets/images/dynamic_bg.svg');
+  background-image: none;
+  //background-image: url('@/assets/images/dynamic_bg.svg');
   background-size: cover;
   background-repeat: no-repeat;
+  border-right: #666 1px solid;
 
   p {
     font-size: var(--font-size-15);
