@@ -4,7 +4,7 @@
       <div class="bg-layer"></div>
       <div class="bg-layer second-layer"></div>
     </div>
-    <img src="@/assets/images/bg_shadow.png" alt="" />
+    <img src="@/assets/images/bg_shadow.avif" alt="" />
     <div class="app-content" :class="{ 'content-ready': isContentReady }">
       <Transition name="fade" mode="out-in">
         <component :is="currentPage" />
