@@ -3,6 +3,7 @@ import { defineStore } from 'pinia';
 
 import services from '@/services/index';
 import { resetKeys } from '@/utils/resetKeys';
+import service from '@/services/index';
 
 const useMacroStore = defineStore('macro', {
   state: () => ({
@@ -16,11 +17,42 @@ const useMacroStore = defineStore('macro', {
       selectName: null,
     },
     usedMacro: [],
-    macroData: [],
+    macroData: [], // v2版本的宏数据
+    localMacros: [], // v1版本的宏数据
     recording: false,
   }),
 
+  getters: {
+    // 根据版本获取宏数据
+    macros: (state) => {
+      const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
+      return isVersion2 ? state.macroData : state.localMacros;
+    },
+  },
+  setters: {
+    setMacroData(macroData) {
+      this.localMacros = macroData;
+    },
+  },
+
   actions: {
+    // 初始化本地宏数据
+    initLocalMacros() {
+      const data = service.getMacro();
+      console.log('data', data);
+      try {
+        const storedMacros = localStorage.getItem('localMacros');
+        if (storedMacros && storedMacros !== '[]') {
+          this.localMacros = JSON.parse(storedMacros);
+        } else {
+          this.localMacros = [];
+        }
+      } catch (error) {
+        console.error('Failed to parse localMacros from localStorage', error);
+        this.localMacros = [];
+      }
+    },
+
     // v2获取所有宏
     async getMacroAllData() {
       for (let i = 0; i < 16; i++) {
@@ -125,6 +157,19 @@ const useMacroStore = defineStore('macro', {
       }
     },
 
+    async setMacroData(macroData) {
+      // 直接更新store中的localMacros
+      this.localMacros = macroData;
+    },
+
+    // v1设置宏列表
+    async setMacroData_V1(macroData) {
+      // 直接更新store中的localMacros
+      this.localMacros = macroData;
+      // 存一份到本地
+      localStorage.setItem('localMacros', JSON.stringify(macroData));
+    },
+
     // 导入宏数据
     async importMacroData(macroData) {
       try {
@@ -147,8 +192,8 @@ const useMacroStore = defineStore('macro', {
           await services.setMacroModeV2({
             macroId: i,
             actNum: macro.actNum || macro.data?.length || 0,
+            repNum: macro.repNum || macro.repeatCount || 1,
             mode: macro.mode || 0,
-            repeat: macro.repeat || 1,
             valid: 1 // 设置为有效
           });
           
@@ -163,7 +208,7 @@ const useMacroStore = defineStore('macro', {
               await services.setMacroDataV2({
                 macroId: i,
                 offset,
-                macros: batch // 使用原始的字段名
+                actions: batch
               });
             }
           }
@@ -171,6 +216,10 @@ const useMacroStore = defineStore('macro', {
         
         // 重新加载宏数据
         await this.getMacroAllData();
+        
+        // 强制触发响应式更新
+        this.macroData = [...this.macroData];
+        
         return true;
       } catch (error) {
         console.error('Import macro data error:', error);

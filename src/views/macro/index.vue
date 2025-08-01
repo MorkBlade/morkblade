@@ -10,10 +10,10 @@
       />
     </template>
     <template v-else>
-      <macro-list v-model:macros="localMacros" @checkedMacroIdx="checkedMacroIdx" />
+      <macro-list v-model:macros="macros" @checkedMacroIdx="checkedMacroIdx" />
       <macro-data
         :macroData="currentMacroData"
-        :disabled="localMacros.length === 0"
+        :disabled="macros.length === 0"
         @updateMacro:data="updateMacroData"
         @updateMacro:mode="updateMacroMode"
         @updateMacro:clear="clearMacro"
@@ -36,18 +36,39 @@ const { setMacroV2, setMacroModeV2, getMacroAllDataV2 } = useMacroHook();
 
 const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
 const curMacroIdx = ref(0);
-// 本地宏数据
-const localMacros = ref([]);
+
+// 使用ref来管理宏数据，这样可以用于v-model
+const macros = ref([]);
+
+// 监听store中宏数据的变化
+watch(
+  () => macroStore.macros,
+  (newMacros) => {
+    macros.value = newMacros;
+  },
+  { immediate: true, deep: true }
+);
+
+// 监听macros的变化，同步到store
+watch(
+  macros,
+  (newMacros) => {
+    if (!isVersion2) {
+      macroStore.setMacroData_V1(newMacros);
+    }
+  },
+  { deep: true }
+);
 
 // 计算属性，获取当前选中的宏数据
 const currentMacroData = computed(() => {
   if (isVersion2) {
     return macroStore.macroData[curMacroIdx.value];
   } else {
-    if (curMacroIdx.value === -1 || localMacros.value.length === 0) {
+    if (curMacroIdx.value === -1 || macros.value.length === 0) {
       return { data: [] };
     }
-    return localMacros.value[curMacroIdx.value] || { data: [] };
+    return macros.value[curMacroIdx.value] || { data: [] };
   }
 });
 
@@ -58,26 +79,12 @@ onMounted(async () => {
       await getMacroAllDataV2();
     }
   } else {
-    const storedMacros = localStorage.getItem('localMacros');
-    if (storedMacros && storedMacros !== '[]') {
-      try {
-        localMacros.value = JSON.parse(storedMacros);
-      } catch (error) {
-        console.error('Failed to parse localMacros from localStorage', error);
-        localMacros.value = [];
-      }
+    // v1版本初始化本地宏数据
+    if (macroStore.localMacros.length === 0) {
+      macroStore.initLocalMacros();
     }
   }
 });
-
-// 监听 localMacros 的修改，并更新 localStorage
-watch(
-  localMacros,
-  (newVal) => {
-    localStorage.setItem('localMacros', JSON.stringify(newVal));
-  },
-  { deep: true },
-);
 
 // 更新当前选中的宏索引
 const checkedMacroIdx = (idx) => {
@@ -95,12 +102,12 @@ const updateMacroData = async (data, settings) => {
       await setMacroV2({ macroId, data });
     }
   } else {
-    // TODO v1更新宏数据需要刷新已绑定的宏事件
+    // v1版本直接更新macros
     // 确保当前宏索引有效
-    if (curMacroIdx.value >= 0 && curMacroIdx.value < localMacros.value.length) {
+    if (curMacroIdx.value >= 0 && curMacroIdx.value < macros.value.length) {
       // 如果当前宏不存在，则初始化它
-      if (!localMacros.value[curMacroIdx.value]) {
-        localMacros.value[curMacroIdx.value] = {
+      if (!macros.value[curMacroIdx.value]) {
+        macros.value[curMacroIdx.value] = {
           id: Date.now(),
           macroName: `宏${curMacroIdx.value + 1}`,
           createTime: Date.now(),
@@ -113,18 +120,15 @@ const updateMacroData = async (data, settings) => {
       }
 
       // 更新数据
-      localMacros.value[curMacroIdx.value].data = data;
-      localMacros.value[curMacroIdx.value].macroLength = data.length;
+      macros.value[curMacroIdx.value].data = data;
+      macros.value[curMacroIdx.value].macroLength = data.length;
 
       // 如果提供了宏类型设置，则更新设置
       if (settings) {
-        localMacros.value[curMacroIdx.value].mode = settings.mode;
-        localMacros.value[curMacroIdx.value].repeatCount = settings.repeatCount;
-        localMacros.value[curMacroIdx.value].repeatInterval = settings.repeatInterval;
+        macros.value[curMacroIdx.value].mode = settings.mode;
+        macros.value[curMacroIdx.value].repeatCount = settings.repeatCount;
+        macros.value[curMacroIdx.value].repeatInterval = settings.repeatInterval;
       }
-
-      // 触发响应式更新
-      // localMacros.value = [...localMacros.value];
     }
   }
 };
@@ -141,14 +145,13 @@ const updateMacroMode = async ({ mode, repeatCount, repeatInterval }) => {
     }
     const { macroId, actNum, repNum, mode: marcoMode } = macroStore.macroData[curMacroIdx.value];
     const res = await setMacroModeV2({ actNum, repNum, mode: marcoMode, macroId, valid: 1 });
-    // if (res && res?.mode < 4) {
-    //   macroStore.macroData[curMacroIdx.value].repNum = 1;
-    // }
-    // console.log('set macro mode: ', res);
   } else {
-    localMacros.value[curMacroIdx.value].mode = mode;
-    localMacros.value[curMacroIdx.value].repeatCount = repeatCount;
-    localMacros.value[curMacroIdx.value].repeatInterval = repeatInterval;
+    // v1版本直接更新macros
+    if (curMacroIdx.value >= 0 && curMacroIdx.value < macros.value.length) {
+      macros.value[curMacroIdx.value].mode = mode;
+      macros.value[curMacroIdx.value].repeatCount = repeatCount;
+      macros.value[curMacroIdx.value].repeatInterval = repeatInterval;
+    }
   }
 };
 
@@ -162,8 +165,11 @@ const clearMacro = async (macro) => {
     macroStore.macroData[curMacroIdx.value].data = [];
     await setMacroModeV2({ actNum, repNum, mode, macroId, valid: 0 });
   } else {
-    localMacros.value[curMacroIdx.value].data = [];
-    localMacros.value[curMacroIdx.value].macroLength = 0;
+    // v1版本直接更新macros
+    if (curMacroIdx.value >= 0 && curMacroIdx.value < macros.value.length) {
+      macros.value[curMacroIdx.value].data = [];
+      macros.value[curMacroIdx.value].macroLength = 0;
+    }
   }
 };
 </script>

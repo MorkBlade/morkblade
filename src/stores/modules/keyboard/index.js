@@ -2,7 +2,7 @@
 import { defineStore } from 'pinia';
 
 import services from '@/services/index';
-import { useMacroStore } from '@/stores';
+import { useMacroStore, usePerformanceStore } from '@/stores';
 import { useKeyboardHook } from '@/hooks';
 
 const state = {
@@ -35,6 +35,7 @@ const useKeyboardStore = defineStore('keyboard', {
     // getLayoutKeyInfo  splitRowArray 只有v1需要调用
     // 获取每一层的值
     async getLayoutKeyInfo(layout = 0, keyboardsData) {
+      // console.log('getLayoutKeyInfo', layout, keyboardsData);
       const result = [];
       // 每一行的数据
       for (let i = 0; i < keyboardsData.length; i++) {
@@ -288,26 +289,27 @@ const useKeyboardStore = defineStore('keyboard', {
 
         // 保存键盘数据到store
         this.keyboards = keyboardData;
-        
+        console.log('导入键盘配置', this.keyboards[0][0].customKeys);
+
         // 获取键盘版本
         const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
-        
+
         // 应用键盘配置到设备
         if (isVersion2) {
           // v2版本: 使用批量设置API
           const keysToUpdate = [];
-          
+
           // 收集所有层的按键数据
           for (let layer = 0; layer < 4; layer++) {
             for (let row = 0; row < keyboardData.length; row++) {
               if (!keyboardData[row]) continue;
-              
+
               for (let col = 0; col < keyboardData[row].length; col++) {
                 if (!keyboardData[row][col]) continue;
-                
+
                 const { customKeys } = keyboardData[row][col];
                 const customKeysKeyName = `fn${layer}`;
-                
+
                 if (customKeys && customKeys[customKeysKeyName]) {
                   const keyCode = customKeys[customKeysKeyName].bindKeyValue;
                   keysToUpdate.push({ layer, row, col, keycode: keyCode });
@@ -315,7 +317,7 @@ const useKeyboardStore = defineStore('keyboard', {
               }
             }
           }
-          
+
           // 批量设置键位 - 使用单个API调用
           if (keysToUpdate.length > 0) {
             // 由于可能没有批量API，使用循环单个设置
@@ -327,34 +329,99 @@ const useKeyboardStore = defineStore('keyboard', {
           // v1版本: 按层设置
           for (let layout = 0; layout < 4; layout++) {
             const keysToUpdate = [];
-            
+
             for (let row = 0; row < keyboardData.length; row++) {
               if (!keyboardData[row]) continue;
-              
+
               for (let col = 0; col < keyboardData[row].length; col++) {
                 if (!keyboardData[row][col]) continue;
-                
+
                 const { keyValue, customKeys } = keyboardData[row][col];
                 const customKeysKeyName = `fn${layout}`;
-                
+
                 if (customKeys && customKeys[customKeysKeyName]) {
                   const value = customKeys[customKeysKeyName].bindKeyValue;
                   keysToUpdate.push({ key: keyValue, layout, value });
                 }
               }
             }
-            
             // 批量设置当前层的键位
             if (keysToUpdate.length > 0) {
               await services.setKey(keysToUpdate);
             }
           }
         }
-        
+
+        // 新增：恢复性能设置
+        await this.restorePerformanceSettings(keyboardData, isVersion2);
+
         return true;
       } catch (error) {
         console.error('Import keyboard config error:', error);
         return false;
+      }
+    },
+
+    // 新增：恢复性能设置的方法
+    async restorePerformanceSettings(keyboardData, isVersion2) {
+      try {
+        const performanceStore = usePerformanceStore();
+
+        if (isVersion2) {
+          // v2版本：使用性能store的v2方法
+          await performanceStore.getKeyPerformanceV2(keyboardData);
+        } else {
+          // v1版本：遍历所有按键，恢复性能设置
+          for (let row = 0; row < keyboardData.length; row++) {
+            for (let col = 0; col < keyboardData[row].length; col++) {
+              const keyItem = keyboardData[row][col];
+              if (!keyItem || keyItem.keyValue === 0) continue;
+
+              const { keyValue, performance, advancedKeys } = keyItem;
+
+              // 恢复性能模式
+              if (performance) {
+                let touchMode = 'single';
+                let advancedKeyMode = 0;
+
+                if (performance.isRt) {
+                  touchMode = 'rt';
+                } else if (performance.isGlobalTriggering) {
+                  touchMode = 'global';
+                }
+
+                // 恢复高级键模式
+                if (advancedKeys && advancedKeys.advancedType) {
+                  advancedKeyMode = advancedKeys.advancedType;
+                }
+
+                // 设置性能模式
+                await performanceStore.setPerformanceMode(keyValue, touchMode, advancedKeyMode);
+
+                // 恢复触发行程
+                if (performance.singleTriggeringValue && (touchMode === 'single' || touchMode === 'rt')) {
+                  await performanceStore.setSingleTravel(keyValue, performance.singleTriggeringValue, 2);
+                }
+
+                // 恢复RT模式设置
+                if (touchMode === 'rt' && performance.rtPressValue && performance.rtReleaseValue) {
+                  await performanceStore.setRtPressTravel(keyValue, performance.rtPressValue);
+                  await performanceStore.setRtReleaseTravel(keyValue, performance.rtReleaseValue);
+                }
+
+                // 恢复死区设置
+                if (performance.deadBandPressValue !== undefined) {
+                  await performanceStore.setDp(keyValue, performance.deadBandPressValue);
+                }
+                if (performance.deadBandReleaseValue !== undefined) {
+                  await performanceStore.setDr(keyValue, performance.deadBandReleaseValue);
+                }
+              }
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Restore performance settings error:', error);
       }
     },
   },

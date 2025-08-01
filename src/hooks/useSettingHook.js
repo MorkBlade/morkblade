@@ -75,16 +75,11 @@ export const useSettingHook = () => {
       }
       return macroStore.macroData;
     } else {
-      // v1版本从localStorage获取宏数据
-      const storedMacros = localStorage.getItem('localMacros');
-      if (storedMacros && storedMacros !== '[]') {
-        try {
-          return JSON.parse(storedMacros);
-        } catch (error) {
-          return [];
-        }
+      // v1版本从store获取宏数据，确保先初始化
+      if (macroStore.localMacros.length === 0) {
+        macroStore.initLocalMacros();
       }
-      return [];
+      return macroStore.localMacros;
     }
   };
 
@@ -274,14 +269,13 @@ export const useSettingHook = () => {
                 } else {
                   // v1版本宏数据处理
                   if (Array.isArray(config.macro)) {
-                    localStorage.setItem('localMacros', JSON.stringify(config.macro));
-                    macroStore.$patch({
-                      macroData: config.macro
-                    });
+                    macroStore.setMacroData_V1(config.macro);
                   }
                 }
               } catch (error) {
                 // 导入宏配置失败
+              } finally {
+                console.log('macroStore.macros', macroStore.macros); 
               }
             }
             

@@ -64,6 +64,7 @@ export const useKeyboardPageHook = () => {
       keyboardStore.initKeyboard();
       await getHighLevelKeys(keyboardStore.keyboards, isVersion2);
     } else {
+      console.log('换层', keyboardStore.keyboards[0][0].customKeys);
       keyboardStore.getLayoutKeyInfo(fn, keyboardStore.keyboards);
     }
   };

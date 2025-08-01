@@ -54,7 +54,7 @@
 import key from '@/components/key.vue';
 
 import { KEYBOARD_MACRO } from '@/configs/constant';
-import { useKeyboardStore } from '@/stores';
+import { useKeyboardStore, useMacroStore } from '@/stores';
 
 // 导入所有需要的图标
 import basicIcon from '@/assets/images/basic.svg';
@@ -101,6 +101,7 @@ const iconMap = {
 const checkedIdx = ref(0);
 
 const keyboardStore = useKeyboardStore();
+const macroStore = useMacroStore();
 const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
 
 const characterArr = [
@@ -137,7 +138,7 @@ const macro = computed(() => {
   if (isVersion2) {
     return KEYBOARD_MACRO;
   } else {
-    return JSON.parse(localStorage.getItem('localMacros')) || [];
+    return macroStore.localMacros || [];
   }
 });
 

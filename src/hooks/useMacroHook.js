@@ -30,8 +30,9 @@ export const useMacroHook = () => {
   };
 
   // v1设置宏
-  const setMacroV1 = async () => {
-    const macroList = JSON.parse(localStorage.getItem('localMacros')) || [];
+  const setMacroV1 = async (macroList_) => {
+    // console.log('macroList', macroList);
+    const macroList = macroList_ || [];
     let index = null;
     for (let i = 0; i < macroList.length; i++) {
       if (macroList[i].id !== macroStore.selectMacro.id) continue;
@@ -66,6 +67,7 @@ export const useMacroHook = () => {
     macroStore.selectMacro = null;
     return result;
   };
+
 
   // v2设置宏模式
   const setMacroModeV2 = async ({ actNum, repNum, mode, macroId, valid }) => {
