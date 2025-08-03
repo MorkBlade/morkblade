@@ -176,7 +176,7 @@ onUnmounted(() => {
   height: var(--size-350);
   margin-top: var(--spacing-25);
   display: flex;
-  background-image: url('@/assets/images/performance_bg.svg');
+  background-image: url('@/assets/images/performance_bg.avif');
   background-size: cover;
   background-repeat: no-repeat;
   position: relative;

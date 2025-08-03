@@ -102,7 +102,7 @@
 <script setup>
 import { scaleValue } from '@/utils/responsive.js';
 import { showMessage } from '@/utils/message';
-import axisIcon1 from '@/assets/images/wanciwang.webp';
+import axisIcon1 from '@/assets/images/wanciwang.avif';
 
 const { carouselData, offset, selectedId } = defineProps({
   carouselData: { type: Array, default: () => [] },

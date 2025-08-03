@@ -1,12 +1,12 @@
 
-import axisIcon1 from '@/assets/images/wanciwang.webp';
-import axisIcon2 from '@/assets/images/ciyu.webp';
-import axisIcon3 from '@/assets/images/wanciwang.webp';
-import axisIcon4 from '@/assets/images/ciyu.webp';
-import axisIcon5 from '@/assets/images/wanciwang.webp';
-import axisIcon6 from '@/assets/images/ciyu.webp';
-import axisIcon7 from '@/assets/images/wanciwang.webp';
-import axisIcon8 from '@/assets/images/ciyu.webp';
+import axisIcon1 from '@/assets/images/wanciwang.avif';
+import axisIcon2 from '@/assets/images/ciyu.avif';
+import axisIcon3 from '@/assets/images/wanciwang.avif';
+import axisIcon4 from '@/assets/images/ciyu.avif';
+import axisIcon5 from '@/assets/images/wanciwang.avif';
+import axisIcon6 from '@/assets/images/ciyu.avif';
+import axisIcon7 from '@/assets/images/wanciwang.avif';
+import axisIcon8 from '@/assets/images/ciyu.avif';
 import cs from '@/assets/images/cs.svg';
 import office from '@/assets/images/key.svg';
 import lol from '@/assets/images/lol.svg';
@@ -257,26 +257,26 @@ export const CONFIG_OPTIONS = [
 
 export const ICON_MAP = {
   TTC: {
-    69: new URL('@/assets/images/TTC_wcw.png', import.meta.url).href,
-    111: new URL('@/assets/images/RGB_wcw.png', import.meta.url).href,
-    112: new URL('@/assets/images/gs.png', import.meta.url).href,
-    113: new URL('@/assets/images/LOVE_wcw.png', import.meta.url).href,
-    115: new URL('@/assets/images/ws.png', import.meta.url).href,
-    116: new URL('@/assets/images/E_sport_wcw.png', import.meta.url).href,
+    69: new URL('@/assets/images/TTC_wcw.avif', import.meta.url).href,
+    111: new URL('@/assets/images/RGB_wcw.avif', import.meta.url).href,
+    112: new URL('@/assets/images/gs.avif', import.meta.url).href,
+    113: new URL('@/assets/images/LOVE_wcw.avif', import.meta.url).href,
+    115: new URL('@/assets/images/ws.avif', import.meta.url).href,
+    116: new URL('@/assets/images/E_sport_wcw.avif', import.meta.url).href,
   },
   佳达隆: {
-    58: new URL('@/assets/images/ciyupro.png', import.meta.url).href,
+    58: new URL('@/assets/images/ciyupro.avif', import.meta.url).href,
     106: new URL('@/assets/images/gd.png', import.meta.url).href,
-    // 4: new URL('@/assets/images/wcw.png', import.meta.url).href,
-    // 78: new URL('@/assets/images/wcw.png', import.meta.url).href,
+    // 4: new URL('@/assets/images/wcw.avif', import.meta.url).href,
+    // 78: new URL('@/assets/images/wcw.avif', import.meta.url).href,
   },
   other: {
-    26: new URL('@/assets/images/ts.png', import.meta.url).href,
+    26: new URL('@/assets/images/ts.avif', import.meta.url).href,
     64: new URL('@/assets/images/sl.png', import.meta.url).href,
-    70: new URL('@/assets/images/ti.png', import.meta.url).href,
-    85: new URL('@/assets/images/ice.png', import.meta.url).href,
+    70: new URL('@/assets/images/ti.avif', import.meta.url).href,
+    85: new URL('@/assets/images/ice.avif', import.meta.url).href,
     118: new URL('@/assets/images/ds.png', import.meta.url).href,
-    121: new URL('@/assets/images/wk.png', import.meta.url).href,
+    121: new URL('@/assets/images/wk.avif', import.meta.url).href,
     123: new URL('@/assets/images/jicipro.png', import.meta.url).href,
   },
 };

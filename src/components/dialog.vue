@@ -161,7 +161,7 @@ const onCancel = () => {
     left: 50%;
     margin-left: calc(var(--size-300) * -1);
     margin-top: calc(var(--size-150) * -1);
-    background-image: url('@/assets/images/dialog_bg.svg');
+    background-image: url('@/assets/images/dialog_bg.webp');
     background-size: cover;
     background-repeat: no-repeat;
 
