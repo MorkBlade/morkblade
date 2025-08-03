@@ -15,31 +15,32 @@ export const useSettingHook = () => {
   // 处理灯光数据
   const handleLightingData = async () => {
     const { light, logo } = storeToRefs(lightSettingStore);
-    
+
     if (isVersion2) {
       // v2版本灯光数据处理
-      const lightingBase = await services.getLightingBaseV2({ 
-        area: lightSettingStore.area, 
-        config: lightSettingStore.base 
+      const lightingBase = await services.getLightingBaseV2({
+        area: lightSettingStore.area,
+        config: lightSettingStore.base
       }, lightSettingStore.lamp);
-      
-      const lightingPalette = await services.getLightingPaletteV2({ 
-        area: lightSettingStore.area, 
-        config: lightSettingStore.palette 
+
+      const lightingPalette = await services.getLightingPaletteV2({
+        area: lightSettingStore.area,
+        config: lightSettingStore.palette
       });
-      
+
       const lightSleepTime = await services.getLightingSleepTimeV2();
-      
+
       return {
         base: lightingBase[0],
         palette: lightingPalette[0],
         sleepTime: lightSleepTime
       };
+      
     } else {
       // v1版本灯光数据处理
       const keyboardLighting = await services.getLighting();
       const logoLighting = await services.getLogoLighting();
-      
+
       return {
         keyboard: keyboardLighting,
         logo: logoLighting
@@ -51,13 +52,13 @@ export const useSettingHook = () => {
   const handleSystemData = async () => {
     // 获取基础信息
     const baseInfo = await appStore.getBaseInfo(isVersion2);
-    
+
     // 获取系统模式
     const systemMode = await appStore.systemMode();
-    
+
     // 获取协议版本
     const protocolVersion = await appStore.getProtocolVersion(isVersion2);
-    
+
     return {
       baseInfo,
       systemMode,
@@ -92,20 +93,47 @@ export const useSettingHook = () => {
       const { keyboards } = keyboardStore;
 
       // 确保获取所有层的键盘布局信息
-      await keyboardStore.getLayoutKeyInfo(0, false);
-      await keyboardStore.getLayoutKeyInfo(1, false);
-      await keyboardStore.getLayoutKeyInfo(2, false);
-      await keyboardStore.getLayoutKeyInfo(3, false);
+      if (isVersion2) {
+        // v2版本：使用getKeyLayoutV2获取所有层的布局信息
+        const { row } = keyboardStore.keyLayoutConfig;
+
+        // 获取所有层的数据并更新到store中
+        for (let layer = 0; layer < 4; layer++) {
+          keyboardStore.checkFnLayer(layer);
+
+          // 获取当前层的所有行数据
+          for (let i = 0; i < row; i++) {
+            const result = await services.getKeyLayoutV2({ layer, row: i });
+            const { keyboardLayout: layerData } = result[0];
+
+            // 更新当前层的数据到keyboards中
+            if (layerData && layerData.length > 0) {
+              for (let colIndex = 0; colIndex < layerData.length; colIndex++) {
+                if (keyboards[i] && keyboards[i][colIndex]) {
+                  const customKeysKeyName = `fn${layer}`;
+                  keyboards[i][colIndex].customKeys[customKeysKeyName].bindKeyValue = layerData[colIndex];
+                }
+              }
+            }
+          }
+        }
+      } else {
+        // v1版本：使用getLayoutKeyInfo获取所有层的布局信息
+        await keyboardStore.getLayoutKeyInfo(0, false);
+        await keyboardStore.getLayoutKeyInfo(1, false);
+        await keyboardStore.getLayoutKeyInfo(2, false);
+        await keyboardStore.getLayoutKeyInfo(3, false);
+      }
 
       const macro = await handleMacroData();
-      
+
       const data = {
         light,
         keyboards,
         system,
         macro,
       };
-      
+
       // 导出为json文件，内容为data
       const jsonStr = JSON.stringify(data, null, 2);
       const blob = new Blob([jsonStr], { type: 'application/json' });
@@ -126,13 +154,13 @@ export const useSettingHook = () => {
   const importConfig = async (file) => {
     try {
       const reader = new FileReader();
-      
+
       return new Promise((resolve, reject) => {
         reader.onload = async (e) => {
           try {
             const content = e.target.result;
             const config = JSON.parse(content);
-            
+
             // 导入灯光配置
             if (config.light) {
               if (isVersion2) {
@@ -145,7 +173,7 @@ export const useSettingHook = () => {
                   const speed = config.light.base.speed || 80;
                   const direction = config.light.base.direction === "Forward" ? true : false;
                   const selectStaticColor = config.light.base.selectStaticColor || 0;
-                  
+
                   // 更新lightSettingStore中的数据
                   lightSettingStore.light.open = open === 'Open' || open === 'OpenUp' || open === 'OpenDown';
                   lightSettingStore.light.mode = mode;
@@ -153,11 +181,11 @@ export const useSettingHook = () => {
                   lightSettingStore.light.speed = speed;
                   lightSettingStore.light.direction = direction;
                   lightSettingStore.light.selectStaticColor = selectStaticColor;
-                  
+
                   // 直接调用setLighting方法设置灯光
                   await setLighting('keyboard', open);
                 }
-                
+
                 // 处理调色板数据
                 if (config.light.palette && Array.isArray(config.light.palette.staticColors)) {
                   // 确保每个颜色都是有效的HEX格式
@@ -181,14 +209,14 @@ export const useSettingHook = () => {
                     }
                     return { color: '#FFFFFF', id: 0 };
                   });
-                  
+
                   // 更新store中的调色板数据
                   lightSettingStore.light.staticColors = validColors;
-                  
+
                   // 设置灯光调色板
                   await setLightingPalette();
                 }
-                
+
                 // 如果有自定义灯光配置，设置自定义灯光
                 if (config.light.custom && Array.isArray(config.light.custom)) {
                   // 更新自定义灯光数据
@@ -197,16 +225,16 @@ export const useSettingHook = () => {
                       keyboardStore.keyboards[row][col].customLight = config.light.custom[row][col];
                     }
                   }
-                  
+
                   // 设置自定义灯光
                   await setCustomLighting();
                 }
-                
+
                 // 设置睡眠时间
                 if (config.light.sleepTime !== undefined) {
                   // 更新store中的睡眠时间
                   lightSettingStore.light.sleepTime = config.light.sleepTime;
-                  
+
                   // 设置睡眠时间
                   await setLightingSleepTime(config.light.sleepTime);
                 }
@@ -225,10 +253,10 @@ export const useSettingHook = () => {
                     staticColors: config.light.keyboard.colors.map((color, index) => ({ color, id: index })),
                     selectStaticColor: config.light.keyboard.staticColor,
                   });
-                  
+
                   await services.setLighting(config.light.keyboard);
                 }
-                
+
                 if (config.light.logo) {
                   // 更新store中的logo灯光数据
                   Object.assign(lightSettingStore.logo, {
@@ -242,12 +270,12 @@ export const useSettingHook = () => {
                     staticColors: config.light.logo.colors.map((color, index) => ({ color, id: index })),
                     selectStaticColor: config.light.logo.staticColor,
                   });
-                  
+
                   await services.setLogoLighting(config.light.logo);
                 }
               }
             }
-            
+
             // 导入键盘配置
             if (config.keyboards && Array.isArray(config.keyboards)) {
               try {
@@ -257,7 +285,7 @@ export const useSettingHook = () => {
                 // 导入键盘配置失败
               }
             }
-            
+
             // 导入宏配置
             if (config.macro) {
               try {
@@ -275,10 +303,10 @@ export const useSettingHook = () => {
               } catch (error) {
                 // 导入宏配置失败
               } finally {
-                console.log('macroStore.macros', macroStore.macros); 
+                console.log('macroStore.macros', macroStore.macros);
               }
             }
-            
+
             // 导入系统配置
             if (config.system) {
               try {
@@ -286,28 +314,28 @@ export const useSettingHook = () => {
                 if (config.system.systemMode) {
                   await appStore.setSystemMode(config.system.systemMode);
                 }
-                
+
                 // 如果有其他系统配置，可以在这里添加
               } catch (error) {
                 // 导入系统配置失败
               }
             }
-            
+
             resolve(true);
           } catch (error) {
             reject(error);
           }
         };
-        
+
         reader.onerror = (error) => {
           reject(error);
         };
-        
+
         reader.readAsText(file);
       });
-      } catch (error) {
-    throw error;
-  }
+    } catch (error) {
+      throw error;
+    }
   };
 
   return {

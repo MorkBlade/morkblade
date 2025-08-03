@@ -141,6 +141,7 @@ const useAppStore = defineStore('app', {
         return protocolVersion;
       }
     },
+
   },
 });
 export default useAppStore;

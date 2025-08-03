@@ -43,6 +43,7 @@ const useKeyboardStore = defineStore('keyboard', {
       }
       this.layout = layout;
       const res = await Promise.all(result);
+      console.log('res', res);
       return res;
     },
 
@@ -289,7 +290,6 @@ const useKeyboardStore = defineStore('keyboard', {
 
         // 保存键盘数据到store
         this.keyboards = keyboardData;
-        console.log('导入键盘配置', this.keyboards[0][0].customKeys);
 
         // 获取键盘版本
         const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
@@ -317,14 +317,15 @@ const useKeyboardStore = defineStore('keyboard', {
               }
             }
           }
-
           // 批量设置键位 - 使用单个API调用
           if (keysToUpdate.length > 0) {
             // 由于可能没有批量API，使用循环单个设置
             for (const keyData of keysToUpdate) {
               await services.setKeyCodeV2(keyData);
+              console.log('keyData', keyData);
             }
           }
+
         } else {
           // v1版本: 按层设置
           for (let layout = 0; layout < 4; layout++) {
@@ -355,6 +356,7 @@ const useKeyboardStore = defineStore('keyboard', {
         // 新增：恢复性能设置
         await this.restorePerformanceSettings(keyboardData, isVersion2);
 
+        // 
         return true;
       } catch (error) {
         console.error('Import keyboard config error:', error);
@@ -368,8 +370,36 @@ const useKeyboardStore = defineStore('keyboard', {
         const performanceStore = usePerformanceStore();
 
         if (isVersion2) {
-          // v2版本：使用性能store的v2方法
-          await performanceStore.getKeyPerformanceV2(keyboardData);
+          // v2版本：遍历所有按键，恢复性能设置
+          for (let row = 0; row < keyboardData.length; row++) {
+            for (let col = 0; col < keyboardData[row].length; col++) {
+              const keyItem = keyboardData[row][col];
+              if (!keyItem || keyItem.keyValue === 0) continue;
+
+              const { keyValue, performance } = keyItem;
+
+              // 恢复性能设置
+              if (performance) {
+                // 构建v2版本的性能参数
+                const params = {
+                  mode: performance.mode || 0,
+                  normalPress: performance.singleTriggeringValue || 0,
+                  rtFirstTouch: performance.rtFirstTouch || 0,
+                  rtPress: performance.rtPressValue || 0,
+                  rtRelease: performance.rtReleaseValue || 0,
+                  pressDeadStroke: performance.deadBandPressValue || 0,
+                  releaseDeadStroke: performance.deadBandReleaseValue || 0,
+                  axis: performance.axisID || 0,
+                  row: row,
+                  col: col,
+                  calibrate: 0
+                };
+
+                // 设置性能配置到设备
+                await services.setPerformanceV2(params);
+              }
+            }
+          }
         } else {
           // v1版本：遍历所有按键，恢复性能设置
           for (let row = 0; row < keyboardData.length; row++) {
@@ -423,6 +453,14 @@ const useKeyboardStore = defineStore('keyboard', {
       } catch (error) {
         console.error('Restore performance settings error:', error);
       }
+    },
+
+    // 获取键盘数据
+    async getAllFnKeyboardData() {
+      const { getKeyboardDataV2 } = useKeyboardHook();
+      const keyboardData = await getKeyboardDataV2();
+      console.log('keyboardData', keyboardData);
+      return keyboardData;
     },
   },
 });

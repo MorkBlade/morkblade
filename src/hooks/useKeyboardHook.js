@@ -71,17 +71,22 @@ export const useKeyboardHook = () => {
       const keyboardsWithPerformance = [];
       // console.log('initKeyboard-------------------------------', keyboardLayout);
 
+      // 遍历每一行的键盘布局数据
       for (let rowIndex = 0; rowIndex < keyboardLayout.length; rowIndex++) {
         const row = keyboardLayout[rowIndex];
+        // 如果当前行在layoutData中还没有初始化，则初始化为空数组
         if (layoutData[rowIndex] === undefined) layoutData[rowIndex] = [];
 
+        // 遍历当前行的每一列（每个按键）
         for (let colIndex = 0; colIndex < row.length; colIndex++) {
+          // 构造customKeys对象，bindKeyValue为当前按键的值
           const customKeys = {
             fn0: { keyValue: -1, bindKeyValue: row[colIndex] },
             fn1: { keyValue: -1, bindKeyValue: row[colIndex] },
             fn2: { keyValue: -1, bindKeyValue: row[colIndex] },
             fn3: { keyValue: -1, bindKeyValue: row[colIndex] },
           };
+          // 将按键信息对象推入layoutData的对应行
           layoutData[rowIndex].push({
             ...keyboardItemInfo,
             keyValue: row[colIndex],
@@ -90,14 +95,15 @@ export const useKeyboardHook = () => {
             customKeys,
           });
         }
-        // 获取性能数据
+        // 获取当前行的性能数据（异步）
         // eslint-disable-next-line no-await-in-loop
         const performanceDataArray = await performanceStore.getKeyPerformanceV2(layoutData[rowIndex]);
 
-        // 将性能数据合并到layoutData中的每个键对象
+        // 如果性能数据是数组，则合并到layoutData中的每个键对象
         if (Array.isArray(performanceDataArray)) {
           let performanceIndex = 0;
           for (let i = 0; i < layoutData[rowIndex].length; i++) {
+            // 只为keyValue大于0的键合并性能数据
             if (performanceIndex < performanceDataArray.length) {
               if (layoutData[rowIndex][i].keyValue > 0) {
                 layoutData[rowIndex][i].performance = {
@@ -110,7 +116,7 @@ export const useKeyboardHook = () => {
           }
         }
 
-        // 将处理后的行数据添加到keyboardsWithPerformance
+        // 将处理后的当前行数据添加到keyboardsWithPerformance数组
         keyboardsWithPerformance.push(layoutData[rowIndex]);
       }
 
@@ -149,8 +155,74 @@ export const useKeyboardHook = () => {
     }
   };
 
+  // V2 获取键盘数据
+  const getKeyboardDataV2 = async () => {
+    // 获取所有层的键盘布局数据
+    const { row } = keyboardStore.keyLayoutConfig;
+    const allLayersData = [];
+    
+    // 并行获取所有层的数据以提高性能
+    const layerPromises = [];
+    for (let layer = 0; layer < 4; layer++) {
+      for (let i = 0; i < row; i++) {
+        layerPromises.push(
+          services.getKeyLayoutV2({ layer, row: i }).then(result => ({
+            layer,
+            row: i,
+            data: result[0].keyboardLayout
+          }))
+        );
+      }
+    }
+    
+    // 等待所有请求完成
+    const results = await Promise.all(layerPromises);
+    
+    // 整理数据到 allLayersData 结构
+    for (let layer = 0; layer < 4; layer++) {
+      allLayersData[layer] = [];
+      for (let i = 0; i < row; i++) {
+        const result = results.find(r => r.layer === layer && r.row === i);
+        if (!allLayersData[layer][i]) allLayersData[layer][i] = [];
+        allLayersData[layer][i] = result.data;
+      }
+    }
+
+    // 使用已初始化的键盘数据作为基础
+    const existingKeyboards = keyboardStore.keyboards;
+    if (!existingKeyboards || existingKeyboards.length === 0) {
+      console.error('键盘数据未初始化，请先调用 initKeyboard');
+      return null;
+    }
+
+    // 深拷贝现有数据，避免修改原始数据
+    const updatedKeyboards = JSON.parse(JSON.stringify(existingKeyboards));
+
+    // 遍历现有键盘数据，更新 customKeys 的 bindKeyValue
+    for (let rowIndex = 0; rowIndex < updatedKeyboards.length; rowIndex++) {
+      const row = updatedKeyboards[rowIndex];
+      if (!Array.isArray(row)) continue;
+
+      for (let colIndex = 0; colIndex < row.length; colIndex++) {
+        const keyItem = row[colIndex];
+        if (!keyItem) continue;
+
+        // 更新 customKeys 的 bindKeyValue，为每一层设置正确的值
+        keyItem.customKeys = {
+          fn0: { keyValue: -1, bindKeyValue: allLayersData[0][rowIndex][colIndex] },
+          fn1: { keyValue: -1, bindKeyValue: allLayersData[1][rowIndex][colIndex] },
+          fn2: { keyValue: -1, bindKeyValue: allLayersData[2][rowIndex][colIndex] },
+          fn3: { keyValue: -1, bindKeyValue: allLayersData[3][rowIndex][colIndex] },
+        };
+      }
+    }
+    
+    return updatedKeyboards;
+  }
+
   return {
     initKeyboard,
+    getKeyboardDataV2,
   };
 };
 

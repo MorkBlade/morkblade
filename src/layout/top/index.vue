@@ -1,6 +1,9 @@
 <template>
   <div class="top-box">
     <dropdownMenu />
+    <template v-if="isVersion2">
+      <configManager />
+    </template>
     <configManager />
     <logo />
     <checkLng />
@@ -55,7 +58,7 @@ const connectMk = async () => {
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .top-box {
   width: 100%;
   height: calc(var(--spacing-70) + var(--spacing-4));

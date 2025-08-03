@@ -186,6 +186,61 @@ export const useLightingHook = () => {
     }
   };
 
+  // V2 获取灯光数据
+  const getLightingDataV2 = async () => {
+    try {
+      // 获取灯光基础配置
+      const lightingBase = await services.getLightingBaseV2({
+        area: lightSettingStore.area,
+        config: lightSettingStore.base
+      }, lightSettingStore.lamp);
+
+      // 获取灯光调色板配置
+      const lightingPalette = await services.getLightingPaletteV2({
+        area: lightSettingStore.area,
+        config: lightSettingStore.palette
+      });
+
+      // 获取灯光睡眠时间
+      const lightSleepTime = await services.getLightingSleepTimeV2();
+
+      // 确保返回的数据格式与V2 API文档一致
+      return {
+        base: {
+          area: lightingBase[0]?.area || lightSettingStore.area,
+          open: lightingBase[0]?.open || "Open",
+          mode: lightingBase[0]?.mode || 0,
+          luminance: lightingBase[0]?.luminance || 50,
+          speed: lightingBase[0]?.speed || 1,
+          direction: lightingBase[0]?.direction || "Forward",
+          selectStaticColor: lightingBase[0]?.selectStaticColor || 0
+        },
+        palette: {
+          staticColors: lightingPalette[0]?.staticColors || ['#fff', '#fff', '#fff', '#fff', '#fff', '#fff']
+        },
+        sleepTime: lightSleepTime || 0
+      };
+    } catch (error) {
+      console.error('获取V2灯光数据失败:', error);
+      // 返回默认值
+      return {
+        base: {
+          area: lightSettingStore.area,
+          open: "Open",
+          mode: 0,
+          luminance: 50,
+          speed: 1,
+          direction: "Forward",
+          selectStaticColor: 0
+        },
+        palette: {
+          staticColors: ['#fff', '#fff', '#fff', '#fff', '#fff', '#fff']
+        },
+        sleepTime: 0
+      };
+    }
+  }
+
   return {
     initLighting,
     setLighting,
@@ -196,6 +251,7 @@ export const useLightingHook = () => {
     getLightingSaturation,
     setLightingSaturation,
     setLightingSleepTime,
+    getLightingDataV2
   };
 };
 
@@ -247,3 +303,4 @@ const conversionData = (lightingType) => {
     staticColor: lightingData.selectStaticColor, // 静态颜色
   };
 };
+

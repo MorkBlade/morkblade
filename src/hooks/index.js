@@ -6,5 +6,6 @@ import { useAdvancedHook } from './useAdvancedHook';
 import { useMacroHook } from './useMacroHook';
 import { useVersionHook } from './useVersionHook';
 import { useSettingHook } from './useSettingHook';
+import { useConfigHook } from './useConfigHook';
 
-export { useLightingHook, usePerformanceHook, useKeyboardHook, useAdvancedHook, useMacroHook, useVersionHook, useSettingHook };
+export { useLightingHook, usePerformanceHook, useKeyboardHook, useAdvancedHook, useMacroHook, useVersionHook, useSettingHook, useConfigHook };

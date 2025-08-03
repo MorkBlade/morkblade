@@ -144,13 +144,14 @@
             <div class="loading-dialog-content-text">正在导入配置，请稍候...</div>
         </div>
     </div>
+
 </template>
 
 <script setup>
 import { onMounted } from 'vue';
 import { onBeforeUnmount, ref, watch, reactive } from 'vue';
 import { useAppStore, useKeyboardStore } from '@/stores';
-import { useAdvancedHook, useSettingHook } from '@/hooks';
+import { useAdvancedHook, useSettingHook, useConfigHook } from '@/hooks';
 import { showMessage } from '@/utils/message';
 import Dialog from '@/components/dialog.vue';
 
@@ -165,9 +166,9 @@ const { dialogTitle, isShow } = defineProps({
 const appStore = useAppStore();
 const isVersion2 = ref(localStorage.getItem('keyboardVersion') === 'v2');
 const keyboardStore = useKeyboardStore();
-const { exportConfig } = useSettingHook();
+const { exportCurrentConfigToFile } = useConfigHook();
 const { getHighLevelKeys } = useAdvancedHook();
-
+const { importAllStoreDataFromFile } = useConfigHook();
 // 重命名弹窗相关
 const showRenameDialog = ref(false);
 const renameItem = ref(null);
@@ -450,7 +451,7 @@ const useEditState = () => {
         },
         
         // 导出配置
-        handleExport(item) {
+        async handleExport(item) {
             // 判断是否是激活状态，只有在激活状态才能导出
             if (appStore.activeConfigIndex !== undefined) {
                 const activeItem = appStore.configList[appStore.activeConfigIndex];
@@ -459,7 +460,8 @@ const useEditState = () => {
                     return;
                 }
             }
-            exportConfig(item);
+            await exportCurrentConfigToFile(item);
+            showMessage('导出成功', 'success');
         },
         
         // 分享取消
@@ -551,8 +553,8 @@ const handleLocalImport = () => {
         
         try {
             isLoading.value = true;
-            const { importConfig } = useSettingHook();
-            const result = await importConfig(file);
+            const { importCurrentConfigFromFile } = useConfigHook();
+            const result = await importCurrentConfigFromFile(file);
             
             if (result) {
                 showMessage('配置导入成功', 'success');

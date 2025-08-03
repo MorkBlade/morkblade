@@ -9,6 +9,7 @@
       <Transition name="fade" mode="out-in">
         <component :is="currentPage" />
       </Transition>
+
     </div>
   </div>
 </template>

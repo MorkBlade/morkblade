@@ -14,6 +14,9 @@
     <div class="show-val-box" v-if="route.path === '/performance'">
       <template v-if="isVersion2">
         <!-- TODO 性能预设要显示啥数据 -->
+
+        <p style=" color: red;">{{ keyItem.keyValue }}</p>
+
         <template v-if="currentModel === 'mechanicalMode'">
           <template v-if="isRT">
             <p class="rt-first-travel" v-if="rtPressTravel !== null">{{ rtFirstTravel }}</p>

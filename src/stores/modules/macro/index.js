@@ -70,6 +70,7 @@ const useMacroStore = defineStore('macro', {
         this.macroData.push({ name, ...res, data });
       }
       // console.log('all macro list', this.macroData);
+      return this.macroData;
     },
 
     // v2获取宏数据
