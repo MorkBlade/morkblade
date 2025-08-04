@@ -3,7 +3,7 @@
     <div class="left-config">
       <div class="key-group">
         <div>
-          <span>按键1:</span>
+          <span>{{ t('rs.key1') }}</span>
           <div class="key-box" @mouseenter="onMouseEn('key1')" @mouseleave="onMouseLe('key1')">
             <p :class="{ 'hover-bg': !rsInfo.dks[0] }" @mouseup="KeydropKey(0)">{{ keyText[0] }}</p>
             <div
@@ -14,7 +14,7 @@
           </div>
         </div>
         <div>
-          <span>按键2:</span>
+          <span>{{ t('rs.key2') }}</span>
           <div class="key-box" @mouseenter="onMouseEn" @mouseleave="onMouseLe">
             <p :class="{ 'hover-bg': !rsInfo.dks[1] }" @mouseup="KeydropKey(1)">{{ keyText[1] }}</p>
             <div
@@ -27,7 +27,7 @@
       </div>
       <div class="save-btn" @click="saveConfig">
         <img src="@/assets/images/sure.svg" alt="" />
-        <span>应用映射</span>
+        <span>{{ t('rs.applyMapping') }}</span>
       </div>
     </div>
     <characterCard @handleSendKey="handleRsKey" />
@@ -41,9 +41,12 @@ import { useKeyboardStore } from '@/stores';
 import { useAdvancedHook } from '@/hooks';
 import { showMessage } from '@/utils/message';
 import { filterSocdAndRsKey } from '@/utils/filter-key.js';
+import { useI18n } from 'vue-i18n';
 
 import mDialog from '@/components/dialog.vue';
 import characterCard from '@/components/character-card.vue';
+
+const { t } = useI18n();
 
 const rsInfo = defineModel('rsInfo', {
   type: Object,
@@ -74,7 +77,7 @@ const keyText = computed(() => {
 
 const saveConfig = () => {
   if (!rsInfo.value.dks[0] || !rsInfo.value.dks[1]) {
-    showMessage('请先选择需要修改的按键', 'warning');
+    showMessage(t('rs.selectKeyTip'), 'warning');
     return;
   }
   isShow.value = true;
@@ -114,7 +117,7 @@ const onMouseLe = (keyCode) => {
 const handleRsKey = (keyVal) => {
   const unBinding = filterSocdAndRsKey(keyboardStore.keyboards, keyVal);
   if (unBinding) {
-    showMessage('该键已绑定高级键，请重新选择', 'warning');
+    showMessage(t('rs.keyBinded'), 'warning');
     return;
   }
   // if (!rsInfo.value.dks[0]) {
@@ -124,14 +127,14 @@ const handleRsKey = (keyVal) => {
   // }
   if (!rsInfo.value.dks[0]) {
     if (rsInfo.value.dks[1] === keyVal) {
-      showMessage('RS键值需不同，请重新选择', 'warning');
+      showMessage(t('rs.keyDiff'), 'warning');
     } else {
       rsInfo.value.dks[0] = keyVal;
     }
     // rsInfo.value.dks[0] = keyVal;
   } else if (!rsInfo.value.dks[1]) {
     if (rsInfo.value.dks[0] === keyVal) {
-      showMessage('RS键值需不同，请重新选择', 'warning');
+      showMessage(t('rs.keyDiff'), 'warning');
     } else {
       rsInfo.value.dks[1] = keyVal;
     }
@@ -143,12 +146,12 @@ const KeydropKey = (idx) => {
   const keyVal = keyboardStore.selectKey.keyCode;
   const unBinding = filterSocdAndRsKey(keyboardStore.keyboards, keyVal);
   if (unBinding) {
-    showMessage('该键已绑定高级键，请重新选择', 'warning');
+    showMessage(t('rs.keyBinded'), 'warning');
     return;
   }
   const otherIdx = idx === 0 ? 1 : 0;
   if (rsInfo.value.dks[otherIdx] === keyVal) {
-    showMessage('SOCD键值需不同，请重新选择', 'warning');
+    showMessage(t('rs.keyDiffTip'), 'warning');
     return;
   }
   rsInfo.value.dks[idx] = keyVal;

@@ -50,6 +50,9 @@
 <script setup>
 import key from './key.vue';
 import emitter from '@/utils/app-emitter';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 // 导入所有需要的图标
 import basicIcon from '@/assets/images/basic.svg';
@@ -90,13 +93,13 @@ const iconMap = {
 
 const emit = defineEmits(['handleSendKey']);
 const checkedIdx = ref(0);
-const characterArr = [
-  { name: '基本字符', icon: 'basic' },
-  { name: '扩展字符', icon: 'extend' },
-  { name: '特殊字符', icon: 'special' },
-  { name: '键盘控制', icon: 'keyboard' },
-  { name: '鼠标键', icon: 'mouse' },
-];
+const characterArr = computed(() => [
+  { name: t('characterCard.basic'), icon: 'basic' },
+  { name: t('characterCard.extend'), icon: 'extend' },
+  { name: t('characterCard.special'), icon: 'special' },
+  { name: t('characterCard.keyboard'), icon: 'keyboard' },
+  { name: t('characterCard.mouse'), icon: 'mouse' },
+]);
 
 const extend = [
   41, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 43, 42, 73, 76, 74, 77, 75, 78, 131, 130, 40, 89, 90,

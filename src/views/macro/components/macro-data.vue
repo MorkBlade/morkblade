@@ -1,6 +1,6 @@
 <template>
   <div class="macro-data-container">
-    <h3>宏列表</h3>
+    <h3>{{ $t('macroData.macroList') }}</h3>
     <TransitionGroup name="list" tag="div" class="container">
       <div
         v-for="(item, i) in curMacro"
@@ -54,7 +54,7 @@
         @mouseleave="onMouseLeave(idx)"
       >
         <img :src="!idx ? changeIcon : item.icon" alt="" />
-        <span>{{ !idx && isStart ? '结束录制' : item.name }}</span>
+        <span>{{ !idx && isStart ? $t('macroData.endRecord') : item.name }}</span>
       </div>
     </div>
   </div>
@@ -88,7 +88,9 @@ import delayIcon from '@/assets/images/delay_icon.svg';
 import eventsIcon from '@/assets/images/events_icon.svg';
 import clearIcon from '@/assets/images/clear_icon.svg';
 import keyboardWord from '@/configs/byte-to-key/keyboard';
+import { useI18n } from 'vue-i18n';
 
+const { t } = useI18n();
 const { macroData, disabled } = defineProps({
   macroData: { type: Object, default: () => ({}) },
   disabled: { type: Boolean, default: false },
@@ -112,12 +114,12 @@ const savePositionInfo = ref([]);
 const selectedItemIndex = ref(null);
 const selectedCreateTime = ref(null);
 
-const operationNameList = [
-  { name: '开始录制', icon: startIcon },
-  { name: '添加延迟', icon: delayIcon },
-  { name: '插入事件', icon: eventsIcon },
-  { name: '清除序列', icon: clearIcon },
-];
+const operationNameList = computed(() => [
+  { name: t('macroData.startRecord'), icon: startIcon },
+  { name: t('macroData.addDelay'), icon: delayIcon },
+  { name: t('macroData.addEvent'), icon: eventsIcon },
+  { name: t('macroData.clearMacroList'), icon: clearIcon },
+]);
 
 const keyValueDictionary = {
   8: 42, // backspace
@@ -285,7 +287,7 @@ const switchClass = (idx) => {
 const onClick = (idx) => {
   // console.log('aiushcnjiashfuiasbnjas', disabled);
   if (disabled) {
-    showMessage('当前没有宏', 'warning');
+    showMessage(t('macroData.currentNoMacro'), 'warning');
     return;
   }
   BottomBtnIdx.value = idx;
@@ -300,11 +302,11 @@ const onClick = (idx) => {
         lastKeydownEventTime = Date.now();
         document.addEventListener('keydown', handleKeysAction);
         document.addEventListener('keyup', handleKeysAction);
-        showMessage('开始录制');
+        showMessage(t('macroData.startRecord'));
       } else {
         document.removeEventListener('keydown', handleKeysAction);
         document.removeEventListener('keyup', handleKeysAction);
-        showMessage('结束录制');
+        showMessage(t('macroData.endRecord'));
       }
       break;
     case 1:
@@ -344,10 +346,10 @@ const onClick = (idx) => {
 
           // 重新计算位置
           calcPosition();
-          showMessage('插入事件成功');
+          showMessage(t('macroData.insertEventSuccess'));
           // console.log('已插入事件:', newEvent);
         } else {
-          showMessage('宏录入数量不能超过64', 'warning');
+          showMessage(t('macroData.macroListFull'), 'warning');
         }
       } else {
         // console.log('没有找到可以插入的按键事件');
@@ -366,7 +368,7 @@ const onClick = (idx) => {
       document.removeEventListener('keyup', handleKeysAction);
 
       emit('updateMacro:clear');
-      showMessage('清除成功');
+      showMessage(t('macroData.clearSuccess'));
       calcPosition();
       break;
     default:
@@ -411,7 +413,7 @@ const handleKeysAction = (event) => {
     curMacro.value.push(value);
     emit('updateMacro:data', [...curMacro.value]);
   } else {
-    showMessage('宏录入数量不能超过64', 'warning');
+    showMessage(t('macroData.macroListFull'), 'warning');
     isStart.value = false;
     document.removeEventListener('keydown', handleKeysAction);
     document.removeEventListener('keyup', handleKeysAction);
@@ -454,7 +456,7 @@ const handleKeyup = (event) => {
     curMacro.value.push(value);
     emit('updateMacro:data', [...curMacro.value]);
   } else {
-    showMessage('宏录入数量不能超过64', 'warning');
+    showMessage(t('macroData.macroListFull'), 'warning');
     isStart.value = false;
     document.removeEventListener('keydown', handleKeysAction);
     document.removeEventListener('keyup', handleKeysAction);
@@ -478,7 +480,7 @@ const copyItem = (item, index) => {
 
     // 通知父组件更新数据
     emit('updateMacro:data', [...curMacro.value]);
-    showMessage('拷贝成功');
+    showMessage(t('macroData.copySuccess'));
     // 重新计算位置
     calcPosition();
 
@@ -496,7 +498,7 @@ const deleteItem = (item) => {
   if (itemIndex !== -1) {
     curMacro.value.splice(itemIndex, 1);
     emit('updateMacro:data', [...curMacro.value]);
-    showMessage('删除成功');
+    showMessage(t('macroData.deleteSuccess'));
     calcPosition();
     // console.log('已删除项:', item);
   }
@@ -760,7 +762,7 @@ const updateMacroTypeSettings = (newSettings) => {
   const { mode, repeatCount, repeatInterval } = newSettings;
   // 通知父组件同时更新数据和设置
   emit('updateMacro:mode', { mode, repeatCount, repeatInterval });
-  showMessage('修改模式成功');
+  showMessage(t('macroData.modifyModeSuccess'));
 };
 </script>
 

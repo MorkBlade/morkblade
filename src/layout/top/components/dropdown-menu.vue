@@ -16,7 +16,7 @@
     />
   </div>
   <div class="dropdown-list" :style="{ height: `${defaultHeight}px` }">
-    <p>板载配置</p>
+    <p>{{ $t('dropdownMenu.boardConfig') }}</p>
     <ul>
       <!-- <ul class="dropdown-list"> -->
       <li
@@ -25,10 +25,10 @@
         :class="{ checked: appStore.activeConfigIndex === index }"
         @click="selectItem(index)"
       >
-        {{ $t(`messages.keyboardConfig${index}`) }}
+        {{ $t(`connect.keyboardConfig${index}`) }}
       </li>
       <template v-if="customItems.length > 0">
-        <p style="margin-bottom: 5px">自定义配置</p>
+        <p style="margin-bottom: 5px">{{ $t('dropdownMenu.customConfig') }}</p>
       </template>
       <li
         v-for="(item, index) in customItems"

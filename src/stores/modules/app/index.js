@@ -9,6 +9,7 @@ import services from '@/services/index';
 
 const useAppStore = defineStore('app', {
   state: () => ({
+    //TODO 需要翻译
     configList: [
       { leftImage: '', title: '我的配置1' },
       { leftImage: '', title: '我的配置2' },
@@ -92,7 +93,6 @@ const useAppStore = defineStore('app', {
       } else {
         const res = await services.getApi({ type: 'ORDER_TYPE_CONFIG'});
         const { configID } = res || {};
-        console.log('configID: ', configID);
         this.activeConfigIndex = configID || 0;
       }
     },

@@ -9,46 +9,46 @@
       </div> -->
     </div>
     <div class="connect-title">
-      <h1>{{ $t('messages.connectTip1') }}</h1>
-      <span>{{ $t('messages.connectTip2') }}</span>
+      <h1>{{ $t('connect.connectTip1') }}</h1>
+      <span>{{ $t('connect.connectTip2') }}</span>
       <p @click="handleDeviceStoreClick">
         <img src="@/assets/images/link2.svg" alt="" />
-        {{ $t('messages.connectKeyBoard') }}
+        {{ $t('connect.connectKeyBoard') }}
       </p>
     </div>
     <div class="connect-guide">
       <div class="guide-item">
-        <p>{{ $t('messages.connectStep1') }}</p>
+        <p>{{ $t('connect.connectStep1') }}</p>
         <img class="guide-item__icon1" src="@/assets/images/guide1.svg" alt="" />
         <div class="step">
           <img src="@/assets/images/sure.svg" alt="" />
-          {{ $t('messages.step1') }}
+          {{ $t('connect.step1') }}
         </div>
       </div>
       <img class="next_icon" src="@/assets/images/next_step.svg" alt="" />
       <div class="guide-item">
-        <p>{{ $t('messages.connectStep2') }}</p>
+        <p>{{ $t('connect.connectStep2') }}</p>
         <img class="guide-item__icon2" src="@/assets/images/guide2.svg" alt="" />
         <div class="step">
           <img src="@/assets/images/sure.svg" alt="" />
-          {{ $t('messages.step2') }}
+          {{ $t('connect.step2') }}
         </div>
       </div>
       <img class="next_icon" src="@/assets/images/next_step.svg" alt="" />
       <div class="guide-item">
-        <p>{{ $t('messages.connectStep3') }}</p>
+        <p>{{ $t('connect.connectStep3') }}</p>
         <img class="guide-item__icon3" src="@/assets/images/guide3.svg" alt="" />
         <div class="step">
           <img src="@/assets/images/sure.svg" alt="" />
-          {{ $t('messages.step3') }}
+          {{ $t('connect.step3') }}
         </div>
       </div>
     </div>
     <div class="update-box" v-if="isUpdate">
       <!-- <div class="update-box">   -->
       <div>
-        <p>{{ $t('messages.upgradeMode') }}</p>
-        <span>{{ $t('messages.upgradeing') }}</span>
+        <p>{{ $t('connect.upgradeMode') }}</p>
+        <span>{{ $t('connect.upgradeing') }}</span>
         <el-progress
           :percentage="progress"
           :color="'#91bc00'"
@@ -68,7 +68,11 @@ import { useAppStore, useDeviceStore } from '@/stores';
 import { scaleValue } from '@/utils/responsive.js';
 import { showMessage } from '@/utils/message';
 import { httpService } from '@/http/api/index.js';
+import { useI18n } from 'vue-i18n';
+import { useRouter } from 'vue-router';
+import { ref } from 'vue';
 
+const { t } = useI18n();
 const router = useRouter();
 const deviceStore = useDeviceStore();
 const appStore = useAppStore();
@@ -77,7 +81,7 @@ const isUpdate = ref(false);
 const progress = ref(0);
 
 // 连接按钮点击事件
-const handleDeviceStoreClick = async () => {
+const handleDeviceStoreClick = async () => {  
   const result = await deviceStore.connectDevice();
   const version = deviceStore.devices[0]?.usagePage === 65440 ? 'v1' : 'v2';
   localStorage.setItem('keyboardVersion', version);
@@ -125,12 +129,12 @@ const getFirmWarePack = async (url) => {
           });
           console.log('update suc-------------> ', result);
           if (result && result.success) {
-            showMessage($t('messages.upgradeSuccess'));
+            showMessage(t('connect.upgradeSuccess'), 'success');
           }
           await deviceStore.connectDevice();
         } catch (error) {
           console.log('update failed----------->', error);
-          showMessage($t('messages.upgradeFailed'), 'warning');
+          showMessage(t('connect.upgradeFailed'), 'warning');
         }
         isUpdate.value = false;
       };
@@ -157,7 +161,7 @@ const handleOnlineUpdate = async () => {
     //   await getFirmWarePack(res.firmware.firmware_file);
     // }
   } catch (error) {
-    console.error('错误:', error.response || error);
+    console.error(t('connect.error'), error.response || error);
   }
 };
 </script>

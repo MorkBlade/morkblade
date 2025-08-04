@@ -6,7 +6,7 @@
       :style="{ marginTop: axisBrandList.length === 0 ? '0' : `${scaleValue(-360)}px` }"
     >
       <!-- :style="{ transform: axisBrandList.length === 0 ? 'scale(1)' : 'scale(0)' }" -->
-      <h4>选择轴体品牌</h4>
+      <h4>{{ $t('axisSetting.axisBrand') }}</h4>
       <div class="brand-list">
         <!-- <div class="brand" @click="handleMatchLZ">
           <img src="@/assets/images/aula.png" alt="" />
@@ -35,7 +35,7 @@
           <mCarousel
             showText
             :carouselData="axisBrandList"
-            btnText="应用轴体"
+            :btnText="$t('axisSetting.applyAxis')"
             :offset="scaleValue(25)"
             :width="scaleValue(920)"
             :selected-id="axisID"
@@ -44,15 +44,15 @@
         </div>
         <div class="axis-info">
           <div class="axis-name">
-            <span>轴体名称:</span>
+            <span>{{ $t('axisSetting.axisName') }}:</span>
             <span>{{ axisName }}</span>
           </div>
           <div class="axis-travel">
-            <span>轴体行程:</span>
+            <span>{{ $t('axisSetting.axisTravel') }}:</span>
             <span>{{ travelRange }}</span>
             <!-- {{ axisID }} -->
           </div>
-          <saveConfigBtn btnText="应用轴体" :verify="true" @saveConfig="handleSaveAxis" />
+          <saveConfigBtn :btnText="$t('axisSetting.applyAxis')" :verify="true" @saveConfig="handleSaveAxis" />
         </div>
       </template>
       <div class="clear-axis-btn" @click="handleClearAxis">
@@ -99,10 +99,13 @@ import { useKeyboardStore, usePerformanceStore } from '@/stores';
 import { KEY_SHAFT } from '@/configs/constant/index.js';
 import { showMessage } from '@/utils/message';
 import { usePerformanceHook } from '@/hooks';
+import { useI18n } from 'vue-i18n';
 
 import mCarousel from '@/components/carousel.vue';
 import saveConfigBtn from '@/components/save-config-btn.vue';
 import sureIcon from '@/assets/images/sure.svg';
+
+const { t } = useI18n();
 
 const keyboardStore = useKeyboardStore();
 const performanceStore = usePerformanceStore();
@@ -145,7 +148,7 @@ const handleSaveAxis = async () => {
     // console.log('set axis:', keyboards.value, activeKeys.value, checkAixsId.value);
     const res = setAxis(keyboards.value, activeKeys.value, checkAixsId.value);
     if (res) {
-      showMessage('修改成功');
+      showMessage(t('axisSetting.modifySuccess'));
     }
   }
 };
@@ -162,7 +165,7 @@ const changeAxisV2 = (axisID) => {
 
 const handleMatchJLD = (e) => {
   const jldAxis = axisList.value.filter((ite) => {
-    return ite.factory_name === '佳达隆';
+    return ite.factory_name === t('axisSetting.jld');
   });
   console.log('jldAxis: ', jldAxis);
 
@@ -171,7 +174,7 @@ const handleMatchJLD = (e) => {
 
 const handleMatchLZ = (e) => {
   const lzAxis = axisList.value.filter((ite) => {
-    return ite.factory_name === '索爱';
+    return ite.factory_name === t('axisSetting.suoai');
   });
   axisBrandList.value = lzAxis;
 };
@@ -181,7 +184,7 @@ const handleMatchTTC = (e) => {
     return ite.factory_name === 'TTC';
   });
   console.log('ttcAxis: ', ttcAxis);
-  if (ttcAxis.length === 0) showMessage('该品牌暂无轴', 'warning');
+  if (ttcAxis.length === 0) showMessage(t('axisSetting.noAxis'), 'warning');
   axisBrandList.value = ttcAxis;
 };
 
@@ -190,7 +193,7 @@ const handleMatchOther = (e) => {
     return ite.factory_name === '';
   });
   console.log('otherAxis: ', otherAxis);
-  if (otherAxis.length === 0) showMessage('暂无更多轴', 'warning');
+  if (otherAxis.length === 0) showMessage(t('axisSetting.noMoreAxis'), 'warning');
   axisBrandList.value = otherAxis;
 };
 

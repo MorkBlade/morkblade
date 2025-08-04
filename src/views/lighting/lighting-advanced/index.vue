@@ -2,7 +2,7 @@
   <div class="lighting-advanced-container">
     <div class="lighting-advanced-container__saturation">
       <div>
-        <h4>色温调整</h4>
+        <h4>{{ t('lightingAdvanced.temperature') }}</h4>
         <div class="rgb-input">
           <span>R</span>
           <input type="number" v-model.number="rgb.R" :min="min" :max="max" @input="updateFromRgb" @blur="handleBlur" />
@@ -40,7 +40,7 @@
     </div>
     <template v-if="isVersion2 && appVersionVeify(appStore.baseInfo?.appVersion, isDoubleLighting)">
       <div class="lighting-advanced-container__lamp">
-        <h4>灯位控制</h4>
+        <h4>{{ t('lightingAdvanced.lamp') }}</h4>
         <div class="lamp-setting">
           <div class="lamp-show">
             <div class="top_lamp" :class="{ active: upOpen }">
@@ -52,7 +52,7 @@
           </div>
           <div class="lamp-control">
             <div class="switch-box">
-              <span>上灯位</span>
+              <span>{{ t('lightingAdvanced.up') }}</span>
               <el-switch
                 v-model="upOpen"
                 :width="getSwitchWidth()"
@@ -70,7 +70,7 @@
               </el-switch>
             </div>
             <div class="switch-box">
-              <span>下灯位</span>
+              <span>{{ t('lightingAdvanced.down') }}</span>
               <el-switch
                 v-model="downOpen"
                 :width="getSwitchWidth()"
@@ -88,7 +88,7 @@
               </el-switch>
             </div>
             <div class="switch-box">
-              <span>双灯位</span>
+              <span>{{ t('lightingAdvanced.doubleLamp') }}</span>
               <el-switch
                 v-model="allLamp"
                 :width="getSwitchWidth()"
@@ -118,7 +118,9 @@ import { appVersionVeify } from '@/utils/versionVeify';
 
 import horizontalSlider from '@/components/horizontal-slider.vue';
 import { storeToRefs } from 'pinia';
+import { useI18n } from 'vue-i18n';
 
+const { t } = useI18n();
 const appStore = useAppStore();
 const deviceStore = useDeviceStore();
 const lightSettingStore = useLightSettingStore();

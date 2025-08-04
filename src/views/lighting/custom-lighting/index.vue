@@ -1,7 +1,7 @@
 <template>
   <div class="custom-light">
     <div class="preinstall-light">
-      <p>预设</p>
+      <p>{{ t('customLighting.preset') }}</p>
       <div class="custom-box">
         <div
           class="custom"
@@ -86,13 +86,14 @@ import { scaleValue } from '@/utils/responsive.js';
 import { useKeyboardStore, useLightSettingStore } from '@/stores';
 import { useLightingHook } from '@/hooks/useLightingHook';
 import preInstallColorList from '@/configs/customColor/index.js';
-
+import { useI18n } from 'vue-i18n';
 const keyboardStore = useKeyboardStore();
 const lightSettingStore = useLightSettingStore();
 const { currentPreset } = storeToRefs(lightSettingStore);
 const { setCustomLighting } = useLightingHook();
+const { t } = useI18n();
 // const checked = ref(null);
-const customList = ['彩虹', '海浪', '炼狱', '迈阿密', '夏日微风', '交流发电机', '粘土', 'Lekker', 'Love'];
+const customList = [t('customLighting.rainbow'), t('customLighting.ocean'), t('customLighting.hell'), t('customLighting.miami'), t('customLighting.summer'), t('customLighting.generator'), t('customLighting.clay'), 'Lekker', 'Love'];
 const colorList = ['#080cfe', '#ff0000', '#ffff00', '#fe00e9', '#00fe2f', '#fe3602', '#ffffff', '#1481fe', '#00ffd8'];
 const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
 const colorWheelRef = ref(null);

@@ -15,14 +15,17 @@
 <script setup>
 import { showMessage } from '@/utils/message';
 import { useKeyboardStore } from '@/stores';
+import { useI18n } from 'vue-i18n';
 
 import mDialog from '@/components/dialog.vue';
 import defaultIcon from '@/assets/images/save_icon.svg';
 
+const { t } = useI18n();
+
 const { btnText, tag, disabled, needKeys, type, verify } = defineProps({
   btnText: {
     type: String,
-    default: '保存更改',
+    default: ('保存更改'),
   },
   tag: {
     // 标识要保存什么数据
@@ -60,7 +63,7 @@ const confirmConfig = () => {
     return;
   }
   if (activeKeys.value.length === 0 && needKeys) {
-    showMessage('请先选择需要修改的按键', 'warning');
+    showMessage(t('saveConfigBtn.saveTip'), 'warning');
     return;
   }
   isAct.value = false;

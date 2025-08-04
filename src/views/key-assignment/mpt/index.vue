@@ -38,7 +38,7 @@
       </div>
       <div class="save-btn" @click="saveConfig">
         <img src="@/assets/images/sure.svg" alt="" />
-        <span>应用映射</span>
+        <span>{{ t('mpt.applyMapping') }}</span>
       </div>
     </div>
     <characterCard @handleSendKey="handleMptKey" />
@@ -52,9 +52,12 @@ import { useKeyboardStore } from '@/stores';
 import { useAdvancedHook } from '@/hooks';
 import { showMessage } from '@/utils/message';
 import { filterSocdAndRsKey } from '@/utils/filter-key.js';
+import { useI18n } from 'vue-i18n';
 
 import mDialog from '@/components/dialog.vue';
 import characterCard from '@/components/character-card.vue';
+
+const { t } = useI18n();
 
 const mptInfo = defineModel('mptInfo', {
   type: Object,
@@ -92,12 +95,12 @@ const activeKeys = computed(() => {
 
 const saveConfig = () => {
   if (!activeKeys.value.length) {
-    showMessage('请先选择需要修改的按键', 'warning');
+    showMessage(t('mpt.selectKeyTip'), 'warning');
     return;
   }
   console.log('saveConfig mpt: ', mptInfo.value);
   if (!mptInfo.value.dks[0] && !mptInfo.value.dks[1] && !mptInfo.value.dks[2]) {
-    showMessage('请选择需要关联的按键', 'warning');
+    showMessage(t('mpt.selectKey'), 'warning');
     return;
   }
   isShow.value = true;

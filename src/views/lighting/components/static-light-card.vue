@@ -1,6 +1,6 @@
 <template>
   <div class="static-light">
-    <p>静态灯光</p>
+    <p>{{ $t('staticLightCard.staticLight') }}</p>
     <div class="light-box">
       <div
         class="light"
@@ -32,11 +32,11 @@
                   @keypress="validateHexInput"
                   @blur="blurUpdateColor"
                 />
-                <span class="clear-color" @click="clearLightingColor(idx)">清除</span>
+                <span class="clear-color" @click="clearLightingColor(idx)">{{ $t('staticLightCard.clear') }}</span>
               </div>
             </div>
           </template>
-          <span class="color-text">{{ !idx ? '彩色' : `灯光${idx}` }}</span>
+          <span class="color-text">{{ !idx ? $t('staticLightCard.color1') : `${$t('staticLightCard.color2')}${idx}` }}</span>
         </template>
         <template v-else>
           <div class="show-color" :style="{ backgroundColor: ite.color }" @click="showColorPicker(idx)">
@@ -57,10 +57,10 @@
                 @keypress="validateHexInput"
                 @blur="blurUpdateColor"
               />
-              <span class="clear-color" @click="clearLightingColor(idx)">清除</span>
+              <span class="clear-color" @click="clearLightingColor(idx)">{{ $t('staticLightCard.clear') }}</span>
             </div>
           </div>
-          <span class="color-text">{{ idx === 7 ? '彩色' : `灯光${idx + 1}` }}</span>
+          <span class="color-text">{{ idx === 7 ? $t('staticLightCard.color1') : `${$t('staticLightCard.color2')}${idx + 1}` }}</span>
         </template>
       </div>
     </div>

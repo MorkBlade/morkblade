@@ -1,11 +1,11 @@
 <template>
   <div class="save-config-box">
     <div class="config-box1">
-      <span>按下死区：</span>
+      <span>{{ $t('deadZone.pressDead') }}：</span>
       <span>{{ keyDownUp }}mm</span>
     </div>
     <div class="config-box2">
-      <span>抬起死区：</span>
+      <span>{{ $t('deadZone.releaseDead') }}：</span>
       <span>{{ keyUpVal }}mm</span>
     </div>
     <div :style="{ marginTop: '130px' }">
@@ -16,6 +16,8 @@
 
 <script setup>
 import saveConfigBtn from '@/components/save-config-btn.vue';
+
+
 const { keyDownUp, keyUpVal } = defineProps({
   keyDownUp: {
     type: Number,

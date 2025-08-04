@@ -1,6 +1,6 @@
 <template>
   <div class="macro-list-container">
-    <h3>宏列表</h3>
+    <h3>{{ $t('macroListV1.macroList') }}</h3>
     <div class="macro-list">
       <div
         v-for="(item, idx) in macros"
@@ -10,17 +10,17 @@
         @click="checkMacro(idx)"
       >
         <h4>{{ item.macroName }}</h4>
-        <p class="create-time">创建时间:{{ formatTimestamp(item.createTime) }}</p>
-        <p class="length">操作长度:{{ item.data.length }}</p>
+        <p class="create-time">{{ $t('macroListV1.createTime') }}{{ formatTimestamp(item.createTime) }}</p>
+        <p class="length">{{ $t('macroListV1.length') }}{{ item.data.length }}</p>
         <div class="controls-group" @click.stop>
-          <span class="copy-btn" @click="copyMacro(item)">复制</span>
-          <span class="del-btn" @click="delMacro(item.id, idx)">删除</span>
+          <span class="copy-btn" @click="copyMacro(item)">{{ $t('macroListV1.copy') }}</span>
+          <span class="del-btn" @click="delMacro(item.id, idx)">{{ $t('macroListV1.delete') }}</span>
         </div>
       </div>
       <template v-if="macros.length < 15">
         <div class="add-macro">
           <div @click="addMacro">
-            <span></span>新建宏</div>
+            <span></span>{{ $t('macroListV1.addMacro') }}</div>
         </div>
       </template>
     </div>
@@ -30,7 +30,9 @@
 <script setup>
 import { showMessage } from '@/utils/message';
 import { useMacroStore, useKeyboardStore } from '@/stores';
+import { useI18n } from 'vue-i18n';
 
+const { t } = useI18n();
 const macros = defineModel('macros', { default: () => [] });
 
 // 通知父组件选中的宏索引
@@ -71,7 +73,7 @@ const addMacro = () => {
   const times = Date.now();
   const macro = {
     id: parseInt(times / 1000),
-    macroName: '宏' + (macros.value.length + 1),
+    macroName: `${t('macroListV1.macroName')}${macros.value.length + 1}`,
     macroLength: 0,
     createTime: times,
     data: [],
@@ -92,7 +94,7 @@ const copyMacro = (macro) => {
   const times = Date.now();
   macroJSON.createTime = times;
   macroJSON.id = parseInt(times / 1000);
-  macroJSON.macroName = '宏' + (macros.value.length + 1);
+  macroJSON.macroName = `${t('macroListV1.macroName')}${macros.value.length + 1}`;
 
   macroJSON.mode = macro.mode || 0;
   macroJSON.repeatCount = macro.repeatCount || 1;
@@ -108,7 +110,7 @@ const delMacro = (id, idx) => {
   //   return;
   // }
   if (keyboardStore.keyboards.length === 0) {
-    showMessage('页面刷新后请重连获取最新数据', 'warning');
+    showMessage(t('macroListV1.refreshData'), 'warning');
     return;
   }
   let isDel = true;
@@ -116,14 +118,14 @@ const delMacro = (id, idx) => {
     for (let col = 0; col < keyboardStore.keyboards[row].length; col++) {
       const advanced = keyboardStore.keyboards[row][col].advancedKeys;
       if (advanced.advancedType === 6 && advanced.macro && advanced.macro.macro.macro.id === idx) {
-        showMessage('宏正在使用中，无法删除', 'warning');
+        showMessage(t('macroListV1.macroIsUsing'), 'warning');
         isDel = false;
       }
     }
   }
   // 创建新数组以触发响应式更新
   if (isDel) {
-    showMessage('宏删除成功');
+    showMessage(t('macroListV1.deleteSuccess'));
     macros.value = macros.value.filter((item) => item.id !== id);
 
     // 如果删除的是当前选中的宏，重置选中状态

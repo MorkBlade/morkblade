@@ -24,6 +24,7 @@
 import emitter from '@/utils/app-emitter';
 import { useAppStore, useMacroStore, useDeviceStore, useKeyboardStore } from '@/stores';
 import { httpService } from '@/http/api/index.js';
+import { useI18n } from 'vue-i18n';
 
 import performanceW from '@/assets/images/performance-w.svg';
 import performanceB from '@/assets/images/performance-b.svg';
@@ -67,14 +68,16 @@ const iconMap = {
   },
 };
 
-const routesInfo = [
-  { path: '/performance', name: '性能', icon: 'performance' },
-  { path: '/key-assignment', name: '按键分配', icon: 'key-assignment' },
-  { path: '/macro', name: '宏', icon: 'macro' },
-  { path: '/lighting', name: '灯光', icon: 'lighting' },
-  { path: '/key-calibration', name: '按键校准', icon: 'key-calibration' },
-  { path: '/settings', name: '设置', icon: 'settings' },
-];
+const { t } = useI18n();
+
+const routesInfo = computed(() => [
+  { path: '/performance', name: t('navigation.performance'), icon: 'performance' },
+  { path: '/key-assignment', name: t('navigation.keyAssignment'), icon: 'key-assignment' },
+  { path: '/macro', name: t('navigation.macro'), icon: 'macro' },
+  { path: '/lighting', name: t('navigation.lighting'), icon: 'lighting' },
+  { path: '/key-calibration', name: t('navigation.keyCalibration'), icon: 'key-calibration' },
+  { path: '/settings', name: t('navigation.settings'), icon: 'settings' },
+]);
 const route = useRoute();
 const router = useRouter();
 const defaultActive = ref('/performance');
@@ -93,7 +96,7 @@ const getNavItemClass = computed(() => {
 
     if (idx === 0) {
       positionClass = isActive ? 'nav-first-active' : 'nav-first';
-    } else if (idx === routesInfo.length - 1) {
+    } else if (idx === routesInfo.value.length - 1) {
       positionClass = isActive ? 'nav-last-active' : 'nav-last';
     } else {
       positionClass = isActive ? 'nav-middle-active' : 'nav-middle';

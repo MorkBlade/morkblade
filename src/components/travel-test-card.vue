@@ -21,7 +21,7 @@
       </div>
     </div>
     <div class="switch-box">
-      <span>行程测试</span>
+      <span>{{ $t('travelTestCard.travelText') }}</span>
       <el-switch
         v-model="testEnabled"
         :width="getSwitchWidth()"

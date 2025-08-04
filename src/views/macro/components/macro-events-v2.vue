@@ -1,11 +1,11 @@
 <template>
   <div class="macro-events-container">
-    <h3>宏事件设置</h3>
+    <h3>{{ $t('macroEventsV2.macroEventSetting') }}</h3>
     <template v-if="itemData?.keyCode">
       <div class="outer-box">
-        <p>更改事件按键</p>
+        <p>{{ $t('macroEventsV2.changeKey') }}</p>
         <div class="key" @click="changeKey">{{ keyboardWord[itemData?.keyCode] }}</div>
-        <p>更改延迟数值</p>
+        <p>{{ $t('macroEventsV2.changeDelay') }}</p>
         <input
           type="number"
           :value="parseFloat(itemData?.delay).toFixed(2)"
@@ -13,7 +13,7 @@
           @input="changeDelayVal"
           @blur="verifyDelay"
         />
-        <p>更改按键状态:</p>
+        <p>{{ $t('macroEventsV2.changeStatus') }}:</p>
         <div class="btn-group">
           <div
             class="change-status__btn"
@@ -21,25 +21,25 @@
             @click="changeEventStatus('down')"
           >
             <img :src="isActive === 'down' ? downCheckedIcon : downIcon" alt="" />
-            <span>按下</span>
+            <span>{{ $t('macroEventsV2.down') }}</span>
           </div>
           <div class="change-status__btn" :class="{ 'is-active': isActive === 'up' }" @click="changeEventStatus">
             <img :src="isActive === 'up' ? upCheckedIcon : upIcon" alt="" />
-            <span>抬起</span>
+            <span>{{ $t('macroEventsV2.up') }}</span>
           </div>
         </div>
       </div>
     </template>
     <template v-else>
       <div class="outer-box">
-        <p :style="{ marginTop: `${scaleValue(50)}px` }">更改延迟数值 单位(ms)</p>
+        <p :style="{ marginTop: `${scaleValue(50)}px` }">{{ $t('macroEventsV2.changeDelayTip') }}</p>
         <input type="number" :value="itemData?.timeDifference.toFixed(2)" @input="changeDelayVal" @blur="verifyDelay" />
       </div>
     </template>
   </div>
   <div class="character-container" v-if="showCharacter">
     <div class="content">
-      <h3>更改事件按键:</h3>
+      <h3>{{ $t('macroEventsV2.changeKeyTip') }}:</h3>
       <div class="key" @mouseup="Keydrop">{{ currentKey }}</div>
       <div class="tabs">
         <div
@@ -71,9 +71,9 @@
         </template>
       </div>
       <div class="operation-btn">
-        <saveConfigBtn btnText="应用更改" :icon="icon1" @saveConfig="saveConfig" :needKeys="false" :verify="true" />
+        <saveConfigBtn :btnText="$t('macroEventsV2.changeApply')" :icon="icon1" @saveConfig="saveConfig" :needKeys="false" :verify="true" />
         <saveConfigBtn
-          btnText="取消更改"
+          :btnText="$t('macroEventsV2.changeCancel')"
           type="warning"
           :icon="icon2"
           :verify="true"
@@ -86,6 +86,7 @@
 </template>
 
 <script setup>
+import { computed } from 'vue';
 import { scaleValue } from '@/utils/responsive.js';
 import { useKeyboardStore } from '@/stores';
 import keyboardWord from '@/configs/byte-to-key/keyboard';
@@ -108,7 +109,9 @@ import keyboardIcon1 from '@/assets/images/keyboard.svg';
 import keyboardIcon2 from '@/assets/images/keyboard_c.svg';
 import mouseIcon1 from '@/assets/images/mouse.svg';
 import mouseIcon2 from '@/assets/images/mouse_c.svg';
+import { useI18n } from 'vue-i18n';
 
+const { t } = useI18n();
 const { data } = defineProps({
   data: { type: Object, default: {} },
 });
@@ -124,13 +127,13 @@ const checkedIdx = ref(0);
 const currentKey = ref(null);
 
 let timer = null;
-const characterArr = [
-  { name: '基本字符', icon1: basicIcon1, icon2: basicIcon2 },
-  { name: '扩展字符', icon1: extendIcon1, icon2: extendIcon2 },
-  { name: '特殊字符', icon1: specialIcon1, icon2: specialIcon2 },
-  { name: '键盘控制', icon1: keyboardIcon1, icon2: keyboardIcon2 },
-  { name: '鼠标键', icon1: mouseIcon1, icon2: mouseIcon2 },
-];
+const characterArr = computed(() => [
+  { name: t('macroEventsV2.basic'), icon1: basicIcon1, icon2: basicIcon2 },
+  { name: t('macroEventsV2.extend'), icon1: extendIcon1, icon2: extendIcon2 },
+  { name: t('macroEventsV2.special'), icon1: specialIcon1, icon2: specialIcon2 },
+  { name: t('macroEventsV2.keyboard'), icon1: keyboardIcon1, icon2: keyboardIcon2 },
+  { name: t('macroEventsV2.mouse'), icon1: mouseIcon1, icon2: mouseIcon2 },
+]);
 const extend = [
   41, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 43, 42, 73, 76, 74, 77, 75, 78, 131, 130, 40, 89, 90,
   91, 92, 93, 94, 95, 96, 97, 98, 84, 85, 86, 87, 224, 225, 226, 227, 228, 229, 230, 231, 44, 118, 80, 81, 82, 79,

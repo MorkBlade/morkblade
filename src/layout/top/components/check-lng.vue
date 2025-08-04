@@ -16,6 +16,7 @@
 
 <script setup>
 import { scaleValue } from '@/utils/responsive.js';
+import { ref, watch, onMounted } from 'vue';
 
 import zhIcon1 from '@/assets/images/zhIcon1.svg';
 import zhIcon2 from '@/assets/images/zhIcon2.svg';
@@ -26,8 +27,18 @@ import jpIcon2 from '@/assets/images/jpIcon2.svg';
 import krIcon1 from '@/assets/images/krIcon1.svg';
 import krIcon2 from '@/assets/images/krIcon2.svg';
 import languageIcon from '@/assets/images/language.svg';
+import { useLocale } from '@/locales/useLocale';
 
+const { changeLocale, locale } = useLocale();
 const defaultHeight = ref(0);
+
+// 语言映射：组件语言名称 -> i18n语言代码
+const languageMap = {
+  'zh-CN': 'zh_CN',
+  'en-US': 'en_US',
+  'ko-KR': 'ko_KR',
+  'ja-JP': 'ja_JP'
+};
 
 // 定义语言选项
 const languages = [
@@ -56,6 +67,23 @@ const languages = [
 // 当前选中的语言
 const selectedLanguage = ref(null);
 
+// 初始化当前语言
+const initCurrentLanguage = () => {
+  const currentLocale = locale.value;
+  const currentLanguage = Object.keys(languageMap).find(key => languageMap[key] === currentLocale);
+  selectedLanguage.value = currentLanguage || 'zh-CN';
+};
+
+// 监听语言变化
+watch(locale, () => {
+  initCurrentLanguage();
+});
+
+// 组件挂载时初始化
+onMounted(() => {
+  initCurrentLanguage();
+});
+
 // 切换下拉菜单状态
 const toggleDropdown = () => {
   defaultHeight.value = defaultHeight.value ? 0 : scaleValue(200);
@@ -63,8 +91,9 @@ const toggleDropdown = () => {
 
 // 选择语言
 const selectLanguage = (language) => {
-  // console.log('click language', language);
   selectedLanguage.value = language;
+  // 调用changeLocale来实际切换语言
+  changeLocale(languageMap[language]);
   defaultHeight.value = defaultHeight.value ? 0 : scaleValue(200);
 };
 </script>

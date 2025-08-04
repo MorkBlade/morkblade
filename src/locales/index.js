@@ -1,5 +1,5 @@
 import { useLocalStorage, usePreferredLanguages } from '@vueuse/core';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { createI18n } from 'vue-i18n';
 
 // 导入语言文件
@@ -27,10 +27,11 @@ const generateLangModuleMap = () => {
   });
 };
 
+// 立即生成语言模块映射
+generateLangModuleMap();
+
 // 导出 Message
 const importMessages = computed(() => {
-  generateLangModuleMap();
-
   const message = {};
   langModuleMap.forEach((value, key) => {
     message[key] = value.default;
@@ -38,17 +39,24 @@ const importMessages = computed(() => {
   return message;
 });
 
+// 获取初始语言
+const getInitialLocale = () => {
+  const storedLocale = useLocalStorage(localeConfigKey, 'zh_CN').value;
+  if (storedLocale && langCode.includes(storedLocale)) {
+    return storedLocale;
+  }
+  return 'zh_CN';
+};
+
 export const i18n = createI18n({
   legacy: false,
-  locale: useLocalStorage(localeConfigKey, 'zh_CN').value || languages.value[0] || 'zh_CN',
+  locale: getInitialLocale(),
   fallbackLocale: 'zh_CN',
   messages: importMessages.value,
   globalInjection: true,
 });
 
 export const langList = computed(() => {
-  if (langModuleMap.size === 0) generateLangModuleMap();
-
   const list = [];
   langModuleMap.forEach((value, key) => {
     list.push({ content: value.default.lang, value: key });

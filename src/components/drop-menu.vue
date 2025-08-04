@@ -2,7 +2,7 @@
   <!-- [selectedIdx !== null ? 'is-selected' : '', disabled] -->
   <div class="cover-list" :class="{ 'is-selected': selectedIdx !== null, disabled }" @click="toggleDropdown">
     <img class="change-icon" :src="selectedIdx !== null ? changedIcon : changeIcon" alt="" />
-    <span>{{ items[selectedIdx] || '请选择' }}</span>
+    <span>{{ items[selectedIdx] || $t('dropMenu.select') }}</span>
     <img
       class="down-icon"
       :src="selectedIdx !== null ? downIcon : downIcon2"

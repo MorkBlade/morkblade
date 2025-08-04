@@ -2,31 +2,31 @@
   <div class="settings-container">
     <div class="settings-center">
       <div class="device-info">
-        <p>设备信息</p>
+        <p>{{ t('settings.deviceInfo') }}</p> 
         <div class="content-box">
-          <span>设备名称:</span>
+          <span>{{ t('settings.deviceName') }}:</span>
           <span>{{ keyboardName }}</span>
         </div>
         <div class="content-box">
-          <span>序列号:</span>
+          <span>{{ t('settings.deviceSN') }}:</span>
           <span>{{ KeyboardSN }}</span>
         </div>
       </div>
       <div class="firmware-version">
-        <p>固件信息</p>
+        <p>{{ t('settings.firmwareInfo') }}</p>
         <div class="content-box">
-          <span>固件版本:</span>
+          <span>{{ t('settings.firmwareVersion') }}:</span>
           <span>{{ appVersion }}</span>
         </div>
         <div class="content-box">
-          <span>固件日期:</span>
+          <span>{{ t('settings.firmwareDate') }}:</span>
           <span>{{ appVersionTime }}</span>
         </div>
       </div>
       <div class="device-set">
-        <p>设备设置</p>
+        <p>{{ t('settings.deviceSetting') }}</p>
         <div class="rate-of-return">
-          <span>回报率切换:</span>
+          <span>{{ t('settings.returnRateSwitch') }}:</span>
           <dropMenu
             :max-height="320"
             :items="RateOfReturnList"
@@ -35,7 +35,7 @@
           />
         </div>
         <div class="reset-box">
-          <span>恢复出厂设置:</span>
+          <span>{{ t('settings.factoryReset') }}:</span>
           <div
             class="save-btn"
             :class="{ 'is-active': restBtnStatus }"
@@ -44,12 +44,12 @@
             @mouseleave="onMouseLeave"
           >
             <img src="@/assets/images/reset_icon.svg" alt="" />
-            <span>恢复出厂设置</span>
+            <span>{{ t('settings.factoryReset') }}</span>
           </div>
         </div>
       </div>
       <div class="firmware-set">
-        <p>固件设置</p>
+        <p>{{ t('settings.firmwareSetting') }}</p>
         <div class="firmware-update">
           <div class="firmware-update__choose-version">
             <!-- <template v-if="!isVersion2">
@@ -57,10 +57,10 @@
               <dropMenu :max-height="180" :items="firmwareVersionList" @sendSelectedIdx="handleSelectedVer" />
             </template> -->
             <template v-if="isVersion2">
-              <span>在线升级:</span>
+              <span>{{ t('settings.onlineUpdate') }}:</span>
               <div class="online-upload" :class="{ loading }" @click="handleOnlineUpdate">
                 <span :class="{ hasFile: bindData.length > 0 && onlineUpload }">
-                  {{ bindData.length > 0 && onlineUpload ? '已下载固件' : '点击下载固件' }}
+                  {{ bindData.length > 0 && onlineUpload ? t('settings.downloadedFirmware') : t('settings.clickDownloadFirmware') }}
                 </span>
                 <!-- v-if="loading" progress-->
                 <p class="online-pack-name" v-if="!loading && onlineUpload">
@@ -72,7 +72,7 @@
               </div>
             </template>
             <template v-if="isVersion2">
-              <span :style="{ marginLeft: `${scaleValue(20)}px` }">本地升级:</span>
+              <span :style="{ marginLeft: `${scaleValue(20)}px` }">{{ t('settings.localUpdate') }}:</span>
               <el-upload
                 ref="uploadRef"
                 class="uploader"
@@ -86,7 +86,7 @@
                 :on-change="handleFileChange"
               >
                 <div class="uploader-text" :class="{ hasFile: bindData.length > 0 && !onlineUpload }">
-                  {{ bindData.length > 0 && !onlineUpload ? '重新选择' : '选择固件' }}
+                  {{ bindData.length > 0 && !onlineUpload ? t('settings.reselect') : t('settings.selectFirmware') }}
                 </div>
                 <!-- v-if="loading" progress-->
                 <div class="uploader-progress" v-if="loading && !onlineUpload">
@@ -96,23 +96,23 @@
             </template>
             <template v-if="!isVersion2">
               <!-- <span :style="{ marginLeft: `${scaleValue(20)}px` }">子版本选择:</span> -->
-              <span :style="{ marginLeft: `${scaleValue(20)}px` }">在线升级:</span>
+              <span :style="{ marginLeft: `${scaleValue(20)}px` }">{{ t('settings.onlineUpdate') }}:</span>
               <!-- :disabled="firmwareVerIdx === null" -->
               <dropMenu :max-height="135" :items="subVersionList" @sendSelectedIdx="handleSelectedSubVer" />
             </template>
           </div>
           <template v-if="isVersion2 && bindData.length > 0">
             <div>
-              <span>固件更新:</span>
+              <span>{{ t('settings.firmwareUpdate') }}:</span>
               <div class="update-btn" @click="startUpdate">
                 <img src="@/assets/images/update_icon.svg" alt="" />
-                <span>{{ loading ? '升级中...' : '升级固件' }}</span>
+                <span>{{ loading ? t('settings.updating') : t('settings.updateFirmware') }}</span>
               </div>
             </div>
           </template>
           <template v-if="!isVersion2 && subVersionIdx !== null">
             <div>
-              <span>固件更新:</span>
+              <span>{{ t('settings.firmwareUpdate') }}:</span>
               <div
                 class="update-btn"
                 :class="{ 'is-active': updateBtnStatus }"
@@ -121,7 +121,7 @@
                 @mouseleave="onMouseLeave('firmware')"
               >
                 <img src="@/assets/images/update_icon.svg" alt="" />
-                <span>升级固件</span>
+                <span>{{ t('settings.updateFirmware') }}</span>
               </div>
             </div>
           </template>
@@ -129,7 +129,7 @@
       </div>
     </div>
     <div class="update-log">
-      <p>固件更新日志</p>
+      <p>{{ t('settings.updateLog') }}</p>
       <div class="outer-box">
         <template v-if="isVersion2">
           <div
@@ -139,16 +139,16 @@
             @click.stop="handleSelectedVerInfo(item.version)"
           >
             <div>
-              <span>固件版本号：</span>
+              <span>{{ t('settings.firmwareVersionNumber') }}:</span>
               <span>{{ item.version }}</span>
             </div>
             <div>
-              <span>发布日期：</span>
+              <span>{{ t('settings.releaseDate') }}:</span>
               <span>{{ item.date }}</span>
             </div>
             <img src="@/assets/images/right_expand.svg" alt="" />
             <div class="update-changes" v-if="item.version === showVersion">
-              <h4>更新内容</h4>
+              <h4>{{ t('settings.updateContent') }}</h4>
               <ul>
                 <li v-for="(item, index) in item.changes" :key="index">{{ item }}</li>
               </ul>
@@ -163,16 +163,16 @@
             @click.stop="handleSelectedVerInfo(item.version)"
           >
             <div>
-              <span>固件版本号：</span>
+              <span>{{ t('settings.firmwareVersionNumber') }}:</span>
               <span>{{ item.version }}</span>
             </div>
             <div>
-              <span>发布日期：</span>
+              <span>{{ t('settings.releaseDate') }}:</span>
               <span>{{ item.date }}</span>
             </div>
             <img src="@/assets/images/right_expand.svg" alt="" />
             <div class="update-changes" v-if="item.version === showVersion">
-              <h4>更新内容</h4>
+              <h4>{{ t('settings.updateContent') }}</h4>
               <ul>
                 <li v-for="(item, index) in item.changes" :key="index">{{ item }}</li>
               </ul>
@@ -204,9 +204,12 @@ import { UPDATE_LOG_V1, UPDATE_LOG_V2 } from '@/configs/update-log';
 import { useAppStore, useDeviceStore, usePerformanceStore, useKeyboardStore, useMacroStore } from '@/stores';
 import { useAdvancedHook, useLightingHook } from '@/hooks';
 import { httpService } from '@/http/api/index.js';
+import { useI18n } from 'vue-i18n';
 
 import mDialog from '@/components/dialog.vue';
 import dropMenu from '@/components/drop-menu.vue';
+
+const { t } = useI18n();
 
 const router = useRouter();
 const appStore = useAppStore();
@@ -298,11 +301,11 @@ onMounted(async () => {
 });
 
 const subVersionList = computed(() => {
-  return ['电竞版', '高亮版', '测试版'];
+  return [t('settings.eSportsVersion'), t('settings.highlightVersion'), t('settings.testVersion')];
 });
 
 const firmwareVersionList = computed(() => {
-  return ['V1.0.8(最新)', 'V1.0.7', 'V1.0.6', 'V1.0.5'];
+  return [t('settings.latestVersion'), t('settings.version7'), t('settings.version6'), t('settings.version5')];
 });
 
 const RateOfReturnList = computed(() => {
@@ -343,7 +346,7 @@ const handleGlobalClick = () => {
 };
 
 const handleRecover = () => {
-  textContent.value = '是否恢复出厂设置？';
+  textContent.value = t('settings.recoverConfirm');
   updateTitle.value = '';
   isUpdate.value = false;
   restBtnStatus.value = false;
@@ -374,8 +377,8 @@ const onMouseLeave = (keyCode) => {
 };
 
 const updateFirware = () => {
-  textContent.value = '1.点击开始升级后键盘会进入BOOT模式，\n连接BOOT设备后开始升级。\n2.升级过程中请不要关闭窗口\n3.升级完成后点击确认会重新连接键盘';
-  updateTitle.value = '固件升级';
+  textContent.value = t('settings.updateConfirm');
+  updateTitle.value = t('settings.updateTitle');
   updateRes.value = null;
   isUpdate.value = true;
   updateBtnStatus.value = false;
@@ -387,7 +390,7 @@ const onSure = async (keyCode) => {
   if (eventType.value === 'rest') {
     const res = await deviceStore.factoryDataReset(isVersion2.value);
     if (res) {
-      showMessage('恢复出厂完成！');
+      showMessage(t('settings.recoverSuccess'));
     }
   } else {
     // console.log('asdasdasd', keyCode);
@@ -447,7 +450,7 @@ const getFirmWarePack = async (url) => {
             deviceStore.updateSuc = true;
             progress.current = 0;
             // isShow.value = false;
-            showMessage('升级成功！');
+            showMessage(t('settings.updateSuccess'));
           }
 
           // setTimeout(() => {
@@ -465,7 +468,7 @@ const getFirmWarePack = async (url) => {
           progress.current = 0;
           updateRes.value = false;
           isShow.value = false;
-          showMessage('设备未连接或升级中断，请重试', 'warning');
+          showMessage(t('settings.deviceNotConnected'), 'warning');
           setTimeout(() => {
             router.push({
               path: '/',
@@ -519,7 +522,7 @@ const handleFileChange = (files) => {
       };
       reader.readAsArrayBuffer(file);
     } else {
-      showMessage('请选择正确的固件文件（.bin）', 'warning');
+      showMessage(t('settings.pleaseSelectCorrectFirmware'), 'warning');
       uploadRef.value?.clearFiles();
       fileList.value = selectedFile.value ? [{ raw: selectedFile.value }] : [];
     }
@@ -540,7 +543,7 @@ const updateDisplayProgress = (targetProgress) => {
 
 const startUpdate = async () => {
   if (!selectedFile.value) {
-    showMessage('请先选择固件文件', 'warning');
+    showMessage(t('settings.pleaseSelectFirmware'), 'warning');
     return;
   }
 
@@ -553,7 +556,7 @@ const startUpdate = async () => {
     progress.value = 0;
     elLoading.value = ElLoading.service({
       lock: true,
-      text: '升级中...',
+      text: t('settings.updating'),
       background: 'rgba(0, 0, 0, 0.5)',
       customClass: 'custom-loading',
     });
@@ -577,8 +580,8 @@ const startUpdate = async () => {
     });
 
     if (!res) {
-      showMessage('升级失败，请重试', 'warning');
-      throw new Error('固件更新失败');
+      showMessage(t('settings.updateFailed'), 'warning');
+      throw new Error(t('settings.updateFailed'));
     }
 
     // 调整重启设备的消息顺序
@@ -594,7 +597,7 @@ const startUpdate = async () => {
     //   await delay(100);
     // }
     // await showMessage('success', '更新成功');
-    showMessage('升级成功');
+    showMessage(t('settings.updateSuccess'));
     elLoading.value.close();
     resetStates();
     regainKeyboardData();
@@ -604,14 +607,14 @@ const startUpdate = async () => {
     await appStore.getConfigID(isVersion2.value);
     await appStore.getBaseInfo(isVersion2.value);
   } catch (error) {
-    console.error('更新失败:', error);
+    console.error(t('settings.updateFailedMessage'), error);
     // if (loadingId.value !== null) {
     //   MessagePlugin.close(loadingId.value);
     //   await delay(100);
     // }
     // await showMessage('error', error.message || '更新失败，请重试');
     elLoading.value.close();
-    showMessage('升级失败，请重试', 'warning');
+    showMessage(t('settings.updateFailed'), 'warning');
     resetStates();
     regainKeyboardData();
   } finally {
@@ -683,7 +686,7 @@ const handleOnlineUpdate = async () => {
       await getOnlineFirmWarePack(res.firmware.firmware_file);
     }
   } catch (error) {
-    console.error('错误:', error.response || error);
+    console.error(t('settings.error'), error.response || error);
   }
 };
 

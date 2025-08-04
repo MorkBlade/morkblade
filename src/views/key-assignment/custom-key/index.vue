@@ -55,6 +55,7 @@ import key from '@/components/key.vue';
 
 import { KEYBOARD_MACRO } from '@/configs/constant';
 import { useKeyboardStore, useMacroStore } from '@/stores';
+import { useI18n } from 'vue-i18n';
 
 // 导入所有需要的图标
 import basicIcon from '@/assets/images/basic.svg';
@@ -104,14 +105,16 @@ const keyboardStore = useKeyboardStore();
 const macroStore = useMacroStore();
 const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
 
-const characterArr = [
-  { name: '基本字符', icon: 'basic' },
-  { name: '扩展字符', icon: 'extend' },
-  { name: '特殊字符', icon: 'special' },
-  { name: '键盘控制', icon: 'keyboard' },
-  { name: '鼠标键', icon: 'mouse' },
-  { name: '宏按键', icon: 'macro' },
-];
+const { t } = useI18n();
+
+const characterArr = computed(() => [
+  { name: t('customKey.basic'), icon: 'basic' },
+  { name: t('customKey.extend'), icon: 'extend' },
+  { name: t('customKey.special'), icon: 'special' },
+  { name: t('customKey.keyboard'), icon: 'keyboard' },
+  { name: t('customKey.mouse'), icon: 'mouse' },
+  { name: t('customKey.macro'), icon: 'macro' },
+]);
 
 const extend = [
   41, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 43, 42, 73, 76, 74, 77, 75, 78, 131, 130, 40, 89, 90,

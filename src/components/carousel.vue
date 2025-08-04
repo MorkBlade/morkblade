@@ -16,7 +16,7 @@
               backgroundColor: carouselData[0]?.color || carouselData[0]?.axis_color || '#fff',
             }"
           >
-            {{ carouselData[0]?.name || carouselData[0]?.axis_name || '磁轴' }}
+            {{ carouselData[0]?.name || carouselData[0]?.axis_name || $t('carousel.defaultAxis') }}
           </span>
         </div>
       </div>
@@ -53,7 +53,7 @@
               backgroundColor: carouselData[currentIdx]?.color || carouselData[currentIdx]?.axis_color || '#fff',
             }"
           >
-            {{ carouselData[currentIdx]?.name || carouselData[currentIdx]?.axis_name || '磁轴' }}
+            {{ carouselData[currentIdx]?.name || carouselData[currentIdx]?.axis_name || $t('carousel.defaultAxis') }}
           </span>
         </div>
       </div>
@@ -91,7 +91,7 @@
                 localCarouselData[currentIdx]?.color || localCarouselData[currentIdx]?.axis_color || '#fff',
             }"
           >
-            {{ localCarouselData[currentIdx]?.name || localCarouselData[currentIdx]?.axis_name || '磁轴' }}
+            {{ localCarouselData[currentIdx]?.name || localCarouselData[currentIdx]?.axis_name || $t('carousel.defaultAxis') }}
           </span>
         </div>
       </div>
@@ -102,7 +102,10 @@
 <script setup>
 import { scaleValue } from '@/utils/responsive.js';
 import { showMessage } from '@/utils/message';
+import { useI18n } from 'vue-i18n';
 import axisIcon1 from '@/assets/images/wanciwang.avif';
+
+const { t } = useI18n();
 
 const { carouselData, offset, selectedId } = defineProps({
   carouselData: { type: Array, default: () => [] },
@@ -186,7 +189,7 @@ const nextClickSlide = () => {
 const prevClickAlone = () => {
   console.log('prevClickAlone log: ', currentIdx.value);
   if (!currentIdx.value) {
-    showMessage('当前是第一个', 'warning');
+    showMessage(t('carousel.firstItem'), 'warning');
     return;
   }
   if (flag) return;
@@ -217,7 +220,7 @@ const prevClickAlone = () => {
 const nextClickAlone = () => {
   console.log('nextClickAlone log: ', currentIdx.value);
   if (currentIdx.value) {
-    showMessage('当前是最后一个', 'warning');
+    showMessage(t('carousel.lastItem'), 'warning');
     return;
   }
   if (flag) return;

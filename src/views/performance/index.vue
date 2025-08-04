@@ -23,6 +23,8 @@
 
 <script setup>
 import { useAppStore } from '@/stores';
+import { useI18n } from 'vue-i18n';
+import { computed } from 'vue';
 
 import mode from './mode/index.vue';
 import quickTrigger from './quick-trigger/index.vue';
@@ -31,9 +33,11 @@ import preinstall from './preinstall/index.vue';
 import axisSetting from './axis-setting/index.vue';
 import emitter from '@/utils/app-emitter';
 
+const { t } = useI18n();
+
 const appStore = useAppStore();
 const clickItem = ref(0);
-const performanceItem = ['机械模式', '快速触发', '死区', '性能预设', '轴体切换'];
+const performanceItem = computed(() => [t('performance.mechanicalMode'), t('performance.quickTrigger'), t('performance.deadZone'), t('performance.preinstall'), t('performance.axis')]);
 const modulesName = ['mechanicalMode', 'quickTrigger', 'deadZone', 'preinstall', 'axis'];
 
 const changeMenu = (idx) => {

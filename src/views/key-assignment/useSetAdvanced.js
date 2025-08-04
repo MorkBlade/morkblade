@@ -3,10 +3,12 @@ import keyboard from '@/configs/byte-to-key/keyboard.js';
 import { ElMessage } from 'element-plus';
 import { useAdvancedHook } from '@/hooks';
 import { useKeyboardStore, usePerformanceStore } from '@/stores';
+import { useI18n } from 'vue-i18n';
 
 import sureIcon from '@/assets/images/sure.svg';
 
 const useSetAdvanced = () => {
+  const { t } = useI18n();
   const keyboardStore = useKeyboardStore();
   const performanceStore = usePerformanceStore();
   const { getHighLevelKeys } = useAdvancedHook();
@@ -117,7 +119,7 @@ const useSetAdvanced = () => {
           grouping: true,
           duration: 1000,
           dangerouslyUseHTMLString: true,
-          message: `<span class="custom-message"><img src="${sureIcon}" class="warn-icon"/>修改成功</span>`,
+          message: `<span class="custom-message"><img src="${sureIcon}" class="warn-icon"/>${t('useSetAdvanced.modifySuccess')}</span>`,
           customClass: 'custom-message-container',
         });
       }

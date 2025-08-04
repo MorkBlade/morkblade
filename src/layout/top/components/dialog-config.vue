@@ -11,8 +11,8 @@
 
                 <div class="content">
                     <div class="on-board-configuration">
-                        <p class="title">板载配置(3/4)</p>
-                        <p class="description">要加载配置到键盘上的话，请将拖放配置到此区域。要替换配置的话，请将配置拖放到要替换的配置上面。</p>
+                        <p class="title">{{ $t('dialogConfig.boardConfig') }}</p>
+                        <p class="description">{{ $t('dialogConfig.boardConfigTip1') }}</p>
                         <div class="box" @dragover="dragState.handleDragOver"
                             @drop="dragState.handleDrop('active', $event)" @dragenter="dragState.handleDragEnter"
                             @dragleave="dragState.handleDragLeave">
@@ -29,29 +29,29 @@
                                 </div>
                                 <div class="item-edit" v-if="editState.editingItemId === item">
                                     <span style="color: gray;" class="item-edit-text"
-                                        @click.stop="editState.handleRename(item)">重命名</span>
+                                        @click.stop="editState.handleRename(item)">{{ $t('dialogConfig.rename') }}</span>
                                     <span style="color: gray;"  class="item-edit-text"
-                                        @click.stop="editState.handleCopy(item)">复制</span>
+                                        @click.stop="editState.handleCopy(item)">{{ $t('dialogConfig.copy') }}</span>
                                     <span style="color: gray;" class="item-edit-text"
-                                        @click.stop="editState.handleMove('active',item)">移至未激活的配置</span>
+                                        @click.stop="editState.handleMove('active',item)">{{ $t('dialogConfig.moveToUnActiveConfig') }}</span>
                                     <span style="color: gray;" class="item-edit-text share-btn"
-                                        @click.stop="editState.handleShare(item)">分享配置</span>
+                                        @click.stop="editState.handleShare(item)">{{ $t('dialogConfig.share') }}</span>
                                     <span  class="item-edit-text"
-                                        @click.stop="editState.handleExport(item)">导出配置至本地</span>
+                                        @click.stop="editState.handleExport(item)">{{ $t('dialogConfig.export') }}</span>
                                     <span style="color: gray;" class="item-edit-text delete-btn"
-                                        @click.stop="editState.handleDelete('active',item)">删除</span>
+                                        @click.stop="editState.handleDelete('active',item)">{{ $t('dialogConfig.delete') }}</span>
                                 </div>
                             </div>
                             <div class="item-list-empty" v-if="appStore.configList && appStore.configList.length < 4"
                                 :class="{ 'drag-over': dragState.isDragOverEmptyActive }">
-                                <span class="item-title">拖放配置至此处</span>
+                                <span class="item-title">{{ $t('dialogConfig.dragConfig') }}</span>
                             </div>
                         </div>
                     </div>
 
                     <div class="un-active-configuration">
-                        <p class="title">未激活的配置</p>
-                        <p class="no-tips">目前仅支持配置本地导入/导出配置<br>其它功能暂未开放，敬请期待</p>
+                        <p class="title">{{ t('dialogConfig.unActiveConfig') }}</p>
+                        <p class="no-tips">{{ t('dialogConfig.noTips') }}<br>{{ t('dialogConfig.noTips2') }}</p>
                         <div class="box" @dragover="dragState.handleDragOver"
                             @drop="dragState.handleDrop('unActive', $event)" @dragenter="dragState.handleDragEnter"
                             @dragleave="dragState.handleDragLeave">
@@ -66,20 +66,20 @@
                                     <span class="more-icon" @click.stop="editState.showEdit(item)"></span>
                                 </div>
                                 <div class="un-active-item-edit" v-if="editState.editingItemId === item">
-                                    <span class="item-edit-text" @click.stop="editState.handleRename(item)">重命名</span>
-                                    <span class="item-edit-text" @click.stop="editState.handleCopy(item)">复制</span>
+                                    <span class="item-edit-text" @click.stop="editState.handleRename(item)">{{ $t('dialogConfig.rename') }}</span>
+                                    <span class="item-edit-text" @click.stop="editState.handleCopy(item)">{{ $t('dialogConfig.copy') }}</span>
                                     <span class="item-edit-text"
-                                        @click.stop="editState.handleMove('unActive',item)">移至板载配置</span>
-                                    <span class="item-edit-text share-btn">分享配置</span>
+                                        @click.stop="editState.handleMove('unActive',item)">{{ $t('dialogConfig.moveToBoardConfig') }}</span>
+                                    <span class="item-edit-text share-btn">{{ $t('dialogConfig.share') }}</span>
                                     <span class="item-edit-text"
-                                        @click.stop="editState.handleExport(item)">导出配置至本地</span>
+                                        @click.stop="editState.handleExport(item)">{{ $t('dialogConfig.export') }}</span>
                                     <span class="item-edit-text delete-btn"
-                                        @click.stop="editState.handleDelete('unActive',item)">删除</span>
+                                        @click.stop="editState.handleDelete('unActive',item)">{{ $t('dialogConfig.delete') }}</span>
                                 </div>
                             </div>
                             <div class="item-list-empty" :class="{ 'drag-over': dragState.isDragOverEmptyUnActive }"
                                 v-if="appStore.unActiveConfigList && appStore.unActiveConfigList.length < 28">
-                                <span class="item-title">拖放配置至此处</span>
+                                <span class="item-title">{{ $t('dialogConfig.dragConfig') }}</span>
                             </div>
                         </div>
                     </div>
@@ -88,23 +88,23 @@
                 <div class="btn-group">
                     <div class="update-btn" @click="handleNewConfig">
                         <img class="update-img" src="@/assets/images/events_icon.svg" alt="" />
-                        <span class="update-text">新建配置</span>
+                        <span class="update-text">{{ $t('dialogConfig.newConfig') }}</span>
                     </div>
                     <div class="cancel-btn" @click="showImportDialog = true">
                         <img src="@/assets/images/download.svg" alt="" />
-                        <span>导入配置</span>
+                        <span>{{ $t('dialogConfig.importConfig') }}</span>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <Dialog v-if="showRenameDialog" :isShow="showRenameDialog" dialogTitle="重命名配置" :textContent="''"
+    <Dialog v-if="showRenameDialog" :isShow="showRenameDialog" :dialogTitle="$t('dialogConfig.rename')" :textContent="''"
         @cancel="editState.handleRenameCancel" @sure="editState.handleRenameConfirm"
         @update:isShow="val => showRenameDialog = val">
         <template #default>
             <div class="rename-input-container">
-                <p>请修改配置名称</p>
-                <input class="rename-input" v-model="renameInput" placeholder="请输入配置名称"
+                <p>{{ $t('dialogConfig.renameTip') }}</p>
+                <input class="rename-input" v-model="renameInput" :placeholder="$t('dialogConfig.renameTip2')"
                     @keyup.enter="editState.handleRenameConfirm" />
             </div>
         </template>
@@ -122,7 +122,7 @@
             <div class="import-btn-group">
                 <div class="cancel-btn" @click="showImportDialog = false">
                     <img src="@/assets/images/cancel_icon.svg" alt="" />
-                    <span>取消</span>
+                    <span>{{ $t('dialogConfig.cancel') }}</span>
                 </div>
             </div>
         </template>
@@ -132,7 +132,7 @@
         @sure="editState.handleShareConfirm" @update:isShow="val => showShareDialog = val">
         <template #default>
             <div class="share-input-container">
-                <p>请在下方输入分享码以加载配置</p>
+                <p>{{ $t('dialogConfig.shareTip') }}</p>
                 <input class="share-input" v-model="shareInput" @keyup.enter="editState.handleShareConfirm" />
             </div>
         </template>
@@ -141,7 +141,7 @@
     <div class="loading-dialog" v-if="isLoading">
         <div class="loading-dialog-content">
             <div class="loading-dialog-content-icon"></div>
-            <div class="loading-dialog-content-text">正在导入配置，请稍候...</div>
+            <div class="loading-dialog-content-text">{{ $t('dialogConfig.loading') }}</div>
         </div>
     </div>
 
@@ -154,6 +154,9 @@ import { useAppStore, useKeyboardStore } from '@/stores';
 import { useAdvancedHook, useSettingHook, useConfigHook } from '@/hooks';
 import { showMessage } from '@/utils/message';
 import Dialog from '@/components/dialog.vue';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 let timer = null;
 
@@ -265,22 +268,22 @@ const useDragState = () => {
             const emptyTarget = event.target.closest('.item-list-empty');
             if (!emptyTarget) return;
 
-            showMessage('功能暂未开放', 'warning');
+            showMessage(t('dialogConfig.functionNotOpen'), 'warning');
             return
 
             // 执行移动操作
             if (targetType === 'active') {
                 if (appStore.configList.length >= 4) {
-                    showMessage('板载配置已满，无法添加更多配置', 'warning');
+                    showMessage(t('dialogConfig.boardConfigFull'), 'warning');
                     return;
                 }
                 appStore.configList.push(state.draggedItem);
                 appStore.unActiveConfigList = appStore.unActiveConfigList.filter(i => i.title !== state.draggedItem.title);
-                showMessage('配置已移至板载配置', 'success');
+                showMessage(t('dialogConfig.moveBoardConfig'), 'success');
             } else {
                 appStore.unActiveConfigList.push(state.draggedItem);
                 appStore.configList = appStore.configList.filter(i => i.title !== state.draggedItem.title);
-                showMessage('配置已移至未激活配置', 'success');
+                showMessage(t('dialogConfig.moveUnActiveConfig'), 'success');
             }
         
             // 重置拖拽状态
@@ -315,7 +318,7 @@ const useEditState = () => {
         // 分享配置
         handleShare(item) {
 
-            showMessage('功能暂未开放', 'warning');
+            showMessage(t('dialogConfig.functionNotOpen'), 'warning');
             return
 
             // 复制 item 的 title 到剪贴板
@@ -324,11 +327,11 @@ const useEditState = () => {
                 if (navigator && navigator.clipboard && navigator.clipboard.writeText) {
                     navigator.clipboard.writeText(item.title).then(() => {
                         // 可选：提示用户复制成功
-                        showMessage('已复制配置名称', 'success');
+                        showMessage(t('dialogConfig.copySuccess'), 'success');
                         editingItemId.value = null;
                     }).catch(err => {
                         // 可选：提示用户复制失败
-                        showMessage('复制失败', 'warning');
+                        showMessage(t('dialogConfig.copyFail'), 'warning');
                     });
                 } else {
                     // 旧版浏览器兼容
@@ -341,10 +344,10 @@ const useEditState = () => {
                     textarea.select();
                     try {
                         document.execCommand('copy');
-                        showMessage('已复制配置名称', 'success');
+                        showMessage(t('dialogConfig.copySuccess'), 'success');
                         editingItemId.value = null;
                     } catch (err) {
-                        showMessage('复制失败', 'warning');
+                        showMessage(t('dialogConfig.copyFail'), 'warning');
                     }
                     document.body.removeChild(textarea);
                 }
@@ -356,7 +359,7 @@ const useEditState = () => {
         // 复制配置
         handleCopy(item) {
 
-            showMessage('功能暂未开放', 'warning');
+            showMessage(t('dialogConfig.functionNotOpen'), 'warning');
             return
 
             // 复制配置，将其添加到未激活配置列表
@@ -364,15 +367,15 @@ const useEditState = () => {
                 // 深拷贝 item，避免引用同一个对象
                 const newItem = JSON.parse(JSON.stringify(item));
                 // 配置名称加上"副本"后缀
-                newItem.title = '副本'+ item.title ;
+                newItem.title = t('dialogConfig.duplicate')+ item.title ;
                 // 设为未激活
                 newItem.active = false;
                 // 计算插入位置
                 appStore.unActiveConfigList.push(newItem);
                 editingItemId.value = null;
-                showMessage('已复制到未激活配置', 'success');
+                showMessage(t('dialogConfig.copySuccess'), 'success');
             } else {
-                showMessage('复制失败，配置列表不存在', 'warning');
+                showMessage(t('dialogConfig.copyFailTip'), 'warning');
             }
         },
         
@@ -380,7 +383,7 @@ const useEditState = () => {
         handleRename(item) {
             // TODO 请求后端接口
 
-            showMessage('功能暂未开放', 'warning');
+            showMessage(t('dialogConfig.functionNotOpen'), 'warning');
             return
 
             renameItem.value = item;
@@ -406,13 +409,13 @@ const useEditState = () => {
         // 移动配置
         handleMove(type, item) {
 
-            showMessage('功能暂未开放', 'warning');
+            showMessage(t('dialogConfig.functionNotOpen'), 'warning');
             return
 
             // TODO 请求后端接口
             if (type === 'active') {
                 if(appStore.unActiveConfigList.length >= 28){
-                    showMessage('未激活配置已满，无法添加更多配置', 'warning');
+                    showMessage(t('dialogConfig.moveUnActiveConfigFull'), 'warning');
                     return;
                 }
                 appStore.unActiveConfigList.push(item);
@@ -427,7 +430,7 @@ const useEditState = () => {
         // 删除配置
         handleDelete(type, item) {
 
-            showMessage('功能暂未开放', 'warning');
+            showMessage(t('dialogConfig.functionNotOpen'), 'warning');
             return
 
             // TODO 请求后端接口
@@ -438,7 +441,7 @@ const useEditState = () => {
                 if (type === 'active' && appStore.activeConfigIndex !== undefined) {
                     const activeItem = appStore.configList[appStore.activeConfigIndex];
                     if (activeItem && activeItem.title === item.title) {
-                        showMessage('当前使用的配置无法删除', 'warning');
+                        showMessage(t('dialogConfig.deleteTip'), 'warning');
                         return;
                     }
                 }
@@ -456,12 +459,12 @@ const useEditState = () => {
             if (appStore.activeConfigIndex !== undefined) {
                 const activeItem = appStore.configList[appStore.activeConfigIndex];
                 if (activeItem && activeItem.title !== item.title) {
-                    showMessage('请先切换到要导出的配置', 'warning');
+                    showMessage(t('dialogConfig.exportTip'), 'warning');
                     return;
                 }
             }
             await exportCurrentConfigToFile(item);
-            showMessage('导出成功', 'success');
+            showMessage(t('dialogConfig.exportSuccess'), 'success');
         },
         
         // 分享取消
@@ -475,8 +478,9 @@ const useEditState = () => {
             if (shareInput.value.trim()) {
                 // isLoading.value = true;
                 // TODO 请求后端接口
-
-                showMessage('功能暂未开放', 'warning');
+                // 清空输入框
+                shareInput.value = '';
+                showMessage(t('dialogConfig.functionNotOpen'), 'warning');
                 return
                 
                 // 模拟请求延迟
@@ -484,10 +488,10 @@ const useEditState = () => {
                     isLoading.value = false;
                     showShareDialog.value = false;
                     showImportDialog.value = false;
-                    showMessage('导入成功', 'success');
+                    showMessage(t('dialogConfig.importSuccess'), 'success');
                 }, 1500);
             } else {
-                showMessage('请输入分享码', 'warning');
+                showMessage(t('dialogConfig.shareTip'), 'warning');
                 return;
             }
         }
@@ -557,14 +561,14 @@ const handleLocalImport = () => {
             const result = await importCurrentConfigFromFile(file);
             
             if (result) {
-                showMessage('配置导入成功', 'success');
+                showMessage(t('dialogConfig.importSuccess'), 'success');
                 showImportDialog.value = false;
             } else {
-                showMessage('配置导入失败', 'warning');
+                showMessage(t('dialogConfig.importFail'), 'warning');
             }
         } catch (error) {
             console.error('Import error:', error);
-            showMessage('配置导入失败:' + error.message, 'warning');
+            showMessage(t('dialogConfig.importFail') + error.message, 'warning');
         } finally {
             isLoading.value = false;
             document.body.removeChild(input);
@@ -580,7 +584,7 @@ const handleCodeImport = () => {
 
 // 新建配置
 const handleNewConfig = () => {
-    showMessage('功能暂未开放', 'warning');
+    showMessage(t('dialogConfig.functionNotOpen'), 'warning');
     return
 }
 

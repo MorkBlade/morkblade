@@ -9,7 +9,7 @@
         :max="max"
         :disabled="disabled"
         :deadZone="true"
-        title="按下死区设置"
+        :title="t('deadZone.pressDead')"
         @sendKeyVal="handlePressDeadChange"
       />
       <setTravelCard
@@ -19,7 +19,7 @@
         :max="max"
         :disabled="disabled"
         :deadZone="true"
-        title="抬起死区设置"
+        :title="t('deadZone.releaseDead')"
         @sendKeyVal="handleReleaseDeadChange"
       />
       <div class="key-dead-preview">
@@ -55,6 +55,9 @@ import sureIcon from '@/assets/images/sure.svg';
 import saveConfig from './components/save-config.vue';
 import setTravelCard from '@/components/dz-travel.vue';
 import travelTestCard from '@/components/travel-test-card.vue';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 const { rowIdx, colIdx, activeKeys, disabled, debounce, hasCurrentKey } = usePerformancePageHook();
 
@@ -190,7 +193,7 @@ const saveDeadZoneTravel = async () => {
   const { setSingleTravel } = usePerformanceHook();
   const res = setSingleTravel(keyboards.value, activeKeys.value, 'dz');
   if (res) {
-    showMessage('修改成功');
+    showMessage(t('deadZone.modifySuccess'));
   }
 };
 </script>

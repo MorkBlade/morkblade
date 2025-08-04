@@ -3,15 +3,15 @@
     <div class="explain" v-if="showTip" :style="explainStyle">
       <h4>{{ type }}</h4>
       <template v-if="type === 'DKS'">
-        <p>单个按键根据四种不同的按压程度实现一到四种功能。</p>
+        <p>{{ $t('explain.dks') }}</p>
       </template>
       <template v-if="type === 'SOCD'">
-        <p>当两个反向的输入同时触发时的处理方式。</p>
+        <p>{{ $t('explain.socd') }}</p>
         <br />
-        <p>可选择三种不同的触发行为：</p>
-        <p>后覆盖：后触发的键会覆盖上次触发的按键。</p>
-        <p>第一/二个键优先：第一/二个键将始终覆盖另一个按键。</p>
-        <p>中性：两个按键同时触发时，输出都不会被执行。</p>
+        <p>{{ $t('explain.socdTip1') }}</p>
+        <p>{{ $t('explain.socdMode0') }}</p>
+        <p>{{ $t('explain.socdMode1') }}</p>
+        <p>{{ $t('explain.socdMode2') }}</p>
       </template>
     </div>
   </div>

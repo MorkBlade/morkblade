@@ -598,6 +598,7 @@ const usePerformanceStore = defineStore('performance', {
           const index = allAxisList.findIndex((axis) => axis.axis_id === item);
           if (index !== -1) {
             const item = allAxisList[index];
+            //TODO 需要翻译
             const factory_name =
               item.factory_name !== 'TTC' && item.factory_name !== '佳达隆' ? 'other' : item.factory_name;
             // console.log('xxxxxx', factory_name);

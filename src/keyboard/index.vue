@@ -1,58 +1,31 @@
 <template>
-  <div
-    class="key-page"
-    :style="{
-      width: `${containerDimensions.width}px`,
-    }"
-  >
+  <div class="key-page" :style="{
+    width: `${containerDimensions.width}px`,
+  }">
     <div class="side-left-container" v-if="route.path === '/performance'">
-      <div
-        class="select-box"
-        :class="{ 'is-checked': selectedKey == 'all-key' }"
-        @click="handleAllSelect"
-        @mouseenter="selectedKey = 'all-key'"
-        @mouseleave="selectedKey = ''"
-      >全选</div>
-      <div
-        class="select-box"
-        :class="{ 'is-checked': selectedKey == 'cancel-all' }"
-        @click="handleCancelSelect"
-        @mouseenter="selectedKey = 'cancel-all'"
-        @mouseleave="selectedKey = ''"
-      >全不选</div>
-      <div
-        class="select-box"
-        :class="{ 'is-checked': selectedKey == 'reverse-key' }"
-        @click="handleReverseSelect"
-        @mouseenter="selectedKey = 'reverse-key'"
-        @mouseleave="selectedKey = ''"
-      >反选</div>
+      <div class="select-box" :class="{ 'is-checked': selectedKey == 'all-key' }" @click="handleAllSelect"
+        @mouseenter="selectedKey = 'all-key'" @mouseleave="selectedKey = ''">{{ $t('keyboard.allSelect') }}</div>
+      <div class="select-box" :class="{ 'is-checked': selectedKey == 'cancel-all' }" @click="handleCancelSelect"
+        @mouseenter="selectedKey = 'cancel-all'" @mouseleave="selectedKey = ''">{{ $t('keyboard.allDisSelect') }}</div>
+      <div class="select-box" :class="{ 'is-checked': selectedKey == 'reverse-key' }" @click="handleReverseSelect"
+        @mouseenter="selectedKey = 'reverse-key'" @mouseleave="selectedKey = ''">{{ $t('keyboard.reverseSelect') }}
+      </div>
     </div>
     <!-- v1 keyboard -->
     <template v-if="!isVersion2">
       <div class="keyboard-container v1">
-        <div
-          class="keyboard"
-          :style="{
-            width: `${containerDimensions.width}px`,
+        <div class="keyboard" :style="{
+          width: `${containerDimensions.width}px`,
             height: `${containerDimensions.height}px`,
-          }"
-        >
+          }">
           <template v-for="(row, rowIndex) in layout">
             <div class="row" :class="`row_${rowIndex + 1}`" :key="rowIndex" v-if="row[0].shapeScale?.w">
               <template v-for="(col, colIndex) in row">
-                <key
-                  v-if="col.shapeScale.w != 0 && col && col.keyItem && col.keyItem.keyValue"
-                  :key="`key-${rowIndex}-${colIndex}`"
-                  :row="rowIndex"
-                  :column="colIndex"
-                  :keyItem="col.keyItem"
-                  :shapeScale="col.shapeScale"
-                  :location="col.location"
-                  :active="activeKeys.includes(`${rowIndex}-${colIndex}`)"
-                  @click="handleKeyClick(rowIndex, colIndex)"
-                  @emits="handleCancelSelect"
-                />
+                <key v-if="col.shapeScale.w != 0 && col && col.keyItem && col.keyItem.keyValue"
+                  :key="`key-${rowIndex}-${colIndex}`" :row="rowIndex" :column="colIndex" :keyItem="col.keyItem"
+                  :shapeScale="col.shapeScale" :location="col.location"
+                  :active="activeKeys.includes(`${rowIndex}-${colIndex}`)" @click="handleKeyClick(rowIndex, colIndex)"
+                  @emits="handleCancelSelect" />
               </template>
             </div>
           </template>
@@ -65,28 +38,18 @@
     <!-- v2 keyboard -->
     <template v-else>
       <div class="keyboard-container v2">
-        <div
-          class="keyboard"
-          :style="{
-            width: `${containerDimensions.width}px`,
+        <div class="keyboard" :style="{
+          width: `${containerDimensions.width}px`,
             height: `${containerDimensions.height}px`,
-          }"
-        >
+          }">
           <template v-for="(row, rowIndex) in layout">
             <div class="row" :class="`row_${rowIndex + 1}`" :key="rowIndex" v-if="row[0].shapeScale?.w">
               <template v-for="(col, colIndex) in row">
-                <key
-                  v-if="col.shapeScale.w != 0 && col && col.keyItem && col.keyItem.keyValue"
-                  :key="`key-${rowIndex}-${colIndex}`"
-                  :row="rowIndex"
-                  :column="colIndex"
-                  :keyItem="col.keyItem"
-                  :shapeScale="col.shapeScale"
-                  :location="col.location"
-                  :active="activeKeys.includes(`${rowIndex}-${colIndex}`)"
-                  @click="handleKeyClick(rowIndex, colIndex)"
-                  @emits="handleCancelSelect"
-                />
+                <key v-if="col.shapeScale.w != 0 && col && col.keyItem && col.keyItem.keyValue"
+                  :key="`key-${rowIndex}-${colIndex}`" :row="rowIndex" :column="colIndex" :keyItem="col.keyItem"
+                  :shapeScale="col.shapeScale" :location="col.location"
+                  :active="activeKeys.includes(`${rowIndex}-${colIndex}`)" @click="handleKeyClick(rowIndex, colIndex)"
+                  @emits="handleCancelSelect" />
               </template>
             </div>
           </template>
@@ -97,38 +60,20 @@
       </div>
     </template>
     <div class="side-right-container" v-if="route.path === '/performance'">
-      <div
-        class="select-box"
-        :class="{ 'is-checked': selectedKey == 'wasd' }"
-        @click="handleWasdSelect"
-        @mouseenter="selectedKey = 'wasd'"
-        @mouseleave="selectedKey = ''"
-      >
+      <div class="select-box" :class="{ 'is-checked': selectedKey == 'wasd' }" @click="handleWasdSelect"
+        @mouseenter="selectedKey = 'wasd'" @mouseleave="selectedKey = ''">
         WASD
       </div>
-      <div
-        class="select-box"
-        :class="{ 'is-checked': selectedKey == 'num-key' }"
-        @click="handleNumSelect"
-        @mouseenter="selectedKey = 'num-key'"
-        @mouseleave="selectedKey = ''"
-      >仅数字</div>
-      <div
-        class="select-box"
-        :class="{ 'is-checked': selectedKey == 'letter-key' }"
-        @click="handleLetterSelect"
-        @mouseenter="selectedKey = 'letter-key'"
-        @mouseleave="selectedKey = ''"
-      >仅字母</div>
+      <div class="select-box" :class="{ 'is-checked': selectedKey == 'num-key' }" @click="handleNumSelect"
+        @mouseenter="selectedKey = 'num-key'" @mouseleave="selectedKey = ''">{{ $t('keyboard.onlyNumber') }}</div>
+      <div class="select-box" :class="{ 'is-checked': selectedKey == 'letter-key' }" @click="handleLetterSelect"
+        @mouseenter="selectedKey = 'letter-key'" @mouseleave="selectedKey = ''">{{ $t('keyboard.onlyLetter') }}</div>
     </div>
     <template v-if="route.path === '/key-assignment'">
-      <div
-        class="layer-container"
-        v-if="isVersion2 || advancedMenu === 'customKey'"
-        @click.capture="(e) => handleFnChange(e, isVersion2)"
-      >
+      <div class="layer-container" v-if="isVersion2 || advancedMenu === 'customKey'"
+        @click.capture="(e) => handleFnChange(e, isVersion2)">
         <div class="layer" v-for="(ite, idx) in 4" :key="ite" :class="{ active: idx === checkedFn }" :data-idx="idx">
-          {{ '层' + ite }}
+          {{ $t('keyboard.layer') + ite }}
         </div>
       </div>
     </template>
@@ -377,6 +322,7 @@ const containerDimensions = computed(() => {
     justify-content: center;
     align-items: center;
     transition: width 0.3s ease-in-out;
+
     &.v2 .keyboard {
       // 特殊背景图 故需要写死宽高
       width: var(--keyboard-v2-width) !important;
@@ -387,6 +333,7 @@ const containerDimensions = computed(() => {
       border: none;
       padding: var(--keyboard-v2-padding);
       transition: width 0.3s ease-in-out;
+
       &::after {
         content: '';
         width: var(--keyboard-pseudo-element-width);
@@ -408,6 +355,7 @@ const containerDimensions = computed(() => {
       padding: var(--spacing-21) var(--spacing-24);
       background-color: #000;
       transition: width 0.3s ease-in-out;
+
       &::after {
         content: '';
         width: 99.2%;
@@ -435,15 +383,19 @@ const containerDimensions = computed(() => {
           margin-bottom: 15px;
           // top: var(--keyboard-row2-top);
         }
+
         &.row_3 {
           // top: var(--keyboard-row3-top);
         }
+
         &.row_4 {
           // top: var(--keyboard-row4-top);
         }
+
         &.row_5 {
           // top: var(--keyboard-row5-top);
         }
+
         &.row_6 {
           // top: var(--keyboard-row6-top);
         }
@@ -530,6 +482,7 @@ const containerDimensions = computed(() => {
       background-repeat: no-repeat;
       cursor: pointer;
     }
+
     .active {
       background-image: url('@/assets/images/layer_check.svg');
       color: #000000;
@@ -549,6 +502,7 @@ const containerDimensions = computed(() => {
     text-align: center;
     line-height: var(--spacing-30);
   }
+
   .is-checked {
     background-image: url('@/assets/images/side_bgC.svg') !important;
   }

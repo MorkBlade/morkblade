@@ -2,7 +2,7 @@
   <div class="end-box">
     <div class="left-config">
       <div class="key">
-        <span>按键1:</span>
+        <span>{{ t('end.key1') }}</span>
         <div class="key-box" @mouseenter="onMouseEn('key1')" @mouseleave="onMouseLe('key1')">
           <p :class="{ 'hover-bg': !endInfo.dks }" @mouseup="KeydropFirst">{{ keyText }}</p>
           <div
@@ -13,14 +13,14 @@
         </div>
       </div>
       <div class="delay-slider">
-        <p>延时(单位:ms)</p>
+        <p>{{ t('end.delay') }}</p>
         <div class="slider-block">
           <el-slider v-model="endInfo.delay" :min="0" :max="200" />
         </div>
       </div>
       <div class="save-btn" @click="saveConfig">
         <img src="@/assets/images/sure.svg" alt="" />
-        <span>应用映射</span>
+        <span>{{ t('end.applyMapping') }}</span>
       </div>
     </div>
     <characterCard @handleSendKey="handleEndKey" />
@@ -34,9 +34,12 @@ import { useAdvancedHook } from '@/hooks';
 import { showMessage } from '@/utils/message';
 import { useAppStore, useKeyboardStore } from '@/stores';
 import { filterSocdAndRsKey } from '@/utils/filter-key.js';
+import { useI18n } from 'vue-i18n';
 
 import mDialog from '@/components/dialog.vue';
 import characterCard from '@/components/character-card.vue';
+
+const { t } = useI18n();
 
 const endInfo = defineModel('endInfo', {
   type: Object,
@@ -67,11 +70,11 @@ const activeKeys = computed(() => {
 
 const saveConfig = () => {
   if (!activeKeys.value.length) {
-    showMessage('请先选择需要修改的按键', 'warning');
+    showMessage(t('end.selectKeyTip'), 'warning');
     return;
   }
   if (!endInfo.value.dks) {
-    showMessage('请选择需要关联的按键', 'warning');
+    showMessage(t('end.selectKey'), 'warning');
     return;
   }
   isShow.value = true;

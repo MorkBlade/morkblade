@@ -14,7 +14,7 @@ export function useLocale() {
 
     locale.value = lang;
 
-    useLocalStorage(localeConfigKey, 'zh_CN').value = lang;
+    useLocalStorage(localeConfigKey, lang).value = lang;
   }
 
   const getComponentsLocale = computed(() => {

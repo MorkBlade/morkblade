@@ -1,17 +1,17 @@
 <template>
   <div class="save-config-box">
     <div class="config-box1">
-      <span>快速触发：</span>
+      <span>{{ t('saveConfig.quickTrigger') }}：</span>
       <!-- <span>{{ quickTrigger }}</span> -->
-      <span>否</span>
+      <span>{{ t('saveConfig.no') }}</span>
     </div>
     <div class="config-box2">
-      <span>触发行程：</span>
+      <span>{{ t('saveConfig.triggerTravel') }}：</span>
       <span>{{ travelVal }}mm</span>
     </div>
     <div class="tip-box">
       <img src="@/assets/images/warn_icon.svg" alt="" />
-      <span>提示：保存选择按钮为机械模式</span>
+      <span>{{ t('saveConfig.tip') }}</span>
     </div>
     <saveConfigBtn :verify="travelVal > 0" @saveConfig="onclick" />
   </div>
@@ -19,6 +19,10 @@
 
 <script setup>
 import saveConfigBtn from '@/components/save-config-btn.vue';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
+
 const { travelVal } = defineProps({
   travelVal: {
     type: Number,

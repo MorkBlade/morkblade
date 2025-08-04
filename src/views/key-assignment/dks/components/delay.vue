@@ -59,7 +59,7 @@
           mm
         </div>
       </div>
-      <div class="close-btn" @click="onCloseDelayPage">关闭</div>
+      <div class="close-btn" @click="onCloseDelayPage">{{ t('dksDelay.close') }}</div>
     </div>
   </div>
 </template>

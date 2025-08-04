@@ -8,7 +8,7 @@
         :min="option.min"
         :max="option.max"
         :disabled="disabled"
-        title="首次触发行程"
+        :title="$t('quickTrigger.firstTouch')"
         @sendKeyVal="handleTriggerPointChange"
       />
       <setTravelCard
@@ -17,7 +17,7 @@
         :min="option.min"
         :max="option.max"
         :disabled="disabled"
-        title="RT按下行程"
+        :title="$t('quickTrigger.rtPress')"
         @sendKeyVal="setRtPressTravel"
       />
       <setTravelCard
@@ -26,7 +26,7 @@
         :min="option.min"
         :max="option.max"
         :disabled="disabled"
-        title="RT抬起行程"
+        :title="$t('quickTrigger.rtRelease')"
         @sendKeyVal="setRtReleaseTravel"
       />
       <div class="link-btn" @click="onLink" :class="{ linking: rtPressLinkRelease }">
@@ -57,6 +57,9 @@ import sureIcon from '@/assets/images/sure.svg';
 import linkIcon from '@/assets/images/link1.svg';
 import linkedIcon from '@/assets/images/link2.svg';
 import { watch } from 'vue';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 const keyboardStore = useKeyboardStore();
 const performanceStore = usePerformanceStore();
@@ -262,7 +265,7 @@ const saveRtConfig = async () => {
   });
   const res = setSingleTravel(keyboards.value, activeKeys.value, 'rt');
   if (res) {
-    showMessage('修改成功');
+    showMessage(t('quickTrigger.modifySuccess'));
   }
 };
 </script>

@@ -30,13 +30,16 @@ import setTravelCard from '@/components/set-travel-card.vue';
 import saveConfig from './components/save-config.vue';
 import { onBeforeUnmount } from 'vue';
 import { onMounted } from 'vue';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 const { rowIdx, colIdx, option, activeKeys, disabled, debounce, hasCurrentKey } = usePerformancePageHook();
 const keyboardStore = useKeyboardStore();
 const performanceStore = usePerformanceStore();
 const { keyboards } = storeToRefs(keyboardStore);
 
-const title = '按键行程设置';
+const title = t('mode.keyTravel');
 const singleTravel = ref(performanceStore.singleTouchTravel);
 
 emitter.on('key-click', ({ rowIndex, colIndex }) => {
@@ -145,7 +148,7 @@ const saveSingleConfig = async () => {
   });
   const res = setSingleTravel(keyboards.value, activeKeys.value);
   if (res) {
-    showMessage('修改成功');
+    showMessage(t('performanceMode.modifySuccess'));
   }
 };
 </script>

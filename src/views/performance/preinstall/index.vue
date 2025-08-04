@@ -2,7 +2,7 @@
   <div class="preinstall-box">
     <mCarousel :carouselData="PRESET_SETTINGS" @handleChangeItem="handleChangePreset" @handleSave="handleSavePreset" />
     <div class="bottom-taskbar">
-      <saveConfigBtn btnText="应用预设" :needKeys="false" :verify="true" @saveConfig="handleSavePreset" />
+      <saveConfigBtn :btnText="$t('preinstall.applyPreset')" :needKeys="false" :verify="true" @saveConfig="handleSavePreset" />
     </div>
   </div>
 </template>
@@ -40,7 +40,7 @@ const handleSavePreset = async () => {
   & .bottom-taskbar {
     position: absolute;
     top: var(--size-230);
-    left: calc(var(--size-510) - var(--spacing-5));
+    left: calc(var(--size-600) - var(--spacing-55));
     &__text {
       width: var(--size-150);
       margin-left: var(--spacing-38);

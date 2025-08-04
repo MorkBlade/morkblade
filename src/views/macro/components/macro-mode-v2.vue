@@ -1,6 +1,6 @@
 <template>
   <div class="macro-mode-container">
-    <h3>宏类型</h3>
+    <h3>{{ $t('macroModeV2.macroType') }}</h3>
     <template v-for="(item, idx) in types" :key="idx">
       <div class="type-item">
         <input
@@ -15,7 +15,7 @@
     </template>
     <template v-if="macroSettings.mode < 4">
       <div class="repeat-numbers">
-        <span>重复次数:</span>
+        <span>{{ $t('macroModeV2.repeatCount') }}:</span>
         <div class="number-controller">
           <button
             class="decrement-btn"
@@ -59,6 +59,10 @@
 </template>
 
 <script setup>
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
+
 const { macroMode, macroRepeatCount } = defineProps({
   macroMode: { type: Number, default: 0 },
   macroRepeatCount: { type: Number, default: 1 },
@@ -69,12 +73,12 @@ const emit = defineEmits(['update:settings']);
 // 创建宏设置对象
 const macroSettings = reactive({ mode: macroMode, repeatCount: macroRepeatCount });
 const types = [
-  '点击执行,执行时再次点击无效',
-  '点击执行,执行时再次点击重新执行',
-  '点击执行,执行时再次点击停止',
-  '点击执行,执行时再次点击,完成本次执行后停止',
-  '按住重复执行无限次,抬起停止',
-  '按住重复执行无限次,抬起执行后停止',
+  t('macroModeV2.clickExecute'),
+  t('macroModeV2.clickExecute2'),
+  t('macroModeV2.clickExecute3'),
+  t('macroModeV2.clickExecute4'),
+  t('macroModeV2.pressHold'),
+  t('macroModeV2.pressHold2'),
 ];
 let timer = null;
 

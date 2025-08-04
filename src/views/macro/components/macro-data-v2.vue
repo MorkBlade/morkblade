@@ -1,6 +1,6 @@
 <template>
   <div class="macro-data-container">
-    <h3>宏列表</h3>
+    <h3>{{ t('macroData.macroList') }}</h3>
     <TransitionGroup name="list" tag="div" class="container">
       <template v-for="(item, i) in curMacro">
         <template v-if="item.keyCode">
@@ -57,7 +57,7 @@
             @mouseleave="onMouseLeave(idx)"
           >
             <img :src="!idx ? changeIcon : item.icon" alt="" />
-            <span>{{ !idx && isStart ? '结束录制' : item.name }}</span>
+            <span>{{ !idx && isStart ? $t('macroData.endRecord') : item.name }}</span>
           </div>
         </template>
       </template>
@@ -93,7 +93,9 @@ import delayIcon from '@/assets/images/delay_icon.svg';
 import eventsIcon from '@/assets/images/events_icon.svg';
 import clearIcon from '@/assets/images/clear_icon.svg';
 import keyboardWord from '@/configs/byte-to-key/keyboard';
+import { useI18n } from 'vue-i18n';
 
+const { t } = useI18n();
 const { macroData } = defineProps({
   macroData: { type: Object, default: () => ({}) },
 });
@@ -118,10 +120,10 @@ const selectedIdx = ref(null); // macro.data高亮标识
 const lastEventTime = ref(null);
 
 const operationNameList = [
-  { name: '开始录制', icon: startIcon },
-  { name: '添加延迟', icon: delayIcon },
-  { name: '插入事件', icon: eventsIcon },
-  { name: '清除序列', icon: clearIcon },
+  { name: t('macroData.startRecord'), icon: startIcon },
+  { name: t('macroData.addDelay'), icon: delayIcon },
+  { name: t('macroData.addEvent'), icon: eventsIcon },
+  { name: t('macroData.clearMacroList'), icon: clearIcon },
 ];
 
 // keyCode映射
@@ -308,12 +310,12 @@ const onClick = (idx) => {
         lastKeydownEventTime = Date.now();
         document.addEventListener('keydown', handleKeyDownAndUp);
         document.addEventListener('keyup', handleKeyDownAndUp);
-        showMessage('开始录制');
+        showMessage(t('macroData.startRecord'));
       } else {
         document.removeEventListener('keydown', handleKeyDownAndUp);
         document.removeEventListener('keyup', handleKeyDownAndUp);
         emit('updateMacro:data', curMacro.value);
-        showMessage('结束录制');
+        showMessage(t('macroData.endRecord'));
       }
       break;
     case 1: // TODO v2添加延时再次获取时无法拆分添加的延时
@@ -355,10 +357,10 @@ const onClick = (idx) => {
             emit('updateMacro:data', curMacro.value);
           }, 500);
 
-          showMessage('插入事件成功');
+          showMessage(t('macroData.insertEventSuccess'));
           // console.log('已插入事件:', newEvent);
         } else {
-          showMessage('宏录入数量不能超过64', 'warning');
+          showMessage(t('macroData.macroListFull'), 'warning');
           // 如果需要，这里可以添加提示消息
         }
       } else {
@@ -377,7 +379,7 @@ const onClick = (idx) => {
       document.removeEventListener('keydown', handleKeyDownAndUp);
       document.removeEventListener('keyup', handleKeyDownAndUp);
       emit('updateMacro:clear', macroData);
-      showMessage('清除成功');
+      showMessage(t('macroData.clearSuccess'));
       calcPosition();
       break;
     default:
@@ -410,7 +412,7 @@ const handleKeyDownAndUp = (event) => {
   if (curMacro.value.length < 64) {
     curMacro.value.push(data);
   } else {
-    showMessage('宏录入数量不能超过64', 'warning');
+    showMessage(t('macroData.macroListFull'), 'warning');
     isStart.value = false;
     document.removeEventListener('keydown', handleKeyDownAndUp);
     document.removeEventListener('keyup', handleKeyDownAndUp);
@@ -438,7 +440,7 @@ const copyItem = (item, index) => {
 
     // 通知父组件更新数据
     emit('updateMacro:data', [...curMacro.value]);
-    showMessage('拷贝成功');
+    showMessage(t('macroData.copySuccess'));
 
     // 重新计算位置
     calcPosition();
@@ -457,7 +459,7 @@ const deleteItem = (item) => {
   if (itemIndex !== -1) {
     curMacro.value.splice(itemIndex, 1);
     emit('updateMacro:data', [...curMacro.value]);
-    showMessage('删除成功');
+    showMessage(t('macroData.deleteSuccess'));
     calcPosition();
     // console.log('已删除项:', item);
   }
@@ -716,7 +718,7 @@ const macroModeSettings = computed(() => {
 const updateMacroMode = (newSettings) => {
   const { mode, repeatCount } = newSettings;
   emit('updateMacro:mode', { mode, repeatCount });
-  showMessage('修改模式成功');
+  showMessage(t('macroData.modifyModeSuccess'));
 };
 </script>
 

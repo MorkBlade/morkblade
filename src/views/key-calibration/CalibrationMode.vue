@@ -18,6 +18,9 @@ import emitter from '@/utils/app-emitter';
 import echarts from '@/configs/echarts/index.js';
 import { scaleValue } from '@/utils/responsive.js';
 import { useKeyboardStore, usePerformanceStore } from '@/stores';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 const performanceStore = usePerformanceStore();
 const keyboardStore = useKeyboardStore();
@@ -63,7 +66,7 @@ const option = {
   }, // 每个刻度为1000
   series: [
     {
-      name: '实时行程',
+      name: t('calibration.realTimeTravel'),
       type: 'line',
       showSymbol: false,
       data: [],

@@ -25,7 +25,7 @@
 <script setup>
 import { useMacroStore } from '@/stores';
 import { useMacroHook } from '@/hooks';
-
+import { useI18n } from 'vue-i18n';
 import macroData from './components/macro-data.vue';
 import macroDataV2 from './components/macro-data-v2.vue';
 import macroList from './components/macro-list.vue';
@@ -33,7 +33,7 @@ import macroListV2 from './components/macro-list-v2.vue';
 
 const macroStore = useMacroStore();
 const { setMacroV2, setMacroModeV2, getMacroAllDataV2 } = useMacroHook();
-
+const { t } = useI18n();
 const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
 const curMacroIdx = ref(0);
 
@@ -109,7 +109,7 @@ const updateMacroData = async (data, settings) => {
       if (!macros.value[curMacroIdx.value]) {
         macros.value[curMacroIdx.value] = {
           id: Date.now(),
-          macroName: `宏${curMacroIdx.value + 1}`,
+          macroName: `${t('macro.macro')}${curMacroIdx.value + 1}`,
           createTime: Date.now(),
           macroLength: 0,
           data: [],

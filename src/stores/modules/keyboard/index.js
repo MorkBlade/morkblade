@@ -43,7 +43,6 @@ const useKeyboardStore = defineStore('keyboard', {
       }
       this.layout = layout;
       const res = await Promise.all(result);
-      console.log('res', res);
       return res;
     },
 
@@ -459,7 +458,6 @@ const useKeyboardStore = defineStore('keyboard', {
     async getAllFnKeyboardData() {
       const { getKeyboardDataV2 } = useKeyboardHook();
       const keyboardData = await getKeyboardDataV2();
-      console.log('keyboardData', keyboardData);
       return keyboardData;
     },
   },

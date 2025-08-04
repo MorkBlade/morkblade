@@ -1,7 +1,7 @@
 <template>
   <div class="key-calibration-container">
     <div class="show-key-box">
-      <p>按键测试</p>
+      <p>{{ $t('keyCalibration.keyTest') }}</p>
       <div class="keys">
         <div v-for="key in keys" :key="key.id">{{ key.name }}</div>
       </div>
@@ -12,13 +12,13 @@
     <div class="start-box">
       <div class="explain-box">
         <img src="@/assets/images/warn_icon.svg" alt="" />
-        <span>校准说明:</span>
+        <span>{{ $t('keyCalibration.calibrationTip1') }}</span>
       </div>
       <div class="text-box">
-        <span>校准时请完全按下按键并保持1到2秒</span>
-        <span>同时上下左右轻微晃动按键。</span>
-        <span>注意：快速的按下并抬起按键</span>
-        <span>会导致校准的结果不准确。</span>
+        <span>{{ $t('keyCalibration.calibrationTip2') }}</span>
+        <span>{{ $t('keyCalibration.calibrationTip3') }}</span>
+        <span>{{ $t('keyCalibration.calibrationTip4') }}</span>
+        <span>{{ $t('keyCalibration.calibrationTip5') }}</span>
       </div>
       <div
         class="start-btn"
@@ -28,7 +28,7 @@
         @mouseleave="onMouseLeave"
       >
         <img :src="isStart ? stopIcon : startIcon" alt="" />
-        <span>{{ isStart ? '结束校验' : '开始校验' }}</span>
+        <span>{{ isStart ? $t('keyCalibration.endAdjusting') : $t('keyCalibration.startAdjusting') }}</span>
       </div>
     </div>
   </div>

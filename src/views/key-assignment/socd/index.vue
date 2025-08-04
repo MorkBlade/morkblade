@@ -3,7 +3,7 @@
     <div class="left-config">
       <div class="key-group">
         <div>
-          <span>按键1:</span>
+          <span>{{ t('socd.key1') }}</span>
           <div class="key-box" @mouseenter="onMouseEn('key1')" @mouseleave="onMouseLe('key1')">
             <template v-if="isVersion2">
               <p :class="{ 'hover-bg': !socdInfo.pos[0] }" @mouseup="KeydropKey(0)">{{ keyText[0] }}</p>
@@ -19,7 +19,7 @@
           </div>
         </div>
         <div>
-          <span>按键2:</span>
+          <span>{{ t('socd.key2') }}</span>
           <div class="key-box" @mouseenter="onMouseEn" @mouseleave="onMouseLe">
             <template v-if="isVersion2">
               <p :class="{ 'hover-bg': !socdInfo.pos[1] }" @mouseup="KeydropKey(1)">{{ keyText[1] }}</p>
@@ -36,14 +36,14 @@
         </div>
       </div>
       <div class="delay-slider">
-        <p>延时(单位:ms)</p>
+        <p>{{ t('socd.delay') }}</p>
         <div class="slider-block">
           <el-slider v-model="socdInfo.delay" :min="0" :max="200" />
         </div>
       </div>
       <div class="cover-list" :class="DKS_MODES[socdInfo.mode] ? 'is-selected' : ''" @click="toggleDropdown">
         <img class="change-icon" :src="DKS_MODES[socdInfo.mode] ? changedIcon : changeIcon" alt="" />
-        <span class="mode-text">{{ DKS_MODES[socdInfo.mode] || '请选择' }}</span>
+        <span class="mode-text">{{ DKS_MODES[socdInfo.mode] || t('socd.selectPlace') }}</span>
         <img
           class="down-icon"
           :src="DKS_MODES[socdInfo.mode] ? downIcon1 : downIcon2"
@@ -64,7 +64,7 @@
       </div>
       <div class="save-btn" @click="saveConfig">
         <img src="@/assets/images/sure.svg" alt="" />
-        <span>应用映射</span>
+        <span>{{ t('socd.applyMapping') }}</span>
       </div>
     </div>
     <characterCard @handleSendKey="handleSocdKey" />
@@ -79,6 +79,7 @@ import { filterSocdAndRsKey } from '@/utils/filter-key.js';
 import { useKeyboardStore } from '@/stores';
 import { useAdvancedHook } from '@/hooks';
 import { showMessage } from '@/utils/message';
+import { useI18n } from 'vue-i18n';
 
 import mDialog from '@/components/dialog.vue';
 import characterCard from '@/components/character-card.vue';
@@ -90,14 +91,16 @@ import downIcon2 from '/src/assets/images/down_icon2.svg';
 const { setSocd, delAdvancedConfig } = useAdvancedHook();
 const keyboardStore = useKeyboardStore();
 
-const defaultHeight = ref(0);
+const { t } = useI18n();
+
+  const defaultHeight = ref(0);
 const delay = ref(0);
 const rotate = ref(180);
 const isShow = ref(false);
 const key1Index = ref(-1);
 const key2Index = ref(-1);
 // const originalSocdInfo = ref(null);
-const DKS_MODES = ['后覆盖', '第一个键优先', '第二个键优先', '中性'];
+const DKS_MODES = [t('socd.mode1'), t('socd.mode2'), t('socd.mode3'), t('socd.mode4')];
 const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
 
 const socdInfo = defineModel('socdInfo', {
@@ -168,7 +171,7 @@ const onMouseLe = (keyCode) => {
 
 const saveConfig = () => {
   if (!socdInfo.value.pos[0] || !socdInfo.value.pos[1]) {
-    showMessage('请先选择需要绑定的按键', 'warning');
+    showMessage(t('socd.keyBinded'), 'warning');
     return;
   }
   // if (originalSocdInfo && originalSocdInfo.key[0] && originalSocdInfo.key[1]) {
@@ -191,12 +194,12 @@ const onCancel = () => {
 const handleSocdKey = (keyVal) => {
   const unBinding = filterSocdAndRsKey(keyboardStore.keyboards, keyVal);
   if (unBinding) {
-    showMessage('该键已绑定高级键，请重新选择', 'warning');
+    showMessage(t('socd.keyBindedTip'), 'warning');
     return;
   }
   if (!socdInfo.value.pos[0]) {
     if (socdInfo.value.key[1] === keyVal) {
-      showMessage('SOCD键值需不同，请重新选择', 'warning');
+      showMessage(t('socd.keyDiff'), 'warning');
     } else {
       socdInfo.value.pos[0] = keyVal;
       socdInfo.value.key[0] = keyVal;
@@ -205,7 +208,7 @@ const handleSocdKey = (keyVal) => {
     // socdInfo.value.key[0] = keyVal;
   } else if (!socdInfo.value.pos[1]) {
     if (socdInfo.value.key[0] === keyVal) {
-      showMessage('SOCD键值需不同，请重新选择', 'warning');
+      showMessage(t('socd.keyDiff'), 'warning');
     } else {
       socdInfo.value.pos[1] = keyVal;
       socdInfo.value.key[1] = keyVal;
@@ -219,14 +222,14 @@ const KeydropKey = async (idx) => {
   const keyVal = keyboardStore.selectKey.keyCode;
   const unBinding = filterSocdAndRsKey(keyboardStore.keyboards, keyVal);
   if (unBinding) {
-    showMessage('该键已绑定高级键，请重新选择', 'warning');
+    showMessage(t('socd.keyBindedTip'), 'warning');
     return;
   }
 
   // Check if the key value already exists in the other position
   const otherIdx = idx === 0 ? 1 : 0;
   if (socdInfo.value.key[otherIdx] === keyVal) {
-    showMessage('SOCD键值需不同，请重新选择', 'warning');
+    showMessage(t('socd.keyDiff'), 'warning');
     return;
   }
 

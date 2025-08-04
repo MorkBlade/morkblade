@@ -4,7 +4,6 @@
     <template v-if="isVersion2">
       <configManager />
     </template>
-    <configManager />
     <logo />
     <checkLng />
     <!-- <div class="test-change-connect" @click="connectMk">连接mork blade tkl</div>
@@ -22,7 +21,7 @@ import checkLng from './components/check-lng.vue';
 import dropdownMenu from './components/dropdown-menu.vue';
 import logo from './components/logo.vue';
 import configManager from './components/config-manager.vue';
-
+const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
 const appStore = useAppStore();
 const deviceStore = useDeviceStore();
 const keyboardStore = useKeyboardStore();

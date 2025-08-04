@@ -1,10 +1,8 @@
 <template>
   <div class="setting-manager-container" @click="handleClick">
     <img class="setting-icon" src="@/assets/images/share.svg" />
-    <span class="setting-text">设置管理</span>
+    <span class="setting-text">{{ $t('configManager.settingManager') }}</span>
   </div>
-  <!-- <Dialog :textContent="'暂未开放，敬请期待'" :isShow="showDialog" @sure="handleSure" @cancel="handleCancel">
-  </Dialog> -->
   <DialogSetting
         :isShow="showDialog"
         @sure="handleSure"

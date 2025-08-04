@@ -101,6 +101,7 @@ import useSetAdvanced from './useSetAdvanced.js';
 import emitter from '@/utils/app-emitter';
 import { useAdvancedHook } from '@/hooks';
 import { showMessage } from '@/utils/message';
+import { useI18n } from 'vue-i18n';
 
 import mt from './mt/index.vue';
 import dks from './dks/index.vue';
@@ -113,6 +114,8 @@ import customKey from './custom-key/index.vue';
 import mDialog from '@/components/dialog.vue';
 import keyConfigCard from './components/key-config-card.vue';
 import explain from '@/components/explain.vue';
+
+const { t } = useI18n();
 
 const {
   edit,
@@ -144,7 +147,7 @@ const isExternalUpdate = ref(false);
 const originalSocdInfo = ref(null);
 const originalRsInfo = ref(null);
 const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
-const performanceItem = ['普通', '单击/长按', 'DKS', 'SOCD', 'RS', 'TGL', 'MPT', 'END'];
+const performanceItem = [t('keyAssignment.normal'), t('keyAssignment.singleClickLongPress'), 'DKS', 'SOCD', 'RS', 'TGL', 'MPT', 'END'];
 
 const changeMenu = (idx) => {
   clickItem.value = idx;
@@ -297,7 +300,7 @@ const onSure = async () => {
   // console.log('del advanced: ', delAdvancedItem.value, delAdvancedType.value);
   delAdvancedConfig(delAdvancedItem.value, delAdvancedType.value);
   resetDefaultValue();
-  showMessage('删除成功!');
+  showMessage(t('keyAssignment.deleteSuccess'));
   // emits('delConfig', advancedVal.value);
 };
 

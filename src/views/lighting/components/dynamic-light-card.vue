@@ -1,6 +1,6 @@
 <template>
   <div class="dynamic-light">
-    <p>动态灯光</p>
+    <p>{{ t('dynamicLightCard.dynamicLight') }}</p>
     <div class="dynamic-light-style">
       <!-- v2 -->
       <template v-if="isVersion2">
@@ -36,6 +36,9 @@
 <script setup>
 import { useLightSettingStore } from '@/stores';
 import emitter from '@/utils/app-emitter';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 // 预加载键盘灯光图片
 const keyLightImages = import.meta.glob('@/assets/images/dynamic*.svg', { eager: true });
@@ -55,48 +58,48 @@ const emits = defineEmits(['checkDynamicLight', 'changelightingMode']);
 const lightSettingStore = useLightSettingStore();
 const isVersion2 = ref(localStorage.getItem('keyboardVersion') === 'v2');
 const dynamicLightStyleV1 = [
-  '波纹荡漾',
-  '潮起潮落',
-  '涟漪轻漾',
-  '旋转风暴',
-  '幸运彩虹',
-  '闪耀彩虹',
-  '熠熠生辉',
-  '移动窗格',
-  '波形变换',
-  '移形换影',
-  '正弦曲线',
-  '行云流水',
-  '百花争艳',
-  '斑斓镶嵌',
-  '雨落如注',
-  '跃动不息',
-  '踏雪无痕',
-  '踏雪寻梅',
-  '镭射穿云',
-  '水波荡漾',
+ t('dynamicLightCard.dynamicLightStyleV1.ripplesUndulating'),
+ t('dynamicLightCard.dynamicLightStyleV1.theTidesRiseAndFall'),
+ t('dynamicLightCard.dynamicLightStyleV1.ripplesGentlySpread'),
+ t('dynamicLightCard.dynamicLightStyleV1.rotatingStorm'),
+ t('dynamicLightCard.dynamicLightStyleV1.luckyRainbow'),
+ t('dynamicLightCard.dynamicLightStyleV1.sparklingRainbow'),
+  t('dynamicLightCard.dynamicLightStyleV1.glittering'),
+  t('dynamicLightCard.dynamicLightStyleV1.movingGrid'),
+  t('dynamicLightCard.dynamicLightStyleV1.waveTransformation'),
+  t('dynamicLightCard.dynamicLightStyleV1.shapeChange'),
+  t('dynamicLightCard.dynamicLightStyleV1.sineCurve'),
+  t('dynamicLightCard.dynamicLightStyleV1.flowingClouds'),
+  t('dynamicLightCard.dynamicLightStyleV1.blooming'),
+  t('dynamicLightCard.dynamicLightStyleV1.colorfulEmbedding'),
+  t('dynamicLightCard.dynamicLightStyleV1.rainDrops'),
+  t('dynamicLightCard.dynamicLightStyleV1.moving'),
+  t('dynamicLightCard.dynamicLightStyleV1.snowless'),
+  t('dynamicLightCard.dynamicLightStyleV1.snowSearch'),
+  t('dynamicLightCard.dynamicLightStyleV1.laserPenetration'),
+  t('dynamicLightCard.dynamicLightStyleV1.waterRipple'),
 ];
 const dynamicLightStyleV2 = [
-  '宁静之光',
-  '潮起潮落',
-  '涟漪轻漾',
-  '旋转风暴',
-  '幸运彩虹',
-  '闪耀彩虹',
-  '熠熠生辉',
-  '移动窗格',
-  '波形变换',
-  '移形换影',
-  '正弦曲线',
-  '行云流水',
-  '百花争艳',
-  '斑斓镶嵌',
-  '雨落如注',
-  '跃动不息',
-  '踏雪无痕',
-  '踏雪寻梅',
-  '镭射穿云',
-  '水波荡漾',
+  t('dynamicLightCard.dynamicLightStyleV2.quietLight'),
+  t('dynamicLightCard.dynamicLightStyleV2.theTidesRiseAndFall'),
+  t('dynamicLightCard.dynamicLightStyleV2.ripplesGentlySpread'),
+  t('dynamicLightCard.dynamicLightStyleV2.rotatingStorm'),
+  t('dynamicLightCard.dynamicLightStyleV2.luckyRainbow'),
+  t('dynamicLightCard.dynamicLightStyleV2.sparklingRainbow'),
+  t('dynamicLightCard.dynamicLightStyleV2.glittering'),
+  t('dynamicLightCard.dynamicLightStyleV2.movingGrid'),
+  t('dynamicLightCard.dynamicLightStyleV2.waveTransformation'),
+  t('dynamicLightCard.dynamicLightStyleV2.shapeChange'),
+  t('dynamicLightCard.dynamicLightStyleV2.sineCurve'),
+  t('dynamicLightCard.dynamicLightStyleV2.flowingClouds'),
+  t('dynamicLightCard.dynamicLightStyleV2.blooming'),
+  t('dynamicLightCard.dynamicLightStyleV2.colorfulEmbedding'),
+  t('dynamicLightCard.dynamicLightStyleV2.rainDrops'),
+  t('dynamicLightCard.dynamicLightStyleV2.moving'),
+  t('dynamicLightCard.dynamicLightStyleV2.snowless'),
+  t('dynamicLightCard.dynamicLightStyleV2.snowSearch'),
+  t('dynamicLightCard.dynamicLightStyleV2.laserPenetration'),
+  t('dynamicLightCard.dynamicLightStyleV2.waterRipple'),
 ];
 
 emitter.on('versionChange', (flag) => {
@@ -114,7 +117,7 @@ const dynamicLightModeList = computed(() => {
     }
     return dynamicLightStyleV1;
   } else {
-    return ['样式一', '样式二', '样式三', '样式四'];
+    return [t('dynamicLightCard.style1'), t('dynamicLightCard.style2'), t('dynamicLightCard.style3'), t('dynamicLightCard.style4')];
   }
 });
 

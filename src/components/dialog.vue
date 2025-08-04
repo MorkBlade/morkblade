@@ -9,11 +9,11 @@
           <div class="btn-group">
             <div class="sure-btn" @click="onSure" v-if="showConfirmBtn">
               <img src="@/assets/images/sure_icon.svg" alt="" />
-              <span>确认</span>
+              <span>{{ $t('dialog.confirm') }}</span>
             </div>
             <div class="cancel-btn" @click="onCancel" v-if="showCancelBtn">
               <img src="@/assets/images/cancel_icon.svg" alt="" />
-              <span>取消</span>
+              <span>{{ $t('dialog.cancel') }}</span>
             </div>
           </div>
         </template>
@@ -33,11 +33,11 @@
             <div class="update-btn" :style="enterUpdate ? { left: '215px' } : ''" @click="onSure" v-if="showConfirmBtn">
               <img class="update-img" src="@/assets/images/sure_icon.svg" alt="" />
               <!-- <span class="update-text">{{ text[updateStep] }}</span> -->
-              <span class="update-text">{{ updateSuc ? '确认' : enterUpdate ? '升级中..' : '升级' }}</span>
+              <span class="update-text">{{ updateSuc ? $t('dialog.confirm') : enterUpdate ? $t('dialog.updating') : $t('dialog.update') }}</span>
             </div>
             <div class="cancel-btn" @click="onCancel" v-if="!enterUpdate && showCancelBtn">
               <img src="@/assets/images/cancel_icon.svg" alt="" />
-              <span>取消升级</span>
+              <span>{{ $t('dialog.cancelUpdate') }}</span>
             </div>
           </div>
         </template>
@@ -49,10 +49,13 @@
 <script setup>
 import { onMounted } from 'vue';
 import { onBeforeUnmount, ref, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 const { dialogTitle, textContent, isShow, isUpdate, progress, updateRes, showConfirmBtn, showCancelBtn } = defineProps({
   dialogTitle: String,
-  textContent: { type: String, default: '是否应用修改？' },
+  textContent: { type: String, default: '是否应用修改' },
   isShow: { type: Boolean, default: false },
   isUpdate: { type: Boolean, default: false },
   progress: { type: Number, default: 0 },
@@ -68,7 +71,7 @@ const enterUpdate = ref(false);
 const updateSuc = ref(false);
 const updateStep = ref(0);
 const updating = ref(false);
-const text = ['进入升级模式', '连接', '升级', '确认'];
+const text = [t('dialog.enterUpdateMode'), t('dialog.connect'), t('dialog.update'), t('dialog.confirm')];
 
 const preventBackgroundScroll = (event) => {
   event.preventDefault();

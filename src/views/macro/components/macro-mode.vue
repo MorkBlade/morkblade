@@ -1,12 +1,12 @@
 <template>
   <div class="macro-mode-container">
-    <h3>宏类型</h3>
+    <h3>{{ $t('macroModeV1.macroType') }}</h3>
     <div v-for="(item, idx) in types" :key="idx" class="type-item">
       <input type="radio" :id="idx" name="type" :checked="macroSettings.mode === idx" @change="changeMacroType(idx)" />
       <span>{{ item }}</span>
     </div>
     <div class="repeat-numbers">
-      <span>重复次数:</span>
+      <span>{{ $t('macroModeV1.repeatCount') }}:</span>
       <div class="number-controller">
         <button class="decrement-btn" @click="decrementValue('repeatCount')" :disabled="macroSettings.repeatCount <= 1">
           -
@@ -22,7 +22,7 @@
       </div>
     </div>
     <div class="repeat-numbers">
-      <span>重复间隔:</span>
+      <span>{{ $t('macroModeV1.repeatInterval') }}:</span>
       <div class="number-controller">
         <button
           class="decrement-btn"
@@ -45,6 +45,9 @@
 </template>
 
 <script setup>
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 const props = defineProps({
   initialMode: { type: Number, default: 0 },
   initialRepeatCount: { type: Number, default: 1 },
@@ -60,7 +63,7 @@ const macroSettings = reactive({
   repeatInterval: props.initialRepeatInterval, // 重复间隔 (ms)
 });
 
-const types = ['点击执行', '点击重复执行', '按下重复执行,抬起停止', '按下重复执行,抬起执行后停止'];
+const types = [t('macroModeV1.clickExecute'), t('macroModeV1.clickExecute2'), t('macroModeV1.clickExecute3'), t('macroModeV1.clickExecute4')];
 
 // 改变宏类型
 const changeMacroType = (idx) => {

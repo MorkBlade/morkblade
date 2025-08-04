@@ -4,7 +4,7 @@
       <div class="key-group">
         <div class="click-box">
           <!-- <span>单击</span> -->
-          <span>{{ isVersion2 ? '单击:' : '长按:' }}</span>
+          <span>{{ isVersion2 ? t('mt.click') : t('mt.longPress') }}</span>
           <div class="key-box" @mouseenter="onMouseEn('click')" @mouseleave="onMouseLe('click')">
             <p :class="{ 'hover-bg': !mtInfo.dks[0] }" @mouseup="KeydropKey(0)">{{ keyText[0] }}</p>
             <div
@@ -16,7 +16,7 @@
         </div>
         <div class="hold-box">
           <!-- <span>长按</span> -->
-          <span>{{ isVersion2 ? '长按:' : '单击:' }}</span>
+          <span>{{ isVersion2 ? t('mt.longPress') : t('mt.click') }}</span>
           <div class="key-box" @mouseenter="onMouseEn" @mouseleave="onMouseLe">
             <p :class="{ 'hover-bg': !mtInfo.dks[1] }" @mouseup="KeydropKey(1)">{{ keyText[1] }}</p>
             <div
@@ -28,14 +28,14 @@
         </div>
       </div>
       <div class="delay-slider">
-        <p>长按触发延时(单位:ms)</p>
+        <p>{{ t('mt.delay') }}</p>
         <div class="slider-block">
           <el-slider v-model="mtInfo.delay" :min="0" :max="200" :step="1" />
         </div>
       </div>
       <div class="save-btn" @click="saveConfig">
         <img src="@/assets/images/sure.svg" alt="" />
-        <span>应用映射</span>
+        <span>{{ t('mt.applyMapping') }}</span>
       </div>
     </div>
     <characterCard @handleSendKey="handleMtKey" />
@@ -49,9 +49,12 @@ import { showMessage } from '@/utils/message';
 import { useKeyboardStore } from '@/stores';
 import { useAdvancedHook } from '@/hooks';
 import { filterSocdAndRsKey } from '@/utils/filter-key.js';
+import { useI18n } from 'vue-i18n';
 
 import mDialog from '@/components/dialog.vue';
 import characterCard from '@/components/character-card.vue';
+
+const { t } = useI18n();
 
 const { setMT } = useAdvancedHook();
 const keyboardStore = useKeyboardStore();
@@ -115,11 +118,11 @@ const saveConfig = () => {
   console.log(activeKeys.value);
   // console.log('handleKeyTypeChangehandleKeyTypeChangehandleKeyTypeChange', mtInfo.value.dks);
   if (!activeKeys.value.length) {
-    showMessage('请先选择需要修改的按键', 'warning');
+    showMessage(t('mt.selectKeyTip'), 'warning');
     return;
   }
   if (!mtInfo.value.dks[0] && !mtInfo.value.dks[1]) {
-    showMessage('请选择需要关联的按键', 'warning');
+    showMessage(t('mt.selectKey'), 'warning');
     return;
   }
 

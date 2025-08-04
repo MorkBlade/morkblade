@@ -2,7 +2,7 @@
   <div class="tgl-box">
     <div class="left-config">
       <div class="key">
-        <span>切换开关TGL:</span>
+        <span>{{ $t('tgl.key1') }}</span>
         <div class="key-box" @mouseenter="onMouseEn('key1')" @mouseleave="onMouseLe('key1')">
           <p :class="{ 'hover-bg': !tglInfo.dks }" @mouseup="KeydropFirst">{{ keyText }}</p>
           <div
@@ -13,14 +13,14 @@
         </div>
       </div>
       <div class="delay-slider">
-        <p>长按触发延时(单位:ms)</p>
+        <p>{{ $t('tgl.delay') }}</p>
         <div class="slider-block">
           <el-slider v-model="tglInfo.delay" :min="0" :max="200" tooltip-class="custom-tooltip" />
         </div>
       </div>
       <div class="save-btn" @click="saveConfig">
         <img src="@/assets/images/sure.svg" alt="" />
-        <span>应用映射</span>
+        <span>{{ $t('tgl.applyMapping') }}</span>
       </div>
     </div>
     <characterCard @handleSendKey="handleTglKey" />
@@ -34,9 +34,12 @@ import { useKeyboardStore } from '@/stores';
 import { useAdvancedHook } from '@/hooks';
 import { showMessage } from '@/utils/message';
 import { filterSocdAndRsKey } from '@/utils/filter-key.js';
+import { useI18n } from 'vue-i18n';
 
 import mDialog from '@/components/dialog.vue';
 import characterCard from '@/components/character-card.vue';
+
+const { t } = useI18n();
 
 const tglInfo = defineModel('tglInfo', {
   type: Object,
@@ -66,11 +69,11 @@ const activeKeys = computed(() => {
 
 const saveConfig = () => {
   if (!activeKeys.value.length) {
-    showMessage('请先选择需要修改的按键', 'warning');
+    showMessage(t('tgl.selectKeyTip'), 'warning');
     return;
   }
   if (!tglInfo.value.dks) {
-    showMessage('请选择需要关联的按键', 'warning');
+    showMessage(t('tgl.selectKey'), 'warning');
     return;
   }
   isShow.value = true;

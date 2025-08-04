@@ -1,25 +1,25 @@
 <template>
   <div class="save-config-box">
     <div class="config-box">
-      <span>快速触发：</span>
+      <span>{{ $t('saveConfig.quickTrigger') }}：</span>
       <!-- <span>{{ quickTrigger }}</span> -->
-      <span>是</span>
+      <span>{{ $t('saveConfig.yes') }}</span>
     </div>
     <div class="other-config-box">
-      <span>触发行程：</span>
+      <span>{{ $t('saveConfig.triggerTravel') }}：</span>
       <span>{{ travelVal }}mm</span>
     </div>
     <div class="other-config-box">
-      <span>RT按下行程：</span>
+      <span>{{ $t('saveConfig.rtPress') }}：</span>
       <span>{{ RTKeyDown }}mm</span>
     </div>
     <div class="other-config-box">
-      <span>RT抬起行程：</span>
+      <span>{{ $t('saveConfig.rtRelease') }}：</span>
       <span>{{ RTKeyUp }}mm</span>
     </div>
     <div class="tip-box">
       <img src="@/assets/images/warn_icon.svg" alt="" />
-      <span>提示：保存选择按钮为RT模式</span>
+      <span>{{ $t('saveConfig.tip2') }}</span>
     </div>
     <saveConfigBtn :verify="travelVal > 0 && RTKeyDown > 0 && RTKeyUp > 0" @saveConfig="onSure" />
   </div>

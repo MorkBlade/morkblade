@@ -2,7 +2,7 @@
   <div class="light-luminance">
     <template v-if="!isVersion2 || (isVersion2 && isCheckVersion)">
       <div class="sleep-time-box">
-        <span class="title">休眠时间:</span>
+        <span class="title">{{ t('lightLuminance.sleepTime') }}</span>
         <div
           class="cover-list"
           :class="selectedId === lingtingData.sleepTime ? 'is-selected' : ''"
@@ -36,12 +36,12 @@
       </div>
     </template>
     <div class="lumminance-box">
-      <span class="title">亮度:</span>
+      <span class="title">{{ t('lightLuminance.brightness') }}</span>
       <horizontalSlider :sliderValue="lingtingData.luminance" :min="0" :max="max" @sendSliderVal="getLuminance" />
       <span class="show-value">{{ lingtingData.luminance || 0 }}</span>
     </div>
     <div class="speed-box">
-      <span class="title">速度:</span>
+      <span class="title">{{ t('lightLuminance.speed') }}</span>
       <horizontalSlider :sliderValue="lingtingData.speed" :min="0" :max="max" @sendSliderVal="getSpeed" />
       <span class="show-value">{{ lingtingData.speed || 0 }}</span>
     </div>
@@ -60,10 +60,11 @@ import downArrowed from '@/assets/images/down_icon.svg';
 import downArrow from '@/assets/images/down_icon2.svg';
 
 import horizontalSlider from '@/components/horizontal-slider.vue';
+import { useI18n } from 'vue-i18n';
 
 const lingtingData = defineModel();
 const emits = defineEmits(['changeSleepDelay', 'changeLuminance', 'changeSpeed']);
-
+const { t } = useI18n();
 const { isCheckVersion } = useVersionHook('1.0.4.0');
 const defaultHeight = ref(0);
 const rotate = ref(180);
@@ -109,12 +110,12 @@ const changeLightSleepDelay = async (id) => {
 };
 
 const getSleepDelayLabel = (delay) => {
-  if (!LIGHT_SLEEP_DELAY?.length) return '未设置';
-  if (delay === 0 || !delay) return LIGHT_SLEEP_DELAY[LIGHT_SLEEP_DELAY.length - 1]?.label || '未设置';
+  if (!LIGHT_SLEEP_DELAY?.length) return t('lightLuminance.notSet');
+  if (delay === 0 || !delay) return LIGHT_SLEEP_DELAY[LIGHT_SLEEP_DELAY.length - 1]?.label || t('lightLuminance.notSet');
   const index = LIGHT_SLEEP_DELAY.findIndex((ite) => ite.id === lingtingData.value.sleepTime);
 
-  if (index < 0 || index >= LIGHT_SLEEP_DELAY.length) return LIGHT_SLEEP_DELAY[0]?.label || '未设置';
-  return LIGHT_SLEEP_DELAY[index]?.label || '未设置';
+  if (index < 0 || index >= LIGHT_SLEEP_DELAY.length) return LIGHT_SLEEP_DELAY[0]?.label || t('lightLuminance.notSet');
+  return LIGHT_SLEEP_DELAY[index]?.label || t('lightLuminance.notSet');
 };
 
 // TODO logo keyboard灯光速度&亮度是否独立

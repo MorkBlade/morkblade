@@ -105,7 +105,7 @@
       </div>
       <div class="save-btn" @click="saveConfig">
         <img src="@/assets/images/sure.svg" alt="" />
-        <span>应用映射</span>
+        <span>{{ t('dks.applyMapping') }}</span>
       </div>
     </div>
     <characterCard @handleSendKey="handleDksKey" />
@@ -113,13 +113,13 @@
   <dksDelay
     v-model:delayPageShow="delayPageShow1"
     :delay="dksInfo.db"
-    title="抬起行程"
+    :title="t('dks.releaseTravel')"
     @changeDelay="changeDksDelay1"
   />
   <dksDelay
     v-model:delayPageShow="delayPageShow2"
     :delay="dksInfo.db2"
-    title="触底行程"
+    :title="t('dks.pressTravel')"
     @changeDelay="changeDksDelay2"
   />
   <mDialog v-model:isShow="isShow" @sure="onSure" @cancel="onCancel" />
@@ -132,9 +132,11 @@ import { useAdvancedHook } from '@/hooks';
 import { showMessage } from '@/utils/message';
 import { scaleValue } from '@/utils/responsive';
 import { filterSocdAndRsKey } from '@/utils/filter-key.js';
-
+import { useI18n } from 'vue-i18n';
 import mDialog from '@/components/dialog.vue';
 import dksDelay from './components/delay.vue';
+
+const { t } = useI18n();
 
 const dksInfo = defineModel('dksInfo', {
   type: Object,
@@ -189,10 +191,10 @@ const clickData = reactive([
   [false, false, false, false, false, false, false],
 ]);
 const titleData = [
-  { name: '按键起点', val: '1.50' },
-  { name: '按下触底', val: '3.00' },
-  { name: '触底抬起', val: '3.00' },
-  { name: '完全抬起', val: '1.50' },
+  { name: t('dks.keyStart'), val: '1.50' },
+  { name: t('dks.keyPress'), val: '3.00' },
+  { name: t('dks.keyRelease'), val: '3.00' },
+  { name: t('dks.keyEnd'), val: '1.50' },
 ];
 
 // 获取CSS变量
@@ -706,11 +708,11 @@ const stopDrag = () => {
 
 const saveConfig = () => {
   if (activeKeys.value.length === 0) {
-    showMessage('请先选择需要修改的按键', 'warning');
+    showMessage(t('dks.selectKeyTip'), 'warning');
     return;
   }
   if (!dksInfo.value.dks[0] && !dksInfo.value.dks[1] && !dksInfo.value.dks[2] && !dksInfo.value.dks[3]) {
-    showMessage('请选择需要关联的按键', 'warning');
+    showMessage(t('dks.selectKey'), 'warning');
     return;
   }
   isShow.value = true;

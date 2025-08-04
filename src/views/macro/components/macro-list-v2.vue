@@ -1,13 +1,13 @@
 <template>
   <div class="macro-list-container">
-    <h3>宏列表</h3>
+    <h3>{{ $t('macroListV2.macroList') }}</h3>
     <div class="macro-list">
       <template v-for="(item, idx) in macroData" :key="item.id">
         <!-- <template v-if="item.valid"> -->
         <div class="macro" :class="{ 'is-checked': curMacroIdx === idx }" @click="checkMacro(idx)">
-          <h4>{{ `宏${idx + 1}` }}</h4>
-          <p class="create-time">创建时间:{{ formatTimestamp(item.createTime || Date.now()) }}</p>
-          <p class="length">操作长度:{{ getMacroValidCount(item.data) }}</p>
+          <h4>{{ `${$t('macroListV2.macroName')}${idx + 1}` }}</h4>
+          <p class="create-time">{{ $t('macroListV2.createTime') }}{{ formatTimestamp(item.createTime || Date.now()) }}</p>
+          <p class="length">{{ $t('macroListV2.length') }}{{ getMacroValidCount(item.data) }}</p>
           <div class="controls-group" @click.stop>
             <!-- <span class="copy-btn" @click="copyMacro(item)">复制</span>
             <span class="del-btn" @click="delMacro(item.id)">删除</span> -->
@@ -18,7 +18,7 @@
       <template v-if="macroData.length < 16">
         <div class="add-macro">
           <div @click="addMacro">
-            <span></span>新建宏</div>
+            <span></span>{{ $t('macroListV2.addMacro') }}</div>
         </div>
       </template>
     </div>
@@ -28,7 +28,9 @@
 <script setup>
 import { useMacroStore } from '@/stores';
 import { storeToRefs } from 'pinia';
+import { useI18n } from 'vue-i18n';
 
+const { t } = useI18n();
 const macros = defineModel('macros', { default: () => [] });
 
 // 通知父组件选中的宏索引
@@ -112,7 +114,7 @@ const copyMacro = (macro) => {
   const times = Date.now();
   macroJSON.createTime = times;
   macroJSON.id = parseInt(times / 1000);
-  macroJSON.macroName = '宏' + (macros.value.length + 1);
+  macroJSON.macroName = `${t('macroListV2.macroName')}${macros.value.length + 1}`;
 
   macroJSON.mode = macro.mode || 0;
   macroJSON.repeatCount = macro.repeatCount || 1;
@@ -124,7 +126,7 @@ const copyMacro = (macro) => {
 
 const delMacro = (id) => {
   if (macroStore.usedMacro.indexOf(id) > -1) {
-    console.log('宏正在使用中，无法删除');
+    showMessage(t('macroListV2.macroIsUsing'), 'warning');
     return;
   }
   // 创建新数组以触发响应式更新

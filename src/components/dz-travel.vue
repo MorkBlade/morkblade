@@ -198,8 +198,8 @@ const handleBlur = (e) => {
   }
   travelVal.value = sendTravel;
 
-  if (inputValue <= 0.005 && !deadZone) showMessage('最小值为0.005', 'warning');
-  if (inputValue >= max) showMessage('最大值为3.3', 'warning');
+  if (inputValue <= 0.005 && !deadZone) showMessage(t('dzTravel.minValue'), 'warning');
+  if (inputValue >= max) showMessage(t('dzTravel.maxValue'), 'warning');
   emits('sendKeyVal', Number(sendTravel.toFixed(3)));
 };
 
