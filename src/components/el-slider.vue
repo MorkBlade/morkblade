@@ -8,7 +8,7 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue'
-const value = ref(0)
+const value = ref(20)
 
 /* const formatTooltip = (val: number) => {
   return val / 100

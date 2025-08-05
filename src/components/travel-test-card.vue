@@ -17,10 +17,10 @@
             </div>
           </div>
           <div class="arrow-nums" 
-            :style="{ transform: `translateY(${currentSingleTravel * 70}px)` }"
+            :style="{ transform: `translateY(${testEnabled ? arrowHeight : -400}px)` }"
           >
             <img class="arrow-left" src="@/assets/images/arrow_left.svg" alt="">
-            <p>{{ currentSingleTravel }}mm</p>
+            <p>{{ arrowHeightValue }}mm</p>
           </div>
 
         </div>
@@ -47,7 +47,6 @@ const testEnabled = ref(true); // 默认开启
 const maxMM = ref(0);
 const keyPressTestCount = ref(0);
 const currentSingleTravel = ref(props.sliderVal);
-console.log(currentSingleTravel.value)
 const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
 // const sliderHeight = computed(() => {
 //   return getComputedStyle(document.documentElement).getPropertyValue('--slider-height').trim();
@@ -74,16 +73,29 @@ watch(keyPressTestCount, async () => {
 
 const dynamicHeight = computed(() => {
   // 使用 CSS 变量获取基准值
-  const baseValue = getComputedStyle(document.documentElement).getPropertyValue('--size-260');
+  const baseValue = getComputedStyle(document.documentElement).getPropertyValue('--size-200');
   const baseHeight = parseInt(baseValue) || 190;
 
   // 计算动态高度
   const height = -baseHeight + (maxMM.value / 4.0) * ((baseHeight * baseHeight) / 190);
-
   // 限制最大高度
   return Math.min(Math.max(height, -baseHeight), 0);
 });
 
+const arrowHeight = computed(() => {
+  if (currentSingleTravel.value && maxMM.value < currentSingleTravel.value) {
+    return Math.max(dynamicHeight.value + 230, (currentSingleTravel.value + 415)/4.0);
+  } else {
+    return Math.max(dynamicHeight.value + 230, 0);
+  }
+});
+const arrowHeightValue = computed(() => {
+  if (currentSingleTravel.value && maxMM.value < currentSingleTravel.value) {
+    return currentSingleTravel.value.toFixed(2);
+  } else {
+    return maxMM.value.toFixed(2);
+  }
+});
 // 组件销毁
 onUnmounted(() => {
   testEnabled.value = false;

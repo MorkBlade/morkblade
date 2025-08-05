@@ -1,6 +1,6 @@
 <template>
   <div class="key-light">
-    <div class="light-title">颜色预设:</div>
+    <!-- <div class="light-title">颜色预设:</div> -->
     <staticLightCard
       staticType="keyLight"
       :staticLightColorList="keyLighting.staticColors"
