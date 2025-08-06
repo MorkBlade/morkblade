@@ -134,7 +134,7 @@ const axisID = computed(() => {
 
 const travelRange = computed(() => {
   if (checkAixsId.value === null) return '';
-  return `${axisList.value[checkAixsId.value]?.doctrine_range_right}mm-${axisList.value[checkAixsId.value]?.doctrine_range_left}mm`;
+  return `${axisList.value[checkAixsId.value]?.doctrine_range_right}-${axisList.value[checkAixsId.value]?.doctrine_range_left}mm`;
 });
 
 const axisName = computed(() => {
@@ -145,7 +145,7 @@ const axisName = computed(() => {
 const handleSaveAxis = async () => {
   if (activeKeys.value.length !== 0) {
     const { setAxis } = usePerformanceHook();
-    // console.log('set axis:', keyboards.value, activeKeys.value, checkAixsId.value);
+    console.log('set axis:', keyboards.value, activeKeys.value, checkAixsId.value);
     const res = setAxis(keyboards.value, activeKeys.value, checkAixsId.value);
     if (res) {
       showMessage(t('axisSetting.modifySuccess'));
@@ -165,7 +165,7 @@ const changeAxisV2 = (axisID) => {
 
 const handleMatchJLD = (e) => {
   const jldAxis = axisList.value.filter((ite) => {
-    return ite.factory_name === t('axisSetting.jld');
+    return ite.factory_name === 'GATERON';
   });
   console.log('jldAxis: ', jldAxis);
 
@@ -174,7 +174,7 @@ const handleMatchJLD = (e) => {
 
 const handleMatchLZ = (e) => {
   const lzAxis = axisList.value.filter((ite) => {
-    return ite.factory_name === t('axisSetting.suoai');
+    return ite.factory_name === '索爱';
   });
   axisBrandList.value = lzAxis;
 };
@@ -190,7 +190,7 @@ const handleMatchTTC = (e) => {
 
 const handleMatchOther = (e) => {
   const otherAxis = axisList.value.filter((ite) => {
-    return ite.factory_name === '';
+    return ite.factory_name === 'other';
   });
   console.log('otherAxis: ', otherAxis);
   if (otherAxis.length === 0) showMessage(t('axisSetting.noMoreAxis'), 'warning');

@@ -264,6 +264,12 @@ export const ICON_MAP = {
     115: new URL('@/assets/images/ws.avif', import.meta.url).href,
     116: new URL('@/assets/images/E_sport_wcw.avif', import.meta.url).href,
   },
+  GATERON: {
+    58: new URL('@/assets/images/ciyupro.avif', import.meta.url).href,
+    106: new URL('@/assets/images/gd.png', import.meta.url).href,
+    // 4: new URL('@/assets/images/wcw.avif', import.meta.url).href,
+    // 78: new URL('@/assets/images/wcw.avif', import.meta.url).href,
+  },
   佳达隆: {
     58: new URL('@/assets/images/ciyupro.avif', import.meta.url).href,
     106: new URL('@/assets/images/gd.png', import.meta.url).href,

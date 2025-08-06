@@ -9,6 +9,7 @@ import {
   useKeyboardStore, 
   useAppStore, 
   useMacroStore, 
+  usePerformanceStore,
 } from '@/stores/index';
 
 export const useConfigHook = () => {
@@ -154,6 +155,9 @@ export const useConfigHook = () => {
         const { setCustomLighting } = useLightingHook();
         const { setPreset } = usePerformanceHook();
 
+        const performanceStore = usePerformanceStore();
+        const isAxisStatus = performanceStore.isAxisStatus;
+
         try {
 
             // 1. 批量设置所有层的键位
@@ -195,7 +199,12 @@ export const useConfigHook = () => {
                         axis: performance.axisID || 0,
                         row,
                         col,
-                        calibrate: 0
+                        calibrate: 0,
+                        ...(isAxisStatus === 'v2' ? {
+                            axisV2Id: 8256,
+                            axisRangeMax: 4000,
+                            axisCoefficient: 1000,
+                        } : {}),
                     };
 
                     await services.setPerformanceV2(params);

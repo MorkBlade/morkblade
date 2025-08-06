@@ -1,4 +1,4 @@
-'
+
 // 定义不同的 baseURL
 export const BASE_URLS = {
   API: '/api/v1', // 使用代理地址

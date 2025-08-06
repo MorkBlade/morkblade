@@ -56,6 +56,8 @@ export const usePerformanceHook = () => {
       return await processKeysV2(keyboards, activeKeys, (performance) => {
         performance.axisID = axisID;
       });
+
+
     } else {
       // v1设置轴
       const promises = activeKeys.map(async (keyLocation) => {
@@ -153,6 +155,16 @@ export const usePerformanceHook = () => {
 };
 
 const changeParams = (params) => {
+  const performanceStore = usePerformanceStore();
+  const isAxisStatus = performanceStore.isAxisStatus; 
+  let axisV2Data = {}
+  if (isAxisStatus === 'v2') {
+    axisV2Data = {
+      axisV2Id: performanceStore.axisList[params.axisID].axis_id,
+      axisRangeMax: performanceStore.axisList[params.axisID].axis_range_max,
+      axisCoefficient: performanceStore.axisList[params.axisID].axis_coefficient, 
+    }
+  }
   const res = {
     mode: params.mode,
     normalPress: params.singleTriggeringValue,
@@ -164,6 +176,10 @@ const changeParams = (params) => {
     axis: params.axisID,
     row: params.row,
     col: params.col,
+
+
+    ...axisV2Data,
+
   };
 
   return res;
@@ -181,7 +197,7 @@ const processKeysV2 = async (keyboards, activeKeys, modifyPerformance = null) =>
     if (modifyPerformance) {
       modifyPerformance(performance);
     }
-
+    console.log('performance', performance);
     const params = changeParams(performance);
     return await services.setPerformanceV2({ ...params, calibrate: 0 });
   });

@@ -235,6 +235,79 @@ const layout = computed(() => {
       });
     }
   });
+  return result;
+});
+
+//TODO 空格键拆分处理
+// 在现有代码基础上添加空格键拆分处理
+const processedLayout = computed(() => {
+  // 获取原始布局数据
+  const baseLayout = layout.value;
+
+  // 如果不是V2版本，直接返回原始布局
+  if (!isVersion2.value) {
+    return baseLayout;
+  }
+
+  // 创建深拷贝，避免修改原始数据
+  const result = JSON.parse(JSON.stringify(baseLayout));
+
+  // 获取空格拆分数量（需要根据实际业务逻辑获取）
+  const spaceCount = 5; // 这里需要根据您的业务逻辑获取实际值
+
+  // 处理第6行（空格行）的拆分逻辑
+  if (result[5] && spaceCount > 1) {
+    // 查找空格键位置
+    let spaceKeyIndex = -1;
+    let spaceKeyData = null;
+
+    // 遍历第6行，找到空格键
+    result[5].forEach((col, colIndex) => {
+      // 空格键检测条件
+      if (colIndex > 2 &&
+        col.location &&
+        col.location.x !== 0 &&
+        col.location.y !== 0 &&
+        col.shapeScale &&
+        col.shapeScale.w > 0 &&
+        spaceKeyIndex === -1) { // 只取第一个符合条件的键位
+        spaceKeyIndex = colIndex;
+        spaceKeyData = col;
+      }
+    });
+
+    // 如果找到空格键，进行拆分处理
+    if (spaceKeyIndex !== -1 && spaceKeyData) {
+      // 计算拆分范围
+      const startIndex = Math.max(0, spaceKeyIndex - Math.floor(spaceCount / 2));
+      const endIndex = Math.min(result[5].length - 1, spaceKeyIndex + Math.floor(spaceCount / 2));
+
+      // 获取原始空格键信息
+      const originalWidth = spaceKeyData.shapeScale.w;
+      const originalX = spaceKeyData.location.x;
+      const originalY = spaceKeyData.location.y;
+
+      // 计算子键宽度
+      const subKeyWidth = Number((originalWidth / spaceCount).toFixed(2));
+
+      // 重新分配空格键区域内的键位
+      for (let i = startIndex; i <= endIndex; i++) {
+        if (result[5][i]) {
+          // 更新位置
+          result[5][i].location.x = originalX + (i - startIndex) * subKeyWidth;
+          result[5][i].location.y = originalY;
+
+          // 更新尺寸
+          result[5][i].shapeScale.w = subKeyWidth;
+          result[5][i].shapeScale.h = spaceKeyData.shapeScale.h;
+
+          // 添加特殊标记
+          result[5][i].isSpaceWidthStyle = true;
+          result[5][i].ratio = 9;
+        }
+      }
+    }
+  }
 
   return result;
 });

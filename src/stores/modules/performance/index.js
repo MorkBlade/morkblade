@@ -4,6 +4,7 @@ import { defineStore } from 'pinia';
 import services from '@/services/index';
 import { useKeyboardStore } from '@/stores';
 import { ICON_MAP } from '@/configs/constant';
+import { httpService } from '@/http/api/index.js';
 
 const state = {
   precision: 0.1, // 键盘行程精度
@@ -30,6 +31,15 @@ const state = {
   veifyKey: {}, // 校验按下的键
   isTravelTest: false,
   axisList: [], // 轴列表
+
+  isAxisStatus: '', // 轴版本
+
+  axis_coefficient: 0,
+  axis_id: 0,
+  axis_range_max: 0,
+
+  allAxisList: [], // 轴列表  v1
+  allAxisListV2: [], // 轴列表  v2
 };
 
 const usePerformanceStore = defineStore('performance', {
@@ -421,7 +431,7 @@ const usePerformanceStore = defineStore('performance', {
             }
             if (keyItem) {
               // console.log('keyItem: ', keyItem, travels[i][j]);
-              const shaft = this.axisList.find((shaft, index) => index === keyItem.performance.axisID) || {
+              const shaft = this.axisList[keyItem.performance.axisID] || {
                 doctrine_range_left: 3.3,
                 doctrine_range_right: 0.3,
               };
@@ -590,26 +600,73 @@ const usePerformanceStore = defineStore('performance', {
     },
 
     async getAixsList(isVersion2, allAxisList) {
+
       if (isVersion2) {
-        const result = await services.getAxisListV2();
-        const { list } = result[0];
-        // console.log('getAxisListV2: ', result);
-        list.forEach((item) => {
-          const index = allAxisList.findIndex((axis) => axis.axis_id === item);
-          if (index !== -1) {
-            const item = allAxisList[index];
-            //TODO 需要翻译
-            const factory_name =
-              item.factory_name !== 'TTC' && item.factory_name !== '佳达隆' ? 'other' : item.factory_name;
-            // console.log('xxxxxx', factory_name);
-            const icon_obj = ICON_MAP[factory_name];
-            if (icon_obj && icon_obj[item.axis_id]) {
-              // console.log('change axis pic----------------->');
-              item.image_url = icon_obj[item.axis_id];
+        // 判断轴的版本 
+        const list = await this.getAxisVersion(); 
+        if (this.isAxisStatus === 'v1') {
+          // v1的轴去请求getAxisList
+          const V1AxisList = await httpService.getAxisList();
+          allAxisList = V1AxisList;
+          // const item = allAxisList;
+          // list.forEach((item, itemIndex) => {
+          //   const index = item.findIndex((axis) => axis.axis_id === item);
+          //   if (index !== -1) {
+          //     const axisItem = item[index];
+          //     this.axisList.push({ ...axisItem, axisIndex: itemIndex });
+          //   }
+          // });
+
+          const result = await services.getAxisListV2();
+          const { list } = result[0];
+          list.forEach((item) => {
+            const index = allAxisList.findIndex((axis) => axis.axis_id === item);
+            if (index !== -1) {
+              const item = allAxisList[index];
+              // 优化轴体品牌名处理逻辑
+              if (item.factory_name === '佳达隆') {
+                item.factory_name = 'GATERON';
+              }
+              // 只保留TTC和GATERON，其余归为other
+              let factory_name = (item.factory_name === 'TTC' || item.factory_name === 'GATERON') ? item.factory_name : 'other';
+              item.factory_name = factory_name;
+              const icon_obj = ICON_MAP[factory_name];
+
+              if (icon_obj && icon_obj[item.axis_id]) {
+                // console.log('change axis pic----------------->');
+                item.image_url = icon_obj[item.axis_id];
+              }
+              this.axisList.push(item);
             }
-            this.axisList.push(item);
-          }
-        });
+          });
+          return list;
+
+        } else {
+          // v2的轴去请求getAxisListV2
+          this.allAxisListV2 = await httpService.getAxisListV2();;
+          this.allAxisListV2.forEach((axisItem, itemIndex) => {
+            this.axisList.push({ ...axisItem, axisIndex: itemIndex });
+          });   
+          
+          // 处理轴体图标映射
+
+          // 修复变量重复声明问题，避免重复声明 item
+          this.axisList.forEach((axisItem) => {
+            const factory_name =
+            axisItem.brand !== 'TTC' && axisItem.brand !== 'GATERON' ? 'other' : axisItem.brand;
+            axisItem.factory_name = factory_name;
+            axisItem.brand = factory_name;
+            axisItem.doctrine_range_left = axisItem.aixsDetail[0].axis_range_max / 1000;
+            axisItem.doctrine_range_right = '0.2mm';
+            // 随机生成颜色
+            axisItem.axis_color = `rgb(${Math.floor(Math.random()*256)},${Math.floor(Math.random()*256)},${Math.floor(Math.random()*256)})`;
+            const icon_obj = ICON_MAP[factory_name];
+            if (icon_obj && icon_obj[axisItem.axis_id]) {
+              // console.log('change axis pic----------------->');
+              axisItem.image_url = icon_obj[axisItem.axis_id];
+            }
+          });
+        }
         return list;
       } else {
         const res = await services.getAxisList();
@@ -618,12 +675,22 @@ const usePerformanceStore = defineStore('performance', {
           const index = allAxisList.findIndex((axis) => axis.axis_id === item);
           if (index !== -1) {
             const item = allAxisList[index];
-            this.axisList.push(item);
+            this.axisList.push(item); 
           }
         });
         return res;
       }
     },
+
+
+    async getAxisVersion() {
+      const result = await services.getAxisListV2();
+      const { list } = result[0];
+      // TODO：根据list 查询allAxisList 中是否存在 按顺序显示
+      this.isAxisStatus = list.length === 0 ? 'v2' : 'v1';
+      return this.isAxisStatus === 'v1' ? list : [];
+    },
+
   },
 });
 
