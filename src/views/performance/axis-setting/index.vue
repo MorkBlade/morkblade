@@ -100,7 +100,7 @@ import { KEY_SHAFT } from '@/configs/constant/index.js';
 import { showMessage } from '@/utils/message';
 import { usePerformanceHook } from '@/hooks';
 import { useI18n } from 'vue-i18n';
-
+import services from '@/services/index';
 import mCarousel from '@/components/carousel.vue';
 import saveConfigBtn from '@/components/save-config-btn.vue';
 import sureIcon from '@/assets/images/sure.svg';
@@ -145,7 +145,6 @@ const axisName = computed(() => {
 const handleSaveAxis = async () => {
   if (activeKeys.value.length !== 0) {
     const { setAxis } = usePerformanceHook();
-    console.log('set axis:', keyboards.value, activeKeys.value, checkAixsId.value);
     const res = setAxis(keyboards.value, activeKeys.value, checkAixsId.value);
     if (res) {
       showMessage(t('axisSetting.modifySuccess'));
@@ -165,7 +164,11 @@ const changeAxisV2 = (axisID) => {
 
 const handleMatchJLD = (e) => {
   const jldAxis = axisList.value.filter((ite) => {
-    return ite.factory_name === 'GATERON';
+    if (isVersion2) {
+      return ite.factory_name === 'GATERON';
+    } else {
+      return ite.factory_name === '佳达隆';
+    }
   });
   console.log('jldAxis: ', jldAxis);
 
@@ -200,6 +203,15 @@ const handleMatchOther = (e) => {
 const handleClearAxis = () => {
   axisBrandList.value = [];
 };
+
+onMounted(async () => {
+  const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
+  await performanceStore.getAixsList(isVersion2);
+  console.log('axisList', axisList.value);
+
+  const res = await services.getPerformanceV2({ row: 1, col: 0 });
+  console.log('res', res);
+});
 </script>
 
 <style scoped lang="scss">

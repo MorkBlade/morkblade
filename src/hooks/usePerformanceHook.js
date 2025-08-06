@@ -163,6 +163,7 @@ const changeParams = (params) => {
       axisV2Id: performanceStore.axisList[params.axisID].axis_id,
       axisRangeMax: performanceStore.axisList[params.axisID].axis_range_max,
       axisCoefficient: performanceStore.axisList[params.axisID].axis_coefficient, 
+      axisID: performanceStore.axisList[params.axisID].axis_id,
     }
   }
   const res = {
@@ -173,9 +174,10 @@ const changeParams = (params) => {
     rtRelease: params.rtReleaseValue,
     pressDeadStroke: params.deadBandPressValue,
     releaseDeadStroke: params.deadBandReleaseValue,
-    axis: params.axisID,
+    // axis: params.axisID,
     row: params.row,
     col: params.col,
+
 
 
     ...axisV2Data,
@@ -197,9 +199,12 @@ const processKeysV2 = async (keyboards, activeKeys, modifyPerformance = null) =>
     if (modifyPerformance) {
       modifyPerformance(performance);
     }
-    console.log('performance', performance);
+
     const params = changeParams(performance);
-    return await services.setPerformanceV2({ ...params, calibrate: 0 });
+    const res = await services.setPerformanceV2({ ...params, calibrate: 0 });
+    const res2 = await services.getPerformanceV2({ row: 1, col: 0 });
+    console.log('res', res, params, res2);
+    return res;
   });
 
   return await Promise.all(promises);

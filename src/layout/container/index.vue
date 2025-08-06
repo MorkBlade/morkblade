@@ -25,6 +25,7 @@
 import { usePerformanceStore } from '@/stores';
 import Navigation from './navigation/index.vue';
 
+
 const Keyboard = defineAsyncComponent(() => import('@/keyboard/index.vue'));
 const route = useRoute();
 const performanceStore = usePerformanceStore();
@@ -35,7 +36,7 @@ const isNotShow = computed(() => {
 
 onMounted(async () => {
   const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
-  performanceStore.getAixsList(isVersion2);
+  // performanceStore.getAixsList(isVersion2);
 });
 
 </script>

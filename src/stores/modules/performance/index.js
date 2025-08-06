@@ -5,6 +5,7 @@ import services from '@/services/index';
 import { useKeyboardStore } from '@/stores';
 import { ICON_MAP } from '@/configs/constant';
 import { httpService } from '@/http/api/index.js';
+import { useAppStore, useDeviceStore } from '@/stores';
 
 const state = {
   precision: 0.1, // 键盘行程精度
@@ -599,7 +600,7 @@ const usePerformanceStore = defineStore('performance', {
       return { mode, dbTravel, touchMode, advancedKeyMode };
     },
 
-    async getAixsList(isVersion2, allAxisList) {
+    async getAixsList(isVersion2) {
 
       if (isVersion2) {
         // 判断轴的版本 
@@ -642,8 +643,14 @@ const usePerformanceStore = defineStore('performance', {
           return list;
 
         } else {
+          const appStore = useAppStore();
+          const deviceStore = useDeviceStore();
           // v2的轴去请求getAxisListV2
-          this.allAxisListV2 = await httpService.getAxisListV2();;
+          const boardId = appStore.baseInfo?.boardId ? appStore.baseInfo.boardId.toString(16).padStart(8, '0') : '00000000';
+          const vid = deviceStore.device?.vendorId ? deviceStore.device.vendorId.toString(16).padStart(4, '0') : '0000';
+          const pid = deviceStore.device?.productId ? deviceStore.device.productId.toString(16).padStart(4, '0') : '0000';
+          const params = { board_id: boardId, vid, pid, t: Date.now() };
+          this.allAxisListV2 = await httpService.getAxisListV2(params);;
           this.allAxisListV2.forEach((axisItem, itemIndex) => {
             this.axisList.push({ ...axisItem, axisIndex: itemIndex });
           });   
@@ -669,6 +676,7 @@ const usePerformanceStore = defineStore('performance', {
         }
         return list;
       } else {
+        const allAxisList = await httpService.getAxisList();
         const res = await services.getAxisList();
         const axisList = res && res.axisList;
         axisList.forEach((item) => {
@@ -676,6 +684,8 @@ const usePerformanceStore = defineStore('performance', {
           if (index !== -1) {
             const item = allAxisList[index];
             this.axisList.push(item); 
+            let factory_name = (item.factory_name === 'TTC' || item.factory_name === '佳达隆') ? item.factory_name : 'other';
+            item.factory_name = factory_name;
           }
         });
         return res;

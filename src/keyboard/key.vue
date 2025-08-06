@@ -214,6 +214,7 @@ const currentKey = computed(() => {
       colData = rowData[colIdx];
     }
   }
+
   return colData;
 });
 
@@ -340,6 +341,7 @@ const axisVal = computed(() => {
 });
 
 const axisColor = computed(() => {
+
   return performanceStore.axisList?.[axisVal.value]?.axis_color ?? 'transparent';
 });
 
@@ -435,6 +437,8 @@ const changeKeyCustomLight = async (e, isCustom = true) => {
     keyboardStore.setKeyColor(rowIndex, colIndex, color, isCustom);
   }
 };
+
+
 </script>
 
 <style scoped lang="scss">
