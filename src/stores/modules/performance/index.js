@@ -601,14 +601,14 @@ const usePerformanceStore = defineStore('performance', {
     },
 
     async getAixsList(isVersion2) {
-
+      this.test();
       if (isVersion2) {
         // 判断轴的版本 
         const list = await this.getAxisVersion(); 
         if (this.isAxisStatus === 'v1') {
           // v1的轴去请求getAxisList
           const V1AxisList = await httpService.getAxisList();
-          allAxisList = V1AxisList;
+          const allAxisList = V1AxisList;
           // const item = allAxisList;
           // list.forEach((item, itemIndex) => {
           //   const index = item.findIndex((axis) => axis.axis_id === item);
@@ -644,9 +644,10 @@ const usePerformanceStore = defineStore('performance', {
 
         } else {
           const appStore = useAppStore();
+          console.log('appStore', appStore.baseInfo.boardId);
           const deviceStore = useDeviceStore();
           // v2的轴去请求getAxisListV2
-          const boardId = appStore.baseInfo?.boardId ? appStore.baseInfo.boardId.toString(16).padStart(8, '0') : '00000000';
+          const boardId = appStore.baseInfo?.boardId ? appStore.baseInfo.boardId.toString(16).padStart(8, '0') : '00150004';
           const vid = deviceStore.device?.vendorId ? deviceStore.device.vendorId.toString(16).padStart(4, '0') : '0000';
           const pid = deviceStore.device?.productId ? deviceStore.device.productId.toString(16).padStart(4, '0') : '0000';
           const params = { board_id: boardId, vid, pid, t: Date.now() };
@@ -665,6 +666,7 @@ const usePerformanceStore = defineStore('performance', {
             axisItem.brand = factory_name;
             axisItem.doctrine_range_left = axisItem.aixsDetail[0].axis_range_max / 1000;
             axisItem.doctrine_range_right = '0.2mm';
+            axisItem.axis_id = axisItem.aixsDetail[0].axis_id;
             // 随机生成颜色
             axisItem.axis_color = `rgb(${Math.floor(Math.random()*256)},${Math.floor(Math.random()*256)},${Math.floor(Math.random()*256)})`;
             const icon_obj = ICON_MAP[factory_name];
@@ -674,6 +676,7 @@ const usePerformanceStore = defineStore('performance', {
             }
           });
         }
+        
         return list;
       } else {
         const allAxisList = await httpService.getAxisList();
@@ -690,6 +693,7 @@ const usePerformanceStore = defineStore('performance', {
         });
         return res;
       }
+
     },
 
 
@@ -701,6 +705,43 @@ const usePerformanceStore = defineStore('performance', {
       return this.isAxisStatus === 'v1' ? list : [];
     },
 
+    async test() {
+      // 定义一个符合 KeyPerformance 接口的对象，填充真实数据
+      const keyPerformanceData = {
+        row: 1,
+        col: 0,
+        // axis: 8256,
+        axisV2Id: 8256,
+        axisRangeMax: 3360,
+        axisCoefficient: 2130,
+        // calibrate: 0,
+
+        // mode: 0,
+        // normalPress: 1.506,
+        // normalRelease: 1.506,
+        // pressDeadStroke: 0.2,
+        // releaseDeadStroke: 0.2,
+        // rtFirstTouch: 0.5,
+        // rtPress: 0.3,
+        // rtRelease: 0.3,
+
+        axis: 0,
+        calibrate: 0,
+        mode: 0,
+        normalPress: 1.506,
+        normalRelease: 1.506,
+        pressDeadStroke: 0.2,
+        releaseDeadStroke: 0.2,
+        rtFirstTouch: 0.5,
+        rtPress: 0.3,
+        rtRelease: 0.3,
+      };
+      // 调用 setPerformance 方法，传入真实数据
+      const res3 = await services.setPerformanceV2({ ...keyPerformanceData});
+      console.log('res3', res3);
+      const res2 = await services.getPerformanceV2({ row: 1, col: 0 });
+      console.log('res2', res2);
+    },
   },
 });
 

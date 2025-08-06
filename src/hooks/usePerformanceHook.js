@@ -158,12 +158,13 @@ const changeParams = (params) => {
   const performanceStore = usePerformanceStore();
   const isAxisStatus = performanceStore.isAxisStatus; 
   let axisV2Data = {}
+  console.log('params', params, performanceStore.axisList);
   if (isAxisStatus === 'v2') {
     axisV2Data = {
-      axisV2Id: performanceStore.axisList[params.axisID].axis_id,
-      axisRangeMax: performanceStore.axisList[params.axisID].axis_range_max,
-      axisCoefficient: performanceStore.axisList[params.axisID].axis_coefficient, 
-      axisID: performanceStore.axisList[params.axisID].axis_id,
+      axisV2Id: params.axis_id,
+      // axisRangeMax: performanceStore.axisList[params.axisID].axis_range_max,
+      // axisCoefficient: performanceStore.axisList[params.axisID].axis_coefficient, 
+      axisID: params.axis_id,
     }
   }
   const res = {
@@ -174,7 +175,7 @@ const changeParams = (params) => {
     rtRelease: params.rtReleaseValue,
     pressDeadStroke: params.deadBandPressValue,
     releaseDeadStroke: params.deadBandReleaseValue,
-    // axis: params.axisID,
+    axis: params.axisID,
     row: params.row,
     col: params.col,
 
@@ -195,6 +196,7 @@ const processKeysV2 = async (keyboards, activeKeys, modifyPerformance = null) =>
     const colIndex = Number(key2);
     const { performance } = keyboards[rowIndex][colIndex];
 
+
     // 如果有需要修改performance的回调，执行它
     if (modifyPerformance) {
       modifyPerformance(performance);
@@ -202,8 +204,8 @@ const processKeysV2 = async (keyboards, activeKeys, modifyPerformance = null) =>
 
     const params = changeParams(performance);
     const res = await services.setPerformanceV2({ ...params, calibrate: 0 });
-    const res2 = await services.getPerformanceV2({ row: 1, col: 0 });
-    console.log('res', res, params, res2);
+   
+    // console.log('传入参数', params, '结果返回值', res,  '获取值', res2);
     return res;
   });
 

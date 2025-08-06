@@ -149,7 +149,7 @@ const prevClickSlide = () => {
   }
   emits(
     'handleChangeItem',
-    localCarouselData.value[currentIdx.value].id || localCarouselData.value[currentIdx.value].axis_id,
+    isV2Axis.value,
   );
   setTimeout(() => {
     flag = false;
@@ -178,7 +178,7 @@ const nextClickSlide = () => {
   // console.log('handleChangeItem', localCarouselData.value, currentIdx.value, localCarouselData.value[currentIdx.value]);
   emits(
     'handleChangeItem',
-    localCarouselData.value[currentIdx.value].id || localCarouselData.value[currentIdx.value].axis_id,
+    isV2Axis.value,
   );
   setTimeout(() => {
     flag = false;
@@ -266,12 +266,24 @@ onMounted(() => {
   if (carouselData.length === 1) {
     emits('handleChangeItem', carouselData[0].id || carouselData[0].axis_id);
   } else {
-    // console.log('onMounted log: ', localCarouselData.value[currentIdx.value]);
     emits(
       'handleChangeItem',
-      localCarouselData.value[currentIdx.value].id || localCarouselData.value[currentIdx.value].axis_id,
+      isV2Axis.value,
     );
   }
+});
+
+// 判断轴体是否是V2
+const isV2Axis = computed(() => {
+  if (
+    localStorage.getItem('keyboardVersion') === 'v2' &&
+    carouselData[currentIdx.value] &&
+    Array.isArray(carouselData[currentIdx.value].aixsDetail) &&
+    carouselData[currentIdx.value].aixsDetail.length > 0
+  ) {
+    return carouselData[currentIdx.value].aixsDetail[0].axis_id;
+  }
+  return localCarouselData.value[currentIdx.value].id || localCarouselData.value[currentIdx.value].axis_id;
 });
 
 // watch(

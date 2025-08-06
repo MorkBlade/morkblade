@@ -204,14 +204,14 @@ const handleClearAxis = () => {
   axisBrandList.value = [];
 };
 
-onMounted(async () => {
-  const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
-  await performanceStore.getAixsList(isVersion2);
-  console.log('axisList', axisList.value);
+// onMounted(async () => {
+//   const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
+//   await performanceStore.getAixsList(isVersion2);
+//   console.log('axisList', axisList.value);
 
-  const res = await services.getPerformanceV2({ row: 1, col: 0 });
-  console.log('res', res);
-});
+//   const res = await services.getPerformanceV2({ row: 1, col: 0 });
+//   console.log('res', res);
+// });
 </script>
 
 <style scoped lang="scss">

@@ -207,6 +207,7 @@ const dynamicKeyColor = computed(() => {
 });
 
 const currentKey = computed(() => {
+  // console.log('keyItem', keyItem);
   const rowData = keyboards.value[keyItem.row];
   let colData = {};
   for (let colIdx = 0; colIdx < rowData.length; colIdx++) {
@@ -333,8 +334,10 @@ const releaseDead = computed(() => {
   return null;
 });
 
+//TODO 
 const axisVal = computed(() => {
   if (currentModel.value === 'axis') {
+    console.log('PerformanceData.value', PerformanceData.value);
     return PerformanceData.value?.axisID ?? null;
   }
   return null;
