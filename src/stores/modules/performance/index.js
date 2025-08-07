@@ -37,6 +37,7 @@ const state = {
 
   axis_coefficient: 0,
   axis_id: 0,
+  axisV2Id: 0,
   axis_range_max: 0,
 
   allAxisList: [], // 轴列表  v1
@@ -148,6 +149,10 @@ const usePerformanceStore = defineStore('performance', {
           axisID: 0,
           calibrations: 0,
           travels: 0,
+
+          axisV2Id: 0,
+          axisRangeMax: 0,
+          axisCoefficient: 0,
         };
         // console.log(keyValue,keyValue===0,keyboard[row][col]);
         if (keyValue === 0) continue;
@@ -156,13 +161,13 @@ const usePerformanceStore = defineStore('performance', {
         // }
       }
       const result = await Promise.all(performance);
-      // console.log('getPerformance result',result);
+      // console.log('getPerformance result', result);
       this.initGetPerformance = true;
       return result;
     },
 
     async getPerformanceValueV2(params, performance) {
-      // console.log('getPerformanceValueV2');
+      // console.log('getPerformanceValueV2', performance);
       const [performanceResult] = await services.getPerformanceV2(params);
       // console.log('getPerformanceValueV2', performanceResult);
       // const performanceResult = Array.isArray(result) && result.length > 0 ? result[0] : null;
@@ -178,6 +183,10 @@ const usePerformanceStore = defineStore('performance', {
           releaseDeadStroke,
           axis,
           calibrate,
+
+          axisV2Id,
+          axisRangeMax,
+          axisCoefficient,
         } = performanceResult;
         // 设置当前键盘的性能模式
         performance.mode = mode;
@@ -192,6 +201,9 @@ const usePerformanceStore = defineStore('performance', {
         performance.deadBandReleaseValue = releaseDeadStroke;
         performance.axisID = axis;
         performance.calibrate = calibrate;
+        performance.axisV2Id = axisV2Id;
+        performance.axisRangeMax = axisRangeMax;
+        performance.axisCoefficient = axisCoefficient;
       }
       // console.log("xxxxxxx",performance);
       return performance;
@@ -601,7 +613,6 @@ const usePerformanceStore = defineStore('performance', {
     },
 
     async getAixsList(isVersion2) {
-      this.test();
       if (isVersion2) {
         // 判断轴的版本 
         const list = await this.getAxisVersion(); 
@@ -644,12 +655,13 @@ const usePerformanceStore = defineStore('performance', {
 
         } else {
           const appStore = useAppStore();
-          console.log('appStore', appStore.baseInfo.boardId);
+         
           const deviceStore = useDeviceStore();
+          await appStore.getBaseInfo(true);
           // v2的轴去请求getAxisListV2
-          const boardId = appStore.baseInfo?.boardId ? appStore.baseInfo.boardId.toString(16).padStart(8, '0') : '00150004';
-          const vid = deviceStore.device?.vendorId ? deviceStore.device.vendorId.toString(16).padStart(4, '0') : '0000';
-          const pid = deviceStore.device?.productId ? deviceStore.device.productId.toString(16).padStart(4, '0') : '0000';
+          const boardId = appStore.baseInfo?.boardId.toString(16).padStart(8, '0');
+          const vid = deviceStore.device?.vendorId.toString(16).padStart(4, '0');
+          const pid = deviceStore.device?.productId.toString(16).padStart(4, '0');
           const params = { board_id: boardId, vid, pid, t: Date.now() };
           this.allAxisListV2 = await httpService.getAxisListV2(params);;
           this.allAxisListV2.forEach((axisItem, itemIndex) => {
@@ -705,43 +717,6 @@ const usePerformanceStore = defineStore('performance', {
       return this.isAxisStatus === 'v1' ? list : [];
     },
 
-    async test() {
-      // 定义一个符合 KeyPerformance 接口的对象，填充真实数据
-      const keyPerformanceData = {
-        row: 1,
-        col: 0,
-        // axis: 8256,
-        axisV2Id: 8256,
-        axisRangeMax: 3360,
-        axisCoefficient: 2130,
-        // calibrate: 0,
-
-        // mode: 0,
-        // normalPress: 1.506,
-        // normalRelease: 1.506,
-        // pressDeadStroke: 0.2,
-        // releaseDeadStroke: 0.2,
-        // rtFirstTouch: 0.5,
-        // rtPress: 0.3,
-        // rtRelease: 0.3,
-
-        axis: 0,
-        calibrate: 0,
-        mode: 0,
-        normalPress: 1.506,
-        normalRelease: 1.506,
-        pressDeadStroke: 0.2,
-        releaseDeadStroke: 0.2,
-        rtFirstTouch: 0.5,
-        rtPress: 0.3,
-        rtRelease: 0.3,
-      };
-      // 调用 setPerformance 方法，传入真实数据
-      const res3 = await services.setPerformanceV2({ ...keyPerformanceData});
-      console.log('res3', res3);
-      const res2 = await services.getPerformanceV2({ row: 1, col: 0 });
-      console.log('res2', res2);
-    },
   },
 });
 

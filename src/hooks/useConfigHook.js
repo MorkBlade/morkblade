@@ -201,7 +201,7 @@ export const useConfigHook = () => {
                         col,
                         calibrate: 0,
                         ...(isAxisStatus === 'v2' ? {
-                            axisV2Id: 8256,
+                            axisV2Id: 0,
                             axisRangeMax: 4000,
                             axisCoefficient: 1000,
                         } : {}),

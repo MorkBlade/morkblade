@@ -52,6 +52,7 @@ export const usePerformanceHook = () => {
   const setAxis = async (keyboards, activeKeys, axisID) => {
     if (isVersion2) {
       // v2设置轴
+      // console.log('axisID', axisID);
       // 使用工具函数，并传入修改performance的回调
       return await processKeysV2(keyboards, activeKeys, (performance) => {
         performance.axisID = axisID;
@@ -158,13 +159,13 @@ const changeParams = (params) => {
   const performanceStore = usePerformanceStore();
   const isAxisStatus = performanceStore.isAxisStatus; 
   let axisV2Data = {}
-  console.log('params', params, performanceStore.axisList);
+
   if (isAxisStatus === 'v2') {
     axisV2Data = {
-      axisV2Id: params.axis_id,
-      // axisRangeMax: performanceStore.axisList[params.axisID].axis_range_max,
-      // axisCoefficient: performanceStore.axisList[params.axisID].axis_coefficient, 
-      axisID: params.axis_id,
+      axisV2Id: params.axisID,
+      axisRangeMax: 3360,
+      axisCoefficient: 2130,
+      axisID: params.axisID,
     }
   }
   const res = {
@@ -179,8 +180,6 @@ const changeParams = (params) => {
     row: params.row,
     col: params.col,
 
-
-
     ...axisV2Data,
 
   };
@@ -190,22 +189,55 @@ const changeParams = (params) => {
 
 // 处理v2模式下的公共逻辑
 const processKeysV2 = async (keyboards, activeKeys, modifyPerformance = null) => {
+  const performanceStore = usePerformanceStore();
   const promises = activeKeys.map(async (keyLocation) => {
     const [key1, key2] = keyLocation.split('-');
     const rowIndex = Number(key1);
     const colIndex = Number(key2);
     const { performance } = keyboards[rowIndex][colIndex];
-
+    // console.log('performance', performance);
 
     // 如果有需要修改performance的回调，执行它
     if (modifyPerformance) {
       modifyPerformance(performance);
+      
+      if (performanceStore.isAxisStatus === 'v2') {
+      // 确保响应式更新 - 更新轴体相关的属性
+        if (performance.axisID !== undefined) {
+          // 对于 v2 轴体，同时更新 axisV2Id
+          if (performanceStore.isAxisStatus === 'v2') {
+            performance.axisV2Id = performance.axisID;
+          }
+        }
+      }
     }
 
     const params = changeParams(performance);
     const res = await services.setPerformanceV2({ ...params, calibrate: 0 });
-   
-    // console.log('传入参数', params, '结果返回值', res,  '获取值', res2);
+    
+    // 如果返回的数据中包含轴状态信息，更新它
+    if (res && res.isAxisStatus) {
+      performanceStore.isAxisStatus = res.isAxisStatus;
+    }
+    
+    // 如果返回的数据中包含轴体信息，更新当前按键的轴体信息
+    if (res && res.axis) {
+      performance.axisID = res.axis;
+      if (res.axisV2Id) {
+        performance.axisV2Id = res.axisV2Id;
+      }
+    }
+    
+    // 强制触发响应式更新 - 通过更新整个 performance 对象
+    if (modifyPerformance || (res && res.axis)) {
+      // 创建一个新的 performance 对象来触发响应式更新
+      const updatedPerformance = { ...performance };
+      keyboards[rowIndex][colIndex].performance = updatedPerformance;
+    }
+
+
+    
+    // console.log('🟢🟢🟢setPerformanceV2', res);
     return res;
   });
 

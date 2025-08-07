@@ -126,7 +126,7 @@ const axisID = computed(() => {
     const [key1, key2] = lastcheckedKey.split('-');
     const rowIndex = Number(key1);
     const colIndex = Number(key2);
-    // console.log(keyboards.value[rowIndex][colIndex].performance.axisID);
+    // console.log(keyboards.value[rowIndex][colIndex].performance);
     return keyboards.value[rowIndex][colIndex].performance.axisID;
   }
   return 0;
@@ -134,17 +134,30 @@ const axisID = computed(() => {
 
 const travelRange = computed(() => {
   if (checkAixsId.value === null) return '';
+  if (performanceStore.isAxisStatus === 'v2') {
+    const axis = axisList.value.find((item) => item.axis_id === checkAixsId.value);
+    return `${axis?.doctrine_range_right}-${axis?.doctrine_range_left}mm`;
+  }
   return `${axisList.value[checkAixsId.value]?.doctrine_range_right}-${axisList.value[checkAixsId.value]?.doctrine_range_left}mm`;
 });
 
 const axisName = computed(() => {
   if (checkAixsId.value === null) return '';
-  return axisList.value[checkAixsId.value]?.axis_name;
+  if (performanceStore.isAxisStatus === 'v2') {
+    return axisList.value.find((item) => item.axis_id === checkAixsId.value)?.axis_name || '';
+  } else {
+    return axisList.value[checkAixsId.value]?.axis_name;
+  }
 });
 
 const handleSaveAxis = async () => {
   if (activeKeys.value.length !== 0) {
     const { setAxis } = usePerformanceHook();
+    //checkAixsId.value 这个是索引值
+    // if (performanceStore.isAxisStatus === 'v2') { 
+    //   checkAixsId.value = axisList.value[checkAixsId.value]?.axisID;
+    //   // console.log('🟢🟢🟢 checkAixsId.value', axisList.value, checkAixsId.value);
+    // }
     const res = setAxis(keyboards.value, activeKeys.value, checkAixsId.value);
     if (res) {
       showMessage(t('axisSetting.modifySuccess'));
@@ -158,8 +171,14 @@ const changeAxis = (axisID) => {
 };
 
 const changeAxisV2 = (axisID) => {
-  checkAixsId.value = axisList.value.findIndex((ite) => ite.axis_id === axisID);
-  // console.log('changeAxisV2 log axisID: ', axisID, checkAixsId.value);
+  if (performanceStore.isAxisStatus === 'v2') {
+    checkAixsId.value = axisID
+  } else {
+    console.log('🟢🟢🟢 axisID', axisList.value, axisID);
+    // 所有轴的索引值
+    checkAixsId.value = axisList.value.findIndex((ite) => ite.axis_id === axisID);
+    // console.log('🟢🟢🟢 checkAixsId.value', checkAixsId.value);
+  }
 };
 
 const handleMatchJLD = (e) => {

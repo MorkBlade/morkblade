@@ -149,7 +149,7 @@ const prevClickSlide = () => {
   }
   emits(
     'handleChangeItem',
-    isV2Axis.value,
+    localCarouselData.value[currentIdx.value].id || localCarouselData.value[currentIdx.value].axis_id,
   );
   setTimeout(() => {
     flag = false;
@@ -178,7 +178,7 @@ const nextClickSlide = () => {
   // console.log('handleChangeItem', localCarouselData.value, currentIdx.value, localCarouselData.value[currentIdx.value]);
   emits(
     'handleChangeItem',
-    isV2Axis.value,
+    localCarouselData.value[currentIdx.value].id || localCarouselData.value[currentIdx.value].axis_id,
   );
   setTimeout(() => {
     flag = false;
@@ -268,7 +268,7 @@ onMounted(() => {
   } else {
     emits(
       'handleChangeItem',
-      isV2Axis.value,
+      localCarouselData.value[currentIdx.value].id || localCarouselData.value[currentIdx.value].axis_id,
     );
   }
 });

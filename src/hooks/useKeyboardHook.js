@@ -23,6 +23,8 @@ const keyboardItemInfo = {
     advancedKeyMode: 0,
     calibrationData: 0,
     calibrations: 0,
+
+
   },
 
   advancedKeys: {
@@ -98,6 +100,7 @@ export const useKeyboardHook = () => {
         // 获取当前行的性能数据（异步）
         // eslint-disable-next-line no-await-in-loop
         const performanceDataArray = await performanceStore.getKeyPerformanceV2(layoutData[rowIndex]);
+        // console.log('🟢🟢🟢获取当前行的性能数据', performanceDataArray);
 
         // 如果性能数据是数组，则合并到layoutData中的每个键对象
         if (Array.isArray(performanceDataArray)) {

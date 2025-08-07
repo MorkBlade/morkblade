@@ -337,15 +337,31 @@ const releaseDead = computed(() => {
 //TODO 
 const axisVal = computed(() => {
   if (currentModel.value === 'axis') {
-    console.log('PerformanceData.value', PerformanceData.value);
-    return PerformanceData.value?.axisID ?? null;
+    // V2轴在这里应该要获取axisID
+    if (performanceStore.isAxisStatus === 'v2') {
+      const axisV2Id = PerformanceData.value?.axisV2Id ?? null;
+
+      return axisV2Id;
+    } else {
+      const axisID = PerformanceData.value?.axisID ?? null;
+
+      return axisID;
+    }
+    
   }
   return null;
 });
 
 const axisColor = computed(() => {
-
-  return performanceStore.axisList?.[axisVal.value]?.axis_color ?? 'transparent';
+  const list = performanceStore.axisList;
+  if (performanceStore.isAxisStatus === 'v2') {
+    const item = list.find((item) => item.axis_id === axisVal.value);
+    return item ? item.axis_color : 'transparent';
+  } else {
+    // v1 情况下，axisVal.value 是 axis_id，需要查找对应的项目
+    const item = list[axisVal.value]?.axis_color ?? 'transparent';
+    return item;
+  }
 });
 
 const changeKeyLightColor = async (key, isCustom = true) => {
