@@ -14,6 +14,7 @@
     "@jaames/iro": "^5.5.2",
     "@sparklinkplayjoy/morkblade-sdk-keyboard": "1.0.2",
     "axios": "^1.6.7",
+    "crypto-js": "^4.2.0",
     "echarts": "^5.5.1",
     "element-plus": "^2.9.5",
     "mitt": "^3.0.1",

@@ -4,6 +4,7 @@ import { useLightingHook } from '@/hooks/useLightingHook';
 import { useKeyboardHook } from '@/hooks/useKeyboardHook';
 import { usePerformanceHook } from '@/hooks/usePerformanceHook';
 import { useAdvancedHook } from '@/hooks/useAdvancedHook';
+import { useCryptoHook } from './useCryptoHook';
 import { 
   useLightSettingStore, 
   useKeyboardStore, 
@@ -15,6 +16,7 @@ import {
 export const useConfigHook = () => {
     const { getLightingDataV2 } = useLightingHook();
     const { getKeyboardDataV2 } = useKeyboardHook();
+    const { encryptData, decryptData, validateEncryptedConfig } = useCryptoHook();
     // 导出当前配置相关数据（精简版）
     const exportCurrentConfig = async () => {
         try {
@@ -54,8 +56,10 @@ export const useConfigHook = () => {
     // 导出当前配置到文件
     const exportCurrentConfigToFile = async (item) => {
         try {
-            const currentConfigData = await exportCurrentConfig();
+            const Data = await exportCurrentConfig();
             
+            const currentConfigData = encryptData(Data, 'password'); // 使用密码加密数据
+
             // 导出为json文件，内容为data
             const jsonStr = JSON.stringify(currentConfigData, null, 2);
             const blob = new Blob([jsonStr], { type: 'application/json' });
@@ -84,7 +88,14 @@ export const useConfigHook = () => {
                 reader.onload = async (e) => {
                     try {
                         const content = e.target.result;
-                        const configData = JSON.parse(content);
+                        const encryptedConfig = JSON.parse(content);
+
+                        // if (!encryptedConfig.encrypted || !encryptedConfig.data) {
+                        //     reject(new Error('文件格式不正确'));
+                        //     return;
+                        // }
+
+                        const configData = decryptData(encryptedConfig, 'password');
 
                         // 获取所有store实例
                         const lightSettingStore = useLightSettingStore();
