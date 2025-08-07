@@ -174,7 +174,7 @@ const changeAxisV2 = (axisID) => {
   if (performanceStore.isAxisStatus === 'v2') {
     checkAixsId.value = axisID
   } else {
-    console.log('🟢🟢🟢 axisID', axisList.value, axisID);
+    // console.log('🟢🟢🟢 axisID', axisList.value, axisID);
     // 所有轴的索引值
     checkAixsId.value = axisList.value.findIndex((ite) => ite.axis_id === axisID);
     // console.log('🟢🟢🟢 checkAixsId.value', checkAixsId.value);
