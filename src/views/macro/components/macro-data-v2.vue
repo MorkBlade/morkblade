@@ -57,7 +57,7 @@
             @mouseleave="onMouseLeave(idx)"
           >
             <img :src="!idx ? changeIcon : item.icon" alt="" />
-            <span>{{ !idx && isStart ? $t('macroData.endRecord') : item.name }}</span>
+            <span class="operation-btn-text" v-ellipsis-marquee="{ duration: 5, gap: 24 }">{{ !idx && isStart ? $t('macroData.endRecord') : item.name }}</span>
           </div>
         </template>
       </template>
@@ -946,10 +946,17 @@ const updateMacroMode = (newSettings) => {
     }
   }
 }
-
+.operation-btn-text {
+  width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
 .list-enter-from,
 .list-leave-to {
   opacity: 0;
   transform: translateY(var(--spacing-30));
 }
+
 </style>
