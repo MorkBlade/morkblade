@@ -49,9 +49,9 @@
               <dropMenu :max-height="180" :items="firmwareVersionList" @sendSelectedIdx="handleSelectedVer" />
             </template> -->
             <template v-if="isVersion2">
-              <span>{{ t('settings.onlineUpdate') }}:</span>
+              <span class="online-update-text" >{{ t('settings.onlineUpdate') }}:</span>
               <div class="online-upload" :class="{ loading }" @click="handleOnlineUpdate">
-                <span :class="{ hasFile: bindData.length > 0 && onlineUpload }">
+                <span class="online-download-text" :class="{ hasFile: bindData.length > 0 && onlineUpload }" v-ellipsis-marquee="{ duration: 5, gap: 24 }">
                   {{ bindData.length > 0 && onlineUpload ? t('settings.downloadedFirmware') :
                   t('settings.clickDownloadFirmware') }}
                 </span>
@@ -727,8 +727,22 @@ onBeforeUnmount(() => {
   .el-loading-spinner .path {
     stroke: #91bc00;
   }
+  
 }
-
+.online-update-text {
+  width: 130px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+.online-download-text {
+  width: 130px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
 @keyframes loading-rotate {
   100% {
     transform: rotate(360deg);
