@@ -1,6 +1,6 @@
 <template>
   <!-- TODO 这里需要根据版本号来判断，v1是-150px，v2是-350px -->
-  <div class="logo-box" :style="{ marginLeft: isVersion2 ? '-350px' : '-350px' }">
+  <div class="logo-box" :style="{ marginLeft: isVersion2 ? '-350px' : '-120px' }">
     <img class="logo-img" src="/src/assets/images/logo.png" alt="" />
     <img class="bar-img" src="/src/assets/images/green_bar.svg" alt="" />
     <template v-if="isVersion2">
