@@ -2,7 +2,7 @@
   <div class="settings-container">
     <div class="settings-center">
       <div class="device-info">
-        <p>{{ t('settings.deviceInfo') }}</p> 
+        <p>{{ t('settings.deviceInfo') }}</p>
         <div class="content-box">
           <span>{{ t('settings.deviceName') }}:</span>
           <span>{{ keyboardName }}</span>
@@ -27,24 +27,16 @@
         <p>{{ t('settings.deviceSetting') }}</p>
         <div class="rate-of-return">
           <span>{{ t('settings.returnRateSwitch') }}:</span>
-          <dropMenu
-            :max-height="320"
-            :items="RateOfReturnList"
-            :special-index="selectedRateIdx"
-            @sendSelectedIdx="handleSelectedRate"
-          />
+          <dropMenu :max-height="320" :items="RateOfReturnList" :special-index="selectedRateIdx"
+            @sendSelectedIdx="handleSelectedRate" />
         </div>
         <div class="reset-box">
           <span>{{ t('settings.factoryReset') }}:</span>
-          <div
-            class="save-btn"
-            :class="{ 'is-active': restBtnStatus }"
-            @click="handleRecover"
-            @mouseenter="onMouseEnter"
-            @mouseleave="onMouseLeave"
-          >
+          <div class="save-btn" :class="{ 'is-active': restBtnStatus }" @click="handleRecover"
+            @mouseenter="onMouseEnter" @mouseleave="onMouseLeave">
             <img src="@/assets/images/reset_icon.svg" alt="" />
-            <span>{{ t('settings.factoryReset') }}</span>
+            <span class="reset-text" v-ellipsis-marquee="{ duration: 5, gap: 24 }">{{ t('settings.factoryReset')
+              }}</span>
           </div>
         </div>
       </div>
@@ -60,7 +52,8 @@
               <span>{{ t('settings.onlineUpdate') }}:</span>
               <div class="online-upload" :class="{ loading }" @click="handleOnlineUpdate">
                 <span :class="{ hasFile: bindData.length > 0 && onlineUpload }">
-                  {{ bindData.length > 0 && onlineUpload ? t('settings.downloadedFirmware') : t('settings.clickDownloadFirmware') }}
+                  {{ bindData.length > 0 && onlineUpload ? t('settings.downloadedFirmware') :
+                  t('settings.clickDownloadFirmware') }}
                 </span>
                 <!-- v-if="loading" progress-->
                 <p class="online-pack-name" v-if="!loading && onlineUpload">
@@ -73,18 +66,9 @@
             </template>
             <template v-if="isVersion2">
               <span :style="{ marginLeft: `${scaleValue(20)}px` }">{{ t('settings.localUpdate') }}:</span>
-              <el-upload
-                ref="uploadRef"
-                class="uploader"
-                :class="{ loading }"
-                :limit="1"
-                :auto-upload="false"
-                :disabled="loading"
-                accept=".bin"
-                :on-exceed="handleExceed"
-                :on-remove="handleRemove"
-                :on-change="handleFileChange"
-              >
+              <el-upload ref="uploadRef" class="uploader" :class="{ loading }" :limit="1" :auto-upload="false"
+                :disabled="loading" accept=".bin" :on-exceed="handleExceed" :on-remove="handleRemove"
+                :on-change="handleFileChange">
                 <div class="uploader-text" :class="{ hasFile: bindData.length > 0 && !onlineUpload }">
                   {{ bindData.length > 0 && !onlineUpload ? t('settings.reselect') : t('settings.selectFirmware') }}
                 </div>
@@ -113,13 +97,8 @@
           <template v-if="!isVersion2 && subVersionIdx !== null">
             <div>
               <span>{{ t('settings.firmwareUpdate') }}:</span>
-              <div
-                class="update-btn"
-                :class="{ 'is-active': updateBtnStatus }"
-                @click="updateFirware"
-                @mouseenter="onMouseEnter('firmware')"
-                @mouseleave="onMouseLeave('firmware')"
-              >
+              <div class="update-btn" :class="{ 'is-active': updateBtnStatus }" @click="updateFirware"
+                @mouseenter="onMouseEnter('firmware')" @mouseleave="onMouseLeave('firmware')">
                 <img src="@/assets/images/update_icon.svg" alt="" />
                 <span>{{ t('settings.updateFirmware') }}</span>
               </div>
@@ -132,12 +111,8 @@
       <p>{{ t('settings.updateLog') }}</p>
       <div class="outer-box">
         <template v-if="isVersion2">
-          <div
-            class="inter-box"
-            v-for="item in UPDATE_LOG_V2"
-            :key="item.version"
-            @click.stop="handleSelectedVerInfo(item.version)"
-          >
+          <div class="inter-box" v-for="item in UPDATE_LOG_V2" :key="item.version"
+            @click.stop="handleSelectedVerInfo(item.version)">
             <div>
               <span>{{ t('settings.firmwareVersionNumber') }}:</span>
               <span>{{ item.version }}</span>
@@ -156,12 +131,8 @@
           </div>
         </template>
         <template v-else>
-          <div
-            class="inter-box"
-            v-for="item in UPDATE_LOG_V1"
-            :key="item.version"
-            @click.stop="handleSelectedVerInfo(item.version)"
-          >
+          <div class="inter-box" v-for="item in UPDATE_LOG_V1" :key="item.version"
+            @click.stop="handleSelectedVerInfo(item.version)">
             <div>
               <span>{{ t('settings.firmwareVersionNumber') }}:</span>
               <span>{{ item.version }}</span>
@@ -182,16 +153,8 @@
       </div>
     </div>
   </div>
-  <mDialog
-    v-model:isShow="isShow"
-    :isUpdate="isUpdate"
-    :dialogTitle="updateTitle"
-    :textContent="textContent"
-    :progress="progress.current"
-    :updateRes="updateRes"
-    @sure="onSure"
-    @cancel="onCancel"
-  />
+  <mDialog v-model:isShow="isShow" :isUpdate="isUpdate" :dialogTitle="updateTitle" :textContent="textContent"
+    :progress="progress.current" :updateRes="updateRes" @sure="onSure" @cancel="onCancel" />
 </template>
 
 <script setup>
@@ -200,7 +163,7 @@ import emitter from '@/utils/app-emitter';
 import { scaleValue } from '@/utils/responsive.js';
 import { showMessage } from '@/utils/message';
 import { genFileId, ElLoading } from 'element-plus';
-import { UPDATE_LOG_V1, UPDATE_LOG_V2 } from '@/configs/update-log';
+import { updateLog_zh_CN, updateLog_en_US } from '@/configs/update-log';
 import { useAppStore, useDeviceStore, usePerformanceStore, useKeyboardStore, useMacroStore } from '@/stores';
 import { useAdvancedHook, useLightingHook } from '@/hooks';
 import { httpService } from '@/http/api/index.js';
@@ -209,7 +172,23 @@ import { useI18n } from 'vue-i18n';
 import mDialog from '@/components/dialog.vue';
 import dropMenu from '@/components/drop-menu.vue';
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
+// 更通用的多语言更新日志映射方案，便于后续扩展更多语言
+const updateLogLangMap = {
+  zh_CN: {
+    UPDATE_LOG_V1: updateLog_zh_CN.UPDATE_LOG_V1,
+    UPDATE_LOG_V2: updateLog_zh_CN.UPDATE_LOG_V2,
+  },
+  en_US: {
+    UPDATE_LOG_V1: updateLog_en_US.UPDATE_LOG_V1,
+    UPDATE_LOG_V2: updateLog_en_US.UPDATE_LOG_V2,
+  },
+  // 以后新增语言只需在此处添加
+};
+
+const currentLogLang = computed(() => locale.value in updateLogLangMap ? locale.value : 'zh_CN');
+const UPDATE_LOG_V1 = computed(() => updateLogLangMap[currentLogLang.value].UPDATE_LOG_V1);
+const UPDATE_LOG_V2 = computed(() => updateLogLangMap[currentLogLang.value].UPDATE_LOG_V2);
 
 const router = useRouter();
 const appStore = useAppStore();

@@ -1,9 +1,10 @@
 <template>
   <div class="top-box">
     <dropdownMenu />
-    <template v-if="isVersion2">
+    <!-- TODO V1调试开启，打包记得注释 -->
+    <!-- <template v-if="isVersion2"> -->
       <configManager />
-    </template>
+    <!-- </template> -->
     <logo />
     <checkLng />
     <!-- <div class="test-change-connect" @click="connectMk">连接mork blade tkl</div>

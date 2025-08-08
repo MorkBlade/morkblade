@@ -187,7 +187,7 @@ const nextClickSlide = () => {
 };
 
 const prevClickAlone = () => {
-  console.log('prevClickAlone log: ', currentIdx.value);
+  // console.log('prevClickAlone log: ', currentIdx.value);
   if (!currentIdx.value) {
     showMessage(t('carousel.firstItem'), 'warning');
     return;
@@ -209,7 +209,7 @@ const prevClickAlone = () => {
   //     // console.log('prev click', currentIdx.value, offsetVal.value, SLIDE_WIDTH.value, originalLength.value - 1);
   //   }, 500);
   // }
-  console.log('handleChangeItem', carouselData, currentIdx.value, carouselData[currentIdx.value]);
+  // console.log('handleChangeItem', carouselData, currentIdx.value, carouselData[currentIdx.value]);
   emits('handleChangeItem', carouselData[currentIdx.value].id || carouselData[currentIdx.value].axis_id);
   setTimeout(() => {
     flag = false;
@@ -218,7 +218,7 @@ const prevClickAlone = () => {
 };
 
 const nextClickAlone = () => {
-  console.log('nextClickAlone log: ', currentIdx.value);
+  // console.log('nextClickAlone log: ', currentIdx.value);
   if (currentIdx.value) {
     showMessage(t('carousel.lastItem'), 'warning');
     return;

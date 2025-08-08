@@ -4,11 +4,8 @@
       <img class="scale-img isreverse" src="@/assets/images/scale.svg" alt="" />
       <div class="progress-bar">
         <div>
-          <img
-            class="progress"
-            src="@/assets/images/progress.png"
-            :style="{ transform: `translateY(${testEnabled ? dynamicHeight : -400}px)` }"
-          />
+          <img class="progress" src="@/assets/images/progress.png"
+            :style="{ transform: `translateY(${testEnabled ? dynamicHeight : -400}px)` }" />
         </div>
       </div>
       <img class="scale-img" src="@/assets/images/scale.svg" alt="" />
@@ -21,15 +18,10 @@
       </div>
     </div>
     <div class="switch-box">
-      <span>{{ $t('travelTestCard.travelText') }}</span>
-      <el-switch
-        v-model="testEnabled"
-        :width="getSwitchWidth()"
-        inline-prompt
-        active-text="ON"
-        inactive-text="OFF"
-        @change="handleSwitchChange"
-      >
+      <span class="travel-text" v-ellipsis-marquee="{ duration: 5, gap: 24 }">{{ $t('travelTestCard.travelText')
+        }}</span>
+      <el-switch v-model="testEnabled" :width="getSwitchWidth()" inline-prompt active-text="ON" inactive-text="OFF"
+        @change="handleSwitchChange">
         <template #active-action>
           <img class="custom-active-action" src="@/assets/images/sliding_block.svg" />
         </template>
@@ -215,6 +207,9 @@ const getSwitchWidth = () => {
     background-image: url('@/assets/images/switch_bg.svg');
     background-size: cover;
     background-repeat: no-repeat;
+    display: flex;
+    align-items: center;
+    // justify-content: space-between;
 
     span {
       font-size: var(--font-size-13);
@@ -222,6 +217,14 @@ const getSwitchWidth = () => {
       font-family: 'CN Heavy';
       // -webkit-text-stroke: 1px #000000;
       margin-left: var(--spacing-16);
+    }
+    .travel-text {
+      display: inline-block;
+      width: 60px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 100%;
+      overflow: hidden;
     }
 
     .el-switch {

@@ -45,7 +45,7 @@
 <script setup>
 import { showMessage } from '@/utils/message';
 import emitter from '@/utils/app-emitter';
-import { KEY_SHAFT } from '@/configs/constant/index.js';
+import { KEY_SHAFT } from '@/configs/constant/zh_CN/index.js';
 import { usePerformanceHook } from '@/hooks';
 import { scaleValue } from '@/utils/responsive.js';
 import { useKeyboardStore, usePerformanceStore } from '@/stores';

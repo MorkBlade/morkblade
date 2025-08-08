@@ -86,15 +86,15 @@
 
 <script setup>
 import verifyIcon from '@/assets/images/sure_icon.svg';
-import { KEY_SHAFT } from '@/configs/constant/index.js';
+import { KEY_SHAFT } from '@/configs/constant/zh_CN/index.js';
 
 import services from '@/services/index';
 import emitter from '@/utils/app-emitter';
 import { usePerformanceStore, useMacroStore, useKeyboardStore, useLightSettingStore } from '@/stores';
-import keyboard from '@/configs/byte-to-key/keyboard.js';
-import keyboardV2 from '@/configs/byte-to-key/keyboard-v2.js';
+import { keyboard_zh_CN, keyboardV2_zh_CN, keyboard_en_US, keyboardV2_en_US } from '@/configs/byte-to-key';
 import { scaleValue } from '@/utils/responsive.js';
 import { useLightingHook, useMacroHook, useAdvancedHook } from '@/hooks';
+import { useI18n } from 'vue-i18n';
 
 const {
   row: rowIndex,
@@ -125,7 +125,7 @@ const { setCustomLighting } = useLightingHook();
 const { setMacroV1 } = useMacroHook();
 const { getMacro } = useAdvancedHook();
 const currentModel = ref('mechanicalMode');
-
+const { locale } = useI18n();
 const route = useRoute();
 const isShow = ref(false);
 const isVersion2 = ref(localStorage.getItem('keyboardVersion') === 'v2');
@@ -156,6 +156,10 @@ watch(
   },
   { immediate: true },
 );
+
+const isZhCN = computed(() => locale.value === 'zh_CN');
+const keyboard = computed(() => (isZhCN.value ? keyboard_zh_CN : keyboard_en_US));
+const keyboardV2 = computed(() => (isZhCN.value ? keyboardV2_zh_CN : keyboardV2_en_US));
 
 const shapeComputed = computed(() => {
   const { w, h } = shapeScale;
@@ -224,10 +228,14 @@ const showKeyCode = computed(() => {
     const customKeysKeyName = `fn${layout.value}`;
     // console.log('currentKey.value', currentKey.value, customKeysKeyName);
     const { bindKeyValue } = currentKey.value.customKeys[customKeysKeyName];
-    return !isVersion2.value ? keyboard[bindKeyValue] : bindKeyValue === 61696 ? 'Fn' : keyboardV2[bindKeyValue];
+    return !isVersion2.value
+      ? keyboard.value[bindKeyValue]
+      : bindKeyValue === 61696
+        ? 'Fn'
+        : keyboardV2.value[bindKeyValue];
   }
 
-  return isVersion2.value ? keyboardV2[0] : keyboard[0];
+  return isVersion2.value ? keyboardV2.value[0] : keyboard.value[0];
 });
 
 const verifySuc = computed(() => {

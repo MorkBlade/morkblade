@@ -3,7 +3,7 @@
     <h3>{{ $t('macroModeV1.macroType') }}</h3>
     <div v-for="(item, idx) in types" :key="idx" class="type-item">
       <input type="radio" :id="idx" name="type" :checked="macroSettings.mode === idx" @change="changeMacroType(idx)" />
-      <span>{{ item }}</span>
+      <span class="type-text" v-ellipsis-marquee="{ duration: 5, gap: 24 }">{{ item }}</span>
     </div>
     <div class="repeat-numbers">
       <span>{{ $t('macroModeV1.repeatCount') }}:</span>
@@ -63,7 +63,7 @@ const macroSettings = reactive({
   repeatInterval: props.initialRepeatInterval, // 重复间隔 (ms)
 });
 
-const types = [t('macroModeV1.clickExecute'), t('macroModeV1.clickExecute2'), t('macroModeV1.clickExecute3'), t('macroModeV1.clickExecute4')];
+const types = computed(() => [t('macroModeV1.clickExecute'), t('macroModeV1.clickExecute2'), t('macroModeV1.clickExecute3'), t('macroModeV1.clickExecute4')]);
 
 // 改变宏类型
 const changeMacroType = (idx) => {
@@ -158,11 +158,16 @@ watch(
     display: flex;
     align-items: center;
 
-    span {
+    .type-text {
       margin-left: var(--spacing-10);
       color: #fff;
       font-size: var(--font-size-14);
       font-family: 'CN Heavy';
+      width: 230px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 100%;
     }
     /* 移除默认样式 */
     input[type='radio'] {

@@ -53,7 +53,7 @@
 <script setup>
 import key from '@/components/key.vue';
 
-import { KEYBOARD_MACRO } from '@/configs/constant';
+import { KEYBOARD_MACRO } from '@/configs/constant/zh_CN';
 import { useKeyboardStore, useMacroStore } from '@/stores';
 import { useI18n } from 'vue-i18n';
 

@@ -1,17 +1,21 @@
 <template>
-  <div
-    class="key"
-    @click="handleClick"
-    @mousedown="startDrag"
-    draggable="false"
-    v-if="keyText"
-    @mouseenter="onMouseEnter"
-    @mouseleave="onMouseLeave"
-  >
+  <div class="key" @click="handleClick" @mousedown="startDrag" draggable="false" v-if="keyText"
+    @mouseenter="onMouseEnter" @mouseleave="onMouseLeave">
+    <!-- <template v-if="keyValue === 129">
+      <p>
+        <img src="@/assets/images/Volume-down.svg" alt=""></img>
+      </p>
+    </template>
+    <template v-else>
+      <p>{{ keyText }}</p>
+      <p>{{ keyValue }}</p>
+    </template> -->
     <p>{{ keyText }}</p>
+    <!-- V2键盘有提示 -->
     <template v-if="showTip && isVersion2 && keyboardMap[keyValue]?.comm">
       <span :style="tipStyle">{{ keyboardMap[keyValue]?.comm }}</span>
     </template>
+
   </div>
   <div ref="dragElement" class="key key-mirror" v-if="isDragging" :style="isDragging ? defaultOffset : ''">
     <p>{{ keyText }}</p>
@@ -19,20 +23,23 @@
 </template>
 
 <script setup>
-import keyboard from '@/configs/byte-to-key/keyboard';
-import keyboardV2 from '@/configs/byte-to-key/keyboard-v2';
-import keyboardMap from '@/configs/byte-to-key/keyboard-map';
+import { keyboard_zh_CN, keyboardV2_zh_CN, keyboardMap_zh_CN, keyboard_en_US, keyboardV2_en_US, keyboardMap_en_US } from '@/configs/byte-to-key';
 import { useKeyboardStore } from '@/stores';
 import { scaleValue } from '@/utils/responsive';
+import { useI18n } from 'vue-i18n';
+
 
 const { keyValue } = defineProps({
   keyValue: { type: [Number, Object], required: true },
   // selectIdx: { type: Number, default: false },
 });
 
+
+
 const emits = defineEmits(['select']);
 
 const keyboardStore = useKeyboardStore();
+const { t, locale } = useI18n();
 
 const isDragging = ref(false);
 const dragElement = ref(null);
@@ -42,17 +49,38 @@ const defaultOffset = reactive({ left: 0, top: 0 });
 const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
 let dragStartTime = 0;
 
+// 更通用的多语言键位映射方案，便于后续扩展更多语言
+const keyboardLangMap = {
+  zh_CN: {
+    keyboard: keyboard_zh_CN,
+    keyboardV2: keyboardV2_zh_CN,
+    keyboardMap: keyboardMap_zh_CN,
+  },
+  en_US: {
+    keyboard: keyboard_en_US,
+    keyboardV2: keyboardV2_en_US,
+    keyboardMap: keyboardMap_en_US,
+  },
+  // 以后新增语言只需在此处添加
+};
+
+const currentLang = computed(() => locale.value in keyboardLangMap ? locale.value : 'zh_CN');
+const keyboard = computed(() => keyboardLangMap[currentLang.value].keyboard);
+const keyboardV2 = computed(() => keyboardLangMap[currentLang.value].keyboardV2);
+const keyboardMap = computed(() => keyboardLangMap[currentLang.value].keyboardMap);
+
 const keyText = computed(() => {
   if (isVersion2) {
     return typeof keyValue === 'object' && keyValue.macroName
       ? keyValue.macroName
       : keyValue === 61696
         ? 'Fn'
-        : keyboardV2[keyValue] || '';
-  } else {
-    return typeof keyValue === 'object' && keyValue.macroName ? keyValue.macroName : keyboard[keyValue] || '';
+        : keyboardV2.value[keyValue] || '';
   }
+  console.log(keyboard.value, );
+  return typeof keyValue === 'object' && keyValue.macroName ? keyValue.macroName : keyboard.value[keyValue] || '';
 });
+
 
 const onMouseEnter = (e) => {
   showTip.value = !showTip.value;
@@ -121,6 +149,11 @@ const stopDrag = () => {
     keyboardStore.updateSelectKeyCode(0);
   }, 200);
 };
+
+// 语言切换将自动通过上面的 computed 生效，无需额外 onMounted 赋值
+
+
+
 </script>
 
 <style lang="scss" scoped>

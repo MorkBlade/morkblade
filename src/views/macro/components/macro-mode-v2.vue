@@ -10,7 +10,7 @@
           :checked="macroSettings.mode === idx"
           @change="changeMacroType(idx)"
         />
-        <span>{{ item }}</span>
+        <span class="type-text" v-ellipsis-marquee="{ duration: 5, gap: 24 }">{{ item }}</span>
       </div>
     </template>
     <template v-if="macroSettings.mode < 4">
@@ -72,14 +72,14 @@ const emit = defineEmits(['update:settings']);
 
 // 创建宏设置对象
 const macroSettings = reactive({ mode: macroMode, repeatCount: macroRepeatCount });
-const types = [
+const types = computed(() => [
   t('macroModeV2.clickExecute'),
   t('macroModeV2.clickExecute2'),
   t('macroModeV2.clickExecute3'),
   t('macroModeV2.clickExecute4'),
   t('macroModeV2.pressHold'),
   t('macroModeV2.pressHold2'),
-];
+]);
 let timer = null;
 
 // 改变宏类型
@@ -180,11 +180,16 @@ watch(
     display: flex;
     align-items: center;
 
-    span {
+    .type-text {
       margin-left: var(--spacing-10);
       color: #fff;
       font-size: var(--font-size-11);
       font-family: 'CN Heavy';
+      width: 100px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 100%;
     }
     /* 移除默认样式 */
     input[type='radio'] {

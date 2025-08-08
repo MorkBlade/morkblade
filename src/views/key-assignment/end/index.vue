@@ -29,7 +29,7 @@
 </template>
 
 <script setup>
-import keyboard from '@/configs/byte-to-key/keyboard';
+import keyboard from '@/configs/byte-to-key/zh_CN/keyboard';
 import { useAdvancedHook } from '@/hooks';
 import { showMessage } from '@/utils/message';
 import { useAppStore, useKeyboardStore } from '@/stores';

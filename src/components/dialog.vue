@@ -4,7 +4,7 @@
       <div class="dialog-content">
         <h3>{{ dialogTitle }}</h3>
         <template v-if="!isUpdate">
-          <p>{{ textContent }}</p>
+          <p>{{ $t(textContent) }}</p>
           <slot></slot>
           <div class="btn-group">
             <div class="sure-btn" @click="onSure" v-if="showConfirmBtn">
@@ -29,7 +29,7 @@
           </div>
           <!-- </div> -->
           <div class="btn-group">
-            <p>{{ textContent }}</p>
+            <p>{{ $t(textContent) }}</p>
             <div class="update-btn" :style="enterUpdate ? { left: '215px' } : ''" @click="onSure" v-if="showConfirmBtn">
               <img class="update-img" src="@/assets/images/sure_icon.svg" alt="" />
               <!-- <span class="update-text">{{ text[updateStep] }}</span> -->
@@ -55,7 +55,7 @@ const { t } = useI18n();
 
 const { dialogTitle, textContent, isShow, isUpdate, progress, updateRes, showConfirmBtn, showCancelBtn } = defineProps({
   dialogTitle: String,
-  textContent: { type: String, default: '是否应用修改' },
+  textContent: { type: String, default: ('connect.saveTip') },
   isShow: { type: Boolean, default: false },
   isUpdate: { type: Boolean, default: false },
   progress: { type: Number, default: 0 },

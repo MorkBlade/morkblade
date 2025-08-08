@@ -3,8 +3,8 @@
     <div class="left-config">
       <div class="title-box">
         <div class="title" v-for="(ite, idx) in titleData" :key="ite.name">
-          <p>{{ ite.name }}</p>
-          <span @click="idx == 0 || idx == 2 ? (delayPageShow1 = true) : (delayPageShow2 = true)">{{
+          <p class="dks-text" v-ellipsis-marquee="{ duration: 5, gap: 24 }">{{ ite.name }}</p>
+          <span @click="idx == 0 || idx == 2 ? (delayPageShow1 = true) : (delayPageShow2 = true)" >{{
             idx == 0 || idx == 2 ? Number(db).toFixed(2) + 'mm' : Number(db2).toFixed(2) + 'mm'
           }}</span>
         </div>
@@ -126,7 +126,7 @@
 </template>
 
 <script setup>
-import keyboard from '@/configs/byte-to-key/keyboard';
+import keyboard from '@/configs/byte-to-key/zh_CN/keyboard';
 import { useKeyboardStore } from '@/stores';
 import { useAdvancedHook } from '@/hooks';
 import { showMessage } from '@/utils/message';
@@ -870,6 +870,14 @@ defineExpose({ save, reset });
         }
         span {
           font-size: var(--font-size-8);
+        }
+        .dks-text {
+          display: inline-block;
+          width: 45px;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          max-width: 100%;
+          overflow: hidden;
         }
       }
     }

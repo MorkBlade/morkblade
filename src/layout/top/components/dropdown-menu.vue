@@ -6,7 +6,8 @@
   >
     <img class="change-icon" :src="appStore.activeConfigIndex !== null ? changedIcon : changeIcon" />
     <span class="dropdown-text">
-      {{ appStore.configList[appStore.activeConfigIndex]?.title }}
+      <!-- TODO 目前写死翻译名字，后续需要优化 -->
+      {{ $t(`connect.keyboardConfig${appStore.activeConfigIndex}`) }}
       <!-- {{ $t(`messages.keyboardConfig${appStore.activeConfigIndex}`) }} -->
     </span>
     <img
@@ -62,6 +63,7 @@ const defaultHeight = ref(0);
 const rotate = ref(0);
 const customItems = reactive([]);
 const isVersion2 = ref(localStorage.getItem('keyboardVersion') === 'v2');
+
 
 emitter.on('versionChange', (flag) => {
   if (flag) {

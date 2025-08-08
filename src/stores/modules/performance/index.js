@@ -3,7 +3,7 @@ import { defineStore } from 'pinia';
 
 import services from '@/services/index';
 import { useKeyboardStore } from '@/stores';
-import { ICON_MAP } from '@/configs/constant';
+import { ICON_MAP } from '@/configs/constant/zh_CN';
 import { httpService } from '@/http/api/index.js';
 import { useAppStore, useDeviceStore } from '@/stores';
 

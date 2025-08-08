@@ -12,13 +12,13 @@
     <div class="start-box">
       <div class="explain-box">
         <img src="@/assets/images/warn_icon.svg" alt="" />
-        <span>{{ $t('keyCalibration.calibrationTip1') }}</span>
+        <span class="explain-text" v-ellipsis-marquee="{ duration: 5, gap: 24 }">{{ $t('keyCalibration.calibrationTip1') }}</span>
       </div>
       <div class="text-box">
-        <span>{{ $t('keyCalibration.calibrationTip2') }}</span>
-        <span>{{ $t('keyCalibration.calibrationTip3') }}</span>
-        <span>{{ $t('keyCalibration.calibrationTip4') }}</span>
-        <span>{{ $t('keyCalibration.calibrationTip5') }}</span>
+        <span class="text-text" v-ellipsis-marquee="{ duration: 5, gap: 24 }">{{ $t('keyCalibration.calibrationTip2') }}</span>
+        <span class="text-text" v-ellipsis-marquee="{ duration: 5, gap: 24 }">{{ $t('keyCalibration.calibrationTip3') }}</span>
+        <span class="text-text" v-ellipsis-marquee="{ duration: 5, gap: 24 }">{{ $t('keyCalibration.calibrationTip4') }}</span>
+        <span class="text-text" v-ellipsis-marquee="{ duration: 5, gap: 24 }">{{ $t('keyCalibration.calibrationTip5') }}</span>
       </div>
       <div
         class="start-btn"
@@ -247,7 +247,6 @@ onUnmounted(() => {
     width: var(--assignment-leftbox-width);
     height: var(--character-card-height);
     box-sizing: border-box;
-    padding-left: var(--spacing-20);
     background-image: url('@/assets/images/show_key_bg.svg');
     background-size: cover;
     background-repeat: no-repeat;
@@ -259,12 +258,20 @@ onUnmounted(() => {
     font-size: var(--font-size-15);
     color: #cccccc;
     font-family: 'CN Heavy';
+    padding: 0 var(--spacing-20);
 
     .explain-box {
       display: flex;
       align-items: center;
       justify-content: center;
       margin: var(--spacing-10) 0;
+      .explain-text {
+        width: 240px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 100%;
+      }
       img {
         width: var(--size-15);
         height: var(--size-15);

@@ -1,7 +1,9 @@
 <template>
   <div class="setting-manager-container" @click="handleClick">
     <img class="setting-icon" src="@/assets/images/share.svg" />
-    <span class="setting-text">{{ $t('configManager.settingManager') }}</span>
+    <span class="setting-text" v-ellipsis-marquee="{ duration: 5, gap: 24 }">
+      {{ $t('configManager.settingManager') }}
+    </span>
   </div>
   <DialogSetting
         :isShow="showDialog"
@@ -62,6 +64,7 @@ const handleCancel = () => {
   }
 
   .setting-text {
+    width: 45%;
     border: none;
     color: #fff;
     display: inline-block;
@@ -69,6 +72,11 @@ const handleCancel = () => {
     background-color: transparent;
     font-weight: 600;
     font-family: 'CN Heavy';
+    /* 基础的单行省略设置（指令会为宿主兜底设置）*/
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
   }
 }
 </style>

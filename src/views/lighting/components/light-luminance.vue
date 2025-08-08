@@ -2,7 +2,7 @@
   <div class="light-luminance">
     <template v-if="!isVersion2 || (isVersion2 && isCheckVersion)">
       <div class="sleep-time-box">
-        <span class="title">{{ t('lightLuminance.sleepTime') }}</span>
+        <span class="title"> {{ $t('lightLuminance.sleepTime') }}</span>
         <div
           class="cover-list"
           :class="selectedId === lingtingData.sleepTime ? 'is-selected' : ''"
@@ -13,7 +13,7 @@
             :src="selectedId === lingtingData.sleepTime ? changedSleepIcon : changeSleepIcon"
             alt=""
           />
-          <span>{{ getSleepDelayLabel(lingtingData?.sleepTime === -1 ? 0 : lingtingData?.sleepTime) }}</span>
+          <span class="sleep-time-text" v-ellipsis-marquee="{ duration: 5, gap: 24 }">{{ getSleepDelayLabel(lingtingData?.sleepTime === -1 ? 0 : lingtingData?.sleepTime) }}</span>
           <img
             class="down-icon"
             :src="selectedId === lingtingData.sleepTime ? downArrowed : downArrow"
@@ -51,7 +51,7 @@
 <script setup>
 import { scaleValue } from '@/utils/responsive.js';
 import { useVersionHook } from '@/hooks';
-import { LIGHT_SLEEP_DELAY } from '@/configs/constant/index.js';
+import { constant } from '@/configs/constant/index.js';
 import emitter from '@/utils/app-emitter';
 
 import changedSleepIcon from '@/assets/images/changed.svg';
@@ -64,7 +64,7 @@ import { useI18n } from 'vue-i18n';
 
 const lingtingData = defineModel();
 const emits = defineEmits(['changeSleepDelay', 'changeLuminance', 'changeSpeed']);
-const { t } = useI18n();
+const { t, locale } = useI18n();
 const { isCheckVersion } = useVersionHook('1.0.4.0');
 const defaultHeight = ref(0);
 const rotate = ref(180);
@@ -82,6 +82,16 @@ emitter.on('versionChange', (flag) => {
     }, 240);
   }
 });
+
+// 参考 key.vue 中的多语言键位映射方案，实现更通用的多语言睡眠延迟配置
+const lightSleepDelayLangMap = {
+  zh_CN: constant.zh_CN.LIGHT_SLEEP_DELAY,
+  en_US: constant.en_US.LIGHT_SLEEP_DELAY,
+  // 以后新增语言只需在此处添加
+};
+
+const currentLang = computed(() => locale.value in lightSleepDelayLangMap ? locale.value : 'zh_CN');
+const LIGHT_SLEEP_DELAY = computed(() => lightSleepDelayLangMap[currentLang.value]);
 
 const toggleDropdown = () => {
   defaultHeight.value = defaultHeight.value ? 0 : scaleValue(590);
@@ -110,12 +120,12 @@ const changeLightSleepDelay = async (id) => {
 };
 
 const getSleepDelayLabel = (delay) => {
-  if (!LIGHT_SLEEP_DELAY?.length) return t('lightLuminance.notSet');
-  if (delay === 0 || !delay) return LIGHT_SLEEP_DELAY[LIGHT_SLEEP_DELAY.length - 1]?.label || t('lightLuminance.notSet');
-  const index = LIGHT_SLEEP_DELAY.findIndex((ite) => ite.id === lingtingData.value.sleepTime);
+  if (!LIGHT_SLEEP_DELAY?.value?.length) return t('lightLuminance.notSet');
+  if (delay === 0 || !delay) return LIGHT_SLEEP_DELAY.value[LIGHT_SLEEP_DELAY.value.length - 1]?.label || t('lightLuminance.notSet');
+  const index = LIGHT_SLEEP_DELAY.value.findIndex((ite) => ite.id === lingtingData.value.sleepTime);
 
-  if (index < 0 || index >= LIGHT_SLEEP_DELAY.length) return LIGHT_SLEEP_DELAY[0]?.label || t('lightLuminance.notSet');
-  return LIGHT_SLEEP_DELAY[index]?.label || t('lightLuminance.notSet');
+  if (index < 0 || index >= LIGHT_SLEEP_DELAY.value.length) return LIGHT_SLEEP_DELAY.value[0]?.label || t('lightLuminance.notSet');
+  return LIGHT_SLEEP_DELAY.value[index]?.label || t('lightLuminance.notSet');
 };
 
 // TODO logo keyboard灯光速度&亮度是否独立
@@ -150,6 +160,13 @@ const getSpeed = (val) => {
 
   .sleep-time-box {
     margin-top: var(--spacing-30);
+    .sleep-time-title {
+      width: 100px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 100%;
+    }
     .cover-list {
       width: var(--size-170);
       height: var(--size-40);
@@ -187,7 +204,8 @@ const getSpeed = (val) => {
         // margin: var(--spacing-5) var(--spacing-10) 0 var(--spacing-40);
         display: flex;
         align-items: center;
-        justify-content: center;
+        // justify-content: center;
+        padding-left: var(--spacing-20);
       }
 
       .drop-list {

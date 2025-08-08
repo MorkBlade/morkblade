@@ -7,7 +7,7 @@
     @mouseleave="onMouseLeave"
   >
     <img :src="icon" alt="" />
-    <span>{{ btnText }}</span>
+    <span class="save-text" v-ellipsis-marquee="{ duration: 5, gap: 24 }">{{ $t(btnText) }}</span>
   </div>
   <mDialog v-model:isShow="isShow" @sure="onSure" @cancel="onCancel" />
 </template>
@@ -25,7 +25,7 @@ const { t } = useI18n();
 const { btnText, tag, disabled, needKeys, type, verify } = defineProps({
   btnText: {
     type: String,
-    default: ('保存更改'),
+    default: ('saveConfigBtn.saveText'),
   },
   tag: {
     // 标识要保存什么数据
@@ -129,6 +129,14 @@ const onCancel = () => {
     position: absolute;
     top: var(--spacing-6);
     left: var(--spacing-65);
+  }
+  .save-text {
+    display: inline-block;
+    width: 100px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
+    overflow: hidden;
   }
 }
 </style>

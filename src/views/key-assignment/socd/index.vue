@@ -43,7 +43,7 @@
       </div>
       <div class="cover-list" :class="DKS_MODES[socdInfo.mode] ? 'is-selected' : ''" @click="toggleDropdown">
         <img class="change-icon" :src="DKS_MODES[socdInfo.mode] ? changedIcon : changeIcon" alt="" />
-        <span class="mode-text">{{ DKS_MODES[socdInfo.mode] || t('socd.selectPlace') }}</span>
+        <span class="mode-text" v-ellipsis-marquee="{ duration: 5, gap: 50 }">{{ DKS_MODES[socdInfo.mode] || t('socd.selectPlace') }}</span>
         <img
           class="down-icon"
           :src="DKS_MODES[socdInfo.mode] ? downIcon1 : downIcon2"
@@ -73,7 +73,7 @@
 </template>
 
 <script setup>
-import keyboard from '@/configs/byte-to-key/keyboard';
+import keyboard from '@/configs/byte-to-key/zh_CN/keyboard';
 import { scaleValue } from '@/utils/responsive.js';
 import { filterSocdAndRsKey } from '@/utils/filter-key.js';
 import { useKeyboardStore } from '@/stores';
@@ -100,7 +100,7 @@ const isShow = ref(false);
 const key1Index = ref(-1);
 const key2Index = ref(-1);
 // const originalSocdInfo = ref(null);
-const DKS_MODES = [t('socd.mode1'), t('socd.mode2'), t('socd.mode3'), t('socd.mode4')];
+const DKS_MODES = computed(() => [t('socd.mode1'), t('socd.mode2'), t('socd.mode3'), t('socd.mode4')]);
 const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
 
 const socdInfo = defineModel('socdInfo', {
@@ -143,7 +143,7 @@ const toggleDropdown = () => {
 };
 
 const selectItem = (item) => {
-  socdInfo.value.mode = DKS_MODES.indexOf(item);
+  socdInfo.value.mode = DKS_MODES.value.indexOf(item);
   defaultHeight.value = 0;
 };
 
@@ -458,7 +458,7 @@ defineExpose({ save, reset });
       .mode-text {
         display: flex;
         align-items: center;
-        justify-content: center;
+        // justify-content: center;
         width: var(--size-100);
         height: 100%;
         border: none;
@@ -466,7 +466,10 @@ defineExpose({ save, reset });
         font-size: var(--font-size-16);
         font-family: 'CN Heavy';
         margin-left: var(--spacing-12);
-        // margin: 5px 10px 0 40px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+
       }
 
       .drop-list {

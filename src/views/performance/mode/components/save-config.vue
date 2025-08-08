@@ -58,7 +58,9 @@ const onclick = () => {
   }
 
   .tip-box {
-    margin: var(--spacing-90) 0 var(--spacing-20) 0;
+    width: 100%;
+    
+    margin: var(--spacing-60) 0 var(--spacing-40) 0;
 
     img {
       width: var(--size-13);

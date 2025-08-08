@@ -73,6 +73,7 @@ const onMouseEnter = (e) => {
     background-color: #000;
     position: fixed;
     z-index: 9999;
+    text-align: center;
     > h4 {
       height: var(--size-14);
       line-height: var(--size-14);

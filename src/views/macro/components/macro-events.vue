@@ -91,7 +91,7 @@ import { scaleValue } from '@/utils/responsive.js';
 import { useKeyboardStore, usePerformanceStore } from '@/stores';
 
 import saveConfigBtn from '@/components/save-config-btn.vue';
-import keyboardWord from '@/configs/byte-to-key/keyboard';
+import keyboardWord from '@/configs/byte-to-key/zh_CN/keyboard';
 
 import upIcon from '@/assets/images/up.svg';
 import upCheckedIcon from '@/assets/images/up_checked.svg';

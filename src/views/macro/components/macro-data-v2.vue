@@ -92,7 +92,7 @@ import stopIcon from '@/assets/images/stop_icon.svg';
 import delayIcon from '@/assets/images/delay_icon.svg';
 import eventsIcon from '@/assets/images/events_icon.svg';
 import clearIcon from '@/assets/images/clear_icon.svg';
-import keyboardWord from '@/configs/byte-to-key/keyboard';
+import keyboardWord from '@/configs/byte-to-key/zh_CN/keyboard';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();

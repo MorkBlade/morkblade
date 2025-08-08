@@ -52,7 +52,7 @@
       </div>
     </div>
     <div class="text-box">
-      <span>{{ title }}</span>
+      <span class="travel-text" v-ellipsis-marquee="{ duration: 5, gap: 24 }">{{ title }}</span>
       <!-- <span>{{ travelVal.toFixed(2) }}mm</span> -->
       <div class="travel-input">
         <input
@@ -375,6 +375,14 @@ onUnmounted(() => {
       font-family: 'CN Heavy';
       // -webkit-text-stroke: 1px #000000;
       margin-left: var(--spacing-16);
+    }
+    .travel-text {
+      display: inline-block;
+      width: 55px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 100%;
+      overflow: hidden;
     }
   }
 }

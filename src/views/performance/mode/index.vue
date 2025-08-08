@@ -39,7 +39,7 @@ const keyboardStore = useKeyboardStore();
 const performanceStore = usePerformanceStore();
 const { keyboards } = storeToRefs(keyboardStore);
 
-const title = t('mode.keyTravel');
+const title = computed(() => t('mode.keyTravel'));
 const singleTravel = ref(performanceStore.singleTouchTravel);
 
 emitter.on('key-click', ({ rowIndex, colIndex }) => {

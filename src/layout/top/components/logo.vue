@@ -1,5 +1,6 @@
 <template>
-  <div class="logo-box">
+  <!-- TODO 这里需要根据版本号来判断，v1是-150px，v2是-350px -->
+  <div class="logo-box" :style="{ marginLeft: isVersion2 ? '-350px' : '-350px' }">
     <img class="logo-img" src="/src/assets/images/logo.png" alt="" />
     <img class="bar-img" src="/src/assets/images/green_bar.svg" alt="" />
     <template v-if="isVersion2">
@@ -115,7 +116,6 @@ const changeKeyboardVersion = async (version) => {
   display: flex;
   justify-content: center;
   align-content: center;
-  margin-left: calc(var(--spacing-100) * -1);
   flex: 2;
 
   .logo-img {

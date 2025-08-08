@@ -8,7 +8,7 @@
 </template>
 
 <script setup>
-import { PRESET_SETTINGS } from '@/configs/constant/index.js';
+import { PRESET_SETTINGS } from '@/configs/constant/zh_CN/index.js';
 import { useKeyboardStore } from '@/stores';
 import { usePerformanceHook } from '@/hooks/usePerformanceHook';
 

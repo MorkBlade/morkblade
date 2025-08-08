@@ -48,13 +48,14 @@
           'is-pending': switchClass(idx),
           'clear-btn': idx === operationNameList.length - 1,
           recording: idx !== 0 && macroStore.recording,
-        }"
+        }
+  "
         @click="onClick(idx)"
         @mouseenter="onMouseEnter(idx)"
         @mouseleave="onMouseLeave(idx)"
       >
         <img :src="!idx ? changeIcon : item.icon" alt="" />
-        <span>{{ !idx && isStart ? $t('macroData.endRecord') : item.name }}</span>
+        <span class="operation-text" v-ellipsis-marquee="{ duration: 5, gap: 24 }">{{ !idx && isStart ? $t('macroData.endRecord') : item.name }}</span>
       </div>
     </div>
   </div>
@@ -87,7 +88,7 @@ import stopIcon from '@/assets/images/stop_icon.svg';
 import delayIcon from '@/assets/images/delay_icon.svg';
 import eventsIcon from '@/assets/images/events_icon.svg';
 import clearIcon from '@/assets/images/clear_icon.svg';
-import keyboardWord from '@/configs/byte-to-key/keyboard';
+import keyboardWord from '@/configs/byte-to-key/zh_CN/keyboard';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
@@ -961,12 +962,16 @@ const updateMacroTypeSettings = (newSettings) => {
       }
 
       span {
+        width: 85px;
         transition: color 0.2s ease-in-out;
         font-size: var(--font-size-18);
         color: #fff;
         position: absolute;
         top: var(--spacing-6);
         left: var(--spacing-65);
+
+        white-space: nowrap;
+        overflow: hidden;
       }
     }
     & .is-active {
