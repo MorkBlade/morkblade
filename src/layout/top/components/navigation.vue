@@ -20,8 +20,8 @@ import { useMacroStore, useKeyboardStore } from '@/stores';
 
 const routesInfo = [
     { path: '/performance', name: '性能设置', icon: 'performance' },
-    { path: '/key-assignment', name: '按键分配', icon: 'key-assignment' },
-    { path: '/macro', name: '宏键设置', icon: 'macro' },
+    //{ path: '/key-assignment', name: '按键分配', icon: 'key-assignment' },
+    //{ path: '/macro', name: '宏键设置', icon: 'macro' },
     { path: '/lighting', name: '灯光设置', icon: 'lighting' },
 ];
 const route = useRoute();

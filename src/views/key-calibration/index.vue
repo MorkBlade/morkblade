@@ -1,15 +1,44 @@
 <template>
   <div class="key-calibration-container">
-    <div class="show-key-box">
-      <p>按键测试</p>
-      <div class="keys">
-        <div v-for="key in keys" :key="key.id">{{ key.name }}</div>
+    <div class="key-calibration-title">
+      <div>
+        <span>校准说明</span>
+        <p>校准时请完全按下按键保持1到2秒，同时上下左右轻微摇晃按键。</p>
+      </div>
+      <div
+        class="start-btn"
+        :class="switchClass"
+        @click="onStart"
+        @mouseenter="onMouseEnter"
+        @mouseleave="onMouseLeave"
+      >
+        <span>{{ isStart ? '结束校验' : '开始校验' }}</span>
       </div>
     </div>
-    <div class="echarts-box">
-      <CalibrationMode v-model:isStart="isStart" />
+    <div class="key-calibration-content">
+      <div class="left-box">
+        <div style="width: 50%;">
+          <p>1.按下需要校准的按键；</p>
+          <img src="@/assets/images/keyboard_calibration_bg.svg" alt="" style="margin-left: 50px;">
+        </div>
+        <div  style="width: 50%;">
+          <p>2.长按保持。等待校准；</p>
+          <img src="@/assets/images/check_btn.svg" alt="" style="margin-left: 50px;">
+        </div>
+        <div style="width: 100%;">
+          <p>3.查看校准结果。</p>
+          <div style="display: flex; justify-content: space-around;">
+            <img src="@/assets/images/un_btn.svg" alt="">
+            <img src="@/assets/images/success_btn.svg" alt="">
+            <img src="@/assets/images/error_btn.svg" alt="">
+          </div>
+        </div>
+      </div>
+      <div class="echarts-box">
+        <CalibrationMode v-model:isStart="isStart" />
+      </div>
     </div>
-    <div class="start-box">
+    <!-- <div class="start-box">
       <div class="explain-box">
         <img src="@/assets/images/warn_icon.svg" alt="" />
         <span>校准说明:</span>
@@ -30,7 +59,7 @@
         <img :src="isStart ? stopIcon : startIcon" alt="" />
         <span>{{ isStart ? '结束校验' : '开始校验' }}</span>
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 <script setup>
@@ -172,16 +201,12 @@ onUnmounted(() => {
 
 <style scoped lang="scss">
 .key-calibration-container {
-  width: var(--size-1600);
-  height: var(--size-350);
-  margin-top: var(--spacing-25);
-  display: flex;
-  background-image: url('@/assets/images/performance_bg.svg');
+  //height: var(--size-350);
+  //background-image: url('@/assets/images/performance_bg.svg');
   background-size: cover;
   background-repeat: no-repeat;
   position: relative;
   box-sizing: border-box;
-  padding-top: var(--spacing-30);
   overflow: hidden;
 
   .show-key-box {
@@ -190,7 +215,7 @@ onUnmounted(() => {
     box-sizing: border-box;
     padding-left: var(--spacing-20);
     margin-left: var(--spacing-30);
-    background-image: url('@/assets/images/show_key_bg.svg');
+    //background-image: url('@/assets/images/show_key_bg.svg');
     background-size: cover;
     background-repeat: no-repeat;
     overflow: hidden;
@@ -227,11 +252,11 @@ onUnmounted(() => {
   }
 
   .echarts-box {
-    width: var(--calibration-echarts-width);
-    height: var(--size-290);
+    width: 1400px;
+    height: 400px;
     margin: 0 var(--spacing-30);
     display: flex;
-    background-image: url('@/assets/images/echarts_box_bg.svg');
+    //background-image: url('@/assets/images/echarts_box_bg.svg');
     background-size: cover;
     background-repeat: no-repeat;
     overflow: hidden;
@@ -248,7 +273,7 @@ onUnmounted(() => {
     height: var(--character-card-height);
     box-sizing: border-box;
     padding-left: var(--spacing-20);
-    background-image: url('@/assets/images/show_key_bg.svg');
+    //background-image: url('@/assets/images/show_key_bg.svg');
     background-size: cover;
     background-repeat: no-repeat;
     overflow: hidden;
@@ -282,7 +307,7 @@ onUnmounted(() => {
     }
 
     .start-btn {
-      width: var(--size-170);
+      width: 180px;
       height: var(--size-40);
       margin-left: var(--spacing-45);
       font-family: 'CN Heavy';
@@ -309,11 +334,72 @@ onUnmounted(() => {
         left: var(--spacing-65);
       }
     }
+  }
+  .key-calibration-title {
+    display: flex;
+    justify-content: space-between;
+    margin-left: 8px;
+    span {
+      font-size: var(--font-size-18);
+      font-family: 'CN Heavy';
+      color: #ffffff;
+    }
+    p {
+      font-size: var(--font-size-14);
+      color: #cccccc;
+      margin-top: var(--spacing-5);
+    }
+    .start-btn {
+      width: var(--size-170);
+      height: var(--size-40);
+      margin-left: var(--spacing-45);
+      font-family: 'CN Heavy';
+      background-image: url('/src/assets/images/save_bg.svg');
+      background-size: cover;
+      background-repeat: no-repeat;
+      position: relative;
+      margin-right: 95px;
+      cursor: pointer;
+
+      img {
+        width: var(--size-20);
+        height: var(--size-20);
+        object-fit: fill;
+        position: absolute;
+        top: var(--spacing-10);
+        left: var(--spacing-10);
+      }
+
+      span {
+        font-size: var(--font-size-16);
+        color: #fff;
+        position: absolute;
+        top: var(--spacing-6);
+        left: 53px;
+      }
+    }
     .is-active {
       background-image: url('/src/assets/images/save_bgc.svg');
     }
     .is-pending {
-      background-image: url('/src/assets/images/pending_bg.svg');
+      background-image: url('/src/assets/images/save_bgc.svg');
+    }
+  }
+  .key-calibration-content {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    height: 100%;
+    margin-left: 8px;
+    .left-box {
+      width: 620px;
+      display: flex;
+      flex-wrap: wrap;
+      border-right: 1px solid #444444;
+      p {
+        margin: 25px 0;
+        color: #fff;
+      }
     }
   }
 }

@@ -143,12 +143,16 @@ const usePerformanceStore = defineStore('performance', {
         // keyboardStore.keyboard.keyboardLayout[row][col].performance = performance;
         // }
       }
+      
       const result = await Promise.all(performance);
       // console.log('getPerformance result',result);
       this.initGetPerformance = true;
       return result;
     },
-
+    async getAxisValue(keyValue) {
+      console.log('getAxisValue', keyValue);
+      return keyValue;
+    },
     async getPerformanceValueV2(params, performance) {
       // console.log('getPerformanceValueV2');
       const [performanceResult] = await services.getPerformanceV2(params);
@@ -181,7 +185,6 @@ const usePerformanceStore = defineStore('performance', {
         performance.axisID = axis;
         performance.calibrate = calibrate;
       }
-      // console.log("xxxxxxx",performance);
       return performance;
     },
 

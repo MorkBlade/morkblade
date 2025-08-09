@@ -160,8 +160,8 @@ const shapeComputed = computed(() => {
   const { w, h } = shapeScale;
   const shapeWidth = w * shape.width;
   const shapeHeight = h * shape.height;
-  const contentWidth = shapeWidth;
-  const contentHeight = shapeHeight - 12;
+  const contentWidth = shapeWidth + 10;
+  const contentHeight = shapeHeight + 8;
   const labelHeight = shapeHeight - 18;
   const labelWidth = shapeWidth - 18;
   return { shapeWidth, shapeHeight, contentWidth, contentHeight, labelHeight, labelWidth };
@@ -173,7 +173,7 @@ const locationComputed = computed(() => {
   const keyBorderTop = y * width;
   const keyBorderLeft = x * height;
   const top = keyBorderTop + 5;
-  const left = keyBorderLeft;
+  const left = keyBorderLeft + 12*colIndex;
   return { x, y, top, left, keyBorderTop, keyBorderLeft };
 });
 
@@ -184,7 +184,7 @@ const keyStyle = computed(() => {
     // top: `${top}px`,
     left: `${left}px`,
     width: `${contentWidth}px`,
-    // height: `${contentHeight}px`,
+    height: `${contentHeight}px`,
   };
 });
 
@@ -337,8 +337,8 @@ const axisVal = computed(() => {
   }
   return null;
 });
-
 const axisColor = computed(() => {
+  performanceStore.getAxisValue(axisVal.value)
   return performanceStore.axisList?.[axisVal.value]?.axis_color ?? 'transparent';
 });
 
@@ -453,7 +453,7 @@ const changeKeyCustomLight = async (e, isCustom = true) => {
   position: absolute;
   top: 0;
   box-sizing: border-box;
-  padding-top: var(--spacing-2);
+  padding-top: 6px;
   cursor: pointer;
   // border: var(--spacing-3) solid transparent;
   transition: border-color 0.2s ease;

@@ -77,6 +77,7 @@ const onMouseLeave = () => {
 const onSure = () => {
   isShow.value = false;
   emits('saveConfig');
+  
 };
 const onCancel = () => {
   isShow.value = false;

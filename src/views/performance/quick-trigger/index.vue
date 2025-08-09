@@ -147,7 +147,6 @@ const renderRtValue = (rowIndex, colIndex) => {
   }
   const rtPressTravelVal = typeof rtPressValue === 'number' ? rtPressValue : parseFloat(rtPressValue);
   const rtReleaseTravelVal = typeof rtReleaseValue === 'number' ? rtReleaseValue : parseFloat(rtReleaseValue);
-  console.log('sigleTravelVal: ', singleTravelVal, rtPressTravelVal, rtReleaseTravelVal);
   singleTravel.value = singleTravelVal || 0.1;
   rtPressTravel.value = rtPressTravelVal || 0.1;
   rtReleaseTravel.value = rtReleaseTravelVal || 0.1;
@@ -334,7 +333,7 @@ const saveRtConfig = async () => {
     background-image: url('@/assets/images/link_icon2.svg');
   }
   .link-box {
-    width: 1120px;
+    width: 820px;
     margin-left: 45px;
     height: 100%;
     .link-rt {

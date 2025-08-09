@@ -175,20 +175,20 @@ onUnmounted(() => {
   }
 
   .chart-container {
-    width: var(--echarts-container-width);
-    height: var(--echarts-container-height);
+    width: 1075px;
+    height: 260px;
     position: absolute;
     z-index: 1;
-    margin: var(--spacing-50) 0 0 calc(var(--spacing-75) - var(--spacing-1));
+    margin: 43px 0 0 135px;
   }
 
   img {
-    width: var(--echarts-container-width);
-    height: var(--echarts-container-height);
+    width: 1280px;
+    height: 325px;
     object-fit: fill;
     position: absolute;
-    left: calc(var(--spacing-90) - var(--spacing-1));
-    top: calc(var(--spacing-45) - var(--spacing-3));
+    left: 10px;
+    top: 10px;
   }
 
   .calibration-nums {
@@ -196,9 +196,9 @@ onUnmounted(() => {
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
-    gap: var(--spacing-16);
+    gap: 32px;
     font-size: var(--font-size-15);
-    color: #ffffff;
+    color: #a19595;
     font-family: 'CN Regular';
     position: absolute;
     top: calc(var(--spacing-50) - var(--spacing-3));

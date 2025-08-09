@@ -1,9 +1,9 @@
 <template>
   <div
     class="key-page"
-    :style="{
-      width: `${containerDimensions.width}px`,
-    }"
+    style="
+      width: 1240px,
+    "
   >
     <div class="side-left-container">
       <DropdownMenu />
@@ -74,10 +74,7 @@
       <div class="keyboard-container v2">
         <div
           class="keyboard"
-          :style="{
-            width: `${containerDimensions.width}px`,
-            height: `${containerDimensions.height}px`,
-          }"
+          style=" width: 1200px; height:365px, "
         >
           <template v-for="(row, rowIndex) in layout">
             <div class="row" :class="`row_${rowIndex + 1}`" :key="rowIndex" v-if="row[0].shapeScale?.w">
@@ -392,9 +389,9 @@ const containerDimensions = computed(() => {
     transition: width 0.3s ease-in-out;
     &.v2 .keyboard {
       // 特殊背景图 故需要写死宽高
-      width: var(--keyboard-v2-width) !important;
-      height: var(--keyboard-v2-height) !important;
-      background-image: url('@/assets/images/mk60_bg.svg');
+      width: 1180px !important;
+      height: 460px !important;
+      //background-image: url('@/assets/images/mk60_bg.svg');
       background-size: cover;
       background-repeat: no-repeat;
       border: none;
@@ -402,14 +399,14 @@ const containerDimensions = computed(() => {
       transition: width 0.3s ease-in-out;
       &::after {
         content: '';
-        width: var(--keyboard-pseudo-element-width);
-        height: var(--keyboard-pseudo-element-height);
+        width: 1140px;
+        height: 410px;
         box-sizing: border-box;
         border-radius: var(--spacing-15);
         position: absolute;
         top: var(--keyboard-pseudo-element-top);
         left: var(--keyboard-pseudo-element-left);
-        border: var(--spacing-3) solid #616161;
+        border: var(--spacing-7) solid #ccc;
       }
     }
 
@@ -436,7 +433,7 @@ const containerDimensions = computed(() => {
 
       .row {
         display: flex;
-        height: var(--size-50);
+        height: 72px;
         position: relative;
         margin-bottom: 5px;
         z-index: 2;
@@ -487,7 +484,7 @@ const containerDimensions = computed(() => {
     .logo-light-bar__left {
       width: var(--size-22);
       height: var(--size-100);
-      background-image: url('@/assets/images/left_logo.svg');
+      //background-image: url('@/assets/images/left_logo.svg');
       background-size: cover;
       background-repeat: no-repeat;
       position: absolute;
@@ -513,7 +510,7 @@ const containerDimensions = computed(() => {
     width: var(--keyboard-side-width);
     height: var(--spacing-30);
     margin-bottom: var(--spacing-10);
-    background-image: url('@/assets/images/side_bg.svg');
+    background-image: url('@/assets/images/save_bg.svg');
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
@@ -563,7 +560,7 @@ const containerDimensions = computed(() => {
     line-height: var(--spacing-30);
   }
   .is-checked {
-    background-image: url('@/assets/images/side_bgC.svg') !important;
+    background-image: url('@/assets/images/save_bgc.svg') !important;
   }
 }
 </style>

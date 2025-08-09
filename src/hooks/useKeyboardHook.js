@@ -47,6 +47,7 @@ const keyboardItemInfo = {
 export const useKeyboardHook = () => {
   const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
   const keyboardStore = useKeyboardStore();
+  console.log('isVersion2:', keyboardStore);
   const performanceStore = usePerformanceStore();
 
   const initKeyboard = async () => {
@@ -112,7 +113,7 @@ export const useKeyboardHook = () => {
         // 将处理后的行数据添加到keyboardsWithPerformance
         keyboardsWithPerformance.push(layoutData[rowIndex]);
       }
-
+      
       // console.log('keyboardsWithPerformance', keyboardsWithPerformance);
       return keyboardsWithPerformance;
     } else {
