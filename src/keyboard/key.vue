@@ -1,14 +1,18 @@
 <!-- :class="keyItem !== 1 ? 'key' + String(keyboardLayout[rowIndex][colIndex]).replace('.', '_') : ''" -->
 <template>
-  <div
-    class="key"
-    :style="[active ? { border: '2px solid #91bc00' } : '', keyStyle]"
-    @click.stop="onChecked(keyItem.keyValue, rowIndex, colIndex)"
-    @dragenter.prevent
-    @dragover.prevent
-    @mouseup="(e) => Keydrop(e, rowIndex, colIndex, keyItem.keyValue)"
-  >
-    <p class="top-key">{{ showKeyCode }}</p>
+  <div class="key" :style="[active ? { border: '2px solid #91bc00' } : '', keyStyle]"
+    @click.stop="onChecked(keyItem.keyValue, rowIndex, colIndex)" @dragenter.prevent @dragover.prevent
+    @mouseup="(e) => Keydrop(e, rowIndex, colIndex, keyItem.keyValue)">
+    <template v-if="showKeyCode === 'Volume-down'">
+      <p>
+        <!-- <img :src="getImageSrc(showKeyCode)" alt=""></img> -->
+        <img :src="ImageSrc" alt=""></img>
+      </p>
+    </template>
+    <template v-else>
+      <p class="top-key">{{ showKeyCode }}</p>
+      <p>{{ keyItem.keyValue }}</p>
+    </template>
     <!-- <p class="center-key" v-if="!singleTravel && !rtReleaseTravel && !rtPressTravel">{{ byteToKey[keyItem.keyValue] }}</p> -->
     <!-- 'mechanicalMode', 'quickTrigger' -->
     <div class="show-val-box" v-if="route.path === '/performance'">
@@ -52,28 +56,17 @@
       <span class="advanced-tag" v-if="advancedTag">{{ advancedTag }}</span>
     </div>
     <template v-if="!isVersion2 && lightSettingStore.enterCustom">
-      <div
-        class="color-key"
-        :style="{ backgroundColor: currentKeyColor }"
-        @mousedown.stop="(e) => startMouseDown(e, keyItem.keyValue)"
-        @mouseenter="handleMouseOver(keyItem.keyValue)"
-        @mouseleave="onMouseLeave"
-        @mouseup.stop="startMouseUp"
-        @contextmenu="(e) => handleContextmenu(e, keyItem.keyValue)"
-      >
+      <div class="color-key" :style="{ backgroundColor: currentKeyColor }"
+        @mousedown.stop="(e) => startMouseDown(e, keyItem.keyValue)" @mouseenter="handleMouseOver(keyItem.keyValue)"
+        @mouseleave="onMouseLeave" @mouseup.stop="startMouseUp"
+        @contextmenu="(e) => handleContextmenu(e, keyItem.keyValue)">
         <p class="top-key">{{ showKeyCode }}</p>
       </div>
     </template>
     <template v-if="route.path === '/lighting' && isVersion2">
-      <div
-        class="color-key"
-        :style="keyColorStyle"
-        @mousedown.stop="(e) => startMouseDown(e, keyItem.keyValue)"
-        @mouseenter="handleMouseOver(keyItem.keyValue)"
-        @mouseleave="onMouseLeave"
-        @mouseup.stop="startMouseUp"
-        @contextmenu="(e) => handleContextmenu(e, keyItem.keyValue)"
-      >
+      <div class="color-key" :style="keyColorStyle" @mousedown.stop="(e) => startMouseDown(e, keyItem.keyValue)"
+        @mouseenter="handleMouseOver(keyItem.keyValue)" @mouseleave="onMouseLeave" @mouseup.stop="startMouseUp"
+        @contextmenu="(e) => handleContextmenu(e, keyItem.keyValue)">
         <p class="top-key">{{ showKeyCode }}</p>
       </div>
     </template>
@@ -228,6 +221,7 @@ const showKeyCode = computed(() => {
     const customKeysKeyName = `fn${layout.value}`;
     // console.log('currentKey.value', currentKey.value, customKeysKeyName);
     const { bindKeyValue } = currentKey.value.customKeys[customKeysKeyName];
+    console.log('keyboardV2.value[bindKeyValue]', keyboardV2.value[bindKeyValue]);
     return !isVersion2.value
       ? keyboard.value[bindKeyValue]
       : bindKeyValue === 61696
@@ -236,6 +230,22 @@ const showKeyCode = computed(() => {
   }
 
   return isVersion2.value ? keyboardV2.value[0] : keyboard.value[0];
+});
+
+// 添加动态导入图片的方法
+const getImageSrc = (keyText) => {
+  try {
+    console.log('keyText', keyText);
+    // 使用动态导入来获取图片路径
+    return new URL(`../assets/images/${keyText}.svg`, import.meta.url).href;
+  } catch (error) {
+    console.warn(`图片 ${keyText}.svg 不存在`);
+    return ''; // 返回空字符串或默认图片
+  }
+};
+
+const ImageSrc = computed(() => {
+  return getImageSrc(showKeyCode.value);
 });
 
 const verifySuc = computed(() => {

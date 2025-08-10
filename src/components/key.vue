@@ -1,16 +1,14 @@
 <template>
   <div class="key" @click="handleClick" @mousedown="startDrag" draggable="false" v-if="keyText"
     @mouseenter="onMouseEnter" @mouseleave="onMouseLeave">
-    <!-- <template v-if="keyValue === 129">
+    <template v-if="keyValue === 62224">
       <p>
-        <img src="@/assets/images/Volume-down.svg" alt=""></img>
+        <img :src="getImageSrc(keyText)" alt="" @mousedown.stop="startDrag" draggable="false"></img>
       </p>
     </template>
     <template v-else>
       <p>{{ keyText }}</p>
-      <p>{{ keyValue }}</p>
-    </template> -->
-    <p>{{ keyText }}</p>
+    </template>
     <!-- V2键盘有提示 -->
     <template v-if="showTip && isVersion2 && keyboardMap[keyValue]?.comm">
       <span :style="tipStyle">{{ keyboardMap[keyValue]?.comm }}</span>
@@ -18,7 +16,15 @@
 
   </div>
   <div ref="dragElement" class="key key-mirror" v-if="isDragging" :style="isDragging ? defaultOffset : ''">
-    <p>{{ keyText }}</p>
+    <!-- 复制原始按键的完整内容 -->
+    <template v-if="keyValue === 62224">
+      <p>
+        <img :src="getImageSrc(keyText)" alt="" @mousedown.stop="startDrag" draggable="false"></img>
+      </p>
+    </template>
+    <template v-else>
+      <p>{{ keyText }}</p>
+    </template>
   </div>
 </template>
 
@@ -77,7 +83,6 @@ const keyText = computed(() => {
         ? 'Fn'
         : keyboardV2.value[keyValue] || '';
   }
-  console.log(keyboard.value, );
   return typeof keyValue === 'object' && keyValue.macroName ? keyValue.macroName : keyboard.value[keyValue] || '';
 });
 
@@ -148,6 +153,17 @@ const stopDrag = () => {
     keyboardStore.updateGrabStatus(false);
     keyboardStore.updateSelectKeyCode(0);
   }, 200);
+};
+
+// 添加动态导入图片的方法
+const getImageSrc = (keyText) => {
+  try {
+    // 使用动态导入来获取图片路径
+    return new URL(`../assets/images/${keyText}.svg`, import.meta.url).href;
+  } catch (error) {
+    console.warn(`图片 ${keyText}.svg 不存在`);
+    return ''; // 返回空字符串或默认图片
+  }
 };
 
 // 语言切换将自动通过上面的 computed 生效，无需额外 onMounted 赋值

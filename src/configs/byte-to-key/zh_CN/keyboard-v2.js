@@ -173,7 +173,7 @@ export default {
   62214: 'Prev',
   62215: 'OnOff',
   62216: 'Dir',
-  62224: 'D1_Mode',
+  62224: 'Volume-down',
   62225: 'D1_Color',
   62226: 'D1_Bri+',
   62227: 'D1_Bri-',

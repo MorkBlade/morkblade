@@ -321,7 +321,6 @@ const useKeyboardStore = defineStore('keyboard', {
             // 由于可能没有批量API，使用循环单个设置
             for (const keyData of keysToUpdate) {
               await services.setKeyCodeV2(keyData);
-              console.log('keyData', keyData);
             }
           }
 
