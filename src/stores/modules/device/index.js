@@ -121,6 +121,7 @@ const useDeviceStore = defineStore('device', {
     // 设备升级
     async updateDevice(data, fn) {
       const update = await services.upgradeV2(data, fn);
+      console.log('update: ', update);
       return update;
     },
 

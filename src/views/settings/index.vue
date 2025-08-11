@@ -557,7 +557,6 @@ const startUpdate = async () => {
     const res = await deviceStore.updateDevice(bindData.value, ({ percentage }) => {
       updateDisplayProgress(percentage);
     });
-
     if (!res) {
       showMessage(t('settings.updateFailed'), 'warning');
       throw new Error(t('settings.updateFailed'));
@@ -576,6 +575,7 @@ const startUpdate = async () => {
     //   await delay(100);
     // }
     // await showMessage('success', '更新成功');
+    // 更新轴体V2
     showMessage(t('settings.updateSuccess'));
     elLoading.value.close();
     resetStates();
@@ -585,9 +585,12 @@ const startUpdate = async () => {
     await deviceStore.getDoubleLighting();
     await appStore.getConfigID(isVersion2.value);
     await appStore.getBaseInfo(isVersion2.value);
+    if (isVersion2.value) {
+      await performanceStore.getAixsList(isVersion2.value);
+    }
   } catch (error) {
     console.error(t('settings.updateFailedMessage'), error);
-    // if (loadingId.value !== null) {
+    // if (loadingId.value !== null) {rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
     //   MessagePlugin.close(loadingId.value);
     //   await delay(100);
     // }
