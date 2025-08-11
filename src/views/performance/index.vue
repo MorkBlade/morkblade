@@ -7,26 +7,30 @@
       </div>
     </div>
     <div class="display-area">
-      <!-- <mode v-if="!clickItem" /> -->
-      <quickTrigger v-if="clickItem == 0" />
-      <!-- <deadZone v-if="clickItem == 2" />
-      <preinstall v-if="clickItem == 3" /> -->
-      <axisSetting v-if="clickItem == 3" />
-      <div class="switch-box" v-if="clickItem == 1">
+      <!-- <mode v-if="!clickItem" />
+      <deadZone v-if="clickItem == 2" />
+      <preinstall v-if="clickItem == 3" />
+      <axisSetting v-if="clickItem === 2" /> -->
+      <quickTrigger v-if="!clickItem" />
+      <div class="switch-box" v-if="clickItem === 1">
         <div class="switch-item-box" style="margin-right: 75px;">
           <p style="color: #fff; font-size: 18px; font-weight: bold;">当前已选：</p>
           <span style="color: #329be2; font-size: 16px; font-weight: bold;">1个按键</span>
           <div class="switch-content-box" style="border-right: 1px solid rgba(255, 255, 255, 0.2);">
-            <div class="switch-item" v-for="(item, idx) in ttcAxis" :key="item">
+            <div class="switch-item" 
+              :class="idx === switchItem ? 'is-active' : ''" 
+              v-for="(item, idx) in ttcAxis" :key="item" 
+              @click="handleSaveAxis(item.axis_id,idx)"
+            >
               <p :style="{backgroundColor: item.axis_color || '#fff'}" class="line"></p>
               <div :style="{backgroundColor: item.axis_color || '#fff',}">{{ 'T'+idx }}</div>
               <p style="color: #fff; font-size: 16px; font-weight: bold;">{{ item.axis_name }}</p>
-              <span class="switch-button" :selected-id="item.axis_id" @click="handleSaveAxis(item.axis_id)">替换轴体</span>
+              <span class="switch-button" :selected-id="item.axis_id">替换轴体</span>
             </div>
           </div>
         </div>
         <div class="switch-item-box">
-          <p style="color: #fff; font-size: 18px; font-weight: bold;">当前已选：</p>
+          <p style="color: #fff; font-size: 18px; font-weight: bold;">轴体列表：</p>
           <span style="color: #329be2; font-size: 16px; font-weight: bold;">已绑定类型：TTC万磁王、万磁王RGB、天王轴</span>
           <div class="switch-content-box">
             <div class="select-switch-item">
@@ -38,13 +42,13 @@
               <p style="color: #fff; font-size: 16px; font-weight: bold;">万磁王RGB</p>
             </div>
             <div class="select-switch-item">
-              <div style="background-color: #c5ff6e;">T1</div>
+              <div style="background-color: #c5ff6e;">T3</div>
               <p style="color: #fff; font-size: 16px; font-weight: bold;">TTC万磁王</p>
             </div>
           </div>
         </div>
       </div>
-      <keyCalibration v-if="clickItem == 2" />
+      <keyCalibration v-if="clickItem === 2" />
     </div>
   </div>
 </template>
@@ -65,11 +69,14 @@ import { usePerformanceHook } from '@/hooks';
 
 const appStore = useAppStore();
 const clickItem = ref(0);
+const switchItem = ref();
 const performanceStore = usePerformanceStore();
 const keyboardStore = useKeyboardStore();
 const { keyboards } = storeToRefs(keyboardStore);
 const checkAixsId = ref(2);
-const axisList = computed(() => performanceStore.axisList);
+const axisList = computed(() => {
+  return performanceStore.axisList;
+});
 //const performanceItem = ['机械模式', '快速触发', '轴体切换', '按键校准'];
 const performanceItem = ['快速触发', '轴体切换', '按键校准'];
 const modulesName = ['quickTrigger', 'axis', 'keyCalibration'];
@@ -92,16 +99,18 @@ const changeMenu = (idx) => {
     // emitter.emit('in-the-where', { value: modulesName[4] });
   }, 10000);
 };
-const ttcAxis = axisList.value.filter((ite) => {
-  return ite.factory_name === 'TTC';
+
+const ttcAxis = computed(() => {
+  return axisList.value.filter((ite) => {
+    return ite.factory_name === 'TTC';
+  });
 });
 
-
-const handleSaveAxis = async (id) => {
+const handleSaveAxis = async (id,idx) => {
+  switchItem.value = idx;
   if (activeKeys.value.length == 1) {
     const { setAxis } = usePerformanceHook();
     checkAixsId.value = axisList.value.findIndex((ite) => ite.axis_id === id);
-    console.log(axisList.value);
     const res = setAxis(keyboards.value, activeKeys.value, checkAixsId.value);
     if (res) {
       showMessage('修改成功');
@@ -204,20 +213,18 @@ onMounted(() => {
             padding-right: 15px;
             height: 42px;
             background-size: contain;
-            
+            cursor: pointer;
+            &:hover {
+              background-image: url('@/assets/images/select_axis_switch.svg');
+            }
             .switch-button {
-              cursor: pointer;
-              color: #eee; 
+              color: #fff; 
               font-size: 12px; 
               font-weight: bold;
               padding: 2px 10px;
               background-color: #232121;
               border-radius: 10px;
               margin-left: auto;
-              &:hover {
-                color: #fff;
-                font-size: 14px
-              }
             };
             .line {
               width: 2px;
@@ -240,11 +247,21 @@ onMounted(() => {
             height: 60px;
             background-image: url('@/assets/images/select_switch_bg.svg');
             background-size: contain;
+            cursor: pointer;
+            &:hover {
+              background-image: url('@/assets/images/select_switch.svg');
+            }
              div {
               font-weight: bold;
               font-size: 14px;
               margin: 6px 10px;
               padding: 4px 6px;
+            }
+          }
+          .is-active {
+            background-image: url('@/assets/images/select_axis_switch.svg');
+            &:hover {
+              background-image: url('@/assets/images/select_axis_switch.svg');
             }
           }
         }

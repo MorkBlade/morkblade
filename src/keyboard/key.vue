@@ -338,9 +338,6 @@ const axisVal = computed(() => {
   return null;
 });
 const axisColor = computed(() => {
-  let  arr = [];
-  arr.push(performanceStore.axisList?.[axisVal.value]?.axis_color);
-  console.log(arr);
   return performanceStore.axisList?.[axisVal.value]?.axis_color ?? 'transparent';
 });
 

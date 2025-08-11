@@ -49,7 +49,7 @@ const keyboardStore = useKeyboardStore();
 const performanceStore = usePerformanceStore();
 
 
-const testEnabled = ref(true); // 默认开启
+const testEnabled = ref(false); // 默认开启
 const maxMM = ref(0);
 const switchValue = ref(true)
 const keyPressTestCount = ref(0);

@@ -1,6 +1,6 @@
 <template>
   <div class="quick-trigger-box">
-    <travelTestCard />
+    <travelTestCard :sliderVal="singleTravel" />
     <div class="key-setting-box">
       <setTravelCard
         :sliderVal="singleTravel"
@@ -139,6 +139,7 @@ const renderRtValue = (rowIndex, colIndex) => {
   rtEnabled.value = true;
   handleRtEnabledChange();
   let singleTravelVal;
+
   if (isVersion2) {
     singleTravelVal = typeof rtFirstTouch === 'number' ? rtFirstTouch : parseFloat(rtFirstTouch);
   } else {

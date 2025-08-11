@@ -43,7 +43,7 @@ const props = defineProps({
   }
 });
 
-const testEnabled = ref(true); // 默认开启
+const testEnabled = ref(false); // 默认开启
 const maxMM = ref(0);
 const keyPressTestCount = ref(0);
 const currentSingleTravel = ref(props.sliderVal);
