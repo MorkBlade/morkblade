@@ -29,7 +29,9 @@ const useDeviceStore = defineStore('device', {
     // 恢复出厂设置
     async connectDevice() {
       try {
+        console.log('开始连接设备');
         const devices = await services.getDevices();
+        console.log(devices);
         services.on('GETDEVICEINFO', (requestDeviceStatus) => {
           this.requestDeviceStatus = requestDeviceStatus;
         });

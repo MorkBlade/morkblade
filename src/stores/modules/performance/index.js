@@ -149,10 +149,6 @@ const usePerformanceStore = defineStore('performance', {
       this.initGetPerformance = true;
       return result;
     },
-    async getAxisValue(keyValue) {
-      console.log('getAxisValue', keyValue);
-      return keyValue;
-    },
     async getPerformanceValueV2(params, performance) {
       // console.log('getPerformanceValueV2');
       const [performanceResult] = await services.getPerformanceV2(params);

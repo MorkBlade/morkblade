@@ -123,7 +123,7 @@ const { keyboards, layout } = storeToRefs(keyboardStore);
 const { setCustomLighting } = useLightingHook();
 const { setMacroV1 } = useMacroHook();
 const { getMacro } = useAdvancedHook();
-const currentModel = ref('mechanicalMode');
+const currentModel = ref('quickTrigger');
 
 const route = useRoute();
 const isShow = ref(false);
@@ -338,7 +338,9 @@ const axisVal = computed(() => {
   return null;
 });
 const axisColor = computed(() => {
-  performanceStore.getAxisValue(axisVal.value)
+  let  arr = [];
+  arr.push(performanceStore.axisList?.[axisVal.value]?.axis_color);
+  console.log(arr);
   return performanceStore.axisList?.[axisVal.value]?.axis_color ?? 'transparent';
 });
 

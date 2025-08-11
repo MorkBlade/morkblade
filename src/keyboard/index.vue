@@ -280,7 +280,7 @@ const layout = computed(() => {
 
   // 创建一个副本，避免直接修改原始布局
   const result = JSON.parse(JSON.stringify(originalLayout));
-
+  
   keyboards.value.forEach((row, rowIndex) => {
     // 跳过不存在的行
     if (!result[rowIndex]) {
@@ -300,10 +300,8 @@ const layout = computed(() => {
       });
     }
   });
-
   return result;
 });
-
 // 容器尺寸计算逻辑
 const containerDimensions = computed(() => {
   // 默认尺寸
@@ -316,7 +314,7 @@ const containerDimensions = computed(() => {
   let maxX = 0;
   let maxY = 0;
   let validKeysCount = 0;
-
+  
   // 遍历所有键位
   layout.value.forEach((row) => {
     if (!row) return;

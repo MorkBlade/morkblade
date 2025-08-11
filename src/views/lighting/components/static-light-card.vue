@@ -94,7 +94,6 @@ const { staticLightColorList, staticType } = defineProps({
 })); */
 const newStaticLightColorList = ref(staticLightColorList);
 newStaticLightColorList.value.push({color: '#000000', id: newStaticLightColorList.value.length}); // 添加一个默认的黑色灯光选项
-console.log(newStaticLightColorList)
 const lightSettingStore = useLightSettingStore();
 const checkedLight = ref(0);
 const checkedColor = ref(null);

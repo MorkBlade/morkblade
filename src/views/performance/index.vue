@@ -98,10 +98,10 @@ const ttcAxis = axisList.value.filter((ite) => {
 
 
 const handleSaveAxis = async (id) => {
-  console.log(axisList.value[4], id);
   if (activeKeys.value.length == 1) {
     const { setAxis } = usePerformanceHook();
     checkAixsId.value = axisList.value.findIndex((ite) => ite.axis_id === id);
+    console.log(axisList.value);
     const res = setAxis(keyboards.value, activeKeys.value, checkAixsId.value);
     if (res) {
       showMessage('修改成功');

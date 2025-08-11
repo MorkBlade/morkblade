@@ -143,7 +143,7 @@ const handleClick = async (ite) => {
     // 确保只有当路径改变时才进行更新
     defaultActive.value = ite.path; // 更新默认激活的菜单项
     if (ite.path !== '/performance') {
-      emitter.emit('in-the-where', { value: 'mechanicalMode' });
+      emitter.emit('in-the-where', { value: 'quickTrigger' });
     }
     try {
       await nextTick();
