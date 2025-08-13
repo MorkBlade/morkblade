@@ -3,16 +3,16 @@
   <div class="key" :style="[active ? { border: '2px solid #91bc00' } : '', keyStyle]"
     @click.stop="onChecked(keyItem.keyValue, rowIndex, colIndex)" @dragenter.prevent @dragover.prevent
     @mouseup="(e) => Keydrop(e, rowIndex, colIndex, keyItem.keyValue)">
-    <template v-if="showKeyCode === 'Volume-down'">
+    <template v-if="isIconKey">
       <p>
-        <!-- <img :src="getImageSrc(showKeyCode)" alt=""></img> -->
-        <img :src="ImageSrc" alt=""></img>
+        <img :src="getImageSrc(showKeyCode)" alt=""></img>
       </p>
     </template>
     <template v-else>
       <p class="top-key">{{ showKeyCode }}</p>
-      <p>{{ keyItem.keyValue }}</p>
     </template>
+    <!-- <p>{{ keyItem.keyValue }}</p> -->
+
     <!-- <p class="center-key" v-if="!singleTravel && !rtReleaseTravel && !rtPressTravel">{{ byteToKey[keyItem.keyValue] }}</p> -->
     <!-- 'mechanicalMode', 'quickTrigger' -->
     <div class="show-val-box" v-if="route.path === '/performance'">
@@ -84,10 +84,12 @@ import { KEY_SHAFT } from '@/configs/constant/zh_CN/index.js';
 import services from '@/services/index';
 import emitter from '@/utils/app-emitter';
 import { usePerformanceStore, useMacroStore, useKeyboardStore, useLightSettingStore } from '@/stores';
-import { keyboard_zh_CN, keyboardV2_zh_CN, keyboard_en_US, keyboardV2_en_US } from '@/configs/byte-to-key';
 import { scaleValue } from '@/utils/responsive.js';
 import { useLightingHook, useMacroHook, useAdvancedHook } from '@/hooks';
 import { useI18n } from 'vue-i18n';
+import {NUM_KEY, NUM_KEY_V2} from '@/configs/byte-to-key/iconNumKey';
+import keyboardV1 from '@/configs/byte-to-key/v1/keyboard';
+import keyboardV2 from '@/configs/byte-to-key/v2/keyboard-v2';
 
 const {
   row: rowIndex,
@@ -150,9 +152,6 @@ watch(
   { immediate: true },
 );
 
-const isZhCN = computed(() => locale.value === 'zh_CN');
-const keyboard = computed(() => (isZhCN.value ? keyboard_zh_CN : keyboard_en_US));
-const keyboardV2 = computed(() => (isZhCN.value ? keyboardV2_zh_CN : keyboardV2_en_US));
 
 const shapeComputed = computed(() => {
   const { w, h } = shapeScale;
@@ -221,31 +220,47 @@ const showKeyCode = computed(() => {
     const customKeysKeyName = `fn${layout.value}`;
     // console.log('currentKey.value', currentKey.value, customKeysKeyName);
     const { bindKeyValue } = currentKey.value.customKeys[customKeysKeyName];
-    console.log('keyboardV2.value[bindKeyValue]', keyboardV2.value[bindKeyValue]);
+    // console.log('keyboardV2.value[bindKeyValue]', keyboardV2.value[bindKeyValue]);
     return !isVersion2.value
-      ? keyboard.value[bindKeyValue]
+      ? keyboardV1[bindKeyValue]
       : bindKeyValue === 61696
         ? 'Fn'
-        : keyboardV2.value[bindKeyValue];
+        : keyboardV2[bindKeyValue];
   }
 
-  return isVersion2.value ? keyboardV2.value[0] : keyboard.value[0];
+  return isVersion2.value ? keyboardV2[0] : keyboardV1[0];
 });
 
 // 添加动态导入图片的方法
 const getImageSrc = (keyText) => {
-  try {
-    console.log('keyText', keyText);
-    // 使用动态导入来获取图片路径
-    return new URL(`../assets/images/${keyText}.svg`, import.meta.url).href;
-  } catch (error) {
-    console.warn(`图片 ${keyText}.svg 不存在`);
-    return ''; // 返回空字符串或默认图片
-  }
+  return new URL(`../assets/images/${keyText}.avif`, import.meta.url).href;
 };
 
 const ImageSrc = computed(() => {
+// 名称
   return getImageSrc(showKeyCode.value);
+});
+
+
+// 判断是否是图标键 - 检查当前键是否应该显示为图标
+const isIconKey = computed(() => {
+  const keyName = (showKeyCode.value || '').trim();
+  
+  // 如果键名为空，则不是图标键
+  if (!keyName) {
+    return false;
+  }
+  // 根据版本选择对应的键值映射表
+  const keyMapping = isVersion2.value ? NUM_KEY_V2 : NUM_KEY;
+
+  // 检查键名是否存在于图标键映射表中（忽略大小写）
+  return Object.values(keyMapping).some(mappedValue => 
+    mappedValue && mappedValue.toLowerCase() === keyName.toLowerCase()
+  );
+});
+
+onMounted(() => {
+  // console.log('isIconKey.value', isIconKey.value);
 });
 
 const verifySuc = computed(() => {

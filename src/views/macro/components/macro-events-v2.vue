@@ -89,7 +89,7 @@
 import { computed } from 'vue';
 import { scaleValue } from '@/utils/responsive.js';
 import { useKeyboardStore } from '@/stores';
-import keyboardWord from '@/configs/byte-to-key/zh_CN/keyboard';
+import keyboardWord from '@/configs/byte-to-key/keyboard';
 
 import saveConfigBtn from '@/components/save-config-btn.vue';
 

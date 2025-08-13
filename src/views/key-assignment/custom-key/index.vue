@@ -20,28 +20,13 @@
         <key v-for="ite in extend" :key="ite" :key-value="ite" @select="selectItem" />
       </template>
       <template v-if="checkedIdx === 2">
-        <template v-if="isVersion2">
-          <key v-for="ite in special2" :key="ite" :key-value="ite" @select="selectItem" />
-        </template>
-        <template v-else>
-          <key v-for="ite in special" :key="ite" :key-value="ite" @select="selectItem" />
-        </template>
+        <key v-for="ite in special" :key="ite" :key-value="ite" @select="selectItem" />
       </template>
       <template v-if="checkedIdx === 3">
-        <template v-if="isVersion2">
-          <key v-for="ite in keyboard2" :key="ite" :key-value="ite" @select="selectItem" />
-        </template>
-        <template v-else>
-          <key v-for="ite in keyboard" :key="ite" :key-value="ite" @select="selectItem" />
-        </template>
+        <key v-for="ite in keyboard" :key="ite" :key-value="ite" @select="selectItem" />
       </template>
       <template v-if="checkedIdx === 4">
-        <template v-if="isVersion2">
-          <key v-for="ite in mouseV2" :key="ite" :key-value="ite" @select="selectItem" />
-        </template>
-        <template v-else>
-          <key v-for="ite in mouse" :key="ite" :key-value="ite" @select="selectItem" />
-        </template>
+        <key v-for="ite in mouse" :key="ite" :key-value="ite" @select="selectItem" />
       </template>
       <template v-if="checkedIdx === 5">
         <key v-for="ite in macro" :key="ite.id || ite" :key-value="ite" @select="selectItem" />
@@ -70,6 +55,9 @@ import mouseIcon from '@/assets/images/mouse.svg';
 import mouseIconChecked from '@/assets/images/mouse_c.svg';
 import macroIcon from '@/assets/images/macro.svg';
 import macroIconChecked from '@/assets/images/macro_c.svg';
+
+// V2键盘
+import { keyboardMapByType } from '@/configs/byte-to-key/v2/zh_CN/keyboard-map';
 
 // 创建图标映射对象
 const iconMap = {
@@ -116,26 +104,25 @@ const characterArr = computed(() => [
   { name: t('customKey.macro'), icon: 'macro' },
 ]);
 
-const extend = [
-  41, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 43, 42, 73, 76, 74, 77, 75, 78, 131, 130, 40, 89, 90,
-  91, 92, 93, 94, 95, 96, 97, 98, 84, 85, 86, 87, 224, 225, 226, 227, 228, 229, 230, 231, 44, 118, 80, 81, 82, 79,
-];
-const special = [129, 128, 127, 173, 176, 174, 181, 183, 182, 61696, 61697, 61698, 61699];
-const special2 = [0, 1, 61696, 61697, 61698, 61699];
-const basic = [
-  4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34,
-  35, 36, 37, 38, 39, 45, 46, 47, 48, 49, 51, 52, 53, 54, 55, 56,
-];
-const keyboard = [
-  62217, 62224, 62225, 62226, 62227, 62228, 62229, 62231, 62245, 62246, 62247, 62248, 62249, 62250, 62251, 62252, 62255,
-];
-const keyboard2 = [
-  62208, 62209, 62210, 62211, 62212, 62213, 62214, 62215, 62216, 62217, 62218, 62219, 62220, 62221, 62222, 62223, 62224,
-  61953, 61954, 8586, 8596, 8739, 8579,
-];
-const mouse = [29441, 29442, 29443, 29444, 29445, 29446, 29447, 29448, 29449];
-// const mouseV2 = [16384, 16640, 16896, 17152, 17408, 17664, 19978, 20214, 20234, 20470];
-const mouseV2 = [];
+const basic = computed(() => {
+  return isVersion2 ? basicV2 : basicV1;
+});
+
+const extend = computed(() => {
+  return isVersion2 ? extendV2 : extendV1;
+});
+
+const special = computed(() => {
+  return isVersion2 ? specialV2 : specialV1;
+});
+
+const keyboard = computed(() => {
+  return isVersion2 ? keyboardV2 : keyboardV1;
+});
+
+const mouse = computed(() => {
+  return isVersion2 ? mouseV2 : mouseV1;
+});
 
 const macro = computed(() => {
   if (isVersion2) {
@@ -144,6 +131,59 @@ const macro = computed(() => {
     return macroStore.localMacros || [];
   }
 });
+
+
+
+const extendV1 = [
+  41, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 43, 42, 73, 76, 74, 77, 75, 78, 131, 130, 40, 89, 90,
+  91, 92, 93, 94, 95, 96, 97, 98, 84, 85, 86, 87, 224, 225, 226, 227, 228, 229, 230, 231, 44, 118, 80, 81, 82, 79,
+];
+const specialV1 = [129, 128, 127, 173, 176, 174, 181, 183, 182, 61696, 61697, 61698, 61699];
+const special2 = [0, 1, 61696, 61697, 61698, 61699];
+const basicV1 = [
+  4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34,
+  35, 36, 37, 38, 39, 45, 46, 47, 48, 49, 51, 52, 53, 54, 55, 56,
+];
+const keyboardV1 = [
+  62217, 62224, 62225, 62226, 62227, 62228, 62229, 62231, 62245, 62246, 62247, 62248, 62249, 62250, 62251, 62252, 62255,
+];
+const keyboard2 = [
+  62208, 62209, 62210, 62211, 62212, 62213, 62214, 62215, 62216, 62217, 62218, 62219, 62220, 62221, 62222, 62223, 62224,
+  61953, 61954, 8586, 8596, 8739, 8579,
+];
+const mouseV1 = [29441, 29442, 29443, 29444, 29445, 29446, 29447, 29448, 29449];
+// const mouseV2 = [16384, 16640, 16896, 17152, 17408, 17664, 19978, 20214, 20234, 20470];
+// const mouseV2 = [];
+
+
+
+// V2键盘
+const basicV2 = [
+  ...keyboardMapByType.basic,
+];
+
+const extendV2 = [
+  ...keyboardMapByType.extend,
+];
+
+const specialV2 = [
+  ...keyboardMapByType.special,
+];
+
+const keyboardV2 = [
+  ...keyboardMapByType.control,
+  ...keyboardMapByType.light,
+  ...keyboardMapByType.media,
+  ...keyboardMapByType.system,
+];
+
+const mouseV2 = [
+  ...keyboardMapByType.mouse,
+];
+
+//TODO 暂时不做宏V2
+
+
 
 // const performanceValue = computed(() => {
 //   return performanceStore.value;

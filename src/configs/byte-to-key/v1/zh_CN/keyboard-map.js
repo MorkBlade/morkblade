@@ -1317,7 +1317,7 @@ export default {
     typeof: 'light',
   },
   62246: {
-    name: 'D2_Prev',
+    name: ' ',
     type: '灯光',
     comm: '装饰灯2-灯效上一个模式',
     hex16: '0xF326',

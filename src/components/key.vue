@@ -1,25 +1,26 @@
 <template>
   <div class="key" @click="handleClick" @mousedown="startDrag" draggable="false" v-if="keyText"
     @mouseenter="onMouseEnter" @mouseleave="onMouseLeave">
-    <template v-if="keyValue === 62224">
+
+    <template v-if="isIconKey">
       <p>
-        <img :src="getImageSrc(keyText)" alt="" @mousedown.stop="startDrag" draggable="false"></img>
+        <img :src="getImageSrc(isVersion2 ? NUM_KEY_V2[keyValue] : NUM_KEY[keyValue])" alt="" @mousedown.stop="startDrag" draggable="false"></img>
       </p>
     </template>
     <template v-else>
       <p>{{ keyText }}</p>
     </template>
-    <!-- V2键盘有提示 -->
-    <template v-if="showTip && isVersion2 && keyboardMap[keyValue]?.comm">
+    
+    <template v-if="showTip && keyboardMap[keyValue]?.comm">
       <span :style="tipStyle">{{ keyboardMap[keyValue]?.comm }}</span>
     </template>
 
   </div>
   <div ref="dragElement" class="key key-mirror" v-if="isDragging" :style="isDragging ? defaultOffset : ''">
     <!-- 复制原始按键的完整内容 -->
-    <template v-if="keyValue === 62224">
+    <template v-if="isIconKey">
       <p>
-        <img :src="getImageSrc(keyText)" alt="" @mousedown.stop="startDrag" draggable="false"></img>
+        <img :src="getImageSrc(isVersion2 ? NUM_KEY_V2[keyValue] : NUM_KEY[keyValue])" alt="" @mousedown.stop="startDrag" draggable="false"></img>
       </p>
     </template>
     <template v-else>
@@ -29,10 +30,27 @@
 </template>
 
 <script setup>
-import { keyboard_zh_CN, keyboardV2_zh_CN, keyboardMap_zh_CN, keyboard_en_US, keyboardV2_en_US, keyboardMap_en_US } from '@/configs/byte-to-key';
+// import { keyboard_zh_CN, keyboardV2_zh_CN, keyboardMap_zh_CN, keyboard_en_US, keyboardV2_en_US, keyboardMap_en_US } from '@/configs/byte-to-key';
+
+// import keyboard from '@/configs/byte-to-key/keyboard';
+// import keyboardV2 from '@/configs/byte-to-key/keyboard-v2';
+// import keyboardMap from '@/configs/byte-to-key/keyboard-map';
+
+// V1键盘
+import keyboardV1 from '@/configs/byte-to-key/v1/keyboard';
+import keyboardMapV1_zh_CN from '@/configs/byte-to-key/v1/zh_CN/keyboard-map';
+import keyboardMapV1_en_US from '@/configs/byte-to-key/v1/en_US/keyboard-map';
+
+// V2键盘
+import keyboardV2 from '@/configs/byte-to-key/v2/keyboard-v2';
+import {keyboardMapV2 as keyboardMapV2_zh_CN} from '@/configs/byte-to-key/v2/zh_CN/keyboard-map';
+import {keyboardMapV2 as keyboardMapV2_en_US} from '@/configs/byte-to-key/v2/en_US/keyboard-map';
+
 import { useKeyboardStore } from '@/stores';
 import { scaleValue } from '@/utils/responsive';
 import { useI18n } from 'vue-i18n';
+import {NUM_KEY, NUM_KEY_V2} from '@/configs/byte-to-key/iconNumKey';
+
 
 
 const { keyValue } = defineProps({
@@ -55,35 +73,47 @@ const defaultOffset = reactive({ left: 0, top: 0 });
 const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
 let dragStartTime = 0;
 
+// 根据语言来选择keyboard-map文件
 // 更通用的多语言键位映射方案，便于后续扩展更多语言
 const keyboardLangMap = {
   zh_CN: {
-    keyboard: keyboard_zh_CN,
-    keyboardV2: keyboardV2_zh_CN,
-    keyboardMap: keyboardMap_zh_CN,
+    keyboardMapV1: keyboardMapV1_zh_CN,
+    keyboardMapV2: keyboardMapV2_zh_CN,
   },
   en_US: {
-    keyboard: keyboard_en_US,
-    keyboardV2: keyboardV2_en_US,
-    keyboardMap: keyboardMap_en_US,
+    keyboardMapV1: keyboardMapV1_en_US,
+    keyboardMapV2: keyboardMapV2_en_US,
   },
   // 以后新增语言只需在此处添加
 };
 
 const currentLang = computed(() => locale.value in keyboardLangMap ? locale.value : 'zh_CN');
-const keyboard = computed(() => keyboardLangMap[currentLang.value].keyboard);
-const keyboardV2 = computed(() => keyboardLangMap[currentLang.value].keyboardV2);
-const keyboardMap = computed(() => keyboardLangMap[currentLang.value].keyboardMap);
+const keyboardMap = computed(() => {
+  // 根据键盘版本选择对应的键位映射
+  if (isVersion2) {
+    return keyboardLangMap[currentLang.value].keyboardMapV2;
+  } else {
+    return keyboardLangMap[currentLang.value].keyboardMapV1;
+  }
+});
+
 
 const keyText = computed(() => {
   if (isVersion2) {
-    return typeof keyValue === 'object' && keyValue.macroName
-      ? keyValue.macroName
-      : keyValue === 61696
-        ? 'Fn'
-        : keyboardV2.value[keyValue] || '';
+    // 检查是否为宏按键对象
+    if (typeof keyValue === 'object' && keyValue.macroName) {
+      return keyValue.macroName;
+    }
+    
+    // 特殊处理 Fn 键 (键值 61696)
+    if (keyValue === 61696) {
+      return 'Fn';
+    }
+
+    // 返回对应的键位名称，如果不存在则返回空字符串
+    return keyboardV2[keyValue] || '';
   }
-  return typeof keyValue === 'object' && keyValue.macroName ? keyValue.macroName : keyboard.value[keyValue] || '';
+  return typeof keyValue === 'object' && keyValue.macroName ? keyValue.macroName : keyboardV1[keyValue] || '';
 });
 
 
@@ -155,18 +185,21 @@ const stopDrag = () => {
   }, 200);
 };
 
+// 判断是否是图标键
+const isIconKey = computed(() => {
+  if (isVersion2) {
+    return NUM_KEY_V2[keyValue];
+  }
+  return NUM_KEY[keyValue];
+});
+
 // 添加动态导入图片的方法
 const getImageSrc = (keyText) => {
-  try {
-    // 使用动态导入来获取图片路径
-    return new URL(`../assets/images/${keyText}.svg`, import.meta.url).href;
-  } catch (error) {
-    console.warn(`图片 ${keyText}.svg 不存在`);
-    return ''; // 返回空字符串或默认图片
-  }
+  return new URL(`../assets/images/${keyText}.avif`, import.meta.url).href
 };
 
 // 语言切换将自动通过上面的 computed 生效，无需额外 onMounted 赋值
+
 
 
 

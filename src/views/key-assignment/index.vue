@@ -114,6 +114,7 @@ import customKey from './custom-key/index.vue';
 import mDialog from '@/components/dialog.vue';
 import keyConfigCard from './components/key-config-card.vue';
 import explain from '@/components/explain.vue';
+import { computed } from 'vue';
 
 const { t } = useI18n();
 
@@ -147,7 +148,9 @@ const isExternalUpdate = ref(false);
 const originalSocdInfo = ref(null);
 const originalRsInfo = ref(null);
 const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
-const performanceItem = [t('keyAssignment.normal'), t('keyAssignment.singleClickLongPress'), 'DKS', 'SOCD', 'RS', 'TGL', 'MPT', 'END'];
+const performanceItem = computed(() => 
+  [t('keyAssignment.normal'), t('keyAssignment.singleClickLongPress'), 'DKS', 'SOCD', 'RS', 'TGL', 'MPT', 'END']
+);
 
 const changeMenu = (idx) => {
   clickItem.value = idx;

@@ -1,5 +1,5 @@
 
-import keyboard from '@/configs/byte-to-key/zh_CN/keyboard.js';
+
 import { ElMessage } from 'element-plus';
 import { useAdvancedHook } from '@/hooks';
 import { useKeyboardStore, usePerformanceStore } from '@/stores';
