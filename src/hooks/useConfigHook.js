@@ -17,6 +17,9 @@ export const useConfigHook = () => {
     const { getLightingDataV2 } = useLightingHook();
     const { getKeyboardDataV2 } = useKeyboardHook();
     const { encryptData, decryptData, validateEncryptedConfig } = useCryptoHook();
+
+    // 配置加密解密密码
+    const configPassword = 'passwordpasswordpasswordpassword';
     // 导出当前配置相关数据（精简版）
     const exportCurrentConfig = async () => {
         try {
@@ -58,7 +61,7 @@ export const useConfigHook = () => {
         try {
             const Data = await exportCurrentConfig();
             
-            const currentConfigData = encryptData(Data, 'password'); // 使用密码加密数据
+            const currentConfigData = encryptData(Data, configPassword); // 使用密码加密数据
 
             // 导出为json文件，内容为data
             const jsonStr = JSON.stringify(currentConfigData, null, 2);
@@ -66,7 +69,7 @@ export const useConfigHook = () => {
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = item.title + '.json';
+            a.download = 'MyConfig.json';
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
@@ -90,13 +93,9 @@ export const useConfigHook = () => {
                         const content = e.target.result;
                         const encryptedConfig = JSON.parse(content);
 
-                        // if (!encryptedConfig.encrypted || !encryptedConfig.data) {
-                        //     reject(new Error('文件格式不正确'));
-                        //     return;
-                        // }
-
-                        const configData = decryptData(encryptedConfig, 'password');
-
+  
+                        const configData = decryptData(encryptedConfig, configPassword);
+                        
                         // 获取所有store实例
                         const lightSettingStore = useLightSettingStore();
                         const keyboardStore = useKeyboardStore();
@@ -116,19 +115,19 @@ export const useConfigHook = () => {
                         if (configData.keyboard) {
                             
                             if (configData.keyboard.keyboards) {
+                                
+                                // 配置到设备
+                                await applyKeyboardConfigToDevice(configData.keyboard.keyboards);
                                 // 配置到store
                                 keyboardStore.$patch((state) => {
                                     state.keyboards = configData.keyboard.keyboards;
                                 });
-                                // 配置到设备
-                                await applyKeyboardConfigToDevice(configData.keyboard.keyboards);
                             }
                         }
                         
                         // 恢复宏配置
                         if (configData.macro) {
-                            
-                            
+                                                      
                             if (configData.macro.macroData) {
                                 macroStore.$patch((state) => {
                                     state.macroData = configData.macro.macroData;
@@ -345,7 +344,6 @@ export const useConfigHook = () => {
                     }
                 }
             }
-
             // 4. 批量设置自定义灯光
             const customLighting = [];
             for (let row = 0; row < importedKeyboards.length; row++) {
@@ -357,8 +355,11 @@ export const useConfigHook = () => {
                 }
             }
             
-
-
+            keyboardStore.keyboards.forEach((row, rowIndex) => {
+                row.forEach((col, colIndex) => {
+                    keyboardStore.keyboards[rowIndex][colIndex].customLight = customLighting[rowIndex][colIndex];
+                });
+            });
             // TODO 灯光导入
             // 使用 V2 的批量设置灯光
             await setCustomLighting(customLighting);
@@ -370,13 +371,11 @@ export const useConfigHook = () => {
         }
     };
 
-    // V2 灯光导入到设备
+    // 灯光导入到设备
     const applyLightingConfigToDevice = async (importedLighting) => {
         const lightSettingStore = useLightSettingStore();
         
         try {
-            
-            
             // 设置灯光基础数据
             if (importedLighting.base) {
                 const baseData = {

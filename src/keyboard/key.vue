@@ -64,8 +64,11 @@
       </div>
     </template>
     <template v-if="route.path === '/lighting' && isVersion2">
-      <div class="color-key" :style="keyColorStyle" @mousedown.stop="(e) => startMouseDown(e, keyItem.keyValue)"
-        @mouseenter="handleMouseOver(keyItem.keyValue)" @mouseleave="onMouseLeave" @mouseup.stop="startMouseUp"
+      <div class="color-key" :style="keyColorStyle" 
+        @mousedown.stop="(e) => startMouseDown(e, keyItem.keyValue)"
+        @mouseenter="handleMouseOver(keyItem.keyValue)" 
+        @mouseleave="onMouseLeave" 
+        @mouseup.stop="startMouseUp"
         @contextmenu="(e) => handleContextmenu(e, keyItem.keyValue)">
         <p class="top-key">{{ showKeyCode }}</p>
       </div>

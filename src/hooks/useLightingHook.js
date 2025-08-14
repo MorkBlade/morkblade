@@ -131,6 +131,7 @@ export const useLightingHook = () => {
   };
 
   const setCustomLighting = async (key) => {
+    // console.log('setCustomLighting', key);
     const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
     if (isVersion2) {
       const customLightData = [];
