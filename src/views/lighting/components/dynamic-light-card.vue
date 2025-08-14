@@ -36,6 +36,7 @@
 <script setup>
 import { useLightSettingStore } from '@/stores';
 import emitter from '@/utils/app-emitter';
+import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
@@ -57,7 +58,7 @@ const { dynamicLightMode, dynamicType } = defineProps({
 const emits = defineEmits(['checkDynamicLight', 'changelightingMode']);
 const lightSettingStore = useLightSettingStore();
 const isVersion2 = ref(localStorage.getItem('keyboardVersion') === 'v2');
-const dynamicLightStyleV1 = [
+const dynamicLightStyleV1 = computed (()  =>  [
  t('dynamicLightCard.dynamicLightStyleV1.ripplesUndulating'),
  t('dynamicLightCard.dynamicLightStyleV1.theTidesRiseAndFall'),
  t('dynamicLightCard.dynamicLightStyleV1.ripplesGentlySpread'),
@@ -78,8 +79,8 @@ const dynamicLightStyleV1 = [
   t('dynamicLightCard.dynamicLightStyleV1.snowSearch'),
   t('dynamicLightCard.dynamicLightStyleV1.laserPenetration'),
   t('dynamicLightCard.dynamicLightStyleV1.waterRipple'),
-];
-const dynamicLightStyleV2 = [
+]);
+const dynamicLightStyleV2 = computed(()  =>  [
   t('dynamicLightCard.dynamicLightStyleV2.quietLight'),
   t('dynamicLightCard.dynamicLightStyleV2.theTidesRiseAndFall'),
   t('dynamicLightCard.dynamicLightStyleV2.ripplesGentlySpread'),
@@ -100,7 +101,7 @@ const dynamicLightStyleV2 = [
   t('dynamicLightCard.dynamicLightStyleV2.snowSearch'),
   t('dynamicLightCard.dynamicLightStyleV2.laserPenetration'),
   t('dynamicLightCard.dynamicLightStyleV2.waterRipple'),
-];
+]);
 
 emitter.on('versionChange', (flag) => {
   if (flag) {
@@ -113,9 +114,9 @@ emitter.on('versionChange', (flag) => {
 const dynamicLightModeList = computed(() => {
   if (dynamicType === 'keyLight') {
     if (isVersion2.value) {
-      return dynamicLightStyleV2;
+      return dynamicLightStyleV2.value;
     }
-    return dynamicLightStyleV1;
+    return dynamicLightStyleV1.value;
   } else {
     return [t('dynamicLightCard.style1'), t('dynamicLightCard.style2'), t('dynamicLightCard.style3'), t('dynamicLightCard.style4')];
   }

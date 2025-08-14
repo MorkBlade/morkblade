@@ -24,7 +24,7 @@
             <div class="content">
               <img :src="item.status === 0 ? keyupIcon : keydownIcon" alt="" v-if="item.keyCode" />
               <span :class="item.keyCode ? 'keyVal' : 'delayVal'">
-                {{ item.keyCode ? keyboardWord[item.keyCode] : item.timeDifference + 'ms' }}
+                {{ item.keyCode ? keyboardV2[item.keyCode] : item.timeDifference + 'ms' }}
               </span>
               <span class="time-diff" v-if="item.keyCode">{{ parseFloat(item.delay).toFixed(2) + 'ms' }}</span>
               <img class="copy-icon" src="@/assets/images/copy_icon.svg" alt="" @click="copyItem(item, i)" />
@@ -92,7 +92,8 @@ import stopIcon from '@/assets/images/stop_icon.svg';
 import delayIcon from '@/assets/images/delay_icon.svg';
 import eventsIcon from '@/assets/images/events_icon.svg';
 import clearIcon from '@/assets/images/clear_icon.svg';
-import keyboardWord from '@/configs/byte-to-key/keyboard';
+// import keyboardWord from '@/configs/byte-to-key/keyboard';
+import keyboardV2 from '@/configs/byte-to-key/v2/keyboard-v2';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
@@ -119,12 +120,12 @@ const selectedItemIndex = ref(null); // 当前选中macro.data的index
 const selectedIdx = ref(null); // macro.data高亮标识
 const lastEventTime = ref(null);
 
-const operationNameList = [
+const operationNameList = computed(() => [
   { name: t('macroData.startRecord'), icon: startIcon },
   { name: t('macroData.addDelay'), icon: delayIcon },
   { name: t('macroData.addEvent'), icon: eventsIcon },
   { name: t('macroData.clearMacroList'), icon: clearIcon },
-];
+]);
 
 // keyCode映射
 const keyValueDictionary = {

@@ -7,7 +7,7 @@
 const DEFAULTS = {
   duration: 5, // 秒
   gap: 24, // px
-  trigger: 'auto', // 'auto' | 'hover' | 'global'
+  trigger: 'auto                                     ', // 'auto' | 'hover' | 'global'
 };
 
 const GLOBAL_KEY = '__EM_TRIGGER__';

@@ -185,7 +185,7 @@ watch(
       color: #fff;
       font-size: var(--font-size-11);
       font-family: 'CN Heavy';
-      width: 100px;
+    width: 230px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;

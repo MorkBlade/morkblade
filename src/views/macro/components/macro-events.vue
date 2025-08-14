@@ -4,7 +4,7 @@
     <template v-if="itemData?.keyType === 'key'">
       <div class="outer-box">
         <p>{{ $t('macroEventsV1.changeKey') }}</p>
-        <div class="key" @click="changeKey">{{ keyboardWord[itemData?.keyCode] }}</div>
+        <div class="key" @click="changeKey">{{ keyboardV1[itemData?.keyCode] }}</div>
         <p>{{ $t('macroEventsV1.changeDelay') }}</p>
         <input
           type="number"
@@ -91,7 +91,8 @@ import { scaleValue } from '@/utils/responsive.js';
 import { useKeyboardStore, usePerformanceStore } from '@/stores';
 
 import saveConfigBtn from '@/components/save-config-btn.vue';
-import keyboardWord from '@/configs/byte-to-key/keyboard';
+// import keyboardWord from '@/configs/byte-to-key/keyboard';
+import keyboardV1 from '@/configs/byte-to-key/v1/keyboard';
 
 import upIcon from '@/assets/images/up.svg';
 import upCheckedIcon from '@/assets/images/up_checked.svg';
@@ -150,7 +151,7 @@ watch(
   () => data,
   (newValue) => {
     itemData.value = newValue;
-    currentKey.value = keyboardWord[newValue?.keyCode];
+    currentKey.value = keyboardV1[newValue?.keyCode];
   },
   { immediate: true, deep: true },
 );
@@ -207,7 +208,7 @@ const changeKey = () => {
 
 const Keydrop = () => {
   if (!keyboardStore.selectKey.keyCode) return;
-  const keyVal = keyboardWord[keyboardStore.selectKey.keyCode];
+  const keyVal = keyboardV1[keyboardStore.selectKey.keyCode];
   currentKey.value = keyVal;
   // if (keyVal && itemData.value && itemData.value.keyType === 'key') {
   //   // 发送按键更新事件

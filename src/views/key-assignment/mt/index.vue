@@ -6,7 +6,14 @@
           <!-- <span>单击</span> -->
           <span>{{ isVersion2 ? t('mt.click') : t('mt.longPress') }}</span>
           <div class="key-box" @mouseenter="onMouseEn('click')" @mouseleave="onMouseLe('click')">
-            <p :class="{ 'hover-bg': !mtInfo.dks[0] }" @mouseup="KeydropKey(0)">{{ keyText[0] }}</p>
+            <p :class="{ 'hover-bg': !mtInfo.dks[0] }" @mouseup="KeydropKey(0)">
+              <template v-if="isIconKey[0]">
+                <img :src="getImageSrc(keyText[0])" alt="">
+              </template>
+              <template v-else>
+                {{ keyText[0] }}
+              </template>
+            </p>
             <div
               class="del_btn"
               @click="onClick"
@@ -18,7 +25,14 @@
           <!-- <span>长按</span> -->
           <span>{{ isVersion2 ? t('mt.longPress') : t('mt.click') }}</span>
           <div class="key-box" @mouseenter="onMouseEn" @mouseleave="onMouseLe">
-            <p :class="{ 'hover-bg': !mtInfo.dks[1] }" @mouseup="KeydropKey(1)">{{ keyText[1] }}</p>
+            <p :class="{ 'hover-bg': !mtInfo.dks[1] }" @mouseup="KeydropKey(1)">
+              <template v-if="isIconKey[1]">
+                <img :src="getImageSrc(keyText[1])" alt="">
+              </template>
+              <template v-else>
+                {{ keyText[1] }}
+              </template>
+            </p>
             <div
               class="del_btn"
               @click="onLongPress"
@@ -44,7 +58,9 @@
 </template>
 
 <script setup>
-import keyboard from '@/configs/byte-to-key/keyboard';
+import keyboardV1 from '@/configs/byte-to-key/v1/keyboard';
+import keyboardV2 from '@/configs/byte-to-key/v2/keyboard-v2';
+import { NUM_KEY, NUM_KEY_V2 } from '@/configs/byte-to-key/iconNumKey';
 import { showMessage } from '@/utils/message';
 import { useKeyboardStore } from '@/stores';
 import { useAdvancedHook } from '@/hooks';
@@ -77,6 +93,8 @@ const { edit, editKey } = defineProps({
 const emits = defineEmits(['handleKeyTypeChange', 'handleDialoConfirm']);
 
 const keyText = computed(() => {
+  // 根据键盘版本选择对应的键盘配置
+  const keyboard = isVersion2 ? keyboardV2 : keyboardV1;
   return [keyboard[mtInfo.value.dks[0]] || '', keyboard[mtInfo.value.dks[1]] || ''];
 });
 
@@ -84,6 +102,22 @@ const keyText = computed(() => {
 const activeKeys = computed(() => {
   return keyboardStore.activeKeys;
 });
+
+
+// 图标键判断
+const isIconKey = computed(() => {
+  const keyMapping = isVersion2 ? NUM_KEY_V2 : NUM_KEY;
+  return [Object.values(keyMapping).some(mappedValue =>
+    mappedValue && mappedValue.toLowerCase() === keyText.value[0].toLowerCase()
+  ), Object.values(keyMapping).some(mappedValue =>
+    mappedValue && mappedValue.toLowerCase() === keyText.value[1].toLowerCase()
+  )];
+});
+
+// 添加动态导入图片的方法
+const getImageSrc = (keyText) => {
+  return new URL(`../../../assets/images/${keyText}.avif`, import.meta.url).href;
+};
 
 const onClick = () => {
   if (mtInfo.value.dks[0]) mtInfo.value.dks[0] = 0;

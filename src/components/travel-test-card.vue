@@ -216,7 +216,7 @@ const getSwitchWidth = () => {
       color: #ccc;
       font-family: 'CN Heavy';
       // -webkit-text-stroke: 1px #000000;
-      margin-left: var(--spacing-16);
+      margin-left: 16px;
     }
     .travel-text {
       display: inline-block;
@@ -228,7 +228,7 @@ const getSwitchWidth = () => {
     }
 
     .el-switch {
-      margin-left: var(--spacing-20);
+      margin-left: var(--spacing-14);
       --el-switch-on-color: rgb(145, 188, 0);
       --el-switch-off-color: rgba(0, 0, 0, 0);
       font-family: 'CN Heavy';

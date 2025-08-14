@@ -4,7 +4,14 @@
       <div class="key">
         <span>{{ $t('tgl.key1') }}</span>
         <div class="key-box" @mouseenter="onMouseEn('key1')" @mouseleave="onMouseLe('key1')">
-          <p :class="{ 'hover-bg': !tglInfo.dks }" @mouseup="KeydropFirst">{{ keyText }}</p>
+          <p :class="{ 'hover-bg': !tglInfo.dks }" @mouseup="KeydropFirst">
+            <template v-if="isIconKey">
+              <img :src="getImageSrc(keyText)" alt="">
+            </template>
+            <template v-else>
+              {{ keyText }}
+            </template>
+          </p>
           <div
             class="del_btn"
             @click="onClick"
@@ -29,7 +36,8 @@
 </template>
 
 <script setup>
-import keyboard from '@/configs/byte-to-key/keyboard';
+import keyboardV1 from '@/configs/byte-to-key/v1/keyboard';
+import keyboardV2 from '@/configs/byte-to-key/v2/keyboard-v2';
 import { useKeyboardStore } from '@/stores';
 import { useAdvancedHook } from '@/hooks';
 import { showMessage } from '@/utils/message';
@@ -38,7 +46,9 @@ import { useI18n } from 'vue-i18n';
 
 import mDialog from '@/components/dialog.vue';
 import characterCard from '@/components/character-card.vue';
+import { NUM_KEY, NUM_KEY_V2 } from '@/configs/byte-to-key/iconNumKey';
 
+const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
 const { t } = useI18n();
 
 const tglInfo = defineModel('tglInfo', {
@@ -59,9 +69,25 @@ const keyboardStore = useKeyboardStore();
 const isShow = ref(false);
 const keyIndex = ref(-1);
 
-const keyText = computed(() => {
-  return keyboard[tglInfo.value.dks] || '';
+const keyboard = computed(() => {
+  return isVersion2 ? keyboardV2 : keyboardV1;
 });
+
+const keyText = computed(() => {
+  return keyboard.value[tglInfo.value.dks] || '';
+});
+
+const isIconKey = computed(() => {
+  if (!keyText.value) return false;
+  const keyMap = isVersion2 ? NUM_KEY_V2 : NUM_KEY;
+  return Object.values(keyMap).some(mappedValue =>
+    mappedValue && mappedValue.toLowerCase() === keyText.value.toLowerCase()
+  );
+});
+
+const getImageSrc = (keyText) => {
+  return new URL(`../../../assets/images/${keyText}.avif`, import.meta.url).href;
+};
 
 const activeKeys = computed(() => {
   return keyboardStore.activeKeys;

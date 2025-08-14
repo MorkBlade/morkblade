@@ -5,7 +5,14 @@
         <div>
           <span>{{ t('rs.key1') }}</span>
           <div class="key-box" @mouseenter="onMouseEn('key1')" @mouseleave="onMouseLe('key1')">
-            <p :class="{ 'hover-bg': !rsInfo.dks[0] }" @mouseup="KeydropKey(0)">{{ keyText[0] }}</p>
+            <p :class="{ 'hover-bg': !rsInfo.dks[0] }" @mouseup="KeydropKey(0)">
+              <template v-if="isIconKey[0]">  
+                <img :src="getImageSrc(keyText[0])" alt="" />
+              </template>
+              <template v-else>
+                {{ keyText[0] }}
+              </template>
+            </p>
             <div
               class="del_btn"
               @click="onClick('key1')"
@@ -16,7 +23,14 @@
         <div>
           <span>{{ t('rs.key2') }}</span>
           <div class="key-box" @mouseenter="onMouseEn" @mouseleave="onMouseLe">
-            <p :class="{ 'hover-bg': !rsInfo.dks[1] }" @mouseup="KeydropKey(1)">{{ keyText[1] }}</p>
+            <p :class="{ 'hover-bg': !rsInfo.dks[1] }" @mouseup="KeydropKey(1)">
+              <template v-if="isIconKey[1]">
+                <img :src="getImageSrc(keyText[1])" alt="" />
+              </template>
+              <template v-else>
+                {{ keyText[1] }}
+              </template>
+            </p>
             <div
               class="del_btn"
               @click="onClick"
@@ -36,7 +50,9 @@
 </template>
 
 <script setup>
-import keyboard from '@/configs/byte-to-key/keyboard';
+import keyboardV1 from '@/configs/byte-to-key/v1/keyboard';
+import keyboardV2 from '@/configs/byte-to-key/v2/keyboard-v2';
+import { NUM_KEY, NUM_KEY_V2 } from '@/configs/byte-to-key/iconNumKey';
 import { useKeyboardStore } from '@/stores';
 import { useAdvancedHook } from '@/hooks';
 import { showMessage } from '@/utils/message';
@@ -45,7 +61,9 @@ import { useI18n } from 'vue-i18n';
 
 import mDialog from '@/components/dialog.vue';
 import characterCard from '@/components/character-card.vue';
+import { computed } from 'vue';
 
+const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
 const { t } = useI18n();
 
 const rsInfo = defineModel('rsInfo', {
@@ -71,9 +89,33 @@ const isShow = ref(false);
 const key1Index = ref(-1);
 const key2Index = ref(-1);
 
-const keyText = computed(() => {
-  return [keyboard[rsInfo.value.dks[0]] || '', keyboard[rsInfo.value.dks[1]] || ''];
+const keyboard = computed(() => {
+  // 根据键盘版本选择对应的键盘配置
+  return isVersion2 ? keyboardV2 : keyboardV1;
 });
+
+const keyText = computed(() => {
+  return [keyboard.value[rsInfo.value.dks[0]] || '', keyboard.value[rsInfo.value.dks[1]] || ''];
+});
+
+const isIconKey = computed(() => {
+  const keyMap = isVersion2 ? NUM_KEY_V2 : NUM_KEY;
+  console.log(keyText.value.map(key =>
+    Object.values(keyMap).some(mappedValue =>
+      mappedValue && mappedValue.toLowerCase() === key.toLowerCase()
+    )
+  ));
+  return keyText.value.map(key =>
+    Object.values(keyMap).some(mappedValue =>
+      mappedValue && mappedValue.toLowerCase() === key.toLowerCase()
+    )
+  );
+});
+
+// 添加动态导入图片的方法
+const getImageSrc = (keyText) => {
+  return new URL(`../../../assets/images/${keyText}.avif`, import.meta.url).href;
+};
 
 const saveConfig = () => {
   if (!rsInfo.value.dks[0] || !rsInfo.value.dks[1]) {

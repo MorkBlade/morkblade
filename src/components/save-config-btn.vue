@@ -128,7 +128,7 @@ const onCancel = () => {
     color: #fff;
     position: absolute;
     top: var(--spacing-6);
-    left: var(--spacing-65);
+    left: var(--spacing-50);
   }
   .save-text {
     display: inline-block;
@@ -137,6 +137,7 @@ const onCancel = () => {
     white-space: nowrap;
     max-width: 100%;
     overflow: hidden;
+    text-align: center;
   }
 }
 </style>

@@ -3,7 +3,14 @@
     <div class="left-config">
       <div class="key">
         <div class="key-box" @mouseenter="onMouseEn('key1')" @mouseleave="onMouseLe(0)">
-          <p :class="{ 'hover-bg': !mptInfo.dks[0] }" @mouseup="KeydropKey(0)">{{ keyText[0] }}</p>
+          <p :class="{ 'hover-bg': !mptInfo.dks[0] }" @mouseup="KeydropKey(0)">
+            <template v-if="isIconKey[0]">
+              <img :src="getImageSrc(isIconKey[0])" alt="">
+            </template>
+            <template v-else>
+              {{ keyText[0] }}
+            </template>
+          </p>
           <div
             class="del_btn"
             @click="onClick('key1')"
@@ -16,7 +23,14 @@
       </div>
       <div class="key">
         <div class="key-box" @mouseenter="onMouseEn('key2')" @mouseleave="onMouseLe(1)">
-          <p :class="{ 'hover-bg': !mptInfo.dks[1] }" @mouseup="KeydropKey(1)">{{ keyText[1] }}</p>
+          <p :class="{ 'hover-bg': !mptInfo.dks[1] }" @mouseup="KeydropKey(1)">
+            <template v-if="isIconKey[1]">
+              <img :src="getImageSrc(isIconKey[1])" alt="">
+            </template>
+            <template v-else>
+              {{ keyText[1] }}
+            </template>
+          </p>
           <div
             class="del_btn"
             @click="onClick('key2')"
@@ -29,7 +43,14 @@
       </div>
       <div class="key">
         <div class="key-box" @mouseenter="onMouseEn" @mouseleave="onMouseLe(2)">
-          <p :class="{ 'hover-bg': !mptInfo.dks[2] }" @mouseup="KeydropKey(2)">{{ keyText[2] }}</p>
+          <p :class="{ 'hover-bg': !mptInfo.dks[2] }" @mouseup="KeydropKey(2)">
+            <template v-if="isIconKey[2]">
+              <img :src="getImageSrc(isIconKey[2])" alt="">
+            </template>
+            <template v-else>
+              {{ keyText[2] }}
+            </template>
+          </p>
           <div class="del_btn" @click="onClick" v-show="keyText[2] && delKeyShow[2] && !keyboardStore.grabStatus"></div>
         </div>
         <div class="slider-block">
@@ -47,7 +68,9 @@
 </template>
 
 <script setup>
-import keyboard from '@/configs/byte-to-key/keyboard';
+import keyboardV1 from '@/configs/byte-to-key/v1/keyboard';
+import keyboardV2 from '@/configs/byte-to-key/v2/keyboard-v2';
+import { NUM_KEY, NUM_KEY_V2 } from '@/configs/byte-to-key/iconNumKey';
 import { useKeyboardStore } from '@/stores';
 import { useAdvancedHook } from '@/hooks';
 import { showMessage } from '@/utils/message';
@@ -56,7 +79,7 @@ import { useI18n } from 'vue-i18n';
 
 import mDialog from '@/components/dialog.vue';
 import characterCard from '@/components/character-card.vue';
-
+const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
 const { t } = useI18n();
 
 const mptInfo = defineModel('mptInfo', {
@@ -77,13 +100,28 @@ const keyboardStore = useKeyboardStore();
 const isShow = ref(false);
 const delKeyShow = reactive([false, false, false]);
 
+const keyboard = computed(() => {
+  // 根据键盘版本选择对应的键盘配置
+  return isVersion2 ? keyboardV2 : keyboardV1;
+});
+
 const keyText = computed(() => {
   return [
-    keyboard[mptInfo.value.dks[0]] || '',
-    keyboard[mptInfo.value.dks[1]] || '',
-    keyboard[mptInfo.value.dks[2]] || '',
+    keyboard.value[mptInfo.value.dks[0]] || '',
+    keyboard.value[mptInfo.value.dks[1]] || '',
+    keyboard.value[mptInfo.value.dks[2]] || '',
   ];
 });
+
+// 判断是否是图标键
+const isIconKey = computed(() => {
+  const keyMap = isVersion2 ? NUM_KEY_V2 : NUM_KEY;
+  return isVersion2 ? mptInfo.value.dks.map((key) => keyMap[key]) : mptInfo.value.dks.map((key) => keyMap[key]);
+});
+// 添加动态导入图片的方法
+const getImageSrc = (keyText) => {
+  return new URL(`../../../assets/images/${keyText}.avif`, import.meta.url).href;
+};
 
 const option = computed(() => {
   return { max: 3.3, min: 0.005, step: 0.005, tooltipVisible: true };
