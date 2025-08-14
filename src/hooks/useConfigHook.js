@@ -12,7 +12,8 @@ import {
   useMacroStore, 
   usePerformanceStore,
 } from '@/stores/index';
-
+import { t } from '@/locales';
+import { showMessage } from '@/utils/message';
 export const useConfigHook = () => {
     const { getLightingDataV2 } = useLightingHook();
     const { getKeyboardDataV2 } = useKeyboardHook();
@@ -45,6 +46,7 @@ export const useConfigHook = () => {
                 // 系统配置
                 system: {
                     version: appStore.version,
+                    appVersion: appStore.baseInfo?.appVersion || '--',
                 },
 
             };
@@ -97,12 +99,15 @@ export const useConfigHook = () => {
                         const configData = decryptData(encryptedConfig, configPassword);
                         
                         // 获取所有store实例
-                        const lightSettingStore = useLightSettingStore();
                         const keyboardStore = useKeyboardStore();
                         const appStore = useAppStore();
                         const macroStore = useMacroStore();
 
-                        
+                        //  判断固件版本是否与当前一致
+                        if (configData.system.appVersion !== appStore.baseInfo?.appVersion) {
+                            showMessage(t('dialogConfig.importFailTip'), 'warning');
+                            throw new Error(t('dialogConfig.importFailTip'));
+                        }
 
                         // 恢复V2灯光配置
                         if (configData.lighting) {

@@ -271,6 +271,7 @@ export default {
     shareTip2: 'Please enter the share code to load the config',
     duplicate: 'Duplicate',
     importFail: 'Config import failed:',
+    importFailTip: 'The Configuration Import Failed Please Check If The Configuration File Is Correct',
   },
   dropdownMenu: {
     boardConfig: 'Onboard config',

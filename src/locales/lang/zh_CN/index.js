@@ -265,6 +265,7 @@ export default {
     shareTip2: '请输入分享码以加载配置',
     duplicate: '副本',
     importFail: '配置导入失败:',
+    importFailTip: '配置导入失败，请检查配置文件是否正确',
   },
   dropdownMenu: {
     boardConfig: '板载配置',

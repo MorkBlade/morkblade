@@ -679,8 +679,6 @@ const usePerformanceStore = defineStore('performance', {
             axisItem.doctrine_range_left = axisItem.aixsDetail[0].axis_range_max / 1000;
             axisItem.doctrine_range_right = '0.2mm';
             axisItem.axis_id = axisItem.aixsDetail[0].axis_id;
-            // 随机生成颜色
-            axisItem.axis_color = `rgb(${Math.floor(Math.random()*256)},${Math.floor(Math.random()*256)},${Math.floor(Math.random()*256)})`;
             const icon_obj = ICON_MAP[factory_name];
             if (icon_obj && icon_obj[axisItem.axis_id]) {
               // console.log('change axis pic----------------->');
