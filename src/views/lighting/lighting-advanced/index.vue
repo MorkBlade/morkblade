@@ -7,34 +7,22 @@
           <span>R</span>
           <input type="number" v-model.number="rgb.R" :min="min" :max="max" @input="updateFromRgb" @blur="handleBlur" />
           <i v-if="!isVersion2">%</i>
-          <horizontalSlider
-            :sliderValue="rgb.R"
-            :min="min"
-            :max="max"
-            @sendSliderVal="(val) => handleSaturation(val, 'R')"
-          />
+          <horizontalSlider :sliderValue="rgb.R" :min="min" :max="max"
+            @sendSliderVal="(val) => handleSaturation(val, 'R')" />
         </div>
         <div class="rgb-input">
           <span>G</span>
           <input type="number" v-model.number="rgb.G" :min="min" :max="max" @input="updateFromRgb" @blur="handleBlur" />
           <i v-if="!isVersion2">%</i>
-          <horizontalSlider
-            :sliderValue="rgb.G"
-            :min="min"
-            :max="max"
-            @sendSliderVal="(val) => handleSaturation(val, 'G')"
-          />
+          <horizontalSlider :sliderValue="rgb.G" :min="min" :max="max"
+            @sendSliderVal="(val) => handleSaturation(val, 'G')" />
         </div>
         <div class="rgb-input">
           <span>B</span>
           <input type="number" v-model.number="rgb.B" :min="min" :max="max" @input="updateFromRgb" @blur="handleBlur" />
           <i v-if="!isVersion2">%</i>
-          <horizontalSlider
-            :sliderValue="rgb.B"
-            :min="min"
-            :max="max"
-            @sendSliderVal="(val) => handleSaturation(val, 'B')"
-          />
+          <horizontalSlider :sliderValue="rgb.B" :min="min" :max="max"
+            @sendSliderVal="(val) => handleSaturation(val, 'B')" />
         </div>
       </div>
     </div>
@@ -52,15 +40,10 @@
           </div>
           <div class="lamp-control">
             <div class="switch-box">
-              <span>{{ t('lightingAdvanced.up') }}</span>
-              <el-switch
-                v-model="upOpen"
-                :width="getSwitchWidth()"
-                inline-prompt
-                active-text="ON"
-                inactive-text="OFF"
-                @change="handleDoubleLight(1)"
-              >
+              <span class="upper-text" v-ellipsis-marquee="{ duration: 5, gap: 24 }">{{ t('lightingAdvanced.up')
+                }}</span>
+              <el-switch v-model="upOpen" :width="getSwitchWidth()" inline-prompt active-text="ON" inactive-text="OFF"
+                @change="handleDoubleLight(1)">
                 <template #active-action>
                   <img class="custom-active-action" src="@/assets/images/sliding_block.svg" />
                 </template>
@@ -70,15 +53,9 @@
               </el-switch>
             </div>
             <div class="switch-box">
-              <span>{{ t('lightingAdvanced.down') }}</span>
-              <el-switch
-                v-model="downOpen"
-                :width="getSwitchWidth()"
-                inline-prompt
-                active-text="ON"
-                inactive-text="OFF"
-                @change="handleDoubleLight(0)"
-              >
+              <span v-ellipsis-marquee="{ duration: 5, gap: 24 }">{{ t('lightingAdvanced.down') }}</span>
+              <el-switch v-model="downOpen" :width="getSwitchWidth()" inline-prompt active-text="ON" inactive-text="OFF"
+                @change="handleDoubleLight(0)">
                 <template #active-action>
                   <img class="custom-active-action" src="@/assets/images/sliding_block.svg" />
                 </template>
@@ -88,15 +65,9 @@
               </el-switch>
             </div>
             <div class="switch-box">
-              <span>{{ t('lightingAdvanced.doubleLamp') }}</span>
-              <el-switch
-                v-model="allLamp"
-                :width="getSwitchWidth()"
-                inline-prompt
-                active-text="ON"
-                inactive-text="OFF"
-                @change="handleAllLight"
-              >
+              <span v-ellipsis-marquee="{ duration: 5, gap: 24 }">{{ t('lightingAdvanced.doubleLamp') }}</span>
+              <el-switch v-model="allLamp" :width="getSwitchWidth()" inline-prompt active-text="ON" inactive-text="OFF"
+                @change="handleAllLight">
                 <template #active-action>
                   <img class="custom-active-action" src="@/assets/images/sliding_block.svg" />
                 </template>
@@ -228,7 +199,8 @@ const handleAllLight = async () => {
     align-items: center;
     justify-content: center;
     position: relative;
-    > div {
+
+    >div {
       width: var(--saturation-width);
 
       & .rgb-input {
@@ -269,6 +241,7 @@ const handleAllLight = async () => {
           border: none;
           outline: none;
         }
+
         /* For Webkit browsers (Chrome, Safari) */
         input[type='number']::-webkit-inner-spin-button,
         input[type='number']::-webkit-outer-spin-button {
@@ -278,7 +251,8 @@ const handleAllLight = async () => {
 
         /* For Firefox */
         input[type='number'] {
-          -moz-appearance: textfield; /* Firefox */
+          -moz-appearance: textfield;
+          /* Firefox */
         }
       }
     }
@@ -318,11 +292,12 @@ const handleAllLight = async () => {
           display: flex;
           align-items: center;
           justify-content: center;
+
           &.active {
             border-color: rgb(145, 188, 0);
           }
 
-          > img {
+          >img {
             width: var(--size-12);
             height: var(--size-12);
             object-fit: fill;
@@ -332,6 +307,7 @@ const handleAllLight = async () => {
         .top_lamp {
           top: var(--spacing-15);
         }
+
         .bottom_lamp {
           bottom: var(--spacing-15);
         }
@@ -341,6 +317,7 @@ const handleAllLight = async () => {
         height: 100%;
         box-sizing: border-box;
         padding-top: var(--lamp-item-gap);
+
         & .switch-box {
           width: var(--size-170);
           height: var(--size-36);
@@ -349,17 +326,25 @@ const handleAllLight = async () => {
           background-image: url('@/assets/images/switch_bg.svg');
           background-size: cover;
           background-repeat: no-repeat;
+          display: flex;
 
           span {
             margin-left: var(--spacing-25);
             font-size: var(--font-size-13);
             color: #ccc;
             font-family: 'CN Heavy';
+            display: inline-block;
+            width: 55px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: 100%;
+            overflow: hidden;
             // -webkit-text-stroke: 1px #000000;
           }
 
           .el-switch {
-            margin-left: var(--spacing-25);
+            margin-left: var(--spacing-12);
+            margin-top: var(--spacing-2);
             --el-switch-on-color: rgb(145, 188, 0);
             --el-switch-off-color: rgba(0, 0, 0, 0);
             font-family: 'CN Heavy';

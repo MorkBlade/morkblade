@@ -11,7 +11,6 @@ import { ColorPickerPanel as TColorPickerPanel } from 'tdesign-vue-next';
 import i18n from './locales';
 import App from './App.vue';
 import router from './router';
-import vMarqueeHover from './directives/marquee-hover';
 import vEllipsisMarquee from './directives/ellipsis-marquee';
 
 const app = createApp(App);
@@ -21,6 +20,5 @@ app.use(router);
 app.use(ElementPlus);
 app.use(i18n);
 app.use(TColorPickerPanel);
-app.directive('marquee-hover', vMarqueeHover);
 app.directive('ellipsis-marquee', vEllipsisMarquee);
 app.mount('#app');

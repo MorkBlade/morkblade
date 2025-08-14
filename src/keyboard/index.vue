@@ -42,7 +42,9 @@
           width: `${containerDimensions.width}px`,
             height: `${containerDimensions.height}px`,
           }">
-          <template v-for="(row, rowIndex) in layout">
+
+          
+          <template v-for="(row, rowIndex) in lightLayout">
             <div class="row" :class="`row_${rowIndex + 1}`" :key="rowIndex" v-if="row[0].shapeScale?.w">
               <template v-for="(col, colIndex) in row">
                 <key v-if="col.shapeScale.w != 0 && col && col.keyItem && col.keyItem.keyValue"
@@ -53,6 +55,7 @@
               </template>
             </div>
           </template>
+
           <div class="logo-light-bar__left">
             <span></span>
           </div>
@@ -90,6 +93,7 @@ import { useAppStore, useKeyboardStore, useDeviceStore, usePerformanceStore } fr
 import { useAdvancedHook } from '@/hooks';
 
 import key from './key.vue';
+import { computed } from 'vue';
 
 const route = useRoute();
 const appStore = useAppStore();
@@ -244,6 +248,7 @@ const processedLayout = computed(() => {
   // 获取原始布局数据
   const baseLayout = layout.value;
 
+
   // 如果不是V2版本，直接返回原始布局
   if (!isVersion2.value) {
     return baseLayout;
@@ -275,42 +280,52 @@ const processedLayout = computed(() => {
         spaceKeyData = col;
       }
     });
-
     // 如果找到空格键，进行拆分处理
     if (spaceKeyIndex !== -1 && spaceKeyData) {
-      // 计算拆分范围
-      const startIndex = Math.max(0, spaceKeyIndex - Math.floor(spaceCount / 2));
-      const endIndex = Math.min(result[5].length - 1, spaceKeyIndex + Math.floor(spaceCount / 2));
-
-      // 获取原始空格键信息
       const originalWidth = spaceKeyData.shapeScale.w;
       const originalX = spaceKeyData.location.x;
       const originalY = spaceKeyData.location.y;
-
-      // 计算子键宽度
       const subKeyWidth = Number((originalWidth / spaceCount).toFixed(2));
-
-      // 重新分配空格键区域内的键位
-      for (let i = startIndex; i <= endIndex; i++) {
-        if (result[5][i]) {
-          // 更新位置
-          result[5][i].location.x = originalX + (i - startIndex) * subKeyWidth;
-          result[5][i].location.y = originalY;
-
-          // 更新尺寸
-          result[5][i].shapeScale.w = subKeyWidth;
-          result[5][i].shapeScale.h = spaceKeyData.shapeScale.h;
-
-          // 添加特殊标记
-          result[5][i].isSpaceWidthStyle = true;
-          result[5][i].ratio = 9;
-        }
+      const newSpaceKeys = [];
+      for (let i = 0; i < spaceCount; i++) {
+        // 关键：为每个新键分配唯一的 col
+        const newColIndex = 4 + i;
+        // 关键：keyItem 里也要带上 row/col
+        const newKeyItem = {
+          ...(spaceKeyData.keyItem || {}),
+          row: 5,
+          col: newColIndex,
+        };
+        newSpaceKeys.push({
+          ...JSON.parse(JSON.stringify(spaceKeyData)),
+          location: {
+            x: originalX + i * subKeyWidth,
+            y: originalY,
+          },
+          shapeScale: {
+            w: subKeyWidth,
+            h: spaceKeyData.shapeScale.h,
+          },
+          isSpaceWidthStyle: true,
+          ratio: 9,
+          keyItem: newKeyItem,
+        });
       }
+      // 替换原有空格键为5个新键
+      result[5].splice(spaceKeyIndex, 1, ...newSpaceKeys);
     }
   }
 
   return result;
 });
+
+const lightLayout = computed(() => {
+  if (route.path === '/lighting') {
+    return processedLayout.value;
+  } else {
+    return layout.value;
+  }
+})
 
 // 容器尺寸计算逻辑
 const containerDimensions = computed(() => {

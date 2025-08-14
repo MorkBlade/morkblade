@@ -4,12 +4,16 @@
       <div class="key">
         <span>{{ t('end.key1') }}</span>
         <div class="key-box" @mouseenter="onMouseEn('key1')" @mouseleave="onMouseLe('key1')">
-          <p :class="{ 'hover-bg': !endInfo.dks }" @mouseup="KeydropFirst">{{ keyText }}</p>
-          <div
-            class="del_btn"
-            @click="onClick"
-            v-show="endInfo.dks && keyIndex === 0 && !keyboardStore.grabStatus"
-          ></div>
+          <p :class="{ 'hover-bg': !endInfo.dks }" @mouseup="KeydropFirst">
+            <template v-if="isIconKey">
+              <img :src="getImageSrc(keyText)" alt="">
+            </template>
+            <template v-else>
+              {{ keyText }}
+            </template>
+          </p>
+          <div class="del_btn" @click="onClick" v-show="endInfo.dks && keyIndex === 0 && !keyboardStore.grabStatus">
+          </div>
         </div>
       </div>
       <div class="delay-slider">
@@ -29,7 +33,9 @@
 </template>
 
 <script setup>
-import keyboard from '@/configs/byte-to-key/keyboard';
+import keyboardV1 from '@/configs/byte-to-key/v1/keyboard';
+import keyboardV2 from '@/configs/byte-to-key/v2/keyboard-v2';
+import { NUM_KEY, NUM_KEY_V2 } from '@/configs/byte-to-key/iconNumKey';
 import { useAdvancedHook } from '@/hooks';
 import { showMessage } from '@/utils/message';
 import { useAppStore, useKeyboardStore } from '@/stores';
@@ -39,6 +45,7 @@ import { useI18n } from 'vue-i18n';
 import mDialog from '@/components/dialog.vue';
 import characterCard from '@/components/character-card.vue';
 
+const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
 const { t } = useI18n();
 
 const endInfo = defineModel('endInfo', {
@@ -60,9 +67,27 @@ const keyboardStore = useKeyboardStore();
 const isShow = ref(false);
 const keyIndex = ref(-1);
 
-const keyText = computed(() => {
-  return keyboard[endInfo.value.dks] || '';
+const keyboard = computed(() => {
+  // 根据键盘版本选择对应的键盘配置
+  return isVersion2 ? keyboardV2 : keyboardV1;
 });
+
+const keyText = computed(() => {
+  return keyboard.value[endInfo.value.dks] || '';
+});
+
+// 判断是否是图标键
+const isIconKey = computed(() => {
+  const keyMap = isVersion2 ? NUM_KEY_V2 : NUM_KEY;
+  return Object.values(keyMap).some(mappedValue =>
+    mappedValue && mappedValue.toLowerCase() === keyText.value.toLowerCase()
+  );
+});
+// 添加动态导入图片的方法
+const getImageSrc = (keyText) => {
+  return new URL(`../../../assets/images/${keyText}.avif`, import.meta.url).href;
+};
+
 
 const activeKeys = computed(() => {
   return keyboardStore.activeKeys;

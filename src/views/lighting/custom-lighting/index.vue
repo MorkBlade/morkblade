@@ -93,7 +93,7 @@ const { currentPreset } = storeToRefs(lightSettingStore);
 const { setCustomLighting } = useLightingHook();
 const { t } = useI18n();
 // const checked = ref(null);
-const customList = [t('customLighting.rainbow'), t('customLighting.ocean'), t('customLighting.hell'), t('customLighting.miami'), t('customLighting.summer'), t('customLighting.generator'), t('customLighting.clay'), 'Lekker', 'Love'];
+const customList = computed(() => [t('customLighting.rainbow'), t('customLighting.ocean'), t('customLighting.hell'), t('customLighting.miami'), t('customLighting.summer'), t('customLighting.generator'), t('customLighting.clay'), 'Lekker', 'Love']);
 const colorList = ['#080cfe', '#ff0000', '#ffff00', '#fe00e9', '#00fe2f', '#fe3602', '#ffffff', '#1481fe', '#00ffd8'];
 const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
 const colorWheelRef = ref(null);

@@ -22,7 +22,7 @@
         <div class="content">
           <img :src="item.status === 0 ? keyupIcon : keydownIcon" alt="" v-if="item.keyType === 'key'" />
           <span :class="item.keyType === 'key' ? 'keyVal' : 'delayVal'">
-            {{ item.keyType === 'key' ? keyboardWord[item.keyCode] : item.timeDifference + 'ms' }}
+            {{ item.keyType === 'key' ? keyboardV1[item.keyCode] : item.timeDifference + 'ms' }}
           </span>
           <span class="time-diff" v-if="item.keyType === 'key'">{{
             parseFloat(item.timeDifference).toFixed(2) + 'ms'
@@ -88,7 +88,8 @@ import stopIcon from '@/assets/images/stop_icon.svg';
 import delayIcon from '@/assets/images/delay_icon.svg';
 import eventsIcon from '@/assets/images/events_icon.svg';
 import clearIcon from '@/assets/images/clear_icon.svg';
-import keyboardWord from '@/configs/byte-to-key/keyboard';
+// import keyboardWord from '@/configs/byte-to-key/keyboard';
+import keyboardV1 from '@/configs/byte-to-key/v1/keyboard';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();

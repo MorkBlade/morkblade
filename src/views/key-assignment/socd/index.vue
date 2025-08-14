@@ -6,32 +6,54 @@
           <span>{{ t('socd.key1') }}</span>
           <div class="key-box" @mouseenter="onMouseEn('key1')" @mouseleave="onMouseLe('key1')">
             <template v-if="isVersion2">
-              <p :class="{ 'hover-bg': !socdInfo.pos[0] }" @mouseup="KeydropKey(0)">{{ keyText[0] }}</p>
+              <p :class="{ 'hover-bg': !socdInfo.pos[0] }" @mouseup="KeydropKey(0)">
+                <template v-if="isIconKey[0]">
+                  <img :src="getImageSrc(isIconKey[0])" alt="">
+                </template>
+                <template v-else>
+                  {{ keyText[0] }}
+                </template>
+              </p>
             </template>
             <template v-else>
-              <p :class="{ 'hover-bg': !socdInfo.key[0] }" @mouseup="KeydropKey(0)">{{ keyText[2] }}</p>
+              <p :class="{ 'hover-bg': !socdInfo.key[0] }" @mouseup="KeydropKey(0)">
+                <template v-if="isIconKey[0]">
+                  <img :src="getImageSrc(isIconKey[0])" alt="">
+                </template>
+                <template v-else>
+                  {{ keyText[2] }}
+                </template>
+              </p>
             </template>
-            <div
-              class="del_btn"
-              @click="onClick('key1')"
-              v-show="socdInfo.pos[0] && key1Index === 0 && !keyboardStore.grabStatus"
-            ></div>
+            <div class="del_btn" @click="onClick('key1')"
+              v-show="socdInfo.pos[0] && key1Index === 0 && !keyboardStore.grabStatus"></div>
           </div>
         </div>
         <div>
           <span>{{ t('socd.key2') }}</span>
           <div class="key-box" @mouseenter="onMouseEn" @mouseleave="onMouseLe">
             <template v-if="isVersion2">
-              <p :class="{ 'hover-bg': !socdInfo.pos[1] }" @mouseup="KeydropKey(1)">{{ keyText[1] }}</p>
+              <p :class="{ 'hover-bg': !socdInfo.pos[1] }" @mouseup="KeydropKey(1)">
+                <template v-if="isIconKey[1]">
+                  <img :src="getImageSrc(isIconKey[1])" alt="">
+                </template>
+                <template v-else>
+                  {{ keyText[1] }}
+                </template>
+              </p>
             </template>
             <template v-else>
-              <p :class="{ 'hover-bg': !socdInfo.key[1] }" @mouseup="KeydropKey(1)">{{ keyText[3] }}</p>
+              <p :class="{ 'hover-bg': !socdInfo.key[1] }" @mouseup="KeydropKey(1)">
+                <template v-if="isIconKey[1]">
+                  <img :src="getImageSrc(isIconKey[1])" alt="">
+                </template>
+                <template v-else>
+                  {{ keyText[3] }}
+                </template>
+              </p>
             </template>
-            <div
-              class="del_btn"
-              @click="onClick"
-              v-show="socdInfo.pos[1] && key2Index === 0 && !keyboardStore.grabStatus"
-            ></div>
+            <div class="del_btn" @click="onClick"
+              v-show="socdInfo.pos[1] && key2Index === 0 && !keyboardStore.grabStatus"></div>
           </div>
         </div>
       </div>
@@ -43,20 +65,14 @@
       </div>
       <div class="cover-list" :class="DKS_MODES[socdInfo.mode] ? 'is-selected' : ''" @click="toggleDropdown">
         <img class="change-icon" :src="DKS_MODES[socdInfo.mode] ? changedIcon : changeIcon" alt="" />
-        <span class="mode-text" v-ellipsis-marquee="{ duration: 5, gap: 50 }">{{ DKS_MODES[socdInfo.mode] || t('socd.selectPlace') }}</span>
-        <img
-          class="down-icon"
-          :src="DKS_MODES[socdInfo.mode] ? downIcon1 : downIcon2"
-          :style="{ transform: `rotate(${rotate}deg)` }"
-        />
+        <span class="mode-text" v-ellipsis-marquee="{ duration: 5, gap: 50 }">{{ DKS_MODES[socdInfo.mode] ||
+          t('socd.selectPlace') }}</span>
+        <img class="down-icon" :src="DKS_MODES[socdInfo.mode] ? downIcon1 : downIcon2"
+          :style="{ transform: `rotate(${rotate}deg)` }" />
         <div class="drop-list" :style="{ height: `${defaultHeight}px` }">
           <ul>
-            <li
-              v-for="ite in DKS_MODES"
-              :key="ite"
-              :class="{ 'checked-item': ite == DKS_MODES[socdInfo.mode] }"
-              @click.stop="selectItem(ite)"
-            >
+            <li v-for="ite in DKS_MODES" :key="ite" :class="{ 'checked-item': ite == DKS_MODES[socdInfo.mode] }"
+              @click.stop="selectItem(ite)">
               {{ ite }}
             </li>
           </ul>
@@ -73,14 +89,15 @@
 </template>
 
 <script setup>
-import keyboard from '@/configs/byte-to-key/keyboard';
+import keyboardV1 from '@/configs/byte-to-key/v1/keyboard';
+import keyboardV2 from '@/configs/byte-to-key/v2/keyboard-v2';
 import { scaleValue } from '@/utils/responsive.js';
 import { filterSocdAndRsKey } from '@/utils/filter-key.js';
 import { useKeyboardStore } from '@/stores';
 import { useAdvancedHook } from '@/hooks';
 import { showMessage } from '@/utils/message';
 import { useI18n } from 'vue-i18n';
-
+import { NUM_KEY, NUM_KEY_V2 } from '@/configs/byte-to-key/iconNumKey';
 import mDialog from '@/components/dialog.vue';
 import characterCard from '@/components/character-card.vue';
 import changeIcon from '@/assets/images/change.svg';
@@ -128,14 +145,28 @@ const emits = defineEmits(['handleKeyTypeChange', 'handleDialoConfirm']);
 //   { deep: true },
 // );
 
+const keyboard = computed(() => {
+  return isVersion2 ? keyboardV2 : keyboardV1;
+});
+
 const keyText = computed(() => {
   return [
-    keyboard[socdInfo.value.pos[0]] || '',
-    keyboard[socdInfo.value.pos[1]] || '',
-    keyboard[socdInfo.value.key[0]] || '',
-    keyboard[socdInfo.value.key[1]] || '',
+    keyboard.value[socdInfo.value.pos[0]] || '',
+    keyboard.value[socdInfo.value.pos[1]] || '',
+    keyboard.value[socdInfo.value.key[0]] || '',
+    keyboard.value[socdInfo.value.key[1]] || '',
   ];
 });
+
+// 判断是否是图标键
+const isIconKey = computed(() => {
+  const keyMap = isVersion2 ? NUM_KEY_V2 : NUM_KEY;
+  return isVersion2 ? socdInfo.value.pos.map((key) => keyMap[key]) : socdInfo.value.key.map((key) => keyMap[key]);
+});
+// 添加动态导入图片的方法
+const getImageSrc = (keyText) => {
+  return new URL(`../../../assets/images/${keyText}.avif`, import.meta.url).href;
+};
 
 const toggleDropdown = () => {
   defaultHeight.value = defaultHeight.value ? 0 : scaleValue(200);

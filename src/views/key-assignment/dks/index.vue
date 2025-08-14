@@ -4,103 +4,100 @@
       <div class="title-box">
         <div class="title" v-for="(ite, idx) in titleData" :key="ite.name">
           <p class="dks-text" v-ellipsis-marquee="{ duration: 5, gap: 24 }">{{ ite.name }}</p>
-          <span @click="idx == 0 || idx == 2 ? (delayPageShow1 = true) : (delayPageShow2 = true)" >{{
+          <span @click="idx == 0 || idx == 2 ? (delayPageShow1 = true) : (delayPageShow2 = true)">{{
             idx == 0 || idx == 2 ? Number(db).toFixed(2) + 'mm' : Number(db2).toFixed(2) + 'mm'
-          }}</span>
+            }}</span>
         </div>
       </div>
       <div>
         <div class="dks-key">
           <div class="key-box" @mouseenter="onMouseEn('key1')" @mouseleave="onMouseLe('key1')">
-            <p @mouseup="KeydropKey(0)">{{ keyText[0] }}</p>
-            <div
-              class="del_btn"
-              @click="onDelKey('key1')"
-              v-show="keyText[0] && delKeyShow[0] && !keyboardStore.grabStatus"
-            ></div>
+
+            <template v-if="isIconKey[0]">
+              <p>
+                <img :src="getImageSrc(keyText[0])" @mouseup="KeydropKey(0)" alt=""></img>
+              </p>
+            </template>
+            <template v-else>
+              <p @mouseup="KeydropKey(0)">{{ keyText[0] }}</p>
+            </template>
+
+            <div class="del_btn" @click="onDelKey('key1')"
+              v-show="keyText[0] && delKeyShow[0] && !keyboardStore.grabStatus"></div>
           </div>
-          <span
-            v-for="idx in 4"
-            :key="idx"
-            :ref="
+          <span v-for="idx in 4" :key="idx" :ref="
               (el) => {
                 if (el) elements[getKey(0, idx)] = el;
               }
-            "
-            :class="{ 'is-drag': isDragStates[String(0)] && currentKeys[0] === getKey(0, idx) }"
-            :style="{ width: `${getWidth(getKey(0, idx))}px` }"
-            @click="onClick(getKey(0, idx))"
-            @mousedown="onMousedown(getKey(0, idx))"
-          ></span>
+            " :class="{ 'is-drag': isDragStates[String(0)] && currentKeys[0] === getKey(0, idx) }"
+            :style="{ width: `${getWidth(getKey(0, idx))}px` }" @click="onClick(getKey(0, idx))"
+            @mousedown="onMousedown(getKey(0, idx))"></span>
         </div>
         <div class="dks-key">
           <div class="key-box" @mouseenter="onMouseEn('key2')" @mouseleave="onMouseLe('key2')">
-            <p @mouseup="KeydropKey(1)">{{ keyText[1] }}</p>
-            <div
-              class="del_btn"
-              @click="onDelKey('key2')"
-              v-show="keyText[1] && delKeyShow[1] && !keyboardStore.grabStatus"
-            ></div>
+            <!-- <p @mouseup="KeydropKey(1)">{{ keyText[1] }}</p> -->
+
+            <template v-if="isIconKey[1]">
+              <p>
+                <img :src="getImageSrc(keyText[1])" @mouseup="KeydropKey(1)" alt=""></img>
+              </p>
+            </template>
+            <template v-else>
+              <p @mouseup="KeydropKey(1)">{{ keyText[1] }}</p>
+            </template>
+
+            <div class="del_btn" @click="onDelKey('key2')"
+              v-show="keyText[1] && delKeyShow[1] && !keyboardStore.grabStatus"></div>
           </div>
-          <span
-            v-for="idx in 4"
-            :key="idx"
-            :ref="
+          <span v-for="idx in 4" :key="idx" :ref="
               (el) => {
                 if (el) elements[getKey(1, idx)] = el;
               }
-            "
-            :class="{ 'is-drag': isDragStates[String(1)] && currentKeys[1] === getKey(1, idx) }"
-            :style="{ width: `${getWidth(getKey(1, idx))}px` }"
-            @click="onClick(getKey(1, idx))"
-            @mousedown="onMousedown(getKey(1, idx))"
-          ></span>
+            " :class="{ 'is-drag': isDragStates[String(1)] && currentKeys[1] === getKey(1, idx) }"
+            :style="{ width: `${getWidth(getKey(1, idx))}px` }" @click="onClick(getKey(1, idx))"
+            @mousedown="onMousedown(getKey(1, idx))"></span>
         </div>
         <div class="dks-key">
           <div class="key-box" @mouseenter="onMouseEn('key3')" @mouseleave="onMouseLe('key3')">
-            <p @mouseup="KeydropKey(2)">{{ keyText[2] }}</p>
-            <div
-              class="del_btn"
-              @click="onDelKey('key3')"
-              v-show="keyText[2] && delKeyShow[2] && !keyboardStore.grabStatus"
-            ></div>
+            <template v-if="isIconKey[2]">
+              <p>
+                <img :src="getImageSrc(keyText[2])" @mouseup="KeydropKey(2)" alt=""></img>
+              </p>
+            </template>
+            <template v-else>
+              <p @mouseup="KeydropKey(2)">{{ keyText[2] }}</p>
+            </template>
+            <div class="del_btn" @click="onDelKey('key3')"
+              v-show="keyText[2] && delKeyShow[2] && !keyboardStore.grabStatus"></div>
           </div>
-          <span
-            v-for="idx in 4"
-            :key="idx"
-            :ref="
+          <span v-for="idx in 4" :key="idx" :ref="
               (el) => {
                 if (el) elements[getKey(2, idx)] = el;
               }
-            "
-            :class="{ 'is-drag': isDragStates[String(2)] && currentKeys[2] === getKey(2, idx) }"
-            :style="{ width: `${getWidth(getKey(2, idx))}px` }"
-            @click="onClick(getKey(2, idx))"
-            @mousedown="onMousedown(getKey(2, idx))"
-          ></span>
+            " :class="{ 'is-drag': isDragStates[String(2)] && currentKeys[2] === getKey(2, idx) }"
+            :style="{ width: `${getWidth(getKey(2, idx))}px` }" @click="onClick(getKey(2, idx))"
+            @mousedown="onMousedown(getKey(2, idx))"></span>
         </div>
         <div class="dks-key">
           <div class="key-box" @mouseenter="onMouseEn" @mouseleave="onMouseLe">
-            <p @mouseup="KeydropKey(3)">{{ keyText[3] }}</p>
-            <div
-              class="del_btn"
-              @click="onDelKey"
-              v-show="keyText[3] && delKeyShow[3] && !keyboardStore.grabStatus"
-            ></div>
+            <template v-if="isIconKey[3]">
+              <p>
+                <img :src="getImageSrc(keyText[3])" @mouseup="KeydropKey(3)" alt=""></img>
+              </p>
+            </template>
+            <template v-else>
+              <p @mouseup="KeydropKey(3)">{{ keyText[3] }}</p>
+            </template>
+            <div class="del_btn" @click="onDelKey" v-show="keyText[3] && delKeyShow[3] && !keyboardStore.grabStatus">
+            </div>
           </div>
-          <span
-            v-for="idx in 4"
-            :key="idx"
-            :ref="
+          <span v-for="idx in 4" :key="idx" :ref="
               (el) => {
                 if (el) elements[getKey(3, idx)] = el;
               }
-            "
-            :class="{ 'is-drag': isDragStates[String(3)] && currentKeys[3] === getKey(3, idx) }"
-            :style="{ width: `${getWidth(getKey(3, idx))}px` }"
-            @click="onClick(getKey(3, idx))"
-            @mousedown="onMousedown(getKey(3, idx))"
-          ></span>
+            " :class="{ 'is-drag': isDragStates[String(3)] && currentKeys[3] === getKey(3, idx) }"
+            :style="{ width: `${getWidth(getKey(3, idx))}px` }" @click="onClick(getKey(3, idx))"
+            @mousedown="onMousedown(getKey(3, idx))"></span>
         </div>
       </div>
       <div class="save-btn" @click="saveConfig">
@@ -110,23 +107,16 @@
     </div>
     <characterCard @handleSendKey="handleDksKey" />
   </div>
-  <dksDelay
-    v-model:delayPageShow="delayPageShow1"
-    :delay="dksInfo.db"
-    :title="t('dks.releaseTravel')"
-    @changeDelay="changeDksDelay1"
-  />
-  <dksDelay
-    v-model:delayPageShow="delayPageShow2"
-    :delay="dksInfo.db2"
-    :title="t('dks.pressTravel')"
-    @changeDelay="changeDksDelay2"
-  />
+  <dksDelay v-model:delayPageShow="delayPageShow1" :delay="dksInfo.db" :title="t('dks.releaseTravel')"
+    @changeDelay="changeDksDelay1" />
+  <dksDelay v-model:delayPageShow="delayPageShow2" :delay="dksInfo.db2" :title="t('dks.pressTravel')"
+    @changeDelay="changeDksDelay2" />
   <mDialog v-model:isShow="isShow" @sure="onSure" @cancel="onCancel" />
 </template>
 
 <script setup>
-import keyboard from '@/configs/byte-to-key/keyboard';
+import keyboardV1 from '@/configs/byte-to-key/v1/keyboard';
+import keyboardV2 from '@/configs/byte-to-key/v2/keyboard-v2';
 import { useKeyboardStore } from '@/stores';
 import { useAdvancedHook } from '@/hooks';
 import { showMessage } from '@/utils/message';
@@ -135,7 +125,9 @@ import { filterSocdAndRsKey } from '@/utils/filter-key.js';
 import { useI18n } from 'vue-i18n';
 import mDialog from '@/components/dialog.vue';
 import dksDelay from './components/delay.vue';
+import { NUM_KEY, NUM_KEY_V2 } from '@/configs/byte-to-key/iconNumKey';
 
+const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
 const { t } = useI18n();
 
 const dksInfo = defineModel('dksInfo', {
@@ -190,12 +182,12 @@ const clickData = reactive([
   [false, false, false, false, false, false, false],
   [false, false, false, false, false, false, false],
 ]);
-const titleData = [
+const titleData = computed(() => [
   { name: t('dks.keyStart'), val: '1.50' },
   { name: t('dks.keyPress'), val: '3.00' },
   { name: t('dks.keyRelease'), val: '3.00' },
   { name: t('dks.keyEnd'), val: '1.50' },
-];
+]);
 
 // 获取CSS变量
 // const getDksKeyWidth = (num) => {
@@ -287,14 +279,30 @@ onMounted(async () => {
 const db = computed(() => dksInfo.value.db);
 const db2 = computed(() => dksInfo.value.db2);
 
+const keyboard = computed(() => {
+  return isVersion2 ? keyboardV2 : keyboardV1;
+});
+
 const keyText = computed(() => {
   return [
-    keyboard[dksInfo.value.dks[0]] || '',
-    keyboard[dksInfo.value.dks[1]] || '',
-    keyboard[dksInfo.value.dks[2]] || '',
-    keyboard[dksInfo.value.dks[3]] || '',
+    keyboard.value[dksInfo.value.dks[0]] || '',
+    keyboard.value[dksInfo.value.dks[1]] || '',
+    keyboard.value[dksInfo.value.dks[2]] || '',
+    keyboard.value[dksInfo.value.dks[3]] || '',
   ];
 });
+
+// 判断是否是图标键
+const isIconKey = computed(() => {
+  const keyMap = isVersion2 ? NUM_KEY_V2 : NUM_KEY;
+  return dksInfo.value.dks.map((key) => keyMap[key]);
+});
+
+// 添加动态导入图片的方法
+const getImageSrc = (keyText) => {
+  return new URL(`../../../assets/images/${keyText}.avif`, import.meta.url).href;
+};
+
 
 // 计算当前选择的高级键
 const activeKeys = computed(() => {
@@ -493,7 +501,6 @@ const onDelKey = (keyCode) => {
       if (dksInfo.value.dks[0]) {
         dksInfo.value.dks[0] = 0;
         dksInfo.value.trps[0] = 0;
-        console.log('widthswidths: ', widths);
         widths['0-1'] = scaleValue(20);
         widths['0-2'] = scaleValue(20);
         widths['0-3'] = scaleValue(20);
