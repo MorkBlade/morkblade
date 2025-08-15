@@ -195,7 +195,7 @@ export const useConfigHook = () => {
                 await services.setKeyCodeV2(keyData);
                 
             }
-
+            
             // 2. 批量设置性能参数
             for (let row = 0; row < importedKeyboards.length; row++) {
                 for (let col = 0; col < importedKeyboards[row].length; col++) {
@@ -216,9 +216,9 @@ export const useConfigHook = () => {
                         col,
                         calibrate: 0,
                         ...(isAxisStatus === 'v2' ? {
-                            axisV2Id: 0,
-                            axisRangeMax: 4000,
-                            axisCoefficient: 1000,
+                            axisV2Id: performance.axisV2Id || 0,
+                            axisRangeMax: performance.axisRangeMax || 4000,
+                            axisCoefficient: performance.axisCoefficient || 1000,
                         } : {}),
                     };
 

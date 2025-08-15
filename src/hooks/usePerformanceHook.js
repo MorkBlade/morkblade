@@ -159,12 +159,11 @@ const changeParams = (params) => {
   const performanceStore = usePerformanceStore();
   const isAxisStatus = performanceStore.isAxisStatus; 
   let axisV2Data = {}
-
   if (isAxisStatus === 'v2') {
     axisV2Data = {
-      axisV2Id: params.axisID,
-      axisRangeMax: 3360,
-      axisCoefficient: 2130,
+      axisV2Id: params.axisV2Id,
+      axisRangeMax: params.axisRangeMax,
+      axisCoefficient: params.axisCoefficient,
       axisID: params.axisID,
     }
   }
