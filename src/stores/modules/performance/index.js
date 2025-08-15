@@ -613,6 +613,7 @@ const usePerformanceStore = defineStore('performance', {
     },
 
     async getAixsList(isVersion2) {
+      this.axisList = [];
       if (isVersion2) {
         // 判断轴的版本 
         const list = await this.getAxisVersion(); 
@@ -654,6 +655,7 @@ const usePerformanceStore = defineStore('performance', {
           return list;
 
         } else {
+
           const appStore = useAppStore();
          
           const deviceStore = useDeviceStore();
