@@ -36,8 +36,9 @@ const defaultHeight = ref(0);
 const languageMap = {
   'zh-CN': 'zh_CN',
   'en-US': 'en_US',
+  'ja-JP': 'ja_JP',
   'ko-KR': 'ko_KR',
-  'ja-JP': 'ja_JP'
+  
 };
 
 // 定义语言选项
@@ -53,15 +54,16 @@ const languages = [
     selectedIcon: enIcon2,
   },
   {
-    name: 'ko-KR',
-    icon: krIcon1,
-    selectedIcon: krIcon2,
-  },
-  {
     name: 'ja-JP',
     icon: jpIcon1,
     selectedIcon: jpIcon2,
   },
+  {
+    name: 'ko-KR',
+    icon: krIcon1,
+    selectedIcon: krIcon2,
+  },
+
 ];
 
 // 当前选中的语言

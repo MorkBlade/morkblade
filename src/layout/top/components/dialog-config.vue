@@ -31,22 +31,26 @@
 								</div>
 								<div class="item-edit" v-if="editState.editingItemId === item">
 									<span style="color: gray;" class="item-edit-text"
-										@click.stop="editState.handleRename(item)">{{ $t('dialogConfig.rename') }}</span>
+										@click.stop="editState.handleRename(item)">{{ $t('dialogConfig.rename')
+										}}</span>
 									<span style="color: gray;" class="item-edit-text"
 										@click.stop="editState.handleCopy(item)">{{ $t('dialogConfig.copy') }}</span>
 									<span style="color: gray;" class="item-edit-text"
-										@click.stop="editState.handleMove('active',item)">{{ $t('dialogConfig.moveToUnActiveConfig') }}</span>
+										@click.stop="editState.handleMove('active',item)">{{
+										$t('dialogConfig.moveToUnActiveConfig') }}</span>
 									<span style="color: gray;" class="item-edit-text share-btn"
 										@click.stop="editState.handleShare(item)">{{ $t('dialogConfig.share') }}</span>
-									<span class="item-edit-text"
-										@click.stop="editState.handleExport(item)">{{ $t('dialogConfig.export') }}</span>
+									<span class="item-edit-text" @click.stop="editState.handleExport(item)">{{
+										$t('dialogConfig.export') }}</span>
 									<span style="color: gray;" class="item-edit-text delete-btn"
-										@click.stop="editState.handleDelete('active',item)">{{ $t('dialogConfig.delete') }}</span>
+										@click.stop="editState.handleDelete('active',item)">{{ $t('dialogConfig.delete')
+										}}</span>
 								</div>
 							</div>
 							<div class="item-list-empty" v-if="appStore.configList && appStore.configList.length < 4"
 								:class="{ 'drag-over': dragState.isDragOverEmptyActive }">
-								<span class="item-title">{{ $t('dialogConfig.dragConfig') }}</span>
+								<span class="item-title" v-ellipsis-marquee="{ duration: 5, gap: 24 }">{{
+									$t('dialogConfig.dragConfig') }}</span>
 							</div>
 						</div>
 					</div>
@@ -68,20 +72,24 @@
 									<span class="more-icon" @click.stop="editState.showEdit(item)"></span>
 								</div>
 								<div class="un-active-item-edit" v-if="editState.editingItemId === item">
-									<span class="item-edit-text" @click.stop="editState.handleRename(item)">{{ $t('dialogConfig.rename') }}</span>
-									<span class="item-edit-text" @click.stop="editState.handleCopy(item)">{{ $t('dialogConfig.copy') }}</span>
-									<span class="item-edit-text"
-										@click.stop="editState.handleMove('unActive',item)">{{ $t('dialogConfig.moveToBoardConfig') }}</span>
+									<span class="item-edit-text" @click.stop="editState.handleRename(item)">{{
+										$t('dialogConfig.rename') }}</span>
+									<span class="item-edit-text" @click.stop="editState.handleCopy(item)">{{
+										$t('dialogConfig.copy') }}</span>
+									<span class="item-edit-text" @click.stop="editState.handleMove('unActive',item)">{{
+										$t('dialogConfig.moveToBoardConfig') }}</span>
 									<span class="item-edit-text share-btn">{{ $t('dialogConfig.share') }}</span>
-									<span class="item-edit-text"
-										@click.stop="editState.handleExport(item)">{{ $t('dialogConfig.export') }}</span>
+									<span class="item-edit-text" @click.stop="editState.handleExport(item)">{{
+										$t('dialogConfig.export') }}</span>
 									<span class="item-edit-text delete-btn"
-										@click.stop="editState.handleDelete('unActive',item)">{{ $t('dialogConfig.delete') }}</span>
+										@click.stop="editState.handleDelete('unActive',item)">{{
+										$t('dialogConfig.delete') }}</span>
 								</div>
 							</div>
 							<div class="item-list-empty" :class="{ 'drag-over': dragState.isDragOverEmptyUnActive }"
 								v-if="appStore.unActiveConfigList && appStore.unActiveConfigList.length < 28">
-								<span class="item-title">{{ $t('dialogConfig.dragConfig') }}</span>
+								<span class="item-title" v-ellipsis-marquee="{ duration: 5, gap: 24 }">{{
+									$t('dialogConfig.dragConfig') }}</span>
 							</div>
 						</div>
 					</div>
@@ -90,7 +98,8 @@
 				<div class="btn-group">
 					<div class="update-btn" @click="handleNewConfig">
 						<img class="update-img" src="@/assets/images/events_icon.svg" alt="" />
-						<span class="update-text" v-ellipsis-marquee="{ duration: 5, gap: 24 }">{{ $t('dialogConfig.newConfig') }}</span>
+						<span class="update-text" v-ellipsis-marquee="{ duration: 5, gap: 24 }">{{
+							$t('dialogConfig.newConfig') }}</span>
 					</div>
 					<div class="cancel-btn" @click="showImportDialog = true">
 						<img src="@/assets/images/download.svg" alt="" />
@@ -100,8 +109,8 @@
 			</div>
 		</div>
 	</div>
-	<Dialog v-if="showRenameDialog" :isShow="showRenameDialog" :dialogTitle="$t('dialogConfig.rename')" :textContent="''"
-		@cancel="editState.handleRenameCancel" @sure="editState.handleRenameConfirm"
+	<Dialog v-if="showRenameDialog" :isShow="showRenameDialog" :dialogTitle="$t('dialogConfig.rename')"
+		:textContent="''" @cancel="editState.handleRenameCancel" @sure="editState.handleRenameConfirm"
 		@update:isShow="val => showRenameDialog = val">
 		<template #default>
 			<div class="rename-input-container">

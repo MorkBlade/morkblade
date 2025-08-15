@@ -1,14 +1,10 @@
 <template>
   <div class="performance-container">
     <div class="left-menu">
-      <div
-        v-for="(item, idx) in performanceItem"
-        :key="item"
-        class="performance-item"
-        :class="idx === clickItem ? 'is-active' : ''"
-        @click="changeMenu(idx)"
-      >
-        {{ item }}
+      <div v-for="(item, idx) in performanceItem" :key="item" class="performance-item"
+        :class="idx === clickItem ? 'is-active' : ''" @click="changeMenu(idx)">
+        <!-- {{ item }} -->
+        <span class="performance-item-text" v-ellipsis-marquee="{ duration: 5, gap: 24 }">{{ item }}</span>
       </div>
     </div>
     <div class="display-area">
@@ -105,6 +101,9 @@ onMounted(() => {
     background-repeat: no-repeat;
     margin-bottom: var(--spacing-20);
     cursor: pointer;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
 
   .display-area {

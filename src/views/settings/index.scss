@@ -106,9 +106,16 @@
           display: inline-block;
           margin-top: var(--spacing-6);
           transition: all 0.2s ease-in-out;
+          
           &.hasFile {
             margin-top: 0;
           }
+        }
+        .online-download-text {
+          width: 100px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
         }
 
         & .online-pack-name {
@@ -133,7 +140,12 @@
       color: rgba(255, 255, 255, 0.5);
       cursor: not-allowed;
     }
-
+    .localUpdate-btn {
+      width: 100px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
     .uploader {
       width: var(--size-200);
       height: var(--size-40);

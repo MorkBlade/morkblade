@@ -1,7 +1,6 @@
 <template>
   <div class="top-box">
     <dropdownMenu />
-    <!-- TODO V1调试开启，打包记得注释 -->
     <template v-if="isVersion2">
       <configManager />
     </template>

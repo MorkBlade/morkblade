@@ -12,23 +12,24 @@
     <div class="start-box">
       <div class="explain-box">
         <img src="@/assets/images/warn_icon.svg" alt="" />
-        <span class="explain-text" v-ellipsis-marquee="{ duration: 5, gap: 24 }">{{ $t('keyCalibration.calibrationTip1') }}</span>
+        <span class="explain-text" v-ellipsis-marquee="{ duration: 5, gap: 24 }">{{ $t('keyCalibration.calibrationTip1')
+          }}</span>
       </div>
       <div class="text-box">
-        <span class="text-text" v-ellipsis-marquee="{ duration: 5, gap: 24 }">{{ $t('keyCalibration.calibrationTip2') }}</span>
-        <span class="text-text" v-ellipsis-marquee="{ duration: 5, gap: 24 }">{{ $t('keyCalibration.calibrationTip3') }}</span>
-        <span class="text-text" v-ellipsis-marquee="{ duration: 5, gap: 24 }">{{ $t('keyCalibration.calibrationTip4') }}</span>
-        <span class="text-text" v-ellipsis-marquee="{ duration: 5, gap: 24 }">{{ $t('keyCalibration.calibrationTip5') }}</span>
+        <span class="text-text" v-ellipsis-marquee="{ duration: 5, gap: 24 }">{{ $t('keyCalibration.calibrationTip2')
+          }}</span>
+        <span class="text-text" v-ellipsis-marquee="{ duration: 5, gap: 24 }">{{ $t('keyCalibration.calibrationTip3')
+          }}</span>
+        <span class="text-text" v-ellipsis-marquee="{ duration: 5, gap: 24 }">{{ $t('keyCalibration.calibrationTip4')
+          }}</span>
+        <span class="text-text" v-ellipsis-marquee="{ duration: 5, gap: 24 }">{{ $t('keyCalibration.calibrationTip5')
+          }}</span>
       </div>
-      <div
-        class="start-btn"
-        :class="switchClass"
-        @click="onStart"
-        @mouseenter="onMouseEnter"
-        @mouseleave="onMouseLeave"
-      >
+      <div class="start-btn" :class="switchClass" @click="onStart" @mouseenter="onMouseEnter"
+        @mouseleave="onMouseLeave">
         <img :src="isStart ? stopIcon : startIcon" alt="" />
-        <span>{{ isStart ? $t('keyCalibration.endAdjusting') : $t('keyCalibration.startAdjusting') }}</span>
+        <span class="start-btn-text" v-ellipsis-marquee="{ duration: 5, gap: 24 }">{{ isStart ?
+          $t('keyCalibration.endAdjusting') : $t('keyCalibration.startAdjusting') }}</span>
       </div>
     </div>
   </div>
@@ -314,6 +315,10 @@ onUnmounted(() => {
         position: absolute;
         top: var(--spacing-6);
         left: var(--spacing-65);
+        width: 80px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
     }
     .is-active {

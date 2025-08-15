@@ -1,42 +1,28 @@
 <template>
-  <div
-    class="dropdown-menu-container"
-    @click="toggleDropdown"
-    :class="{ 'is-checked': appStore.activeConfigIndex !== null }"
-  >
+  <div class="dropdown-menu-container" @click="toggleDropdown"
+    :class="{ 'is-checked': appStore.activeConfigIndex !== null }">
     <img class="change-icon" :src="appStore.activeConfigIndex !== null ? changedIcon : changeIcon" />
-    <span class="dropdown-text">
+    <span class="dropdown-text" v-ellipsis-marquee="{ duration: 5, gap: 24 }">
       <!-- TODO 目前写死翻译名字，后续需要优化 -->
       {{ $t(`connect.keyboardConfig${appStore.activeConfigIndex}`) }}
       <!-- {{ $t(`messages.keyboardConfig${appStore.activeConfigIndex}`) }} -->
     </span>
-    <img
-      class="down-icon"
-      :src="appStore.activeConfigIndex !== null ? downArrowed : downArrow"
-      :style="{ transform: `rotate(${rotate}deg)` }"
-    />
+    <img class="down-icon" :src="appStore.activeConfigIndex !== null ? downArrowed : downArrow"
+      :style="{ transform: `rotate(${rotate}deg)` }" />
   </div>
   <div class="dropdown-list" :style="{ height: `${defaultHeight}px` }">
     <p>{{ $t('dropdownMenu.boardConfig') }}</p>
     <ul>
       <!-- <ul class="dropdown-list"> -->
-      <li
-        v-for="(item, index) in appStore.configList"
-        :key="index"
-        :class="{ checked: appStore.activeConfigIndex === index }"
-        @click="selectItem(index)"
-      >
+      <li v-for="(item, index) in appStore.configList" :key="index"
+        :class="{ checked: appStore.activeConfigIndex === index }" @click="selectItem(index)">
         {{ $t(`connect.keyboardConfig${index}`) }}
       </li>
       <template v-if="customItems.length > 0">
         <p style="margin-bottom: 5px">{{ $t('dropdownMenu.customConfig') }}</p>
       </template>
-      <li
-        v-for="(item, index) in customItems"
-        :key="index"
-        :class="{ checked: appStore.activeConfigIndex === index }"
-        @click="selectItem(idx)"
-      >
+      <li v-for="(item, index) in customItems" :key="index" :class="{ checked: appStore.activeConfigIndex === index }"
+        @click="selectItem(idx)">
         <img v-if="!item" src="" alt="" />
         {{ item }}
         <span class="del_btn" v-if="item" @click="delConfig(item)"></span>
@@ -153,6 +139,10 @@ const delConfig = (configInfo) => {
     background-color: transparent;
     font-weight: 600;
     font-family: 'CN Heavy';
+    width: 80px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .down-icon {

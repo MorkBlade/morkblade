@@ -49,7 +49,7 @@
               <dropMenu :max-height="180" :items="firmwareVersionList" @sendSelectedIdx="handleSelectedVer" />
             </template> -->
             <template v-if="isVersion2">
-              <span class="online-update-text" >{{ t('settings.onlineUpdate') }}:</span>
+              <span class="online-update-text" v-ellipsis-marquee="{ duration: 5, gap: 24 }">{{ t('settings.onlineUpdate') }}:</span>
               <div class="online-upload" :class="{ loading }" @click="handleOnlineUpdate">
                 <span class="online-download-text" :class="{ hasFile: bindData.length > 0 && onlineUpload }" v-ellipsis-marquee="{ duration: 5, gap: 24 }">
                   {{ bindData.length > 0 && onlineUpload ? t('settings.downloadedFirmware') :
@@ -65,7 +65,7 @@
               </div>
             </template>
             <template v-if="isVersion2">
-              <span :style="{ marginLeft: `${scaleValue(20)}px` }">{{ t('settings.localUpdate') }}:</span>
+              <span :style="{ marginLeft: `${scaleValue(20)}px` }" class="localUpdate-btn" v-ellipsis-marquee="{ duration: 5, gap: 24 }">{{ t('settings.localUpdate') }}:</span>
               <el-upload ref="uploadRef" class="uploader" :class="{ loading }" :limit="1" :auto-upload="false"
                 :disabled="loading" accept=".bin" :on-exceed="handleExceed" :on-remove="handleRemove"
                 :on-change="handleFileChange">

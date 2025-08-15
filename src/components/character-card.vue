@@ -4,7 +4,7 @@
       <div class="tab-item" v-for="(ite, idx) in characterArr" :key="ite.icon"
         :class="checkedIdx == idx ? 'selected' : ''" @click="onCheck(idx)">
         <img :src="getImageUrl(ite.icon, checkedIdx == idx)" alt="" />
-        <span>{{ ite.name }}</span>
+        <span class="tab-name" v-ellipsis-marquee="{ duration: 5, gap: 24 }">{{ ite.name }}</span>
       </div>
     </div>
     <div class="keys-box">
@@ -201,6 +201,12 @@ const selectItem = (keyVal) => {
         object-fit: fill;
         vertical-align: middle;
         margin-right: var(--spacing-5);
+      }
+      .tab-name {
+        width: 60px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
     }
 

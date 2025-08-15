@@ -80,7 +80,7 @@
       </div>
       <div class="save-btn" @click="saveConfig">
         <img src="@/assets/images/sure.svg" alt="" />
-        <span>{{ t('socd.applyMapping') }}</span>
+        <span class="apply-btn" v-ellipsis-marquee="{ duration: 5, gap: 24 }">{{ t('socd.applyMapping') }}</span>
       </div>
     </div>
     <characterCard @handleSendKey="handleSocdKey" />
@@ -611,6 +611,10 @@ defineExpose({ save, reset });
         position: absolute;
         top: var(--spacing-6);
         left: var(--spacing-65);
+        width: 80px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
     }
     .is-active {

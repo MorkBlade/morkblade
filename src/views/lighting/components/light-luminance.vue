@@ -87,7 +87,7 @@ emitter.on('versionChange', (flag) => {
 const lightSleepDelayLangMap = {
   zh_CN: constant.zh_CN.LIGHT_SLEEP_DELAY,
   en_US: constant.en_US.LIGHT_SLEEP_DELAY,
-  // 以后新增语言只需在此处添加
+  ja_JP: constant.ja_JP.LIGHT_SLEEP_DELAY,
 };
 
 const currentLang = computed(() => locale.value in lightSleepDelayLangMap ? locale.value : 'zh_CN');
