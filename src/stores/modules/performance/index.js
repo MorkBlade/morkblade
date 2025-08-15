@@ -655,7 +655,6 @@ const usePerformanceStore = defineStore('performance', {
           return list;
 
         } else {
-
           const appStore = useAppStore();
          
           const deviceStore = useDeviceStore();
