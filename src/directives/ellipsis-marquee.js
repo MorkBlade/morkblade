@@ -7,7 +7,7 @@
 const DEFAULTS = {
   duration: 5, // 秒
   gap: 24, // px
-  trigger: 'auto                                     ', // 'auto' | 'hover' | 'global'
+  trigger: 'hover', // 'auto' | 'hover' | 'global'
 };
 
 const GLOBAL_KEY = '__EM_TRIGGER__';
@@ -40,12 +40,12 @@ function injectOnce() {
   const style = document.createElement('style');
   style.setAttribute('data-v-ellipsis-marquee', '');
   style.textContent = `
-  .v-em { display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; position: relative; }
-  .v-em .v-em-inner { display: inline-block; white-space: nowrap; will-change: transform; }
+  .v-em {  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; position: relative;}
+  .v-em .v-em-inner { display: inline-block; width: 100%; line-height: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;  will-change: transform; }
   /* 仅在确认溢出后，才追加复制文本用于无缝滚动 */
   .v-em.v-em--overflow .v-em-inner::after { content: attr(data-text); display: inline-block; padding-left: var(--em-gap, 24px); }
   /* 仅当溢出时才允许动画 */
-  .v-em.v-em--overflow.v-em--hover:hover .v-em-inner { animation: v-em-marquee var(--em-duration, 5s) linear infinite; }
+  .v-em.v-em--overflow.v-em--hover:hover .v-em-inner {overflow: visible; text-overflow: clip; animation: v-em-marquee var(--em-duration, 5s) linear infinite; }
   .v-em.v-em--overflow.v-em--auto .v-em-inner { animation: v-em-marquee var(--em-duration, 5s) linear infinite; }
   @keyframes v-em-marquee { from { transform: translateX(0); } to { transform: translateX(calc(-50% - var(--em-gap, 24px)/2)); } }
   `;
@@ -184,4 +184,5 @@ export default {
     el.style.removeProperty('--em-duration');
   },
 };
+
 

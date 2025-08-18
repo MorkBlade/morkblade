@@ -49,7 +49,7 @@
               <dropMenu :max-height="180" :items="firmwareVersionList" @sendSelectedIdx="handleSelectedVer" />
             </template> -->
             <template v-if="isVersion2">
-              <span class="online-update-text" v-ellipsis-marquee="{ duration: 5, gap: 24 }">{{ t('settings.onlineUpdate') }}:</span>
+              <span class="online-update-text" style="display: flex;" v-ellipsis-marquee="{ duration: 5, gap: 24 }">{{ t('settings.onlineUpdate') }}:</span>
               <div class="online-upload" :class="{ loading }" @click="handleOnlineUpdate">
                 <span class="online-download-text" :class="{ hasFile: bindData.length > 0 && onlineUpload }" v-ellipsis-marquee="{ duration: 5, gap: 24 }">
                   {{ bindData.length > 0 && onlineUpload ? t('settings.downloadedFirmware') :

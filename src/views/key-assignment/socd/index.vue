@@ -489,6 +489,7 @@ defineExpose({ save, reset });
       .mode-text {
         display: flex;
         align-items: center;
+        text-align: center;
         // justify-content: center;
         width: var(--size-100);
         height: 100%;
@@ -609,7 +610,8 @@ defineExpose({ save, reset });
         font-size: var(--font-size-18);
         color: #fff;
         position: absolute;
-        top: var(--spacing-6);
+        display: flex;
+        top: var(--spacing-10);
         left: var(--spacing-65);
         width: 80px;
         overflow: hidden;

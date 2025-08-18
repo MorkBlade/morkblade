@@ -172,6 +172,7 @@ const getSpeed = (val) => {
       height: var(--size-40);
       margin-left: var(--spacing-10);
       display: flex;
+      text-align: center;
       align-items: center;
       background-image: url('@/assets/images/select_bg.svg');
       background-size: cover;

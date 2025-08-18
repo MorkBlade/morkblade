@@ -67,7 +67,7 @@ const handleCancel = () => {
     width: 45%;
     border: none;
     color: #fff;
-    display: inline-block;
+    display: flex;
     font-size: var(--font-size-18);
     background-color: transparent;
     font-weight: 600;

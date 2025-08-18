@@ -367,7 +367,7 @@ onUnmounted(() => {
     }
 
     & span:first-child {
-      display: inline-block;
+      display: flex;
       width: var(--size-78);
       font-size: var(--font-size-13);
       text-align: center;
@@ -377,7 +377,7 @@ onUnmounted(() => {
       margin-left: var(--spacing-16);
     }
     .travel-text {
-      display: inline-block;
+      display: flex;
       width: 55px;
       text-overflow: ellipsis;
       white-space: nowrap;

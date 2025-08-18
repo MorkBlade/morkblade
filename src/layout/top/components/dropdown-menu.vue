@@ -114,6 +114,7 @@ const delConfig = (configInfo) => {
   top: calc(var(--spacing-15) + var(--spacing-2));
   display: flex;
   align-content: center;
+  align-items: center;
   margin-left: var(--spacing-50);
   background-image: url('@/assets/images/config_bg.svg');
   background-size: cover;
@@ -127,19 +128,22 @@ const delConfig = (configInfo) => {
     height: var(--size-20);
     object-fit: fill;
     transform: rotate(90deg);
-    margin: var(--spacing-10) 0 0 var(--spacing-10);
+    // margin: var(--spacing-10) 0 0 var(--spacing-10);
+    margin-left: 10px;
   }
 
   .dropdown-text {
     border: none;
     color: #fff;
-    display: inline-block;
-    margin: var(--spacing-8) 0 0 var(--spacing-16);
+    display: flex;
+    // margin: 10px 0 0 var(--spacing-16);
+    margin-left: var(--spacing-16);
     font-size: var(--font-size-18);
     background-color: transparent;
     font-weight: 600;
     font-family: 'CN Heavy';
-    width: 80px;
+    width: 100px;
+    text-align: center;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -150,7 +154,8 @@ const delConfig = (configInfo) => {
     height: var(--size-8);
     object-fit: fill;
     transition: transform 0.3s;
-    margin: calc(var(--spacing-15) + var(--spacing-3)) 0 0 var(--spacing-10);
+    // margin: calc(var(--spacing-15) + 0) 0 0 var(--spacing-10);
+    margin-left: var(--spacing-3);
   }
 }
 

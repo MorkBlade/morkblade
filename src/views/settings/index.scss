@@ -57,6 +57,8 @@
     color: #ffffff;
 
     & span {
+      display: flex;
+      margin-top: var(--spacing-5);
       font-size: var(--font-size-16);
     }
   }
@@ -103,7 +105,7 @@
         position: relative;
 
         > span {
-          display: inline-block;
+          display: flex;
           margin-top: var(--spacing-6);
           transition: all 0.2s ease-in-out;
           
@@ -112,7 +114,10 @@
           }
         }
         .online-download-text {
-          width: 100px;
+          // display: flex;
+          // width: 100px;
+          margin: auto;
+          margin-top: 10px;
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
@@ -141,6 +146,7 @@
       cursor: not-allowed;
     }
     .localUpdate-btn {
+      display: flex;
       width: 100px;
       overflow: hidden;
       text-overflow: ellipsis;

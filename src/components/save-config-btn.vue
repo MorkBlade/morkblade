@@ -96,6 +96,7 @@ const onCancel = () => {
   background-size: cover;
   background-repeat: no-repeat;
   position: relative;
+  display: flex;
   cursor: pointer;
 
   &.is-active {
@@ -131,13 +132,14 @@ const onCancel = () => {
     left: var(--spacing-50);
   }
   .save-text {
-    display: inline-block;
+    display: flex;
     width: 100px;
     text-overflow: ellipsis;
     white-space: nowrap;
     max-width: 100%;
     overflow: hidden;
     text-align: center;
+    margin-top: 5px;
   }
 }
 </style>

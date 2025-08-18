@@ -880,7 +880,7 @@ defineExpose({ save, reset });
         }
         .dks-text {
           display: inline-block;
-          width: 45px;
+          width: var(--spacing-45);
           text-overflow: ellipsis;
           white-space: nowrap;
           max-width: 100%;
@@ -1004,7 +1004,8 @@ defineExpose({ save, reset });
         font-size: var(--font-size-18);
         color: #fff;
         position: absolute;
-        top: var(--spacing-6);
+        display: flex;
+        top: var(--spacing-10);
         left: var(--spacing-65);
         width: 80px;
         overflow: hidden;

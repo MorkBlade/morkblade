@@ -4,7 +4,8 @@
       <div class="key-group">
         <div class="click-box">
           <!-- <span>单击</span> -->
-          <span>{{ isVersion2 ? t('mt.click') : t('mt.longPress') }}</span>
+          <span class="click-text" v-ellipsis-marquee="{ duration: 5, gap: 24 }">{{ isVersion2 ? t('mt.click') :
+            t('mt.longPress') }}</span>
           <div class="key-box" @mouseenter="onMouseEn('click')" @mouseleave="onMouseLe('click')">
             <p :class="{ 'hover-bg': !mtInfo.dks[0] }" @mouseup="KeydropKey(0)">
               <template v-if="isIconKey[0]">
@@ -14,16 +15,14 @@
                 {{ keyText[0] }}
               </template>
             </p>
-            <div
-              class="del_btn"
-              @click="onClick"
-              v-show="mtInfo.dks[0] && clickDelIndex === 0 && !keyboardStore.grabStatus"
-            ></div>
+            <div class="del_btn" @click="onClick"
+              v-show="mtInfo.dks[0] && clickDelIndex === 0 && !keyboardStore.grabStatus"></div>
           </div>
         </div>
         <div class="hold-box">
           <!-- <span>长按</span> -->
-          <span>{{ isVersion2 ? t('mt.longPress') : t('mt.click') }}</span>
+          <span class="click-text" v-ellipsis-marquee="{ duration: 5, gap: 24 }">{{ isVersion2 ? t('mt.longPress') :
+            t('mt.click') }}</span>
           <div class="key-box" @mouseenter="onMouseEn" @mouseleave="onMouseLe">
             <p :class="{ 'hover-bg': !mtInfo.dks[1] }" @mouseup="KeydropKey(1)">
               <template v-if="isIconKey[1]">
@@ -33,11 +32,8 @@
                 {{ keyText[1] }}
               </template>
             </p>
-            <div
-              class="del_btn"
-              @click="onLongPress"
-              v-show="mtInfo.dks[1] && longDelIndex === 0 && !keyboardStore.grabStatus"
-            ></div>
+            <div class="del_btn" @click="onLongPress"
+              v-show="mtInfo.dks[1] && longDelIndex === 0 && !keyboardStore.grabStatus"></div>
           </div>
         </div>
       </div>
@@ -248,7 +244,7 @@ defineExpose({ save, reset });
 
         .key-box {
           position: relative;
-          margin-left: var(--spacing-20);
+          margin-left: var(--spacing-10);
         }
 
         .del_btn {
@@ -265,9 +261,13 @@ defineExpose({ save, reset });
         }
 
         span {
+          width: 60px;
           font-size: var(--font-size-15);
           font-family: 'CN Heavy';
           color: #fff;
+          text-overflow: ellipsis;
+          overflow: hidden;
+          white-space: nowrap;
         }
         p {
           height: var(--size-50);
@@ -369,9 +369,11 @@ defineExpose({ save, reset });
 
       span {
         font-size: var(--font-size-18);
+        display: flex;
+        align-items: center;
         color: #fff;
         position: absolute;
-        top: var(--spacing-6);
+        top: var(--spacing-10);
         left: var(--spacing-65);
         width: 80px;
         overflow: hidden;

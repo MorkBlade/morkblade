@@ -923,7 +923,7 @@ const updateMacroMode = (newSettings) => {
         color: #fff;
         position: absolute;
         top: var(--spacing-6);
-        left: var(--spacing-65);
+        left: var(--spacing-50);
       }
     }
     & .is-active {
@@ -948,7 +948,10 @@ const updateMacroMode = (newSettings) => {
   }
 }
 .operation-btn-text {
+  display: flex;
   width: 100px;
+  text-align: center;
+  margin-top: var(--spacing-5);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

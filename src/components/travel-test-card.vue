@@ -219,7 +219,7 @@ const getSwitchWidth = () => {
       margin-left: 16px;
     }
     .travel-text {
-      display: inline-block;
+      display: flex;
       width: 60px;
       text-overflow: ellipsis;
       white-space: nowrap;

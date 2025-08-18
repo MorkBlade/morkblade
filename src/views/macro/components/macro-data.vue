@@ -963,13 +963,16 @@ const updateMacroTypeSettings = (newSettings) => {
       }
 
       span {
-        width: 85px;
+        width: 100px;
         transition: color 0.2s ease-in-out;
         font-size: var(--font-size-18);
         color: #fff;
+        display: flex;
+        margin-top: 5px;
+        text-align: center;
         position: absolute;
         top: var(--spacing-6);
-        left: var(--spacing-65);
+        left: var(--spacing-50);
 
         white-space: nowrap;
         overflow: hidden;

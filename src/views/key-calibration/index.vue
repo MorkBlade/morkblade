@@ -16,13 +16,13 @@
           }}</span>
       </div>
       <div class="text-box">
-        <span class="text-text" v-ellipsis-marquee="{ duration: 5, gap: 24 }">{{ $t('keyCalibration.calibrationTip2')
+        <span class="text-text" >{{ $t('keyCalibration.calibrationTip2')
           }}</span>
-        <span class="text-text" v-ellipsis-marquee="{ duration: 5, gap: 24 }">{{ $t('keyCalibration.calibrationTip3')
+        <span class="text-text" >{{ $t('keyCalibration.calibrationTip3')
           }}</span>
-        <span class="text-text" v-ellipsis-marquee="{ duration: 5, gap: 24 }">{{ $t('keyCalibration.calibrationTip4')
+        <span class="text-text" >{{ $t('keyCalibration.calibrationTip4')
           }}</span>
-        <span class="text-text" v-ellipsis-marquee="{ duration: 5, gap: 24 }">{{ $t('keyCalibration.calibrationTip5')
+        <span class="text-text" >{{ $t('keyCalibration.calibrationTip5')
           }}</span>
       </div>
       <div class="start-btn" :class="switchClass" @click="onStart" @mouseenter="onMouseEnter"
@@ -268,9 +268,9 @@ onUnmounted(() => {
       margin: var(--spacing-10) 0;
       .explain-text {
         width: 240px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
+        // overflow: hidden;
+        // text-overflow: ellipsis;
+        // white-space: nowrap;;
         max-width: 100%;
       }
       img {
@@ -283,6 +283,28 @@ onUnmounted(() => {
     .text-box {
       display: flex;
       flex-direction: column;
+      height: 65%;
+      overflow-y: scroll;
+      margin-bottom: 5px;
+
+      /* 自定义滚动条样式 */
+      &::-webkit-scrollbar {
+        width: 4px;
+      }
+
+      &::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: 2px;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background: rgba(144, 147, 153, 0.3);
+        border-radius: 2px;
+        
+        &:hover {
+          background: rgba(144, 147, 153, 0.5);
+        }
+      }
 
       & span {
         margin-bottom: var(--spacing-20);
@@ -312,9 +334,10 @@ onUnmounted(() => {
       span {
         font-size: var(--font-size-18);
         color: #fff;
+        display: flex;
         position: absolute;
-        top: var(--spacing-6);
-        left: var(--spacing-65);
+        top: var(--spacing-10);
+        left: var(--spacing-60);
         width: 80px;
         overflow: hidden;
         text-overflow: ellipsis;
