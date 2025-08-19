@@ -129,12 +129,12 @@ const getFirmWarePack = async (url) => {
           });
           console.log('update suc-------------> ', result);
           if (result && result.success) {
-            showMessage(t('connect.upgradeSuccess'), 'success');
+            showMessage(t('settings.updateSuccess'), 'success');
           }
           await deviceStore.connectDevice();
         } catch (error) {
           console.log('update failed----------->', error);
-          showMessage(t('connect.upgradeFailed'), 'warning');
+          showMessage(t('settings.updateFailed'), 'warning');
         }
         isUpdate.value = false;
       };
