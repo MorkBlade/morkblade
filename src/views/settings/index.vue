@@ -163,7 +163,7 @@ import emitter from '@/utils/app-emitter';
 import { scaleValue } from '@/utils/responsive.js';
 import { showMessage } from '@/utils/message';
 import { genFileId, ElLoading } from 'element-plus';
-import { updateLog_zh_CN, updateLog_en_US } from '@/configs/update-log';
+import { updateLog_zh_CN, updateLog_en_US, updateLog_ja_JP } from '@/configs/update-log';
 import { useAppStore, useDeviceStore, usePerformanceStore, useKeyboardStore, useMacroStore } from '@/stores';
 import { useAdvancedHook, useLightingHook } from '@/hooks';
 import { httpService } from '@/http/api/index.js';
@@ -182,6 +182,10 @@ const updateLogLangMap = {
   en_US: {
     UPDATE_LOG_V1: updateLog_en_US.UPDATE_LOG_V1,
     UPDATE_LOG_V2: updateLog_en_US.UPDATE_LOG_V2,
+  },
+  ja_JP: {
+    UPDATE_LOG_V1: updateLog_ja_JP.UPDATE_LOG_V1,
+    UPDATE_LOG_V2: updateLog_ja_JP.UPDATE_LOG_V2,
   },
   // 以后新增语言只需在此处添加
 };
