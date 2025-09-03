@@ -142,7 +142,7 @@ const delConfig = (configInfo) => {
     background-color: transparent;
     font-weight: 600;
     font-family: 'CN Heavy';
-    width: 100px;
+    width: var(--spacing-100);
     text-align: center;
     overflow: hidden;
     text-overflow: ellipsis;

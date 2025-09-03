@@ -117,7 +117,7 @@
           // display: flex;
           // width: 100px;
           margin: auto;
-          margin-top: 10px;
+          margin-top: var(--spacing-10);
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
@@ -147,10 +147,11 @@
     }
     .localUpdate-btn {
       display: flex;
-      width: 100px;
+      max-width: var(--spacing-90);
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+      text-align: center;
     }
     .uploader {
       width: var(--size-200);

@@ -220,7 +220,7 @@ const getSwitchWidth = () => {
     }
     .travel-text {
       display: flex;
-      width: 60px;
+      width: var(--spacing-60);
       text-overflow: ellipsis;
       white-space: nowrap;
       max-width: 100%;

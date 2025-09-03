@@ -203,7 +203,7 @@ const selectItem = (keyVal) => {
         margin-right: var(--spacing-5);
       }
       .tab-name {
-        width: 60px;
+        width: var(--spacing-60);
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;

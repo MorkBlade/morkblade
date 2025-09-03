@@ -334,7 +334,7 @@ const handleAllLight = async () => {
             color: #ccc;
             font-family: 'CN Heavy';
             display: inline-block;
-            width: 55px;
+            width: var(--spacing-55);
             text-overflow: ellipsis;
             white-space: nowrap;
             max-width: 100%;
@@ -343,8 +343,8 @@ const handleAllLight = async () => {
           }
 
           .el-switch {
-            margin-left: var(--spacing-12);
-            margin-top: var(--spacing-2);
+            margin-left: var(--light-left);
+            margin-top: var(--light-top);
             --el-switch-on-color: rgb(145, 188, 0);
             --el-switch-off-color: rgba(0, 0, 0, 0);
             font-family: 'CN Heavy';

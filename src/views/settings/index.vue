@@ -737,18 +737,20 @@ onBeforeUnmount(() => {
   
 }
 .online-update-text {
-  width: 130px;
+  width: var(--spacing-130);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   max-width: 100%;
+  text-align: center;
 }
 .online-download-text {
-  width: 130px;
+  width: var(--spacing-130);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   max-width: 100%;
+  text-align: center;
 }
 @keyframes loading-rotate {
   100% {

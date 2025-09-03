@@ -657,13 +657,13 @@ onBeforeUnmount(() => {
 	background-color: rgba(0, 0, 0, 0.7);
 
 	.dialog-content {
-		width: 1000px;
-		height: 700px;
+		width: var(--size-1040);
+		height: var(--size-700);
 		position: absolute;
 		top: 50%;
 		left: 50%;
-		margin-left: calc(500px * -1);
-		margin-top: calc(350px * -1);
+		margin-left: calc(var(--size-510) * -1);
+		margin-top: calc(var(--size-350) * -1);
 		background-color: #050505;
 		border-radius: 20px;
 		border: 1px solid #242424;
@@ -676,19 +676,19 @@ onBeforeUnmount(() => {
 			align-items: center;
 
 			h3 {
-				font-size: 16px;
+				font-size: var(--size-16);
 				font-weight: 500;
 				color: #ffffff;
 				font-family: "CN Heavy";
-				margin-left: 30px;
-				margin-top: 13px;
+				margin-left: var(--spacing-30);
+				margin-top: var(--spacing-13);
 			}
 
 			.close-btn {
-				width: 20px;
-				height: 20px;
-				margin-right: 30px;
-				margin-top: 15px;
+				width: var(--size-20);
+				height: var(--size-20);
+				margin-right: var(--spacing-30);
+				margin-top: var(--spacing-15);
 				cursor: pointer;
 
 				img {
@@ -699,24 +699,24 @@ onBeforeUnmount(() => {
 		}
 
 		.content {
-			margin: 20px 50px;
+			margin: var(--spacing-20) var(--spacing-50);
 
 			.on-board-configuration,
 			.un-active-configuration {
 				background-color: #0d0d0d;
-				padding: 20px 40px;
+				padding: var(--spacing-20) var(--spacing-40);
 				border-radius: 20px;
 
 				.title {
-					font-size: 12px;
+					font-size: var(--size-12);
 					font-weight: 900;
 					color: #ffffff;
-					margin: 5px 0;
+					margin: var(--spacing-5) 0;
 					font-family: "CN Heavy";
 				}
 
 				.description {
-					font-size: 12px;
+					font-size: var(--size-12);
 					font-weight: 400;
 					color: #ffffff;
 					font-family: "CN Regular";
@@ -724,10 +724,10 @@ onBeforeUnmount(() => {
 
 				.box {
 					display: grid;
-					grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-					gap: 10px;
-					margin-top: 10px;
-					max-height: 300px;
+					grid-template-columns: repeat(auto-fill, minmax(var(--size-160), 1fr));
+					gap: var(--spacing-10);
+					margin-top: var(--spacing-10);
+					max-height: var(--size-300);
 					/* 滑动条美化 */
 					&::-webkit-scrollbar {
 						width: 8px;
@@ -753,17 +753,18 @@ onBeforeUnmount(() => {
 						display: flex;
 						align-items: center;
 						flex-wrap: nowrap;
-						width: 160px;
-						height: 40px;
+						// width: var(--size-170);
+						height: var(--size-40);
 						align-items: center;
 						background-color: #1a1a1a;
-						padding: 10px;
+						padding: var(--spacing-10);
 						border-radius: 10px;
 						background-image: url('@/assets/images/setting_btn_bg.svg');
+						background-size: 100% 100%;
 						font-family: "Source Han Sans CN";
 						font-weight: 900;
 						font-style: Heavy;
-						font-size: 18px;
+						font-size: var(--size-18);
 						line-height: 100%;
 						letter-spacing: 0%;
 						color: #ffffff;
@@ -778,6 +779,7 @@ onBeforeUnmount(() => {
 
 						&:hover {
 							background-image: url('@/assets/images/setting_btn_bg_hover.svg');
+							background-size: 100% 100%;
 							color: #ffffff;
 						}
 
@@ -794,10 +796,10 @@ onBeforeUnmount(() => {
 						.item-title {
 							width: 100%;
 							text-align: center;
-							font-size: 18px;
+							font-size: var(--size-18);
 							font-weight: 900;
-							padding-left: 30px;
-							margin-right: 16px;
+							padding-left: var(--spacing-30);
+							margin-right: var(--spacing-16);
 							overflow: hidden;
 							text-overflow: ellipsis;
 							white-space: nowrap;
@@ -805,10 +807,11 @@ onBeforeUnmount(() => {
 						}
 
 						.more-icon {
-							width: 14px;
-							height: 14px;
+							width: var(--size-14);
+							height: var(--size-14);
 							cursor: pointer;
 							background-image: url('@/assets/images/more_white.svg');
+							background-size: 100% 100%;
 						}
 					}
 
@@ -818,12 +821,12 @@ onBeforeUnmount(() => {
 
 					.item-edit,
 					.un-active-item-edit {
-						width: 133px;
+						width: var(--size-130);
 						height: auto;
 						cursor: pointer;
 						background-color: #000;
 						position: absolute;
-						left: 165px;
+						left: var(--size-170);
 						top: 0px;
 						border: 3px solid #242424;
 						border-radius: 10px;
@@ -834,11 +837,11 @@ onBeforeUnmount(() => {
 						overflow: hidden;
 
 						.item-edit-text {
-							height: 30px;
-							padding: 0px 20px;
-							line-height: 30px;
+							height: var(--size-30);
+							padding: 0 var(--spacing-20);
+							line-height: var(--size-30);
 							font-family: "CN Regular";
-							font-size: 10px;
+							font-size: var(--size-10);
 
 							&:hover {
 								background-color: #91bc00;
@@ -886,8 +889,8 @@ onBeforeUnmount(() => {
 					}
 
 					.item-list-empty {
-						width: 160px;
-						height: 40px;
+						width: var(--size-160);
+						height: var(--size-40);
 						border: 3px dashed #242424;
 						color: #242424;
 						border-radius: 10px;
@@ -895,7 +898,7 @@ onBeforeUnmount(() => {
 						align-items: center;
 						justify-content: center;
 						font-family: "CN Heavy";
-						font-size: 12px;
+						font-size: var(--size-12);
 						transition: all 0.2s ease;
 
 						&.drag-over {
@@ -905,14 +908,16 @@ onBeforeUnmount(() => {
 						}
 
 						.item-title {
-							font-size: 18px;
+							width: 100%;
+							text-align: center;
+							font-size: var(--size-18);
 						}
 					}
 				}
 			}
 
 			.un-active-configuration {
-				margin-top: 20px;
+				margin-top: var(--spacing-20);
 			}
 		}
 
@@ -921,14 +926,14 @@ onBeforeUnmount(() => {
 			justify-content: center;
 			gap: 60px;
 			margin-top: auto;
-			padding-bottom: 20px;
+			padding-bottom: var(--spacing-20);
 			position: static;
 
 			.sure-btn,
 			.update-btn,
 			.cancel-btn {
-				width: 170px;
-				height: 42px;
+				width: 150px;
+				height: 45px;
 				font-size: 18px;
 				font-family: 'CN Heavy';
 				color: #ffffff;
@@ -936,19 +941,19 @@ onBeforeUnmount(() => {
 				display: flex;
 				align-items: center;
 				background-image: url('@/assets/images/save_bg.svg');
-				background-size: contain;
+				background-size: 100% 100%;
 				background-repeat: no-repeat;
 
 				img {
-					width: var(--size-20);
-					height: var(--size-20);
+					width: 20px;
+					height: 20px;
 					object-fit: fill;
-					margin: 0 var(--spacing-10) 0 var(--spacing-10);
+					margin: 0 10px 0 10px;
 				}
 
 				span {
 					display: inline-block;
-					width: calc(var(--size-120) - var(--spacing-5));
+					width: calc(120px - 10px);
 					text-align: center;
 				}
 
@@ -957,12 +962,10 @@ onBeforeUnmount(() => {
 				}
 
 				.update-text {
-					display: inline-block;
-					width: var(--size-120);
-					height: var(--size-30);
+					width: 110px;
 					text-align: center;
-					font-size: var(--font-size-18);
-					margin-left: var(--spacing-13);
+					font-size: 18px;
+					margin-left: 13px;
 					overflow: hidden;
 					text-overflow: ellipsis;
 					white-space: nowrap;
@@ -971,19 +974,20 @@ onBeforeUnmount(() => {
 
 				&:hover {
 					background-image: url('@/assets/images/setting_btn_bg_hover.svg');
+					background-size: 100% 100%;
 				}
 			}
 
 			.sure-btn,
 			.update-btn {
-				left: var(--spacing-60);
+				left: 60px;
 			}
 
 			.cancel-btn {
-				left: calc(var(--size-400) - var(--size-30));
+				left: calc(400px - 30px);
 				.import-text{
 						text-align: center;
-						font-size: var(--font-size-18);
+						font-size: 18px;
 						overflow: hidden;
 						text-overflow: ellipsis;
 						white-space: nowrap;
@@ -1003,7 +1007,7 @@ onBeforeUnmount(() => {
 		transform: translate(-50%, -50%);
 
 		p {
-			font-size: 22px;
+			font-size: var(--font-size-22);
 			font-weight: 500;
 			color: #ffffff;
 			font-family: "CN Heavy";
@@ -1045,8 +1049,8 @@ onBeforeUnmount(() => {
 		gap: 130px;
 		transform: translate(-50%, -50%);
 		.local-import{
-			width: 135px;
-			height: 135px;
+			width: var(--size-130);
+			height: var(--size-130);
 			background-color: #242424;
 			border-radius: 10px;
 			background-image: url('@/assets/images/local_import.svg');
@@ -1059,8 +1063,8 @@ onBeforeUnmount(() => {
 			}
 		}
 		.code-import{
-			width: 135px;
-			height: 135px;
+			width: var(--size-130);
+			height: var(--size-130);
 			background-color: #242424;
 			border-radius: 10px;
 			background-image: url('@/assets/images/code_import.svg');
@@ -1125,8 +1129,8 @@ onBeforeUnmount(() => {
 	align-items: center;
 
 	&-content {
-		width: 300px;
-		height: 150px;
+		width: var(--size-300);
+		height: var(--size-150);
 		background-color: #0d0d0d;
 		border-radius: 20px;
 		border: 1px solid #242424;
@@ -1137,8 +1141,8 @@ onBeforeUnmount(() => {
 		padding: 20px;
 
 		&-icon {
-			width: 50px;
-			height: 50px;
+			width: var(--size-50);
+			height: var(--size-50);
 			border: 4px solid rgba(145, 188, 0, 0.3);
 			border-top: 4px solid #91bc00;
 			border-radius: 50%;
@@ -1148,7 +1152,7 @@ onBeforeUnmount(() => {
 
 		&-text {
 			font-family: "CN Heavy";
-			font-size: 18px;
+			font-size: var(--font-size-18);
 			color: #ffffff;
 			text-align: center;
 		}

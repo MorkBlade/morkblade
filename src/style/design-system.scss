@@ -35,6 +35,7 @@
   --spacing-55: 55px;
   --spacing-60: 60px;
   --spacing-65: 65px;
+  --spacing-68: 66px;
   --spacing-70: 70px;
   --spacing-75: 75px;
   --spacing-80: 80px;
@@ -234,7 +235,7 @@
   --slider-btn-offset: 11;
   --lighting-custom-width: 590px;
   --iro-slider--outer-width: 154px;
-    --iro-slider-width: 148px;
+  --iro-slider-width: 148px;
   --iro-handle-top: -13px;
   --iro-handle-left: -15px;
   --keyboard-row2-top: 89px;
@@ -252,7 +253,10 @@
   --saturation-width: 324px;
   --lamp-item-gap: 66px;
   --keys-box-height: 179px;
-  --t-color-picker-width:256px;
+  --t-color-picker-width: 256px;
+
+  --light-left: 10px;
+  --light-top: 2px;
 }
 
 /* 2K 分辨率 (1440p) 2560*1440 
@@ -300,6 +304,7 @@
     --spacing-55: 60px;
     --spacing-60: 70px;
     --spacing-65: 72px;
+    --spacing-68: 78px;
     --spacing-70: 80px;
     --spacing-75: 85px;
     --spacing-80: 100px;
@@ -519,7 +524,10 @@
     --saturation-width: 372px;
     --lamp-item-gap: 76px;
     --keys-box-height: 205px;
-    --t-color-picker-width:294px;
+    --t-color-picker-width: 294px;
+
+    --light-left: 12px;
+    --light-top: 4px;
   }
 }
 
@@ -561,8 +569,9 @@
     --spacing-50: 100px;
     --spacing-54: 108px;
     --spacing-55: 110px;
-    --spacing-60: 120px;
+    --spacing-60: 130px;
     --spacing-65: 130px;
+    --spacing-68: 138px;
     --spacing-70: 140px;
     --spacing-75: 150px;
     --spacing-80: 180px;
@@ -782,6 +791,9 @@
     --saturation-width: 648px;
     --lamp-item-gap: 132px;
     --keys-box-height: 358px;
-    --t-color-picker-width:512px;
+    --t-color-picker-width: 512px;
+
+    --light-left: 16px;
+    --light-top: 18px;
   }
 }

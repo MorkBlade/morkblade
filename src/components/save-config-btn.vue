@@ -133,7 +133,7 @@ const onCancel = () => {
   }
   .save-text {
     display: flex;
-    width: 100px;
+    width: var(--spacing-100);
     text-overflow: ellipsis;
     white-space: nowrap;
     max-width: 100%;

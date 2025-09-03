@@ -378,7 +378,7 @@ onUnmounted(() => {
     }
     .travel-text {
       display: flex;
-      width: 55px;
+      width: var(--spacing-55);
       text-overflow: ellipsis;
       white-space: nowrap;
       max-width: 100%;

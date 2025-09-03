@@ -261,13 +261,14 @@ defineExpose({ save, reset });
         }
 
         span {
-          width: 60px;
+          width: var(--spacing-60);
           font-size: var(--font-size-15);
           font-family: 'CN Heavy';
           color: #fff;
           text-overflow: ellipsis;
           overflow: hidden;
           white-space: nowrap;
+          text-align: center;
         }
         p {
           height: var(--size-50);
@@ -375,7 +376,7 @@ defineExpose({ save, reset });
         position: absolute;
         top: var(--spacing-10);
         left: var(--spacing-65);
-        width: 80px;
+        width: var(--spacing-80);
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;

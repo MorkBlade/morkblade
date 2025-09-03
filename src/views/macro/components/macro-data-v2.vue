@@ -949,7 +949,7 @@ const updateMacroMode = (newSettings) => {
 }
 .operation-btn-text {
   display: flex;
-  width: 100px;
+  width: var(--spacing-105);
   text-align: center;
   margin-top: var(--spacing-5);
   overflow: hidden;

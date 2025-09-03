@@ -1007,7 +1007,7 @@ defineExpose({ save, reset });
         display: flex;
         top: var(--spacing-10);
         left: var(--spacing-65);
-        width: 80px;
+        width: var(--spacing-80);
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;

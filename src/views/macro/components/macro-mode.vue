@@ -163,7 +163,7 @@ watch(
       color: #fff;
       font-size: var(--font-size-14);
       font-family: 'CN Heavy';
-      width: 230px;
+      width: var(--spacing-230);
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -173,6 +173,7 @@ watch(
     input[type='radio'] {
       appearance: none; /* 移除默认样式 */
       width: var(--size-18);
+      min-width: var(--size-18);
       height: var(--size-18);
       border: var(--spacing-3) solid #91bc00;
       border-radius: 50%;
