@@ -133,13 +133,15 @@ const onCancel = () => {
   }
   .save-text {
     display: flex;
-    width: var(--spacing-100);
+    width: var(--spacing-105);
     text-overflow: ellipsis;
     white-space: nowrap;
     max-width: 100%;
     overflow: hidden;
     text-align: center;
     margin-top: 5px;
+    justify-content: center;
+    align-items: center;
   }
 }
 </style>
