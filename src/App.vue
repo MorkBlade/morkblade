@@ -15,7 +15,7 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import Layout from '@/layout/index.vue';
 import Connect from '@/views/connect/index.vue';
@@ -28,10 +28,8 @@ const currentPage = computed(() => {
 });
 
 onMounted(() => {
-  // 页面加载后显示内容
-  setTimeout(() => {
-    isContentReady.value = true;
-  }, 500);
+  // 页面加载完成后直接显示内容，不需要loading
+  isContentReady.value = true;
 });
 </script>
 

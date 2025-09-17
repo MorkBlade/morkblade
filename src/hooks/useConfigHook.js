@@ -62,6 +62,7 @@ export const useConfigHook = () => {
     const exportCurrentConfigToFile = async (item) => {
         try {
             const Data = await exportCurrentConfig();
+            console.log('exportCurrentConfigToFile', Data);
             
             const currentConfigData = encryptData(Data, configPassword); // 使用密码加密数据
 

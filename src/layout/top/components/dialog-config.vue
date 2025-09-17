@@ -17,11 +17,11 @@
 							@drop="dragState.handleDrop('active', $event)" @dragenter="dragState.handleDragEnter"
 							@dragleave="dragState.handleDragLeave">
 							<div class="item-list" v-for="(item, index) in appStore.configList" :key="index">
-								<div class="item" :class="{ 
-                                         'is-active': appStore.activeConfigIndex === index,
-                                         'dragging': dragState.draggedItem === item,
-                                         'drag-over': dragState.dragOverItem === item
-                                     }" :draggable="appStore.activeConfigIndex !== index"
+								<div class="item" :class="{
+									'is-active': appStore.activeConfigIndex === index,
+									'dragging': dragState.draggedItem === item,
+									'drag-over': dragState.dragOverItem === item
+								}" :draggable="appStore.activeConfigIndex !== index"
 									@dragstart="dragState.handleDragStart($event, item, 'active')"
 									@dragend="dragState.handleDragEnd" @click="handleActiveItem(index)">
 									<!-- //TODO 翻译 目前使用索引，后续使用title -->
@@ -36,14 +36,14 @@
 									<span style="color: gray;" class="item-edit-text"
 										@click.stop="editState.handleCopy(item)">{{ $t('dialogConfig.copy') }}</span>
 									<span style="color: gray;" class="item-edit-text"
-										@click.stop="editState.handleMove('active',item)">{{
-										$t('dialogConfig.moveToUnActiveConfig') }}</span>
+										@click.stop="editState.handleMove('active', item)">{{
+											$t('dialogConfig.moveToUnActiveConfig') }}</span>
 									<span style="color: gray;" class="item-edit-text share-btn"
 										@click.stop="editState.handleShare(item)">{{ $t('dialogConfig.share') }}</span>
 									<span class="item-edit-text" @click.stop="editState.handleExport(item)">{{
 										$t('dialogConfig.export') }}</span>
 									<span style="color: gray;" class="item-edit-text delete-btn"
-										@click.stop="editState.handleDelete('active',item)">{{ $t('dialogConfig.delete')
+										@click.stop="editState.handleDelete('active', item)">{{ $t('dialogConfig.delete')
 										}}</span>
 								</div>
 							</div>
@@ -62,10 +62,10 @@
 							@drop="dragState.handleDrop('unActive', $event)" @dragenter="dragState.handleDragEnter"
 							@dragleave="dragState.handleDragLeave">
 							<div class="item-list" v-for="(item, index) in appStore.unActiveConfigList" :key="index">
-								<div class="item" :class="{ 
-                                         'dragging': dragState.draggedItem === item,
-                                         'drag-over': dragState.dragOverItem === item
-                                     }" draggable="true"
+								<div class="item" :class="{
+									'dragging': dragState.draggedItem === item,
+									'drag-over': dragState.dragOverItem === item
+								}" draggable="true"
 									@dragstart="dragState.handleDragStart($event, item, 'unActive')"
 									@dragend="dragState.handleDragEnd">
 									<span class="item-title">{{ item.title }}</span>
@@ -76,14 +76,14 @@
 										$t('dialogConfig.rename') }}</span>
 									<span class="item-edit-text" @click.stop="editState.handleCopy(item)">{{
 										$t('dialogConfig.copy') }}</span>
-									<span class="item-edit-text" @click.stop="editState.handleMove('unActive',item)">{{
+									<span class="item-edit-text" @click.stop="editState.handleMove('unActive', item)">{{
 										$t('dialogConfig.moveToBoardConfig') }}</span>
 									<span class="item-edit-text share-btn">{{ $t('dialogConfig.share') }}</span>
 									<span class="item-edit-text" @click.stop="editState.handleExport(item)">{{
 										$t('dialogConfig.export') }}</span>
 									<span class="item-edit-text delete-btn"
-										@click.stop="editState.handleDelete('unActive',item)">{{
-										$t('dialogConfig.delete') }}</span>
+										@click.stop="editState.handleDelete('unActive', item)">{{
+											$t('dialogConfig.delete') }}</span>
 								</div>
 							</div>
 							<div class="item-list-empty" :class="{ 'drag-over': dragState.isDragOverEmptyUnActive }"
@@ -280,7 +280,7 @@ const useDragState = () => {
 			if (!emptyTarget) return;
 
 			showMessage(t('dialogConfig.functionNotOpen'), 'warning');
-			return
+			return;
 
 			// 执行移动操作
 			if (targetType === 'active') {
@@ -330,7 +330,7 @@ const useEditState = () => {
 		handleShare(item) {
 
 			showMessage(t('dialogConfig.functionNotOpen'), 'warning');
-			return
+			return;
 
 			// 复制 item 的 title 到剪贴板
 			if (item && item.title) {
@@ -371,14 +371,14 @@ const useEditState = () => {
 		handleCopy(item) {
 
 			showMessage(t('dialogConfig.functionNotOpen'), 'warning');
-			return
+			return;
 
 			// 复制配置，将其添加到未激活配置列表
 			if (item && appStore && Array.isArray(appStore.unActiveConfigList)) {
 				// 深拷贝 item，避免引用同一个对象
 				const newItem = JSON.parse(JSON.stringify(item));
 				// 配置名称加上"副本"后缀
-				newItem.title = t('dialogConfig.duplicate')+ item.title ;
+				newItem.title = t('dialogConfig.duplicate') + item.title;
 				// 设为未激活
 				newItem.active = false;
 				// 计算插入位置
@@ -395,7 +395,7 @@ const useEditState = () => {
 			// TODO 请求后端接口
 
 			showMessage(t('dialogConfig.functionNotOpen'), 'warning');
-			return
+			return;
 
 			renameItem.value = item;
 			renameInput.value = item.title;
@@ -421,11 +421,11 @@ const useEditState = () => {
 		handleMove(type, item) {
 
 			showMessage(t('dialogConfig.functionNotOpen'), 'warning');
-			return
+			return;
 
 			// TODO 请求后端接口
 			if (type === 'active') {
-				if(appStore.unActiveConfigList.length >= 28){
+				if (appStore.unActiveConfigList.length >= 28) {
 					showMessage(t('dialogConfig.moveUnActiveConfigFull'), 'warning');
 					return;
 				}
@@ -442,7 +442,7 @@ const useEditState = () => {
 		handleDelete(type, item) {
 
 			showMessage(t('dialogConfig.functionNotOpen'), 'warning');
-			return
+			return;
 
 			// TODO 请求后端接口
 			// 删除逻辑
@@ -492,7 +492,7 @@ const useEditState = () => {
 				// 清空输入框
 				shareInput.value = '';
 				showMessage(t('dialogConfig.functionNotOpen'), 'warning');
-				return
+				return;
 
 				// 模拟请求延迟
 				setTimeout(() => {
@@ -521,7 +521,7 @@ const handleActiveItem = async (index) => {
 
 	if (res) {
 		if (!isVersion2.value) {
-			clearTimeout(timer); 
+			clearTimeout(timer);
 			timer = setTimeout(async () => {
 				// 对于非v2版本，延迟执行以确保配置切换完成
 				await keyboardStore.initKeyboard();
@@ -559,7 +559,7 @@ const handleLocalImport = () => {
 	input.style.display = 'none';
 	document.body.appendChild(input);
 
-	input.onchange = async (event) => { 
+	input.onchange = async (event) => {
 		const file = event.target.files[0];
 		if (!file) {
 			document.body.removeChild(input);
@@ -596,8 +596,8 @@ const handleCodeImport = () => {
 // 新建配置
 const handleNewConfig = () => {
 	showMessage(t('dialogConfig.functionNotOpen'), 'warning');
-	return
-}
+	return;
+};
 
 const preventBackgroundScroll = (event) => {
 	// 检查事件目标是否在对话框内部
@@ -728,23 +728,28 @@ onBeforeUnmount(() => {
 					gap: var(--spacing-10);
 					margin-top: var(--spacing-10);
 					max-height: var(--size-300);
+
 					/* 滑动条美化 */
 					&::-webkit-scrollbar {
 						width: 8px;
 						background: #232323;
 						border-radius: 8px;
 					}
+
 					&::-webkit-scrollbar-thumb {
 						background: #444;
 						border-radius: 8px;
 						transition: background 0.2s;
 					}
+
 					&::-webkit-scrollbar-thumb:hover {
 						background: #91bc00;
 					}
+
 					&::-webkit-scrollbar-corner {
 						background: transparent;
 					}
+
 					/* Firefox */
 					scrollbar-width: thin;
 					scrollbar-color: #444 #232323;
@@ -882,6 +887,7 @@ onBeforeUnmount(() => {
 
 						&:hover {
 							cursor: no-drop;
+
 							.more-icon {
 								background-image: url('@/assets/images/more_white.svg');
 							}
@@ -985,19 +991,21 @@ onBeforeUnmount(() => {
 
 			.cancel-btn {
 				left: calc(400px - 30px);
-				.import-text{
-						text-align: center;
-						font-size: 18px;
-						overflow: hidden;
-						text-overflow: ellipsis;
-						white-space: nowrap;
-						max-width: 100%;
+
+				.import-text {
+					text-align: center;
+					font-size: 18px;
+					overflow: hidden;
+					text-overflow: ellipsis;
+					white-space: nowrap;
+					max-width: 100%;
 				}
 			}
 		}
 	}
 
-	.rename-input-container, .share-input-container {
+	.rename-input-container,
+	.share-input-container {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
@@ -1014,7 +1022,8 @@ onBeforeUnmount(() => {
 		}
 	}
 
-	.rename-input, .share-input {
+	.rename-input,
+	.share-input {
 		width: 400px;
 		height: 50px;
 		font-size: 16px;
@@ -1038,7 +1047,8 @@ onBeforeUnmount(() => {
 			border: 1px solid #91bc00;
 		}
 	}
-	.import-dialog{
+
+	.import-dialog {
 		display: flex;
 		flex-direction: row;
 		align-items: center;
@@ -1048,7 +1058,8 @@ onBeforeUnmount(() => {
 		left: 50%;
 		gap: 130px;
 		transform: translate(-50%, -50%);
-		.local-import{
+
+		.local-import {
 			width: var(--size-130);
 			height: var(--size-130);
 			background-color: #242424;
@@ -1058,11 +1069,13 @@ onBeforeUnmount(() => {
 			background-repeat: no-repeat;
 			background-position: center;
 			cursor: pointer;
-			&:hover{
+
+			&:hover {
 				background-image: url('@/assets/images/local_import_hover.svg');
 			}
 		}
-		.code-import{
+
+		.code-import {
 			width: var(--size-130);
 			height: var(--size-130);
 			background-color: #242424;
@@ -1072,50 +1085,54 @@ onBeforeUnmount(() => {
 			background-repeat: no-repeat;
 			background-position: center;
 			cursor: pointer;
-			&:hover{
+
+			&:hover {
 				background-image: url('@/assets/images/code_import_hover.svg');
 			}
 		}
 
 	}
-	.import-btn-group{
+
+	.import-btn-group {
 		display: flex;
 		justify-content: center;
 		align-items: center;
 
-	.cancel-btn {
-		width: var(--size-170);
-		height: var(--size-40);
-		font-size: var(--font-size-22);
-		font-family: 'CN Heavy';
-		color: #ffffff;
-		cursor: pointer;
-		display: flex;
-		align-items: center;
-		background-image: url('@/assets/images/save_bg.svg');
-		background-size: cover;
-		background-repeat: no-repeat;
-		position: absolute;
-		bottom: var(--spacing-20);
-		&:hover {
-			background-image: url('@/assets/images/pending_bg.svg');
+		.cancel-btn {
+			width: var(--size-170);
+			height: var(--size-40);
+			font-size: var(--font-size-22);
+			font-family: 'CN Heavy';
+			color: #ffffff;
+			cursor: pointer;
+			display: flex;
+			align-items: center;
+			background-image: url('@/assets/images/save_bg.svg');
+			background-size: cover;
+			background-repeat: no-repeat;
+			position: absolute;
+			bottom: var(--spacing-20);
+
+			&:hover {
+				background-image: url('@/assets/images/pending_bg.svg');
 			}
 
-		img {
-			width: var(--size-20);
-			height: var(--size-20);
-			object-fit: fill;
-			margin: 0 var(--spacing-10) 0 var(--spacing-10);
-		}
+			img {
+				width: var(--size-20);
+				height: var(--size-20);
+				object-fit: fill;
+				margin: 0 var(--spacing-10) 0 var(--spacing-10);
+			}
 
-		span {
-			display: inline-block;
-			width: calc(var(--size-120) - var(--spacing-5));
-			text-align: center;
-		}
+			span {
+				display: inline-block;
+				width: calc(var(--size-120) - var(--spacing-5));
+				text-align: center;
+			}
 		}
 	}
 }
+
 .loading-dialog {
 	position: fixed;
 	top: 0;
@@ -1160,16 +1177,22 @@ onBeforeUnmount(() => {
 }
 
 @keyframes spin {
-	0% { transform: rotate(0deg); }
-	100% { transform: rotate(360deg); }
+	0% {
+		transform: rotate(0deg);
+	}
+
+	100% {
+		transform: rotate(360deg);
+	}
 }
 
-.un-active-configuration{
+.un-active-configuration {
 	width: 100%;
 	height: 100%;
 	position: relative;
+
 	// background-color: pink !important;
-	.no-tips{
+	.no-tips {
 		position: absolute;
 		top: 50%;
 		left: 50%;
