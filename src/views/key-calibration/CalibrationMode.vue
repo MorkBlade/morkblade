@@ -199,7 +199,7 @@ onUnmounted(() => {
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
-    gap: var(--spacing-16);
+    gap: var(--spacing-20);
     font-size: var(--font-size-15);
     color: #ffffff;
     font-family: 'CN Regular';

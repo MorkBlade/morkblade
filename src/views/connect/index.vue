@@ -71,7 +71,7 @@ import { httpService } from '@/http/api/index.js';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import { ref } from 'vue';
-import { Loading } from '@/utils/loading.js';
+// import { Loading } from '@/utils/loading.js';
 
 const { t } = useI18n();
 const router = useRouter();
@@ -83,11 +83,11 @@ const progress = ref(0);
 
 // 连接按钮点击事件
 const handleDeviceStoreClick = async () => {  
-  Loading.service({
-    lock: true,
-    text: '连接中...',
-    background: 'rgba(0, 0, 0, 0.5)',
-  });
+  // Loading.service({
+  //   lock: true,
+  //   text: '连接中...',
+  //   background: 'rgba(0, 0, 0, 0.5)',
+  // });
   const result = await deviceStore.connectDevice();
   const version = deviceStore.devices[0]?.usagePage === 65440 ? 'v1' : 'v2';
   localStorage.setItem('keyboardVersion', version);
