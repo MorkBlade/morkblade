@@ -9,7 +9,7 @@ export function useLocale() {
   function changeLocale(lang) {
     // 如果切换的语言不在对应语言文件里则默认为简体中文
     if (!langCode.includes(lang)) {
-      lang = 'zh_CN';
+      lang = 'en_US';
     }
 
     locale.value = lang;

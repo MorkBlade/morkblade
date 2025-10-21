@@ -54,14 +54,14 @@ const getInitialLocale = () => {
   if (browserLang.startsWith('ja')) return 'ja_JP';
   if (browserLang.startsWith('en')) return 'en_US';
 
-  // 3. 默认中文
-  return 'zh_CN';
+  // 3. 默认英文
+  return 'en_US';
 };
 
 export const i18n = createI18n({
   legacy: false,
   locale: getInitialLocale(),
-  fallbackLocale: 'zh_CN',
+  fallbackLocale: 'en_US',
   messages: importMessages.value,
   globalInjection: true,
 });
