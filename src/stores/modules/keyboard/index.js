@@ -43,6 +43,7 @@ const useKeyboardStore = defineStore('keyboard', {
       }
       this.layout = layout;
       const res = await Promise.all(result);
+      console.log('getLayoutKeyInfo', res);
       return res;
     },
 

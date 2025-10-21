@@ -71,7 +71,7 @@ export const useKeyboardHook = () => {
 
       const layoutData = [];
       const keyboardsWithPerformance = [];
-      // console.log('initKeyboard-------------------------------', keyboardLayout);
+      console.log('initKeyboard-------------------------------', keyboardLayout);
 
       // 遍历每一行的键盘布局数据
       for (let rowIndex = 0; rowIndex < keyboardLayout.length; rowIndex++) {

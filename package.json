@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@jaames/iro": "^5.5.2",
-    "@sparklinkplayjoy/morkblade-sdk-keyboard": "1.0.2",
+    "@sparklinkplayjoy/morkblade-sdk-keyboard": "file:C:/Users/Administrator/Desktop/sparklinkplayjoy-morkblade-sdk-keyboard-1.0.3.tgz",
     "axios": "^1.6.7",
     "crypto-js": "^4.2.0",
     "echarts": "^5.5.1",

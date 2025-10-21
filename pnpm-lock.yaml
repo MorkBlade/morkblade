@@ -12,8 +12,8 @@ importers:
         specifier: ^5.5.2
         version: 5.5.2
       '@sparklinkplayjoy/morkblade-sdk-keyboard':
-        specifier: 1.0.2
-        version: 1.0.2
+        specifier: file:C:/Users/Administrator/Desktop/sparklinkplayjoy-morkblade-sdk-keyboard-1.0.3.tgz
+        version: file:C:/Users/Administrator/Desktop/sparklinkplayjoy-morkblade-sdk-keyboard-1.0.3.tgz
       axios:
         specifier: ^1.6.7
         version: 1.11.0
@@ -718,8 +718,9 @@ packages:
   '@sparklinkplayjoy/morkblade-protocol-keyboard@1.0.0':
     resolution: {integrity: sha512-S68VRevrexgnwjergbrWKfYKWmkKmIXTM/zTquuC2tnq6JttZkLyYdG+QQEC2SuRbNKnewsDzY6U9Yhe4RDXQw==}
 
-  '@sparklinkplayjoy/morkblade-sdk-keyboard@1.0.2':
-    resolution: {integrity: sha512-Xz8DRS2sB/8RM/AZ7Vm/p9OPOKR/y5U9mQZfUVC8jQg5ZV9K2lAEZbRu2MnpDYnftPIbdZu/vV+Iz6S+T+yoPA==}
+  '@sparklinkplayjoy/morkblade-sdk-keyboard@file:C:/Users/Administrator/Desktop/sparklinkplayjoy-morkblade-sdk-keyboard-1.0.3.tgz':
+    resolution: {integrity: sha512-iUXgzDUDEEiq6RNZIiDhKH4YgyiULE62ukEkTR/vmqfkCocRsFgvx2ykSICyZqGopMQded8PypP54XHZ7JjqLw==, tarball: file:C:/Users/Administrator/Desktop/sparklinkplayjoy-morkblade-sdk-keyboard-1.0.3.tgz}
+    version: 1.0.3
 
   '@sxzz/popperjs-es@2.11.7':
     resolution: {integrity: sha512-Ccy0NlLkzr0Ex2FKvh2X+OyERHXJ88XJ1MXtsI9y9fGexlaXaVTPzBCRBwIxFkORuOb+uBqeu+RqnpgYTEZRUQ==}
@@ -863,7 +864,7 @@ packages:
     resolution: {integrity: sha512-7HhHjtERjqlNbZtqNqy2rckN/SpOOlmDliet+lP7k+eKZEjPk3DgyeU9lIXLdeLz0uBbbVp+9Qdow9wJWgwwfg==}
 
   asynckit@0.4.0:
-    resolution: {integrity: sha1-x57Zf380y48robyXkLzDZkdLS3k=}
+    resolution: {integrity: sha512-Oei9OH4tRh0YqU3GxhX79dM/mwVgvbZJaSNaRk+bshkj0S5cfHcgYakreBjrHwatXKbz+IoIdYLxrKim2MjW0Q==}
 
   axios@1.11.0:
     resolution: {integrity: sha512-1Lx3WLFQWm3ooKDYZD1eXmoGO9fxYQjrycfHFC8P0sCfQVXyROp0p9PFWBehewBOdCwHc+f/b8I0fMto5eSfwA==}
@@ -879,7 +880,7 @@ packages:
     resolution: {integrity: sha512-VSWO/W6nNQdyP520F1mhf+Lc2f8pjGQOtoHHm7Ze8Go1kX7akpVIrtTa0fn+HB0QJEDVacl6aO08YE0PgXfdnQ==}
 
   boolbase@1.0.0:
-    resolution: {integrity: sha512-JZOSA7Mo9sNGB8+UjSgzdLtokWAky1zbztM3WRLCbZ70/3cTANmQmOdR7y2g+J0e2WXywy1yS468tY+IruqEww==}
+    resolution: {integrity: sha1-aN/1++YMUes3cl6p4+0xDcwed24=}
 
   brace-expansion@1.1.12:
     resolution: {integrity: sha512-9T9UjW3r0UW5c1Q7GTwllptXwhvYmEzFhzMfZ9H7FQWt+uZePjZPjBP/W1ZEyZ1twGWom5/56TF4lPcqjnDHcg==}
@@ -997,7 +998,7 @@ packages:
     engines: {node: '>=12'}
 
   delayed-stream@1.0.0:
-    resolution: {integrity: sha512-ZySD7Nf91aLB0RxL4KGrKHBXl7Eds1DAmEdcoVawXnLD7SDhpNgtuII2aAkg7a7QS41jxPSZ17p4VdGnMHk3MQ==}
+    resolution: {integrity: sha1-3zrhmayt+31ECqrgsp4icrJOxhk=}
     engines: {node: '>=0.4.0'}
 
   detect-libc@1.0.3:
@@ -1053,7 +1054,7 @@ packages:
     engines: {node: '>=6'}
 
   escape-html@1.0.3:
-    resolution: {integrity: sha512-NiSupZ4OeuGwr68lGIeym/ksIZMJodUGOSCZ/FSnTxcrekbvqrgdUxlJOMpijaKZVjAJrWrGs/6Jy8OMuyj9ow==}
+    resolution: {integrity: sha1-Aljq5NPQwJdN4cFpGI7wBR0dGYg=}
 
   escape-string-regexp@4.0.0:
     resolution: {integrity: sha512-TtpcNJ3XAzx3Gq8sWRzJaVajRs0uVxA2YAkdb1jm2YkPz4G6egUFAyA3n5vtEIZefPk5Wa4UXbKuS5fKkJWdgA==}
@@ -1307,7 +1308,7 @@ packages:
     hasBin: true
 
   is-extglob@2.1.1:
-    resolution: {integrity: sha1-qIwCU1eR8C7TfHahueqXc8gz+MI=}
+    resolution: {integrity: sha512-SbKbANkN603Vi4jEZv49LeVJMn4yGwsbzZworEoyEiutsN3nJYdbO36zfhGJ6QEDpOZIFkDtnq5JRxmvl3jsoQ==}
     engines: {node: '>=0.10.0'}
 
   is-glob@4.0.3:
@@ -1464,7 +1465,7 @@ packages:
     hasBin: true
 
   natural-compare@1.4.0:
-    resolution: {integrity: sha1-Sr6/7tdUHywnrPspvbvRXI1bpPc=}
+    resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
 
   neo-async@2.6.2:
     resolution: {integrity: sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==}
@@ -2508,7 +2509,7 @@ snapshots:
     dependencies:
       decimal.js: 10.6.0
 
-  '@sparklinkplayjoy/morkblade-sdk-keyboard@1.0.2':
+  '@sparklinkplayjoy/morkblade-sdk-keyboard@file:C:/Users/Administrator/Desktop/sparklinkplayjoy-morkblade-sdk-keyboard-1.0.3.tgz':
     dependencies:
       '@sparklinkplayjoy/morkblade-hid': 1.0.0
       '@sparklinkplayjoy/morkblade-protocol-keyboard': 1.0.0
