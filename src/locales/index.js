@@ -1,4 +1,4 @@
-import { useLocalStorage, usePreferredLanguages } from '@vueuse/core';
+import { useLocalStorage } from '@vueuse/core';
 import { computed, ref } from 'vue';
 import { createI18n } from 'vue-i18n';
 
@@ -11,8 +11,7 @@ export const langCode = [];
 
 export const localeConfigKey = 'tdesign-starter-locale';
 
-// 获取浏览器默认语言环境
-const languages = usePreferredLanguages();
+
 
 // 生成语言模块列表
 const generateLangModuleMap = () => {
@@ -41,10 +40,21 @@ const importMessages = computed(() => {
 
 // 获取初始语言
 const getInitialLocale = () => {
-  const storedLocale = useLocalStorage(localeConfigKey, 'zh_CN').value;
+  // 1. 优先使用 localStorage 中保存的语言设置
+  const storedLocale = useLocalStorage(localeConfigKey, null).value;
   if (storedLocale && langCode.includes(storedLocale)) {
     return storedLocale;
   }
+
+  // 2. 使用浏览器语言
+  const browserLang = navigator.language;
+  
+  // 简单映射逻辑
+  if (browserLang.startsWith('zh')) return 'zh_CN';
+  if (browserLang.startsWith('ja')) return 'ja_JP';
+  if (browserLang.startsWith('en')) return 'en_US';
+
+  // 3. 默认中文
   return 'zh_CN';
 };
 
