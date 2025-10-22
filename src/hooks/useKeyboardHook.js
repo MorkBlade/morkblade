@@ -1,5 +1,5 @@
 
-import { useKeyboardStore, usePerformanceStore } from '@/stores';
+import { useKeyboardStore, usePerformanceStore, useDeviceStore } from '@/stores';
 import services from '@/services/index';
 
 const keyboardItemInfo = {
@@ -51,9 +51,11 @@ export const useKeyboardHook = () => {
   const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
   const keyboardStore = useKeyboardStore();
   const performanceStore = usePerformanceStore();
+  const deviceStore = useDeviceStore();
 
   const initKeyboard = async () => {
     if (isVersion2) {
+      deviceStore.getDeviceStatus();
       // v2 keyboard初始化
       const { row } = keyboardStore.keyLayoutConfig;
       const keyboardLayout = [];

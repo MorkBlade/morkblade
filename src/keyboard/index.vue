@@ -43,7 +43,7 @@
             height: `${containerDimensions.height}px`,
           }">
 
-          
+
           <template v-for="(row, rowIndex) in lightLayout">
             <div class="row" :class="`row_${rowIndex + 1}`" :key="rowIndex" v-if="row[0].shapeScale?.w">
               <template v-for="(col, colIndex) in row">
@@ -62,6 +62,27 @@
         </div>
       </div>
     </template>
+
+    <!-- v2 三模 -->
+    <!-- <template v-else>
+      <div class="keyboard-container v2-three-mode">
+        <div class="keyboard" >
+          <template v-for="(row, rowIndex) in layout">
+            <div class="row row_v2" :class="`row_${rowIndex + 1}`" :key="rowIndex" v-if="row[0].shapeScale?.w">
+              <template v-for="(col, colIndex) in row">
+                <key v-if="col.shapeScale.w != 0 && col && col.keyItem && col.keyItem.keyValue"
+                  :key="`key-${rowIndex}-${colIndex}`" :row="rowIndex" :column="colIndex" :keyItem="col.keyItem"
+                  :shapeScale="col.shapeScale" :location="col.location"
+                  :active="activeKeys.includes(`${rowIndex}-${colIndex}`)" @click="handleKeyClick(rowIndex, colIndex)"
+                  @emits="handleCancelSelect" />
+              </template>
+            </div>
+          </template>
+        </div>
+      </div>
+    </template> -->
+
+
     <div class="side-right-container" v-if="route.path === '/performance'">
       <div class="select-box" :class="{ 'is-checked': selectedKey == 'wasd' }" @click="handleWasdSelect"
         @mouseenter="selectedKey = 'wasd'" @mouseleave="selectedKey = ''">
@@ -180,6 +201,8 @@ onMounted(async () => {
 });
 
 const handleKeyClick = (rowIndex, colIndex) => {
+  console.log('rowIndex: ', rowIndex);
+  console.log('colIndex: ', colIndex);
   // 当前类型
   if (route.path === '/key-assignment') {
     // 单选
@@ -189,7 +212,7 @@ const handleKeyClick = (rowIndex, colIndex) => {
     //   keyboardStore.handleSelectKeyClick({ rowIndex, colIndex }, 'single');
     // }
     keyboardStore.handleSelectKeyClick({ rowIndex, colIndex }, 'single');
-  } else {
+  // } else {
     // 多选
     keyboardStore.handleSelectKeyClick({ rowIndex, colIndex });
   }
@@ -207,7 +230,9 @@ const matchLayout = () => {
   if (!isVersion2.value) {
     return layouts.keyboardLayoutV1;
   }
+  // TODO 判断是三模版本还是普通版本
   return layouts.keyboardLayoutV2;
+  // return layouts.keyboardLayoutV2_threeMode;
 };
 
 const layout = computed(() => {
@@ -435,6 +460,8 @@ const containerDimensions = computed(() => {
       }
     }
 
+   
+
     .keyboard {
       border-radius: var(--spacing-15);
       border: var(--spacing-3) solid rgb(37, 37, 37);
@@ -487,6 +514,23 @@ const containerDimensions = computed(() => {
         &.row_6 {
           // top: var(--keyboard-row6-top);
         }
+      }
+
+      .row_v2 {
+        &.row_1 {
+            margin-bottom: 5px;
+            // top: var(--keyboard-row2-top);
+          }
+      }
+    }
+
+    &.v2-three-mode {
+      width: var(--keyboard-v2-three-mode-width) !important;
+          height: var(--size-380);
+      .keyboard {
+        width: var(--keyboard-v2-three-mode-width) !important;
+        height: var(--keyboard-v2-three-mode-height) !important;
+        padding: var(--keyboard-v2-three-mode-padding);
       }
     }
 

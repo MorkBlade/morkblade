@@ -12,8 +12,8 @@ importers:
         specifier: ^5.5.2
         version: 5.5.2
       '@sparklinkplayjoy/morkblade-sdk-keyboard':
-        specifier: file:C:/Users/Administrator/Desktop/sparklinkplayjoy-morkblade-sdk-keyboard-1.0.3.tgz
-        version: file:C:/Users/Administrator/Desktop/sparklinkplayjoy-morkblade-sdk-keyboard-1.0.3.tgz
+        specifier: 1.0.4
+        version: 1.0.4
       axios:
         specifier: ^1.6.7
         version: 1.11.0
@@ -709,18 +709,17 @@ packages:
     resolution: {integrity: sha512-tlqY9xq5ukxTUZBmoOp+m61cqwQD5pHJtFY3Mn8CA8ps6yghLH/Hw8UPdqg4OLmFW3IFlcXnQNmo/dh8HzXYIQ==}
     engines: {node: '>=18'}
 
-  '@sparklinkplayjoy/morkblade-hid@1.0.0':
-    resolution: {integrity: sha512-3kkI7KelNMWFgPA6P9722nU8eOsuKRSVXHbYeKp3EWEEYtnGC13wz369NpufPo0dy+7vxjs34VNLeKKQHM3U2g==}
+  '@sparklinkplayjoy/morkblade-hid@1.0.1':
+    resolution: {integrity: sha512-kBDZ24St2C038okaQUh0fSQO9kQcMcQhCKkxy0CUPCgHJZKfahkGGMyVKx8ABJH2T1KCenQ5IWhThx70EtgFTw==}
 
-  '@sparklinkplayjoy/morkblade-protocol-keyboard-v2@1.0.2':
-    resolution: {integrity: sha512-rGiM2EVnWRuk7Oz+0r5B8XtdjFEkoI/By/ql77RVJNy1La122zLFlivL7rmC7ZnNtxQ88NklpivyfbOgLLrjlg==}
+  '@sparklinkplayjoy/morkblade-protocol-keyboard-v2@1.0.4':
+    resolution: {integrity: sha512-n3EywBjEDHJ6+wxPiLfWpi0AlfmcrKlWa1u2LDQDzbMDjuEbTKgocWbAaKpsUKoXYLQlckHtj8MHNmh8BKsY5g==}
 
-  '@sparklinkplayjoy/morkblade-protocol-keyboard@1.0.0':
-    resolution: {integrity: sha512-S68VRevrexgnwjergbrWKfYKWmkKmIXTM/zTquuC2tnq6JttZkLyYdG+QQEC2SuRbNKnewsDzY6U9Yhe4RDXQw==}
+  '@sparklinkplayjoy/morkblade-protocol-keyboard@1.0.1':
+    resolution: {integrity: sha512-xlG2HbwJNTCjGieqxH/bWm3DaOFljl3eseDGzjdCf513tE6TfPvCALjYIvjJdZa9OqJmGlfjv1TvZJr5R8ekcQ==}
 
-  '@sparklinkplayjoy/morkblade-sdk-keyboard@file:C:/Users/Administrator/Desktop/sparklinkplayjoy-morkblade-sdk-keyboard-1.0.3.tgz':
-    resolution: {integrity: sha512-iUXgzDUDEEiq6RNZIiDhKH4YgyiULE62ukEkTR/vmqfkCocRsFgvx2ykSICyZqGopMQded8PypP54XHZ7JjqLw==, tarball: file:C:/Users/Administrator/Desktop/sparklinkplayjoy-morkblade-sdk-keyboard-1.0.3.tgz}
-    version: 1.0.3
+  '@sparklinkplayjoy/morkblade-sdk-keyboard@1.0.4':
+    resolution: {integrity: sha512-YoDuL4ig36aYh9dwci6pBkbKb9PlxmZ7IXgrQHp629BvNZIKqeCAyqscJ9tpC7UXzfaECYDrM2ySvFnb3uMgLw==}
 
   '@sxzz/popperjs-es@2.11.7':
     resolution: {integrity: sha512-Ccy0NlLkzr0Ex2FKvh2X+OyERHXJ88XJ1MXtsI9y9fGexlaXaVTPzBCRBwIxFkORuOb+uBqeu+RqnpgYTEZRUQ==}
@@ -2499,21 +2498,21 @@ snapshots:
 
   '@sindresorhus/merge-streams@4.0.0': {}
 
-  '@sparklinkplayjoy/morkblade-hid@1.0.0':
+  '@sparklinkplayjoy/morkblade-hid@1.0.1':
     dependencies:
       uuid: 11.1.0
 
-  '@sparklinkplayjoy/morkblade-protocol-keyboard-v2@1.0.2': {}
+  '@sparklinkplayjoy/morkblade-protocol-keyboard-v2@1.0.4': {}
 
-  '@sparklinkplayjoy/morkblade-protocol-keyboard@1.0.0':
+  '@sparklinkplayjoy/morkblade-protocol-keyboard@1.0.1':
     dependencies:
       decimal.js: 10.6.0
 
-  '@sparklinkplayjoy/morkblade-sdk-keyboard@file:C:/Users/Administrator/Desktop/sparklinkplayjoy-morkblade-sdk-keyboard-1.0.3.tgz':
+  '@sparklinkplayjoy/morkblade-sdk-keyboard@1.0.4':
     dependencies:
-      '@sparklinkplayjoy/morkblade-hid': 1.0.0
-      '@sparklinkplayjoy/morkblade-protocol-keyboard': 1.0.0
-      '@sparklinkplayjoy/morkblade-protocol-keyboard-v2': 1.0.2
+      '@sparklinkplayjoy/morkblade-hid': 1.0.1
+      '@sparklinkplayjoy/morkblade-protocol-keyboard': 1.0.1
+      '@sparklinkplayjoy/morkblade-protocol-keyboard-v2': 1.0.4
       '@types/crypto-js': 4.2.2
       crypto-js: 4.2.0
       decimal.js: 10.6.0
