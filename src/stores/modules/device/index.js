@@ -145,22 +145,6 @@ const useDeviceStore = defineStore('device', {
       if (doubleLighting) this.isDoubleLighting = true;
       return doubleLightingRes;
     },
-
-    // 查询键盘的当前模式、充电状态和电量百分比
-    async getDeviceStatus() {
-      try {
-        console.log('查询键盘的当前模式、充电状态和电量百分比', services);
-        // const res = await services.getThreeModeBasicInfoV2();
-        const res = await services.getDevicesInfoV2();
-        // const res = await services.getThreeModeSleepTimeV2();
-        // const res = await services.setThreeModeSleepTime(1000, 1000);
-        console.log('getDeviceStatus', res);
-        return res;
-      } catch (error) {
-        console.error('获取设备状态失败:', error);
-        return null;
-      }
-    },
   },
 });
 

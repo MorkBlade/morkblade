@@ -12,8 +12,8 @@ importers:
         specifier: ^5.5.2
         version: 5.5.2
       '@sparklinkplayjoy/morkblade-sdk-keyboard':
-        specifier: 1.0.4
-        version: 1.0.4
+        specifier: 1.0.5
+        version: 1.0.5
       axios:
         specifier: ^1.6.7
         version: 1.11.0
@@ -718,8 +718,8 @@ packages:
   '@sparklinkplayjoy/morkblade-protocol-keyboard@1.0.1':
     resolution: {integrity: sha512-xlG2HbwJNTCjGieqxH/bWm3DaOFljl3eseDGzjdCf513tE6TfPvCALjYIvjJdZa9OqJmGlfjv1TvZJr5R8ekcQ==}
 
-  '@sparklinkplayjoy/morkblade-sdk-keyboard@1.0.4':
-    resolution: {integrity: sha512-YoDuL4ig36aYh9dwci6pBkbKb9PlxmZ7IXgrQHp629BvNZIKqeCAyqscJ9tpC7UXzfaECYDrM2ySvFnb3uMgLw==}
+  '@sparklinkplayjoy/morkblade-sdk-keyboard@1.0.5':
+    resolution: {integrity: sha512-/zXjSgTw1azts2JcDyNU6Iz/HIzlRrxtUTU9x5B8T2bS+eS9lI/VCk1yk92brv7jCkudqd/wAUhedzBM1jRnnA==}
 
   '@sxzz/popperjs-es@2.11.7':
     resolution: {integrity: sha512-Ccy0NlLkzr0Ex2FKvh2X+OyERHXJ88XJ1MXtsI9y9fGexlaXaVTPzBCRBwIxFkORuOb+uBqeu+RqnpgYTEZRUQ==}
@@ -2508,7 +2508,7 @@ snapshots:
     dependencies:
       decimal.js: 10.6.0
 
-  '@sparklinkplayjoy/morkblade-sdk-keyboard@1.0.4':
+  '@sparklinkplayjoy/morkblade-sdk-keyboard@1.0.5':
     dependencies:
       '@sparklinkplayjoy/morkblade-hid': 1.0.1
       '@sparklinkplayjoy/morkblade-protocol-keyboard': 1.0.1

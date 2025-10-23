@@ -110,9 +110,9 @@ const updateColors = async () => {
     const changedKeys = new Set();
 
     // 只更新发生变化的颜色
-    for (let row = 1; row <= 6; row++) {
+    for (let row = 0; row <= 5; row++) {
       if (customLighting[row]) {
-        for (let col = 0; col <= 14; col++) {
+        for (let col = 0; col <= 15; col++) {
           if (customLighting[row][col]) {
             const { R, G, B } = customLighting[row][col];
             const currentColor = root.style.getPropertyValue(`--key-color-${row}-${col}`);

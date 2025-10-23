@@ -1,5 +1,5 @@
 
-import { useKeyboardStore, usePerformanceStore, useDeviceStore } from '@/stores';
+import { useKeyboardStore, usePerformanceStore, useAppStore } from '@/stores';
 import services from '@/services/index';
 
 const keyboardItemInfo = {
@@ -51,11 +51,15 @@ export const useKeyboardHook = () => {
   const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
   const keyboardStore = useKeyboardStore();
   const performanceStore = usePerformanceStore();
-  const deviceStore = useDeviceStore();
+  const appStore = useAppStore();
 
   const initKeyboard = async () => {
     if (isVersion2) {
-      deviceStore.getDeviceStatus();
+      appStore.getDeviceStatus();
+      // TODO 判断是不是三模版本
+      if (appStore.baseInfo?.subType === 1) {
+        
+      }
       // v2 keyboard初始化
       const { row } = keyboardStore.keyLayoutConfig;
       const keyboardLayout = [];

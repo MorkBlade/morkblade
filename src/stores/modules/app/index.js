@@ -1,10 +1,5 @@
 
 import { defineStore } from 'pinia';
-
-// import image1 from '@/assets/images/configured-content-item-img-1.png';
-// import image2 from '@/assets/images/configured-content-item-img-2.png';
-// import image3 from '@/assets/images/configured-content-item-img-3.png';
-// import image4 from '@/assets/images/configured-content-item-img-4.png';
 import services from '@/services/index';
 
 const useAppStore = defineStore('app', {
@@ -36,6 +31,17 @@ const useAppStore = defineStore('app', {
       hardwareVersion: 0,
       softwareVersion: 0,
     },
+    deviceStatus: {
+      battery: 0,
+      charge: 0,
+      mode: 0,
+    },
+    sleepTime: {
+      shallowSleepTime: 0,
+      deepSleepTime: 0,
+    },
+    // 三模版本需要查询
+    isThreeMode: false,
     // keyboardVersion: '', // 键盘版本v1 v2
   }),
 
@@ -119,6 +125,8 @@ const useAppStore = defineStore('app', {
       if (isVersion2) {
         const result = await services.getDevicesInfoV2();
         this.baseInfo = (result && result[0]) || {};
+        console.log('获取基础信息---', result);
+        this.isThreeMode = result[0]?.subType === 0;
         return result;
       } else {
         const baseInfo = await services.getBaseInfo();
@@ -142,6 +150,41 @@ const useAppStore = defineStore('app', {
       }
     },
 
+    // 查询键盘的当前模式、充电状态和电量百分比
+    async getDeviceStatus() {
+      try {
+        const res = await services.getThreeModeBasicInfoV2();
+        this.deviceStatus = res[0];
+        console.log('getDeviceStatus', res);
+        return res;
+      } catch (error) {
+        console.error('获取设备状态失败:', error);
+        return null;
+      }
+    },
+
+    // 获取休眠时间
+    async getSleepTime() {
+      try {
+        const res = await services.getThreeModeSleepTimeV2();
+        console.log('getSleepTime', res);
+        return res;
+      } catch (error) {
+        console.error('获取休眠时间失败:', error);
+        return null;
+      }
+    },
+    // 设置休眠时间
+    async setSleepTime(sleepTime, deepSleepTime) {
+      try {
+        const res = await services.setThreeModeSleepTimeV2(sleepTime, deepSleepTime);
+        console.log('setSleepTime', res);
+        return res;
+      } catch (error) {
+        console.error('设置休眠时间失败:', error);
+        return null;
+      }
+    },
   },
 });
 export default useAppStore;

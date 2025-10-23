@@ -91,8 +91,6 @@ const handleDeviceStoreClick = async () => {
   const result = await deviceStore.connectDevice();
   const version = deviceStore.devices[0]?.usagePage === 65440 ? 'v1' : 'v2';
   localStorage.setItem('keyboardVersion', version);
-  await appStore.getBaseInfo();
-  // console.log('keyboardRunMode', appStore.baseInfo?.KeyboardRunMode, result);
   if (appStore.baseInfo?.KeyboardRunMode === 255) {
     isUpdate.value = true;
     if (version === 'v2') {

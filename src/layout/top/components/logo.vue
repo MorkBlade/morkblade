@@ -3,15 +3,7 @@
   <div class="logo-box" :style="{ marginLeft: isVersion2 ? '-350px' : '-120px' }">
     <img class="logo-img" src="/src/assets/images/logo.png" alt="" />
     <img class="bar-img" src="/src/assets/images/green_bar.svg" alt="" />
-    <template v-if="isVersion2">
-      <span>M K 6 0</span>
-    </template>
-    <template v-else>
-      <span>BOLD TKL</span>
-    </template>
-    <!-- <el-select v-model="selectVersion" placeholder="Select" @change="changeKeyboardVersion">
-      <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
-    </el-select> -->
+    <span>{{ title }}</span>
   </div>
 </template>
 
@@ -34,6 +26,8 @@ const selectVersion = ref(isVersion2 ? 'v2' : 'v1');
 //   { value: 'v1', label: 'BOLD TKL' },
 //   { value: 'v2', label: 'M K 6 0' },
 // ];
+
+const isMK84 = deviceStore.devices[0]?.productId === 5382 && deviceStore.devices[0]?.vendorId === 7334;
 const options = computed(() => {
   if (deviceStore.devices.length > 1) {
     return [
@@ -43,9 +37,22 @@ const options = computed(() => {
   } else {
     if (deviceStore.devices[0]?.usagePage === 65440) {
       return [{ value: 'v1', label: 'BOLD TKL' }];
+    } else if (isMK84) {
+      return [{ value: 'v2', label: 'M K 8 4' }];
     } else {
       return [{ value: 'v2', label: 'M K 6 0' }];
     }
+  }
+});
+
+const title = computed(() => {
+  // 先判断版本
+  if (!isVersion2 && !isMK84) {
+    return 'BOLD TKL';
+  } else if (isMK84) {
+    return 'M K 8 4';
+  } else {
+    return 'M K 6 0';
   }
 });
 

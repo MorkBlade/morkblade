@@ -5,6 +5,9 @@
       <configManager />
     </template>
     <logo />
+    <template v-if="appStore.isThreeMode">
+      <BatteryLevelStatus />
+    </template>
     <checkLng />
     <!-- <div class="test-change-connect" @click="connectMk">连接mork blade tkl</div>
     <div class="test-change-connect">连接mk60</div> -->
@@ -21,6 +24,7 @@ import checkLng from './components/check-lng.vue';
 import dropdownMenu from './components/dropdown-menu.vue';
 import logo from './components/logo.vue';
 import configManager from './components/config-manager.vue';
+import BatteryLevelStatus from './components/battery-level-status.vue';
 const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
 const appStore = useAppStore();
 const deviceStore = useDeviceStore();
@@ -34,6 +38,7 @@ const delay = (ms) => {
     setTimeout(resolve, ms);
   });
 };
+
 
 const connectMk = async () => {
   // console.log('切换设备前先断连', deviceStore.devices);

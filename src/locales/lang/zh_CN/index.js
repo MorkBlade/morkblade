@@ -618,6 +618,8 @@ export default {
     updateLog: '固件更新日志',
     returnRateSwitch: '回报率切换',
     factoryReset: '恢复出厂设置',
+    currentConnectionMode: '当前连接模式',
+    sleepTime: '休眠时间',
     onlineUpdate: '在线升级',
     firmwareVersion: '固件版本',
     firmwareDate: '固件日期',

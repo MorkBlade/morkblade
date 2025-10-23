@@ -36,14 +36,12 @@
       </div>
     </template>
     <!-- v2 keyboard -->
-    <template v-else>
+    <template v-if="keyboardConfiguration === 60 && isVersion2">
       <div class="keyboard-container v2">
         <div class="keyboard" :style="{
           width: `${containerDimensions.width}px`,
             height: `${containerDimensions.height}px`,
           }">
-
-
           <template v-for="(row, rowIndex) in lightLayout">
             <div class="row" :class="`row_${rowIndex + 1}`" :key="rowIndex" v-if="row[0].shapeScale?.w">
               <template v-for="(col, colIndex) in row">
@@ -64,7 +62,7 @@
     </template>
 
     <!-- v2 三模 -->
-    <!-- <template v-else>
+    <template v-if="keyboardConfiguration === 84 && isVersion2">
       <div class="keyboard-container v2-three-mode">
         <div class="keyboard" >
           <template v-for="(row, rowIndex) in layout">
@@ -80,7 +78,7 @@
           </template>
         </div>
       </div>
-    </template> -->
+    </template>
 
 
     <div class="side-right-container" v-if="route.path === '/performance'">
@@ -201,8 +199,6 @@ onMounted(async () => {
 });
 
 const handleKeyClick = (rowIndex, colIndex) => {
-  console.log('rowIndex: ', rowIndex);
-  console.log('colIndex: ', colIndex);
   // 当前类型
   if (route.path === '/key-assignment') {
     // 单选
@@ -212,7 +208,7 @@ const handleKeyClick = (rowIndex, colIndex) => {
     //   keyboardStore.handleSelectKeyClick({ rowIndex, colIndex }, 'single');
     // }
     keyboardStore.handleSelectKeyClick({ rowIndex, colIndex }, 'single');
-  // } else {
+  } else {
     // 多选
     keyboardStore.handleSelectKeyClick({ rowIndex, colIndex });
   }
@@ -224,14 +220,22 @@ const handleHighLevelKeyChange = ({ rowIndex, colIndex }) => {
   keyboardStore.handleHighLevelKeyClick({ rowIndex, colIndex });
 };
 
+// 键盘布局
+const keyboardConfiguration = ref(60);
 // 匹配布局，暂时用json文件来做
 const matchLayout = () => {
   // console.log('isVersion2: ', isVersion2.value);
   if (!isVersion2.value) {
     return layouts.keyboardLayoutV1;
   }
-  // TODO 判断是三模版本还是普通版本
-  return layouts.keyboardLayoutV2;
+  if (deviceStore.devices[0]?.productId === 5382 && deviceStore.devices[0]?.vendorId === 7334) {
+    keyboardConfiguration.value = 84;
+    return layouts.keyboardLayoutV2_threeMode;
+  } else {
+    keyboardConfiguration.value = 60;
+    return layouts.keyboardLayoutV2;
+  }
+  // return layouts.keyboardLayoutV2;
   // return layouts.keyboardLayoutV2_threeMode;
 };
 

@@ -25,33 +25,48 @@
       </div>
       <div class="device-set">
         <p>{{ t('settings.deviceSetting') }}</p>
-        <div class="rate-of-return">
-          <span>{{ t('settings.returnRateSwitch') }}:</span>
-          <dropMenu :max-height="320" :items="RateOfReturnList" :special-index="selectedRateIdx"
-            @sendSelectedIdx="handleSelectedRate" />
-        </div>
-        <div class="reset-box">
-          <span>{{ t('settings.factoryReset') }}:</span>
-          <div class="save-btn" :class="{ 'is-active': restBtnStatus }" @click="handleRecover"
-            @mouseenter="onMouseEnter" @mouseleave="onMouseLeave">
-            <img src="@/assets/images/reset_icon.svg" alt="" />
-            <span class="reset-text" v-ellipsis-marquee="{ duration: 5, gap: 24 }">{{ t('settings.factoryReset')
-              }}</span>
+        <div class="set-box">
+          <div class="rate-of-return">
+            <span>{{ t('settings.returnRateSwitch') }}:</span>
+            <dropMenu :max-height="320" :items="RateOfReturnList" :special-index="selectedRateIdx"
+              @sendSelectedIdx="handleSelectedRate" />
           </div>
+          <div class="reset-box">
+            <span>{{ t('settings.factoryReset') }}:</span>
+            <div class="save-btn" :class="{ 'is-active': restBtnStatus }" @click="handleRecover"
+              @mouseenter="onMouseEnter" @mouseleave="onMouseLeave">
+              <img src="@/assets/images/reset_icon.svg" alt="" />
+              <span class="reset-text" v-ellipsis-marquee="{ duration: 5, gap: 24 }">{{ t('settings.factoryReset')
+                }}</span>
+            </div>
+          </div>
+
+          <template v-if="appStore.isThreeMode">
+            <div class="current-connection-mode">
+              <span>{{ t('settings.currentConnectionMode') }}:</span>
+              <div class="connection-mode-text">
+                <p>蓝牙</p>
+              </div>
+            </div>
+
+            <div class="sleep-time">
+              <span>{{ t('settings.sleepTime') }}:</span>
+              <dropMenu :max-height="220" :items="sleepTimeList" :special-index="selectedSleepTimeIdx"
+                @sendSelectedIdx="handleSelectedSleepTime" />
+            </div>
+          </template>
         </div>
       </div>
       <div class="firmware-set">
         <p>{{ t('settings.firmwareSetting') }}</p>
         <div class="firmware-update">
           <div class="firmware-update__choose-version">
-            <!-- <template v-if="!isVersion2">
-              <span>在线升级:</span>
-              <dropMenu :max-height="180" :items="firmwareVersionList" @sendSelectedIdx="handleSelectedVer" />
-            </template> -->
             <template v-if="isVersion2">
-              <span class="online-update-text" style="display: flex;" v-ellipsis-marquee="{ duration: 5, gap: 24 }">{{ t('settings.onlineUpdate') }}:</span>
+              <span class="online-update-text" style="display: flex;" v-ellipsis-marquee="{ duration: 5, gap: 24 }">{{
+                t('settings.onlineUpdate') }}:</span>
               <div class="online-upload" :class="{ loading }" @click="handleOnlineUpdate">
-                <span class="online-download-text" :class="{ hasFile: bindData.length > 0 && onlineUpload }" v-ellipsis-marquee="{ duration: 5, gap: 24 }">
+                <span class="online-download-text" :class="{ hasFile: bindData.length > 0 && onlineUpload }"
+                  v-ellipsis-marquee="{ duration: 5, gap: 24 }">
                   {{ bindData.length > 0 && onlineUpload ? t('settings.downloadedFirmware') :
                   t('settings.clickDownloadFirmware') }}
                 </span>
@@ -65,7 +80,8 @@
               </div>
             </template>
             <template v-if="isVersion2">
-              <span :style="{ marginLeft: `${scaleValue(20)}px` }" class="localUpdate-btn" v-ellipsis-marquee="{ duration: 5, gap: 24 }">{{ t('settings.localUpdate') }}:</span>
+              <span :style="{ marginLeft: `${scaleValue(20)}px` }" class="localUpdate-btn"
+                v-ellipsis-marquee="{ duration: 5, gap: 24 }">{{ t('settings.localUpdate') }}:</span>
               <el-upload ref="uploadRef" class="uploader" :class="{ loading }" :limit="1" :auto-upload="false"
                 :disabled="loading" accept=".bin" :on-exceed="handleExceed" :on-remove="handleRemove"
                 :on-change="handleFileChange">
@@ -212,6 +228,7 @@ const updateTitle = ref(''); // dialog 标题
 const subVersionIdx = ref(null); // 子版本index
 const firmwareVerIdx = ref(null); // 固件版本index
 const selectedRateIdx = ref(null); // 回报率index
+const selectedSleepTimeIdx = ref(null); // 休眠时间index
 
 // 按钮状态
 const restBtnStatus = ref(false);
@@ -279,6 +296,14 @@ emitter.on('versionChange', (flag) => {
 onMounted(async () => {
   const rate = await performanceStore.getRateOfReturn(isVersion2.value);
   selectedRateIdx.value = rate;
+  // 如果是三模版本
+  if (appStore.isThreeMode) {
+    await appStore.getSleepTime();
+    // 将获取到的浅睡时间映射到 sleepTimeList 的索引
+    const shallowSleepTime = appStore.sleepTime.shallowSleepTime;
+    const index = sleepTimeList.value.findIndex(item => item === `${shallowSleepTime}min`);
+    selectedSleepTimeIdx.value = index !== -1 ? index : 0;
+  }
   window.addEventListener('click', handleGlobalClick);
   getConfig();
 });
@@ -294,6 +319,22 @@ const firmwareVersionList = computed(() => {
 const RateOfReturnList = computed(() => {
   return ['8KHz', '4KHz', '2KHz', '1KHz', '500Hz', '250Hz', '125Hz'];
 });
+
+// 休眠时间
+const sleepTimeList = computed(() => {
+  return ['10min', '30min', '60min', '120min', '240min', '360min'];
+});
+
+// 处理选中的休眠时间
+const handleSelectedSleepTime = (idx, item) => {
+  // 浅度睡眠
+  const shallowSleepTime = item.slice(0, -3);
+  // 深度睡眠
+  const deepSleepTime = Number(shallowSleepTime) * 2;
+  appStore.setSleepTime(shallowSleepTime, deepSleepTime);
+};
+
+
 
 const getConfig = async () => {
   try {
@@ -543,21 +584,6 @@ const startUpdate = async () => {
       background: 'rgba(0, 0, 0, 0.5)',
       customClass: 'custom-loading',
     });
-    // setTimeout(() => {
-    //   elLoading.close();
-    // }, 2000);
-
-    // await showMessage('loading', UPDATE_STEPS.ENTER_BOOT);
-    // await deviceStore.appToBoot();
-    // await delay(4000);
-
-    // await showMessage('loading', UPDATE_STEPS.CONNECT);
-    // const device = await deviceStore.connectDevice();
-    // if (!device) {
-    //   throw new Error('连接超时，请检查设备是否正确连接');
-    // }
-
-    // await showMessage('loading', UPDATE_STEPS.UPDATING);
     const res = await deviceStore.updateDevice(bindData.value, ({ percentage }) => {
       updateDisplayProgress(percentage);
     });
@@ -566,19 +592,6 @@ const startUpdate = async () => {
       throw new Error(t('settings.updateFailed'));
     }
 
-    // 调整重启设备的消息顺序
-    // await showMessage('loading', UPDATE_STEPS.RESTARTING);
-    // await deviceStore.bootToApp();
-    // await delay(1500);
-    // await deviceStore.connectDevice();
-    // await delay(1000); // 给一点时间显示重启消息
-
-    // 成功提示
-    // if (loadingId.value !== null) {
-    //   MessagePlugin.close(loadingId.value);
-    //   await delay(100);
-    // }
-    // await showMessage('success', '更新成功');
     // 更新轴体V2
     showMessage(t('settings.updateSuccess'));
     elLoading.value.close();
@@ -594,11 +607,6 @@ const startUpdate = async () => {
     }
   } catch (error) {
     console.error(t('settings.updateFailedMessage'), error);
-    // if (loadingId.value !== null) {rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
-    //   MessagePlugin.close(loadingId.value);
-    //   await delay(100);
-    // }
-    // await showMessage('error', error.message || '更新失败，请重试');
     elLoading.value.close();
     showMessage(t('settings.updateFailed'), 'warning');
     resetStates();
@@ -734,8 +742,9 @@ onBeforeUnmount(() => {
   .el-loading-spinner .path {
     stroke: #91bc00;
   }
-  
+
 }
+
 .online-update-text {
   width: var(--spacing-130);
   overflow: hidden;
@@ -744,6 +753,7 @@ onBeforeUnmount(() => {
   max-width: 100%;
   text-align: center;
 }
+
 .online-download-text {
   width: var(--spacing-130);
   overflow: hidden;
@@ -752,6 +762,7 @@ onBeforeUnmount(() => {
   max-width: 100%;
   text-align: center;
 }
+
 @keyframes loading-rotate {
   100% {
     transform: rotate(360deg);
