@@ -640,6 +640,12 @@ export default {
     releaseDate: 'リリース日',
     updateContent: '更新内容',
 
+    currentConnectionMode: '現在の接続モード',
+    sleepTime: 'スリープ時間',
+    bluetooth1: 'Bluetooth1',
+    bluetooth2: 'Bluetooth2',
+    bluetooth3: 'Bluetooth3',
+
     eSportsVersion: 'eスポーツ版',
     highlightVersion: '高辉度版',
     testVersion: 'テスト版',

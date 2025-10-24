@@ -125,8 +125,7 @@ const useAppStore = defineStore('app', {
       if (isVersion2) {
         const result = await services.getDevicesInfoV2();
         this.baseInfo = (result && result[0]) || {};
-        console.log('获取基础信息---', result);
-        this.isThreeMode = result[0]?.subType === 0;
+        this.isThreeMode = result[0]?.subType === 1;
         return result;
       } else {
         const baseInfo = await services.getBaseInfo();

@@ -26,13 +26,13 @@
       <div class="device-set">
         <p>{{ t('settings.deviceSetting') }}</p>
         <div class="set-box">
-          <div class="rate-of-return">
+          <div class="grid-item rate-of-return">
             <span>{{ t('settings.returnRateSwitch') }}:</span>
             <dropMenu :max-height="320" :items="RateOfReturnList" :special-index="selectedRateIdx"
               @sendSelectedIdx="handleSelectedRate" />
           </div>
-          <div class="reset-box">
-            <span>{{ t('settings.factoryReset') }}:</span>
+          <div class="grid-item reset-box">
+            <span v-ellipsis-marquee="{ duration: 5, gap: 24 }">{{ t('settings.factoryReset') }}:</span>
             <div class="save-btn" :class="{ 'is-active': restBtnStatus }" @click="handleRecover"
               @mouseenter="onMouseEnter" @mouseleave="onMouseLeave">
               <img src="@/assets/images/reset_icon.svg" alt="" />
@@ -42,14 +42,14 @@
           </div>
 
           <template v-if="appStore.isThreeMode">
-            <div class="current-connection-mode">
-              <span>{{ t('settings.currentConnectionMode') }}:</span>
+            <div class="grid-item current-connection-mode">
+              <span v-ellipsis-marquee="{ duration: 5, gap: 24 }">{{ t('settings.currentConnectionMode') }}:</span>
               <div class="connection-mode-text">
-                <p>蓝牙</p>
+                <p>{{ t(connectionMode) }}</p>
               </div>
             </div>
 
-            <div class="sleep-time">
+            <div class="grid-item sleep-time">
               <span>{{ t('settings.sleepTime') }}:</span>
               <dropMenu :max-height="220" :items="sleepTimeList" :special-index="selectedSleepTimeIdx"
                 @sendSelectedIdx="handleSelectedSleepTime" />
@@ -230,6 +230,9 @@ const firmwareVerIdx = ref(null); // 固件版本index
 const selectedRateIdx = ref(null); // 回报率index
 const selectedSleepTimeIdx = ref(null); // 休眠时间index
 
+const connectionModeList = ['USB', '2.4G', t('settings.bluetooth1'), t('settings.bluetooth2'), t('settings.bluetooth3')]
+const connectionMode = ref('USB'); // 当前连接模式
+
 // 按钮状态
 const restBtnStatus = ref(false);
 const updateBtnStatus = ref(false);
@@ -258,7 +261,6 @@ const urlList = [
   '/fw/XS117_KB987_App_v1.1.3.1_20250421a.bin',
   '/fw/XS117_KB987_App_v1.1.3.1_20250421a.bin',
 ];
-
 const keyboardName = computed(() => {
   if (!isVersion2.value) {
     const device = deviceStore.devices.find(
@@ -303,6 +305,7 @@ onMounted(async () => {
     const shallowSleepTime = appStore.sleepTime.shallowSleepTime;
     const index = sleepTimeList.value.findIndex(item => item === `${shallowSleepTime}min`);
     selectedSleepTimeIdx.value = index !== -1 ? index : 0;
+    connectionMode.value = connectionModeList[appStore.deviceStatus.mode];
   }
   window.addEventListener('click', handleGlobalClick);
   getConfig();

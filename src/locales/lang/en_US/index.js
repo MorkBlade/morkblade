@@ -640,6 +640,12 @@ export default {
     releaseDate: 'Release Date',
     updateContent: 'Update Content',
 
+    currentConnectionMode: 'Current Connection Mode',
+    sleepTime: 'Sleep Time',
+    bluetooth1: 'Bluetooth1',
+    bluetooth2: 'Bluetooth2',
+    bluetooth3: 'Bluetooth3',
+
     eSportsVersion: 'Esport',
     highlightVersion: 'Highlight',
     testVersion: 'Test Only',

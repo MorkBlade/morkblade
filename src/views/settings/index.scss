@@ -34,15 +34,77 @@
 
   .device-set {
     .set-box {
-      display: flex;
-      flex-direction: row;
-      flex-wrap: wrap;
-      justify-content: space-around;
+      width: 90%;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-gap: var(--spacing-20);
       align-items: center;
-      margin-bottom: var(--spacing-20);
+      margin: auto;
+      padding: var(--spacing-10) 0;
+      
+      .grid-item {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: var(--size-40);
+        span {
+          width: var(--spacing-105);
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+      }
+      .reset-text {
+          width: var(--spacing-110);
+      }
+        
+        // 默认情况下，前两个项目占第一行
+        &:nth-child(1) {
+          grid-column: 1;
+          grid-row: 1;
+        }
+        &:nth-child(2) {
+          grid-column: 2;
+          grid-row: 1;
+        }
+        
+        // 三模式下的第三、四个项目占第二行
+        &:nth-child(3) {
+          grid-column: 1;
+          grid-row: 2;
+        }
+        &:nth-child(4) {
+          grid-column: 2;
+          grid-row: 2;
+        }
+      }
+      
+      // 响应式设计：在较小屏幕上改为单列布局
+      @media (max-width: 768px) {
+        grid-template-columns: 1fr;
+        
+        .grid-item {
+          &:nth-child(1),
+          &:nth-child(2),
+          &:nth-child(3),
+          &:nth-child(4) {
+            grid-column: 1;
+          }
+          
+          &:nth-child(1) { grid-row: 1; }
+          &:nth-child(2) { grid-row: 2; }
+          &:nth-child(3) { grid-row: 3; }
+          &:nth-child(4) { grid-row: 4; }
+        }
+      }
     }
     .current-connection-mode {
-
+      
+      span {
+        width: var(--spacing-105);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
       .connection-mode-text {
         width: var(--size-160);
         height: var(--size-40);
@@ -81,13 +143,9 @@
   .reset-box,
   .current-connection-mode,
   .sleep-time {
-    display: flex;
-    align-items: center;
-    justify-content: center;
     font-family: 'CN Heavy';
     color: #ffffff;
     min-width: var(--spacing-280);
-    margin-top: var(--spacing-10);
 
     & span {
       display: flex;
@@ -238,9 +296,6 @@
   }
 
   .rate-of-return {
-    display: flex;
-    align-items: center;
-    justify-content: center;
     font-family: 'CN Heavy';
     color: #ffffff;
 
