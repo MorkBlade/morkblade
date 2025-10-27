@@ -9,10 +9,10 @@
                 ></div>
             </div>
             <div class="battery-level-status__text">
-                {{ appStore.deviceStatus.battery }}%
+                {{ deviceStatus.battery }}%
             </div>
         </div>
-        <div class="battery-level-status__charge" v-if="appStore.deviceStatus.charge === 1">
+        <div class="battery-level-status__charge" v-if="deviceStatus.charge === 1">
             
         </div>
     </div>
@@ -20,14 +20,20 @@
 
 <script setup lang="ts">
 import { useAppStore } from '@/stores';
-import { onMounted, computed } from 'vue';
+import { onMounted, computed, ref } from 'vue';
 
 const appStore = useAppStore();
 const { getDeviceStatus } = appStore;
 
+const deviceStatus = ref({
+    battery: 0,
+    charge: 0,
+    mode: 0,
+});
+
 // 计算电池填充样式
 const batteryFillStyle = computed(() => {
-    const batteryLevel = appStore.deviceStatus.battery || 0;
+    const batteryLevel = deviceStatus.value.battery || 0;
     const fillWidth = Math.max(0, Math.min(100, batteryLevel));
     return {
         width: `${fillWidth}%`,
@@ -36,7 +42,7 @@ const batteryFillStyle = computed(() => {
 
 // 计算电池颜色类
 const batteryColorClass = computed(() => {
-    const batteryLevel = appStore.deviceStatus.battery || 0;
+    const batteryLevel = deviceStatus.value.battery || 0;
     if (batteryLevel <= 20) {
         return 'battery-low';
     } else {
@@ -45,8 +51,7 @@ const batteryColorClass = computed(() => {
 });
 
 onMounted(async () => {
-  const res = await getDeviceStatus();
-  console.log('deviceStatus', appStore.deviceStatus);
+    deviceStatus.value = await getDeviceStatus();
 });
 
 </script>
@@ -61,7 +66,7 @@ onMounted(async () => {
     align-items: center;
     justify-content: center;
     border: var(--spacing-3) solid #242424;
-    border-radius: var(--spacing-6);
+    border-radius: var(--spacing-10);
 }
 
 .battery-left-status {
@@ -98,7 +103,7 @@ onMounted(async () => {
 .battery-level-status__text {
     position: absolute;
     top: var(--spacing-5);
-    left: var(--spacing-12);
+    left: var(--spacing-10);
     font-size: var(--font-size-8);
     font-weight: 500;
     line-height: var(--line-height-20);

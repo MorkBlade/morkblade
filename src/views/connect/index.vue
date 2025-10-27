@@ -89,6 +89,7 @@ const handleDeviceStoreClick = async () => {
   //   background: 'rgba(0, 0, 0, 0.5)',
   // });
   const result = await deviceStore.connectDevice();
+  console.log('connectDevice result:>>>', result);
   const version = deviceStore.devices[0]?.usagePage === 65440 ? 'v1' : 'v2';
   localStorage.setItem('keyboardVersion', version);
   if (appStore.baseInfo?.KeyboardRunMode === 255) {
@@ -105,7 +106,7 @@ const handleDeviceStoreClick = async () => {
       router.push({ name: 'performance' });
     }
   }
-  Loading.closeAll();
+  // Loading.closeAll();
 };
 
 const getFirmWarePack = async (url) => {

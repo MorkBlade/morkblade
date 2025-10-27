@@ -27,10 +27,11 @@ const useDeviceStore = defineStore('device', {
   },
 
   actions: {
-    // 恢复出厂设置
+    
     async connectDevice() {
       try {
         const devices = await services.getDevices();
+        console.log('connectDevice devices:>>>', devices);
         services.on('GETDEVICEINFO', (requestDeviceStatus) => {
           this.requestDeviceStatus = requestDeviceStatus;
         });
@@ -96,6 +97,8 @@ const useDeviceStore = defineStore('device', {
             return true;
           }
           return false;
+        } else {
+          console.log('未检测到设备。');
         }
         return false;
       } catch (error) {
@@ -103,6 +106,7 @@ const useDeviceStore = defineStore('device', {
       }
     },
 
+    // 恢复出厂设置
     async factoryDataReset(isVersion2) {
       if (isVersion2) {
         const res = await services.GFSRestoreV2('All');
