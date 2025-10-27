@@ -35,7 +35,8 @@
         </div>
       </div>
     </template>
-    <!-- v2 keyboard -->
+
+    <!-- v2 60配列 -->
     <template v-if="keyboardConfiguration === 60 && isVersion2">
       <div class="keyboard-container v2">
         <div class="keyboard" :style="{
@@ -61,7 +62,7 @@
       </div>
     </template>
 
-    <!-- v2 三模 -->
+    <!-- v2 84配列 -->
     <template v-if="keyboardConfiguration === 84 && isVersion2">
       <div class="keyboard-container v2-three-mode">
         <div class="keyboard" >
@@ -235,8 +236,6 @@ const matchLayout = () => {
     keyboardConfiguration.value = 60;
     return layouts.keyboardLayoutV2;
   }
-  // return layouts.keyboardLayoutV2;
-  // return layouts.keyboardLayoutV2_threeMode;
 };
 
 const layout = computed(() => {
@@ -271,7 +270,6 @@ const layout = computed(() => {
   return result;
 });
 
-//TODO 空格键拆分处理
 // 在现有代码基础上添加空格键拆分处理
 const processedLayout = computed(() => {
   // 获取原始布局数据

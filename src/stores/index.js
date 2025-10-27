@@ -14,26 +14,6 @@ import keyboardStore from './modules/keyboard/index.js';
 const pinia = createPinia();
 
 
-// const light = await handleLightingData();
-// const system = await handleSystemData();
-// const keyboards = await handleKeyboardData();  
-// const keyboardStore = useKeyboardStore();
-// console.log('keyboards: ', keyboardStore);
-// await keyboardStore.getLayoutKeyInfo(0, false);
-// await keyboardStore.getLayoutKeyInfo(1, false);
-// await keyboardStore.getLayoutKeyInfo(2, false);
-// await keyboardStore.getLayoutKeyInfo(3, false);
-// const macro = handleMacroData();
-// const data = {
-//   light,
-//   keyboards,
-//   system,
-//   macro,
-// };
-// console.log('data: ', data);
-// services.exportConfig(data); 
-
-
 export {
   useLightSettingStore,
   useDeviceStore,

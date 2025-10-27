@@ -1,5 +1,4 @@
 
-import { UsbDetect } from '@sparklinkplayjoy/morkblade-sdk-keyboard';
 import { defineStore } from 'pinia';
 
 import services from '@/services/index.js';
@@ -48,10 +47,7 @@ const useDeviceStore = defineStore('device', {
 
           if (data.type === 'disconnect' || data.type === 'isUpgrading_disconnect') {
             // 如果不是在升级页面的话 路由回到连接页面
-            // console.log('this.isUpdate', this.isUpdate);
             if (!this.isUpdate) {
-              // if (router) router.replace({ path: '/' });
-              // console.log('out connectDevice', this.reseted);
               if (this.reseted) return;
               emitter.emit('disconnect', this.isUpdate);
               return;
@@ -139,7 +135,6 @@ const useDeviceStore = defineStore('device', {
 
     // 双灯位获取
     async getDoubleLighting() {
-      // console.log('getLightingAreagetLightingArea');
       const doubleLightingRes = await services.getDoubleLightingV2();
       const { doubleLighting } = doubleLightingRes;
       if (doubleLighting) this.isDoubleLighting = true;

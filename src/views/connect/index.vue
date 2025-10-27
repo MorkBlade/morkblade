@@ -1,12 +1,6 @@
 <template>
   <div class="connect">
     <div class="connect-header">
-      <!-- <img class="connect-logo" src="@/assets/images/banner-logo.png" alt="banner-logo" /> -->
-      <!-- <div class="connect-operate">
-        <button>FAQ</button>
-        <span>中&nbsp;文</span>
-        <span>English</span>
-      </div> -->
     </div>
     <div class="connect-title">
       <h1>{{ $t('connect.connectTip1') }}</h1>
@@ -45,7 +39,6 @@
       </div>
     </div>
     <div class="update-box" v-if="isUpdate">
-      <!-- <div class="update-box">   -->
       <div>
         <p>{{ $t('connect.upgradeMode') }}</p>
         <span>{{ $t('connect.upgradeing') }}</span>
@@ -62,7 +55,6 @@
 </template>
 
 <script setup>
-// defineOptions({ name: 'ConnectIndex' });
 import services from '@/services/index.js';
 import { useAppStore, useDeviceStore } from '@/stores';
 import { scaleValue } from '@/utils/responsive.js';
@@ -71,7 +63,6 @@ import { httpService } from '@/http/api/index.js';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import { ref } from 'vue';
-// import { Loading } from '@/utils/loading.js';
 
 const { t } = useI18n();
 const router = useRouter();
@@ -83,19 +74,12 @@ const progress = ref(0);
 
 // 连接按钮点击事件
 const handleDeviceStoreClick = async () => {  
-  // Loading.service({
-  //   lock: true,
-  //   text: '连接中...',
-  //   background: 'rgba(0, 0, 0, 0.5)',
-  // });
   const result = await deviceStore.connectDevice();
   const version = deviceStore.devices[0]?.usagePage === 65440 ? 'v1' : 'v2';
   localStorage.setItem('keyboardVersion', version);
   if (appStore.baseInfo?.KeyboardRunMode === 255) {
     isUpdate.value = true;
     if (version === 'v2') {
-      // TODO 暂未发现v2升级失败进不去驱动
-      // await handleOnlineUpdate();
     } else {
       getFirmWarePack('/bin-data/update_esports.bin');
     }
