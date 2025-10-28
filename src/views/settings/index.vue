@@ -269,9 +269,10 @@ const keyboardName = computed(() => {
     );
     return device?.productName || '--';
   } else {
+    console.log('isVersion2.value:', deviceStore.devices);
     const device = deviceStore.devices.find(
       // (item) => item.usagePage === 65456 && item.vendorId === 7334 && item.productId === 5380,
-      (item) => item.usagePage === 65456,
+      (item) => item.usagePage === 65456 || item.usagePage === 65408,
     );
     return device?.productName || '--';
   }
@@ -299,13 +300,14 @@ onMounted(async () => {
   const rate = await performanceStore.getRateOfReturn(isVersion2.value);
   selectedRateIdx.value = rate;
   // 如果是三模版本
+  console.log('appStore.isThreeMode:', appStore.isThreeMode);
   if (appStore.isThreeMode) {
-    await appStore.getSleepTime();
+    const sleepTime = await appStore.getSleepTime();
     // 将获取到的浅睡时间映射到 sleepTimeList 的索引
-    const shallowSleepTime = appStore.sleepTime.shallowSleepTime;
-    const index = sleepTimeList.value.findIndex(item => item === `${shallowSleepTime}min`);
-    selectedSleepTimeIdx.value = index !== -1 ? index : 0;
-    connectionMode.value = connectionModeList[appStore.deviceStatus.mode];
+    const shallowSleepTime = sleepTime.shallowSleepTime;
+    selectedSleepTimeIdx.value = sleepTimeList.value.findIndex(item => item === `${shallowSleepTime}min`);
+    const deviceStatus = await appStore.getDeviceStatus();
+    connectionMode.value = connectionModeList[deviceStatus.mode];
   }
   window.addEventListener('click', handleGlobalClick);
   getConfig();

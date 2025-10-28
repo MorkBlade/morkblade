@@ -154,7 +154,6 @@ const useAppStore = defineStore('app', {
       try {
         const res = await services.getThreeModeBasicInfoV2();
         this.deviceStatus = res[0];
-        console.log('getDeviceStatus', res);
         return res;
       } catch (error) {
         console.error('获取设备状态失败:', error);
@@ -166,7 +165,6 @@ const useAppStore = defineStore('app', {
     async getSleepTime() {
       try {
         const res = await services.getThreeModeSleepTimeV2();
-        console.log('getSleepTime', res);
         return res;
       } catch (error) {
         console.error('获取休眠时间失败:', error);

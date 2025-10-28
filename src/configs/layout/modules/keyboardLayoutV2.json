@@ -40,8 +40,8 @@
   ],
   [
     { "shapeScale": { "w": 1.5, "h": 1 }, "location": { "x": 0, "y": 1 } },
-    { "shapeScale": { "w": 1, "h": 1 }, "location": { "x": 1.6, "y": 1 } },
-    { "shapeScale": { "w": 1, "h": 1 }, "location": { "x": 2.65, "y": 1 } },
+    { "shapeScale": { "w": 1, "h": 1 }, "location": { "x": 1.59, "y": 1 } },
+    { "shapeScale": { "w": 1, "h": 1 }, "location": { "x": 2.68, "y": 1 } },
     { "shapeScale": { "w": 1, "h": 1 }, "location": { "x": 3.75, "y": 1 } },
     { "shapeScale": { "w": 1, "h": 1 }, "location": { "x": 4.85, "y": 1 } },
     { "shapeScale": { "w": 1, "h": 1 }, "location": { "x": 5.95, "y": 1 } },
@@ -55,7 +55,7 @@
     { "shapeScale": { "w": 1.75, "h": 1 }, "location": { "x": 14.75, "y": 1 } }
   ],
   [
-    { "shapeScale": { "w": 1.75, "h": 1 }, "location": { "x": 0, "y": 2 } },
+    { "shapeScale": { "w": 1.8, "h": 1 }, "location": { "x": 0, "y": 2 } },
     { "shapeScale": { "w": 1, "h": 1 }, "location": { "x": 1.9, "y": 2 } },
     { "shapeScale": { "w": 1, "h": 1 }, "location": { "x": 3, "y": 2 } },
     { "shapeScale": { "w": 1, "h": 1 }, "location": { "x": 4.1, "y": 2 } },
@@ -87,19 +87,19 @@
     { "shapeScale": { "w": 3.25, "h": 1 }, "location": { "x": 13.25, "y": 3 } }
   ],
   [
-    { "shapeScale": { "w": 1.25, "h": 1 }, "location": { "x": 0, "y": 4 } },
-    { "shapeScale": { "w": 1.25, "h": 1 }, "location": { "x": 1.4, "y": 4 } },
-    { "shapeScale": { "w": 1.25, "h": 1 }, "location": { "x": 2.8, "y": 4 } },
+    { "shapeScale": { "w": 1.28, "h": 1 }, "location": { "x": 0, "y": 4 } },
+    { "shapeScale": { "w": 1.28, "h": 1 }, "location": { "x": 1.4, "y": 4 } },
+    { "shapeScale": { "w": 1.28, "h": 1 }, "location": { "x": 2.8, "y": 4 } },
     { "shapeScale": { "w": 0, "h": 0 }, "location": { "x": 0, "y": 0 } },
     { "shapeScale": { "w": 0, "h": 0 }, "location": { "x": 0, "y": 0 } },
     { "shapeScale": { "w": 0, "h": 0 }, "location": { "x": 0, "y": 0 } },
     { "shapeScale": { "w": 6.75, "h": 1 }, "location": { "x": 4.2, "y": 4 } },
     { "shapeScale": { "w": 0, "h": 0 }, "location": { "x": 0, "y": 0 } },
     { "shapeScale": { "w": 0, "h": 0 }, "location": { "x": 0, "y": 0 } },
-    { "shapeScale": { "w": 1.25, "h": 0 }, "location": { "x": 0, "y": 0 } },
-    { "shapeScale": { "w": 1.25, "h": 1 }, "location": { "x": 11.1, "y": 4 } },
-    { "shapeScale": { "w": 1.25, "h": 1 }, "location": { "x": 12.5, "y": 4 } },
-    { "shapeScale": { "w": 1.25, "h": 1 }, "location": { "x": 13.9, "y": 4 } },
-    { "shapeScale": { "w": 1.25, "h": 1 }, "location": { "x": 15.25, "y": 4 } }
+    { "shapeScale": { "w": 1.28, "h": 0 }, "location": { "x": 0, "y": 0 } },
+    { "shapeScale": { "w": 1.28, "h": 1 }, "location": { "x": 11.1, "y": 4 } },
+    { "shapeScale": { "w": 1.28, "h": 1 }, "location": { "x": 12.5, "y": 4 } },
+    { "shapeScale": { "w": 1.28, "h": 1 }, "location": { "x": 13.9, "y": 4 } },
+    { "shapeScale": { "w": 1.28, "h": 1 }, "location": { "x": 15.25, "y": 4 } }
   ]
 ]

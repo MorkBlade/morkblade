@@ -7,13 +7,14 @@ const service = new XDKeyboard({
     { vendorId: 0x1c4f, productId: 0xee88, usagePage: 0xffa0, usage: 0x01 }, // v1 boot
     { vendorId: 0x1ca6, productId: 0x1504, usagePage: 65456, usage: 0x01 }, // v2
     { vendorId: 0x1ca6, productId: 0x0834, usagePage: 65456, usage: 0x01 }, // v2索艾
-    { vendorId: 7334, productId: 5382, usagePage: 65456, usage: 0x01}, // 三模
+    { vendorId: 0x1ca6, productId: 0X1506, usagePage: 65456, usage: 0x01 }, // mk84
+    { vendorId: 0x1ca6, productId: 0X1506, usagePage: 65408, usage: 0x01}, // mk84 2.4G
     // { vendorId: 0x1ca3, productId: 0x0101, usagePage: 0xffa0, usage: 0x01 },
     // { vendorId: 0x1ca9, productId: 0xe501, usagePage: 0xffa0, usage: 0x01 },
   ],
   // configs: [],
   usage: [0x01],
-  usagePage: [65440, 65456],
-  usagePageV2: [65408, 65456]
+  usagePage: [65440, 65456, 65408],
+  usagePageV2: [0xff80, 0xffb0]
 });
 export default service;

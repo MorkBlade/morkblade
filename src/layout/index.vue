@@ -24,5 +24,6 @@ emitter.on('disconnect', (isUpdate) => {
     router.replace({ path: '/' });
     keyboardStore.activeKeys.length = 0;
   }
-});
+}); 
+
 </script>

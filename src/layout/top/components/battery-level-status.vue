@@ -9,10 +9,10 @@
                 ></div>
             </div>
             <div class="battery-level-status__text">
-                {{ appStore.deviceStatus.battery }}%
+                {{ deviceStatus.battery }}%
             </div>
         </div>
-        <div class="battery-level-status__charge" v-if="appStore.deviceStatus.charge === 1">
+        <div class="battery-level-status__charge" v-if="deviceStatus.charge === 1">
             
         </div>
     </div>
@@ -20,14 +20,52 @@
 
 <script setup lang="ts">
 import { useAppStore } from '@/stores';
-import { onMounted, computed } from 'vue';
+import { onMounted, onUnmounted, computed, ref } from 'vue';
 
 const appStore = useAppStore();
 const { getDeviceStatus } = appStore;
 
+const deviceStatus = ref({
+    battery: 0,
+    charge: 0,
+    mode: 0,
+});
+
+// 定时器引用
+let statusTimer: NodeJS.Timeout | null = null;
+
+// 更新设备状态的函数
+const updateDeviceStatus = async () => {
+    try {
+        deviceStatus.value = await getDeviceStatus();
+        console.log('电池状态更新', deviceStatus.value);
+    } catch (error) {
+        console.error('获取设备状态失败:', error);
+    }
+};
+
+// 启动定时器
+const startStatusTimer = () => {
+    // 清除可能存在的旧定时器
+    if (statusTimer) {
+        clearInterval(statusTimer);
+    }
+    
+    // 每60秒更新一次电池状态
+    statusTimer = setInterval(updateDeviceStatus, 60000);
+};
+
+// 停止定时器
+const stopStatusTimer = () => {
+    if (statusTimer) {
+        clearInterval(statusTimer);
+        statusTimer = null;
+    }
+};
+
 // 计算电池填充样式
 const batteryFillStyle = computed(() => {
-    const batteryLevel = appStore.deviceStatus.battery || 0;
+    const batteryLevel = deviceStatus.value.battery || 0;
     const fillWidth = Math.max(0, Math.min(100, batteryLevel));
     return {
         width: `${fillWidth}%`,
@@ -36,7 +74,7 @@ const batteryFillStyle = computed(() => {
 
 // 计算电池颜色类
 const batteryColorClass = computed(() => {
-    const batteryLevel = appStore.deviceStatus.battery || 0;
+    const batteryLevel = deviceStatus.value.battery || 0;
     if (batteryLevel <= 20) {
         return 'battery-low';
     } else {
@@ -45,8 +83,15 @@ const batteryColorClass = computed(() => {
 });
 
 onMounted(async () => {
-  const res = await getDeviceStatus();
-  console.log('deviceStatus', appStore.deviceStatus);
+    // 初始化时获取一次状态
+    await updateDeviceStatus();
+    // 启动定时器
+    startStatusTimer();
+});
+
+onUnmounted(() => {
+    // 组件卸载时清理定时器
+    stopStatusTimer();
 });
 
 </script>
@@ -61,7 +106,7 @@ onMounted(async () => {
     align-items: center;
     justify-content: center;
     border: var(--spacing-3) solid #242424;
-    border-radius: var(--spacing-6);
+    border-radius: var(--spacing-10);
 }
 
 .battery-left-status {
@@ -98,7 +143,7 @@ onMounted(async () => {
 .battery-level-status__text {
     position: absolute;
     top: var(--spacing-5);
-    left: var(--spacing-12);
+    left: var(--spacing-10);
     font-size: var(--font-size-8);
     font-weight: 500;
     line-height: var(--line-height-20);

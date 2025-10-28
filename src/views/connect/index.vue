@@ -75,6 +75,7 @@ const progress = ref(0);
 // 连接按钮点击事件
 const handleDeviceStoreClick = async () => {  
   const result = await deviceStore.connectDevice();
+  console.log('connectDevice result:>>>', result);
   const version = deviceStore.devices[0]?.usagePage === 65440 ? 'v1' : 'v2';
   localStorage.setItem('keyboardVersion', version);
   if (appStore.baseInfo?.KeyboardRunMode === 255) {
@@ -89,7 +90,7 @@ const handleDeviceStoreClick = async () => {
       router.push({ name: 'performance' });
     }
   }
-  Loading.closeAll();
+  // Loading.closeAll();
 };
 
 const getFirmWarePack = async (url) => {
