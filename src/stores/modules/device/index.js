@@ -31,7 +31,6 @@ const useDeviceStore = defineStore('device', {
     async connectDevice() {
       try {
         const devices = await services.getDevices();
-        console.log('connectDevice devices:>>>', devices);
         services.on('GETDEVICEINFO', (requestDeviceStatus) => {
           this.requestDeviceStatus = requestDeviceStatus;
         });

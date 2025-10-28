@@ -235,8 +235,6 @@ const matchLayout = () => {
     keyboardConfiguration.value = 60;
     return layouts.keyboardLayoutV2;
   }
-  // return layouts.keyboardLayoutV2;
-  // return layouts.keyboardLayoutV2_threeMode;
 };
 
 const layout = computed(() => {
