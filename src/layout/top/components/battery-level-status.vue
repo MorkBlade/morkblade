@@ -20,7 +20,7 @@
 
 <script setup lang="ts">
 import { useAppStore } from '@/stores';
-import { onMounted, computed, ref } from 'vue';
+import { onMounted, onUnmounted, computed, ref } from 'vue';
 
 const appStore = useAppStore();
 const { getDeviceStatus } = appStore;
@@ -30,6 +30,38 @@ const deviceStatus = ref({
     charge: 0,
     mode: 0,
 });
+
+// 定时器引用
+let statusTimer: NodeJS.Timeout | null = null;
+
+// 更新设备状态的函数
+const updateDeviceStatus = async () => {
+    try {
+        deviceStatus.value = await getDeviceStatus();
+        console.log('电池状态更新', deviceStatus.value);
+    } catch (error) {
+        console.error('获取设备状态失败:', error);
+    }
+};
+
+// 启动定时器
+const startStatusTimer = () => {
+    // 清除可能存在的旧定时器
+    if (statusTimer) {
+        clearInterval(statusTimer);
+    }
+    
+    // 每60秒更新一次电池状态
+    statusTimer = setInterval(updateDeviceStatus, 60000);
+};
+
+// 停止定时器
+const stopStatusTimer = () => {
+    if (statusTimer) {
+        clearInterval(statusTimer);
+        statusTimer = null;
+    }
+};
 
 // 计算电池填充样式
 const batteryFillStyle = computed(() => {
@@ -51,7 +83,15 @@ const batteryColorClass = computed(() => {
 });
 
 onMounted(async () => {
-    deviceStatus.value = await getDeviceStatus();
+    // 初始化时获取一次状态
+    await updateDeviceStatus();
+    // 启动定时器
+    startStatusTimer();
+});
+
+onUnmounted(() => {
+    // 组件卸载时清理定时器
+    stopStatusTimer();
 });
 
 </script>
