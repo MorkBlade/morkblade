@@ -640,6 +640,9 @@ export default {
     releaseDate: 'リリース日',
     updateContent: '更新内容',
 
+    deepSleepTime: 'ディープスリープ時間',
+    shallowSleepTime: '浅いスリープ時間',
+
     currentConnectionMode: '現在の接続モード',
     sleepTime: 'スリープ時間',
     bluetooth1: 'Bluetooth1',

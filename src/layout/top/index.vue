@@ -6,11 +6,9 @@
     </template>
     <logo />
     <template v-if="appStore.isThreeMode">
-      <BatteryLevelStatus />
+      <statusBox />
     </template>
     <checkLng />
-    <!-- <div class="test-change-connect" @click="connectMk">连接mork blade tkl</div>
-    <div class="test-change-connect">连接mk60</div> -->
   </div>
 </template>
 
@@ -24,7 +22,7 @@ import checkLng from './components/check-lng.vue';
 import dropdownMenu from './components/dropdown-menu.vue';
 import logo from './components/logo.vue';
 import configManager from './components/config-manager.vue';
-import BatteryLevelStatus from './components/battery-level-status.vue';
+import statusBox from './components/status-box.vue';
 const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
 const appStore = useAppStore();
 const deviceStore = useDeviceStore();

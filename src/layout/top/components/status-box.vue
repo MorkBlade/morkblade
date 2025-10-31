@@ -1,29 +1,45 @@
 <template>
-    <div class="battery-level-status">
-        <div class="battery-left-status">
-            <div class="battery-level-status__icon">
-                <div 
-                    class="batteryPower" 
-                    :style="batteryFillStyle"
-                    :class="batteryColorClass"
-                ></div>
+        <div class="connection-mode">
+            <img class="connection-mode__icon" :src="connectionModeIconList[deviceStatus.mode]" alt="连接模式">
+        </div>
+        <div class="battery-level-status">
+            <div class="battery-left-status">
+                <div class="battery-level-status__icon">
+                    <div class="batteryPower" :style="batteryFillStyle" :class="batteryColorClass"></div>
+                </div>
+                <div class="battery-level-status__text">
+                    {{ deviceStatus.battery }}%
+                </div>
             </div>
-            <div class="battery-level-status__text">
-                {{ deviceStatus.battery }}%
+            <div class="battery-level-status__charge" v-if="deviceStatus.charge === 1">
+
             </div>
         </div>
-        <div class="battery-level-status__charge" v-if="deviceStatus.charge === 1">
-            
-        </div>
-    </div>
 </template>
 
 <script setup lang="ts">
 import { useAppStore } from '@/stores';
 import { onMounted, onUnmounted, computed, ref } from 'vue';
+import { useDeviceStore } from '@/stores';
 
+// 正确引入静态资源
+import modeUsbIcon from '@/assets/images/mode_usb.svg';
+import mode24gIcon from '@/assets/images/mode_2.4g.svg';
+import modeBluetooth1Icon from '@/assets/images/mode_bluetooth1.svg';
+import modeBluetooth2Icon from '@/assets/images/mode_bluetooth2.svg';
+import modeBluetooth3Icon from '@/assets/images/mode_bluetooth3.svg';
+
+const deviceStore = useDeviceStore();
 const appStore = useAppStore();
 const { getDeviceStatus } = appStore;
+
+const connectionModeIconList = [
+    modeUsbIcon,
+    mode24gIcon,
+    modeBluetooth1Icon,
+    modeBluetooth2Icon,
+    modeBluetooth3Icon,
+]
 
 const deviceStatus = ref({
     battery: 0,
@@ -38,7 +54,6 @@ let statusTimer: NodeJS.Timeout | null = null;
 const updateDeviceStatus = async () => {
     try {
         deviceStatus.value = await getDeviceStatus();
-        console.log('电池状态更新', deviceStatus.value);
     } catch (error) {
         console.error('获取设备状态失败:', error);
     }
@@ -82,6 +97,7 @@ const batteryColorClass = computed(() => {
     }
 });
 
+
 onMounted(async () => {
     // 初始化时获取一次状态
     await updateDeviceStatus();
@@ -97,10 +113,23 @@ onUnmounted(() => {
 </script>
 
 <style scoped lang="scss">
+
+
+.connection-mode {
+    width: var(--spacing-30);
+    height: var(--spacing-30);
+    margin: auto;
+    .connection-mode__icon {
+        width: 100%;
+        height: 100%;
+    }
+}
+
 .battery-level-status { 
     max-height: var(--spacing-40);
     margin-top: calc(var(--spacing-16) + var(--spacing-1));
     margin-right: var(--spacing-16);
+    margin-left: var(--spacing-16);
     padding: var(--spacing-2) var(--spacing-7);
     display: flex;
     align-items: center;

@@ -26,4 +26,9 @@ emitter.on('disconnect', (isUpdate) => {
   }
 }); 
 
+onMounted(() => {
+  // 监听窗口resize事件
+  // window.addEventListener('resize', handleResize);
+});
+
 </script>

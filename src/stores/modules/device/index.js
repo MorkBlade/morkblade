@@ -1,7 +1,10 @@
 
 import { UsbDetect } from '@sparklinkplayjoy/morkblade-sdk-keyboard';
 import { defineStore } from 'pinia';
+import { useAppStore } from '@/stores';
 
+
+import router from '@/router';
 import services from '@/services/index.js';
 import emitter from '@/utils/app-emitter';
 
@@ -39,7 +42,8 @@ const useDeviceStore = defineStore('device', {
           this.isUpdate = data;
         });
         services.on('usbChange', async (data) => {
-          // console.log('USB设备变化2222222:', data);
+          // 设备拔插时 路由到连接页面
+          router.replace({ path: '/' });
           const { device } = data;
           if (data.updateFail) {
             emitter.emit('toUpdate');
@@ -62,18 +66,15 @@ const useDeviceStore = defineStore('device', {
             if (device?.collections?.length) {
               try {
                 const targetCollection = device.collections.find(
-                  (collection) => collection.usage === 1 && [65440, 65456].includes(collection.usagePage),
+                  (collection) => collection.usage === 1 && [65440, 65456, 65408].includes(collection.usagePage),
                 );
 
-                // console.log('targetCollection: ', targetCollection);
-
                 if (targetCollection) {
-                  emitter.emit('reconnect-device');
                   if (this.reseted) {
                     emitter.emit('resetData', this.reseted);
                     this.reseted = false;
                   }
-                  // emitter.emit('setDeviceName', device.productName);
+
                 }
               } catch (error) {
                 console.error('Reconnection failed:', error);
@@ -86,12 +87,45 @@ const useDeviceStore = defineStore('device', {
         });
 
         // 监听设备拔插
-        if (devices.length > 0) {
-          const [device] = devices;
+        if (devices.length > 0) {          
+          let selectedDevice = null;
+          
+          if (devices.length === 1) {
+            // 只有一个设备时直接使用
+            selectedDevice = devices[0];
+            if (selectedDevice.usagePage === 65408) {
+              console.log('2.4G连接设备: ', selectedDevice);
+            }
+          } else {
+            // 多个设备时，优先选择非2.4G设备
+            console.log('检测到多个设备，开始设备优先级选择');
+            
+            // 分离2.4G设备和非2.4G设备
+            const non24GDevices = devices.filter(item => item.usagePage !== 65408);
+            const device24G = devices.filter(item => item.usagePage === 65408);
+            
+            console.log('非2.4G设备数量: ', non24GDevices.length);
+            console.log('2.4G设备数量: ', device24G.length);
+            
+            if (non24GDevices.length > 0) {
+              // 优先选择非2.4G设备
+              selectedDevice = non24GDevices[0];
+              console.log('选择非2.4G设备: ', selectedDevice);
+            } else {
+              // 如果只有2.4G设备，则选择第一个2.4G设备
+              selectedDevice = device24G[0];
+              console.log('只有2.4G设备可用，选择2.4G设备: ', selectedDevice);
+            }
+          }
+          
           this.devices = devices;
-          this.device = device;
-          if (device) {
-            await services.init(device.id);
+          this.device = selectedDevice;
+          if (selectedDevice) {
+            const res = await services.init(selectedDevice.id);
+            console.log('init res: ', res);
+            // const appStore = useAppStore();
+            // const res2 = await appStore.getBaseInfo(true);
+            // console.log('getBaseInfo res2: ', res2);
             this.connectDeviceStatus = true;
             return true;
           }
@@ -147,6 +181,13 @@ const useDeviceStore = defineStore('device', {
       const { doubleLighting } = doubleLightingRes;
       if (doubleLighting) this.isDoubleLighting = true;
       return doubleLightingRes;
+    },
+
+    // 获取设备列表
+    async getDevices() {
+      const devices = await services.getDevices();
+      console.log('获取设备列表: ', devices);
+      return devices;
     },
   },
 });
