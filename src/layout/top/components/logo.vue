@@ -1,9 +1,10 @@
 <template>
-  <!-- TODO 这里需要根据版本号来判断，v1是-150px，v2是-350px -->
-  <div class="logo-box" :style="{ marginLeft: isVersion2 ? '-350px' : '-120px' }">
-    <img class="logo-img" src="/src/assets/images/logo.png" alt="" />
-    <img class="bar-img" src="/src/assets/images/green_bar.svg" alt="" />
-    <span>{{ title }}</span>
+  <div class="logo-out-box">
+    <div class="logo-box">
+      <img class="logo-img" src="/src/assets/images/logo.png" alt="" />
+      <img class="bar-img" src="/src/assets/images/green_bar.svg" alt="" />
+      <span>{{ title }}</span>
+    </div>
   </div>
 </template>
 
@@ -119,11 +120,22 @@ const changeKeyboardVersion = async (version) => {
 </script>
 
 <style scoped lang="scss">
+.logo-out-box {
+  display: flex;
+    justify-content: center;
+    align-content: center;
+    flex: 2;
+}
+
 .logo-box {
   display: flex;
   justify-content: center;
   align-content: center;
   flex: 2;
+  // 屏幕居中
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
 
   .logo-img {
     width: calc(var(--size-200) + var(--size-7));

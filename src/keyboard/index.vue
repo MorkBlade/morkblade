@@ -66,7 +66,7 @@
     <template v-if="keyboardConfiguration === 84 && isVersion2">
       <div class="keyboard-container v2-three-mode">
         <div class="keyboard" >
-          <template v-for="(row, rowIndex) in layout">
+          <template v-for="(row, rowIndex) in lightLayout">
             <div class="row row_v2" :class="`row_${rowIndex + 1}`" :key="rowIndex" v-if="row[0].shapeScale?.w">
               <template v-for="(col, colIndex) in row">
                 <key v-if="col.shapeScale.w != 0 && col && col.keyItem && col.keyItem.keyValue"
@@ -275,9 +275,8 @@ const processedLayout = computed(() => {
   // 获取原始布局数据
   const baseLayout = layout.value;
 
-
   // 如果不是V2版本，直接返回原始布局
-  if (!isVersion2.value) {
+  if (!isVersion2.value || keyboardConfiguration.value == 84) {
     return baseLayout;
   }
 

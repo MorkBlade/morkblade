@@ -650,6 +650,9 @@ export default {
     highlightVersion: 'Highlight',
     testVersion: 'Test Only',
 
+    deepSleepTime: 'Deep Sleep Time',
+    shallowSleepTime: 'Shallow Sleep Time',
+
     latestVersion: 'V1.0.8(New)',
     version7: 'V1.0.7',
     version6: 'V1.0.6',

@@ -620,7 +620,8 @@ export default {
     factoryReset: '恢复出厂设置',
     
     currentConnectionMode: '当前连接模式',
-    sleepTime: '休眠时间',
+    deepSleepTime: '深度休眠时间',
+    shallowSleepTime: '浅度休眠时间',
     bluetooth1: '蓝牙1',
     bluetooth2: '蓝牙2',
     bluetooth3: '蓝牙3',

@@ -42,17 +42,16 @@
           </div>
 
           <template v-if="appStore.isThreeMode">
-            <div class="grid-item current-connection-mode">
-              <span v-ellipsis-marquee="{ duration: 5, gap: 24 }">{{ t('settings.currentConnectionMode') }}:</span>
-              <div class="connection-mode-text">
-                <p>{{ t(connectionMode) }}</p>
-              </div>
+            <div class="grid-item sleep-time">
+              <span v-ellipsis-marquee="{ duration: 5, gap: 24 }">{{ t('settings.shallowSleepTime') }}:</span>
+              <dropMenu :max-height="220" :items="sleepTimeList" :special-index="selectedShallowSleepTimeIdx"
+                @sendSelectedIdx="handleSelectedShallowSleepTime" />
             </div>
 
             <div class="grid-item sleep-time">
-              <span>{{ t('settings.sleepTime') }}:</span>
-              <dropMenu :max-height="220" :items="sleepTimeList" :special-index="selectedSleepTimeIdx"
-                @sendSelectedIdx="handleSelectedSleepTime" />
+              <span v-ellipsis-marquee="{ duration: 5, gap: 24 }">{{ t('settings.deepSleepTime') }}:</span>
+              <dropMenu :max-height="220" :items="sleepTimeList" :special-index="selectedDeepSleepTimeIdx"
+                @sendSelectedIdx="handleSelectedDeepSleepTime" />
             </div>
           </template>
         </div>
@@ -228,10 +227,8 @@ const updateTitle = ref(''); // dialog 标题
 const subVersionIdx = ref(null); // 子版本index
 const firmwareVerIdx = ref(null); // 固件版本index
 const selectedRateIdx = ref(null); // 回报率index
-const selectedSleepTimeIdx = ref(null); // 休眠时间index
-
-const connectionModeList = ['USB', '2.4G', t('settings.bluetooth1'), t('settings.bluetooth2'), t('settings.bluetooth3')]
-const connectionMode = ref('USB'); // 当前连接模式
+const selectedShallowSleepTimeIdx = ref(null); // 浅度休眠时间index
+const selectedDeepSleepTimeIdx = ref(null); // 深度休眠时间index
 
 // 按钮状态
 const restBtnStatus = ref(false);
@@ -296,18 +293,42 @@ emitter.on('versionChange', (flag) => {
   }
 });
 
+// 获取三模设备数据的通用函数
+const loadThreeModeData = async () => {
+  try {
+    const [sleepTime] = await Promise.all([
+      appStore.getSleepTime(),
+    ]);
+    
+    if (sleepTime?.shallowSleepTime !== undefined) {
+      selectedShallowSleepTimeIdx.value = sleepTimeList.value.findIndex(
+        item => item === `${sleepTime.shallowSleepTime}min`
+      );
+    }
+    if (sleepTime?.deepSleepTime !== undefined) {
+      selectedDeepSleepTimeIdx.value = sleepTimeList.value.findIndex(
+        item => item === `${sleepTime.deepSleepTime}min`
+      );
+    }
+  } catch (error) {
+    console.error('获取三模设备数据失败:', error);
+  }
+};
+
+// 监听 isThreeMode 状态变化
+watch(() => appStore.isThreeMode, (newValue) => {
+  if (newValue) loadThreeModeData();
+}, { immediate: false });
+
 onMounted(async () => {
+  // 确保基础信息已初始化，包括 isThreeMode 状态
+  await appStore.getBaseInfo(isVersion2.value);
+  
   const rate = await performanceStore.getRateOfReturn(isVersion2.value);
   selectedRateIdx.value = rate;
-  // 如果是三模版本
-  console.log('appStore.isThreeMode:', appStore.isThreeMode);
+
   if (appStore.isThreeMode) {
-    const sleepTime = await appStore.getSleepTime();
-    // 将获取到的浅睡时间映射到 sleepTimeList 的索引
-    const shallowSleepTime = sleepTime.shallowSleepTime;
-    selectedSleepTimeIdx.value = sleepTimeList.value.findIndex(item => item === `${shallowSleepTime}min`);
-    const deviceStatus = await appStore.getDeviceStatus();
-    connectionMode.value = connectionModeList[deviceStatus.mode];
+    await loadThreeModeData();
   }
   window.addEventListener('click', handleGlobalClick);
   getConfig();
@@ -330,12 +351,22 @@ const sleepTimeList = computed(() => {
   return ['10min', '30min', '60min', '120min', '240min', '360min'];
 });
 
-// 处理选中的休眠时间
-const handleSelectedSleepTime = (idx, item) => {
+
+// 处理选中的浅度睡眠时间
+const handleSelectedShallowSleepTime = (idx, item) => {
   // 浅度睡眠
-  const shallowSleepTime = item.slice(0, -3);
+  const shallowSleepTime = sleepTimeList.value[idx].slice(0, -3);
   // 深度睡眠
-  const deepSleepTime = Number(shallowSleepTime) * 2;
+  const deepSleepTime = sleepTimeList.value[selectedDeepSleepTimeIdx.value].slice(0, -3);
+  appStore.setSleepTime(shallowSleepTime, deepSleepTime);
+};
+
+// 处理选中的深度睡眠时间
+const handleSelectedDeepSleepTime = (idx, item) => {
+  // 浅度睡眠
+  const shallowSleepTime = sleepTimeList.value[selectedShallowSleepTimeIdx.value].slice(0, -3);
+  // 深度睡眠
+  const deepSleepTime = sleepTimeList.value[idx].slice(0, -3);
   appStore.setSleepTime(shallowSleepTime, deepSleepTime);
 };
 

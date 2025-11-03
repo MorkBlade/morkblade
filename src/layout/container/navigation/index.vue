@@ -119,6 +119,11 @@ watch(
 onMounted(() => {
   if (isVersion2) {
     setTimeout(async () => {
+      // 判断boardId是否存在，不存在就跳转到连接页面
+      if (!appStore.baseInfo?.boardId) {
+        router.replace({ path: '/connect' });
+        return;
+      }
       const boardId = appStore.baseInfo?.boardId.toString(16).padStart(8, '0');
       const vid = deviceStore.device?.vendorId.toString(16).padStart(4, '0');
       const pid = deviceStore.device?.productId.toString(16).padStart(4, '0');

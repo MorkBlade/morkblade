@@ -151,6 +151,10 @@
       display: flex;
       margin-top: var(--spacing-5);
       font-size: var(--font-size-16);
+      width: var(--spacing-105);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
   }
 

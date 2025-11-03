@@ -63,6 +63,8 @@ import { httpService } from '@/http/api/index.js';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import { ref } from 'vue';
+import { requestHIDDevice, connectToDevice, checkHIDSupport } from '@/utils/hid-helper.js';
+// import { Loading } from '@/utils/loading.js';
 
 const { t } = useI18n();
 const router = useRouter();
@@ -74,8 +76,9 @@ const progress = ref(0);
 
 // 连接按钮点击事件
 const handleDeviceStoreClick = async () => {  
+  const device = await requestHIDDevice();
   const result = await deviceStore.connectDevice();
-  console.log('connectDevice result:>>>', result);
+  console.log('连接结果: ', result);
   const version = deviceStore.devices[0]?.usagePage === 65440 ? 'v1' : 'v2';
   localStorage.setItem('keyboardVersion', version);
   if (appStore.baseInfo?.KeyboardRunMode === 255) {
@@ -90,8 +93,8 @@ const handleDeviceStoreClick = async () => {
       router.push({ name: 'performance' });
     }
   }
-  // Loading.closeAll();
 };
+
 
 const getFirmWarePack = async (url) => {
   let updateSuc = false;
