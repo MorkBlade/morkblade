@@ -289,6 +289,7 @@ export default {
     keyboard: 'Functions',
     mouse: 'Mouse',
     macro: 'Macro',
+    threeMode: 'Tri-Mode',
   },
   dks: {
     applyMapping: 'Apply',

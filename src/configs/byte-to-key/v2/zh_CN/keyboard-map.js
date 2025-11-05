@@ -38,6 +38,8 @@ export const keyboardMapByType = {
     decorativeLighting1: [62224, 62225, 62226, 62227, 62228, 62229, 62230, 62231, 62232], // 装饰灯1
     decorativeLighting2: [62240, 62241, 62242, 62243, 62244, 62245, 62246, 62247, 62248], // 装饰灯2
     decorativeLighting3: [62256, 62257, 62258, 62259, 62260, 62261, 62262, 62263, 62264], // 装饰灯3
+
+    threeMode: [62466, 62470, 62471, 62467, 62468, 62469],
 };
 
 export const keyboardMapV2 = {
@@ -1490,42 +1492,42 @@ export const keyboardMapV2 = {
         hex16: '0xF400',
         typeof: 'triMode',
     },
-    62465: {
+    62466: {
         name: '2.4G',
         type: '三模',
         comm: '切换至2.4G模式（短按切换，长按配对）',
         hex16: '0xF401',
         typeof: 'triMode',
     },
-    62466: {
+    62467: {
         name: 'BLE1',
         type: '三模',
         comm: '切换至蓝牙1模式（短按切换，长按配对）',
         hex16: '0xF402',
         typeof: 'triMode',
     },
-    62467: {
+    62468: {
         name: 'BLE2',
         type: '三模',
         comm: '切换至蓝牙2模式（短按切换，长按配对）',
         hex16: '0xF403',
         typeof: 'triMode',
     },
-    62468: {
+    62469: {
         name: 'BLE3',
         type: '三模',
         comm: '切换至蓝牙3模式（短按切换，长按配对）',
         hex16: '0xF404',
         typeof: 'triMode',
     },
-    62469: {
+    62470: {
         name: 'Reset',
         type: '三模',
         comm: '清除配对数据',
         hex16: '0xF405',
         typeof: 'triMode',
     },
-    62470: {
+    62471: {
         name: 'Batt',
         type: '三模',
         comm: '查询电量',
