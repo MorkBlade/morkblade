@@ -31,7 +31,7 @@
       <template v-if="checkedIdx === 5">
         <key v-for="ite in macro" :key="ite.id || ite" :key-value="ite" @select="selectItem" />
       </template>
-      <template v-if="checkedIdx === 6">
+      <template v-if="checkedIdx === 6 && appStore.isThreeMode">
         <key v-for="ite in threeMode" :key="ite.id || ite" :key-value="ite" @select="selectItem" />
       </template>
     </div>
@@ -44,6 +44,7 @@ import key from '@/components/key.vue';
 import { KEYBOARD_MACRO } from '@/configs/constant/zh_CN';
 import { useKeyboardStore, useMacroStore } from '@/stores';
 import { useI18n } from 'vue-i18n';
+import { useAppStore } from '@/stores';
 
 // 导入所有需要的图标
 import basicIcon from '@/assets/images/basic.svg';
@@ -64,6 +65,7 @@ import threeModeIconChecked from '@/assets/images/three_mode_c.svg';
 
 // V2键盘
 import { keyboardMapByType } from '@/configs/byte-to-key/v2/zh_CN/keyboard-map';
+
 
 // 创建图标映射对象
 const iconMap = {
@@ -102,18 +104,24 @@ const checkedIdx = ref(0);
 const keyboardStore = useKeyboardStore();
 const macroStore = useMacroStore();
 const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
+const appStore = useAppStore();
 
 const { t } = useI18n();
 
-const characterArr = computed(() => [
-  { name: t('customKey.basic'), icon: 'basic' },
-  { name: t('customKey.extend'), icon: 'extend' },
-  { name: t('customKey.special'), icon: 'special' },
-  { name: t('customKey.keyboard'), icon: 'keyboard' },
-  { name: t('customKey.mouse'), icon: 'mouse' },
-  { name: t('customKey.macro'), icon: 'macro' },
-  { name: t('customKey.threeMode'), icon: 'threeMode' },
-]);
+const characterArr = computed(() => {
+  const arr = [
+    { name: t('customKey.basic'), icon: 'basic' },
+    { name: t('customKey.extend'), icon: 'extend' },
+    { name: t('customKey.special'), icon: 'special' },
+    { name: t('customKey.keyboard'), icon: 'keyboard' },
+    { name: t('customKey.mouse'), icon: 'mouse' },
+    { name: t('customKey.macro'), icon: 'macro' },
+  ];
+  if (appStore.isThreeMode) {
+    arr.push({ name: t('customKey.threeMode'), icon: 'threeMode' });
+  }
+  return arr;
+});
 
 const basic = computed(() => {
   return isVersion2 ? basicV2 : basicV1;
