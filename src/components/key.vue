@@ -13,6 +13,7 @@
     
     <template v-if="showTip && keyboardMap[keyValue]?.comm">
       <span :style="tipStyle">{{ keyboardMap[keyValue]?.comm }}</span>
+      
     </template>
 
   </div>

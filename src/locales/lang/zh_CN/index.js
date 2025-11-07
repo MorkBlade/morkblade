@@ -283,6 +283,7 @@ export default {
     keyboard: '键盘控制',
     mouse: '鼠标键',
     macro: '宏按键',
+    threeMode: '三模',
   },
   dks: {
     applyMapping: '应用映射',

@@ -288,6 +288,7 @@ export default {
     keyboard: 'ファンクション',
     mouse: 'マウス',
     macro: 'マクロ',
+    threeMode: '三モード',
   },
   dks: {
     applyMapping: 'マッピングを適用',
