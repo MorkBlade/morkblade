@@ -5,7 +5,6 @@
     <span class="dropdown-text" v-ellipsis-marquee="{ duration: 5, gap: 24 }">
       <!-- TODO 目前写死翻译名字，后续需要优化 -->
       {{ $t(`connect.keyboardConfig${appStore.activeConfigIndex}`) }}
-      <!-- {{ $t(`messages.keyboardConfig${appStore.activeConfigIndex}`) }} -->
     </span>
     <img class="down-icon" :src="appStore.activeConfigIndex !== null ? downArrowed : downArrow"
       :style="{ transform: `rotate(${rotate}deg)` }" />
@@ -142,7 +141,7 @@ const delConfig = (configInfo) => {
     background-color: transparent;
     font-weight: 600;
     font-family: 'CN Heavy';
-    width: var(--spacing-100);
+    width: var(--spacing-95);
     text-align: center;
     overflow: hidden;
     text-overflow: ellipsis;

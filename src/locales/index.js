@@ -41,10 +41,10 @@ const importMessages = computed(() => {
 // 获取初始语言
 const getInitialLocale = () => {
   // 1. 优先使用 localStorage 中保存的语言设置
-  const storedLocale = useLocalStorage(localeConfigKey, null).value;
-  if (storedLocale && langCode.includes(storedLocale)) {
-    return storedLocale;
-  }
+  // const storedLocale = useLocalStorage(localeConfigKey, null).value;
+  // if (storedLocale && langCode.includes(storedLocale)) {
+  //   return storedLocale;
+  // }
 
   // 2. 使用浏览器语言
   const browserLang = navigator.language;

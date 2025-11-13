@@ -35,14 +35,14 @@
 										}}</span>
 									<span style="color: gray;" class="item-edit-text"
 										@click.stop="editState.handleCopy(item)">{{ $t('dialogConfig.copy') }}</span>
-									<span style="color: gray;" class="item-edit-text"
-										@click.stop="editState.handleMove('active', item)">{{
+									<span style="color: gray;" class="item-edit-text" v-ellipsis-marquee="{ duration: 5, gap: 24 }"
+										@click.stop="editState.handleMove('active', item)" >{{
 											$t('dialogConfig.moveToUnActiveConfig') }}</span>
 									<span style="color: gray;" class="item-edit-text share-btn"
 										@click.stop="editState.handleShare(item)">{{ $t('dialogConfig.share') }}</span>
-									<span class="item-edit-text" @click.stop="editState.handleExport(item)">{{
+									<span class="item-edit-text" v-ellipsis-marquee="{ duration: 5, gap: 24 }" @click.stop="editState.handleExport(item)" >{{
 										$t('dialogConfig.export') }}</span>
-									<span style="color: gray;" class="item-edit-text delete-btn"
+									<span class="item-edit-text delete-btn"
 										@click.stop="editState.handleDelete('active', item)">{{ $t('dialogConfig.delete')
 										}}</span>
 								</div>
@@ -76,10 +76,10 @@
 										$t('dialogConfig.rename') }}</span>
 									<span class="item-edit-text" @click.stop="editState.handleCopy(item)">{{
 										$t('dialogConfig.copy') }}</span>
-									<span class="item-edit-text" @click.stop="editState.handleMove('unActive', item)">{{
+									<span class="item-edit-text" v-ellipsis-marquee="{ duration: 5, gap: 24 }" @click.stop="editState.handleMove('unActive', item)">{{
 										$t('dialogConfig.moveToBoardConfig') }}</span>
 									<span class="item-edit-text share-btn">{{ $t('dialogConfig.share') }}</span>
-									<span class="item-edit-text" @click.stop="editState.handleExport(item)">{{
+									<span class="item-edit-text"  v-ellipsis-marquee="{ duration: 5, gap: 24 }" @click.stop="editState.handleExport(item)">{{
 										$t('dialogConfig.export') }}</span>
 									<span class="item-edit-text delete-btn"
 										@click.stop="editState.handleDelete('unActive', item)">{{
@@ -125,10 +125,8 @@
 		:showCancelBtn="false" @cancel="handleImportCancel" @update:isShow="val => showImportDialog = val">
 		<template #default>
 			<div class="import-dialog">
-				<div :class="isChniese ? 'local-import-cn' : 'local-import-en'" @click="handleLocalImport">
-				</div>
-				<div :class="isChniese ? 'code-import-cn' : 'code-import-en'" @click="handleCodeImport">
-				</div>
+				<div :class="isChniese ? 'local-import-cn' : 'local-import-en'" @click="handleLocalImport"></div>
+				<div :class="isChniese ? 'code-import-cn' : 'code-import-en'" @click="handleCodeImport"></div>
 			</div>
 			<div class="import-btn-group">
 				<div class="cancel-btn" @click="showImportDialog = false">
@@ -848,11 +846,16 @@ onBeforeUnmount(() => {
 						overflow: hidden;
 
 						.item-edit-text {
+							width: 100%;
 							height: var(--size-30);
 							padding: 0 var(--spacing-20);
 							line-height: var(--size-30);
 							font-family: "CN Regular";
 							font-size: var(--size-10);
+							overflow: hidden;
+							text-overflow: ellipsis;
+							white-space: nowrap;
+
 
 							&:hover {
 								background-color: #91bc00;
@@ -861,11 +864,11 @@ onBeforeUnmount(() => {
 						}
 
 						.delete-btn {
-							color: #ff0000 !important;
+							color: #ff0000 ;
 
 							&:hover {
 								background-color: #ff0000;
-								color: #000 !important;
+								color: #000 ;
 							}
 						}
 
