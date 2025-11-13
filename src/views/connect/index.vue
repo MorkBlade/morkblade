@@ -13,7 +13,7 @@
     <div class="connect-guide">
       <div class="guide-item">
         <p>{{ $t('connect.connectStep1') }}</p>
-        <img class="guide-item__icon1" src="@/assets/images/guide1.svg" alt="" />
+        <img class="guide-item__icon1" :src="step1Img" alt="" />
         <div class="step">
           <img src="@/assets/images/sure.svg" alt="" />
           {{ $t('connect.step1') }}
@@ -22,7 +22,7 @@
       <img class="next_icon" src="@/assets/images/next_step.svg" alt="" />
       <div class="guide-item">
         <p>{{ $t('connect.connectStep2') }}</p>
-        <img class="guide-item__icon2" src="@/assets/images/guide2.svg" alt="" />
+        <img class="guide-item__icon2" :src="step2Img" alt="" />
         <div class="step">
           <img src="@/assets/images/sure.svg" alt="" />
           {{ $t('connect.step2') }}
@@ -38,7 +38,7 @@
         </div>
       </div>
     </div>
-    <div class="update-box" v-if="isUpdate">
+    <div class="update-box" v-if="isUpdate"> 
       <div>
         <p>{{ $t('connect.upgradeMode') }}</p>
         <span>{{ $t('connect.upgradeing') }}</span>
@@ -64,15 +64,29 @@ import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import { ref } from 'vue';
 import { requestHIDDevice, connectToDevice, checkHIDSupport } from '@/utils/hid-helper.js';
-// import { Loading } from '@/utils/loading.js';
+// 引入图片资源
+import step1ImgCn from '@/assets/images/guide1.svg';
+import step1ImgEn from '@/assets/images/guide1_en.svg';
+import step2ImgCn from '@/assets/images/guide2.svg';
+import step2ImgEn from '@/assets/images/guide2_en.svg';
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 const router = useRouter();
 const deviceStore = useDeviceStore();
 const appStore = useAppStore();
 
 const isUpdate = ref(false);
 const progress = ref(0);
+
+// 感觉当前语言使用不同的图片
+const step1Img = computed(() => {
+  return locale.value === 'zh_CN' ? step1ImgCn : step1ImgEn;
+});
+
+const step2Img = computed(() => {
+  return locale.value === 'zh_CN' ? step2ImgCn : step2ImgEn;
+});
+
 
 // 连接按钮点击事件
 const handleDeviceStoreClick = async () => {  

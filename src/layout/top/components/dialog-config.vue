@@ -125,9 +125,9 @@
 		:showCancelBtn="false" @cancel="handleImportCancel" @update:isShow="val => showImportDialog = val">
 		<template #default>
 			<div class="import-dialog">
-				<div class="local-import" @click="handleLocalImport">
+				<div :class="isChniese ? 'local-import-cn' : 'local-import-en'" @click="handleLocalImport">
 				</div>
-				<div class="code-import" @click="handleCodeImport">
+				<div :class="isChniese ? 'code-import-cn' : 'code-import-en'" @click="handleCodeImport">
 				</div>
 			</div>
 			<div class="import-btn-group">
@@ -167,7 +167,13 @@ import { showMessage } from '@/utils/message';
 import Dialog from '@/components/dialog.vue';
 import { useI18n } from 'vue-i18n';
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
+
+// 配置导入图片中英文判断
+const isChniese = computed(() => {
+	return locale.value === 'zh_CN';
+});
+
 
 let timer = null;
 
@@ -855,11 +861,11 @@ onBeforeUnmount(() => {
 						}
 
 						.delete-btn {
-							color: #ff0000;
+							color: #ff0000 !important;
 
 							&:hover {
 								background-color: #ff0000;
-								color: #000;
+								color: #000 !important;
 							}
 						}
 
@@ -1059,7 +1065,7 @@ onBeforeUnmount(() => {
 		gap: 130px;
 		transform: translate(-50%, -50%);
 
-		.local-import {
+		.local-import-cn {
 			width: var(--size-130);
 			height: var(--size-130);
 			background-color: #242424;
@@ -1075,7 +1081,7 @@ onBeforeUnmount(() => {
 			}
 		}
 
-		.code-import {
+		.code-import-cn {
 			width: var(--size-130);
 			height: var(--size-130);
 			background-color: #242424;
@@ -1088,6 +1094,37 @@ onBeforeUnmount(() => {
 
 			&:hover {
 				background-image: url('@/assets/images/code_import_hover.svg');
+			}
+		}
+		.local-import-en {
+			width: var(--size-130);
+			height: var(--size-130);
+			background-color: #242424;
+			border-radius: 10px;
+			background-image: url('@/assets/images/local_import_en.svg');
+			background-size: contain;
+			background-repeat: no-repeat;
+			background-position: center;
+			cursor: pointer;
+
+			&:hover {
+				background-image: url('@/assets/images/local_import_hover_en.svg');
+			}
+		}
+
+		.code-import-en {
+			width: var(--size-130);
+			height: var(--size-130);
+			background-color: #242424;
+			border-radius: 10px;
+			background-image: url('@/assets/images/code_import_en.svg');
+			background-size: contain;
+			background-repeat: no-repeat;
+			background-position: center;
+			cursor: pointer;
+
+			&:hover {
+				background-image: url('@/assets/images/code_import_hover_en.svg');
 			}
 		}
 
