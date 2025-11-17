@@ -26,7 +26,7 @@
 									@dragend="dragState.handleDragEnd" @click="handleActiveItem(index)">
 									<!-- //TODO 翻译 目前使用索引，后续使用title -->
 									<!-- <span class="item-title">{{ item.title }}</span> -->
-									<span class="item-title">{{ $t(`connect.keyboardConfig${index}`) }}</span>
+									<span class="item-title" v-ellipsis-marquee="{ duration: 5, gap: 24 }">{{ $t(`connect.keyboardConfig${index}`) }}</span>
 									<span class="more-icon" @click.stop="editState.showEdit(item)"></span>
 								</div>
 								<div class="item-edit" v-if="editState.editingItemId === item">
@@ -103,7 +103,7 @@
 					</div>
 					<div class="cancel-btn" @click="showImportDialog = true">
 						<img src="@/assets/images/download.svg" alt="" />
-						<span class="import-text">{{ $t('dialogConfig.importConfig') }}</span>
+						<span class="import-text" >{{ $t('dialogConfig.importConfig') }}</span>
 					</div>
 				</div>
 			</div>
@@ -855,7 +855,6 @@ onBeforeUnmount(() => {
 							overflow: hidden;
 							text-overflow: ellipsis;
 							white-space: nowrap;
-
 
 							&:hover {
 								background-color: #91bc00;

@@ -2,7 +2,7 @@
 
 export default {
   connect: {
-    connectTip1: 'WELCOMETO MORKBLADE',
+    connectTip1: 'WELCOME TO MORKBLADE',
     connectTip2: 'TAKE 3 STEPS TO CONFIG YOUR KEYBOARD',
     connectKeyBoard: 'Connect',
     connectStep1: 'Click Connect Button',
@@ -239,7 +239,7 @@ export default {
     copy: 'Copy',
     moveToUnActiveConfig: 'Move to unactive config',
     share: 'Share config',
-    export: 'Export config to local',
+    export: 'Export config to local file.',
     delete: 'Delete',
     unActiveConfig: 'Unactive config',
     noTips: 'Currently only supports importing/exporting config locally',

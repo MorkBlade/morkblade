@@ -27,7 +27,7 @@
         <p>{{ t('settings.deviceSetting') }}</p>
         <div class="set-box">
           <div class="grid-item rate-of-return">
-            <span>{{ t('settings.returnRateSwitch') }}:</span>
+            <span v-ellipsis-marquee="{ duration: 5, gap: 24 }">{{ t('settings.returnRateSwitch') }}:</span>
             <dropMenu :max-height="320" :items="RateOfReturnList" :special-index="selectedRateIdx"
               @sendSelectedIdx="handleSelectedRate" />
           </div>
