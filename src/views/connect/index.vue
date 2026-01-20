@@ -38,7 +38,7 @@
         </div>
       </div>
     </div>
-    <div class="update-box" v-if="isUpdate"> 
+    <div class="update-box" v-if="isUpdate">
       <div>
         <p>{{ $t('connect.upgradeMode') }}</p>
         <span>{{ $t('connect.upgradeing') }}</span>
@@ -89,7 +89,7 @@ const step2Img = computed(() => {
 
 
 // 连接按钮点击事件
-const handleDeviceStoreClick = async () => {  
+const handleDeviceStoreClick = async () => {
   const device = await requestHIDDevice();
   const result = await deviceStore.connectDevice();
   console.log('连接结果: ', result);

@@ -29,12 +29,13 @@ const useDeviceStore = defineStore('device', {
   },
 
   actions: {
-    
+
     async connectDevice() {
       try {
         const devices = await services.getDevices();
         services.on('GETDEVICEINFO', (requestDeviceStatus) => {
           this.requestDeviceStatus = requestDeviceStatus;
+          console.log('requestDeviceStatus: ', requestDeviceStatus);
         });
         emitter.on('isUpdate', (data) => {
           // console.log('isupdate', data);
@@ -83,9 +84,9 @@ const useDeviceStore = defineStore('device', {
         });
 
         // 监听设备拔插
-        if (devices.length > 0) {          
+        if (devices.length > 0) {
           let selectedDevice = null;
-          
+
           if (devices.length === 1) {
             // 只有一个设备时直接使用
             selectedDevice = devices[0];
@@ -95,14 +96,14 @@ const useDeviceStore = defineStore('device', {
           } else {
             // 多个设备时，优先选择非2.4G设备
             console.log('检测到多个设备，开始设备优先级选择');
-            
+
             // 分离2.4G设备和非2.4G设备
             const non24GDevices = devices.filter(item => item.usagePage !== 65408);
             const device24G = devices.filter(item => item.usagePage === 65408);
-            
+
             console.log('非2.4G设备数量: ', non24GDevices.length);
             console.log('2.4G设备数量: ', device24G.length);
-            
+
             if (non24GDevices.length > 0) {
               // 优先选择非2.4G设备
               selectedDevice = non24GDevices[0];
@@ -113,7 +114,7 @@ const useDeviceStore = defineStore('device', {
               console.log('只有2.4G设备可用，选择2.4G设备: ', selectedDevice);
             }
           }
-          
+
           this.devices = devices;
           this.device = selectedDevice;
           if (selectedDevice) {

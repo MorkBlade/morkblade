@@ -350,7 +350,7 @@ watch(clickData, () => {
     }
     dksInfo.value.trps[i] = buf;
   }
-  // console.log('watch clickData: ', dksInfo.value.trps);
+  console.log('watch clickData: ', dksInfo.value.trps);
 });
 
 const updateUIFromTrps = () => {
@@ -814,7 +814,7 @@ const save = async () => {
     row = +rowIndex;
     col = +colIndex;
   }
-  // console.log('dks save log info: ', dksInfo.value);
+  console.log('dks save log info: ', dksInfo.value);
   const res = await setDKS({ key, row, col, ...dksInfo.value });
   reset();
   return res;

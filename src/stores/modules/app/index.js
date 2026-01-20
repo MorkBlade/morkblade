@@ -84,7 +84,7 @@ const useAppStore = defineStore('app', {
       if (isVersion2) {
         const result = await services.getConfigListV2();
         const result2 = await services.getConfigV2();
-     
+
         const curConfig = result2[0].key;
         // this.activeConfigIndex = result[0]?.list.findIndex((item) => item === curConfig);
         this.activeConfigIndex = result2[0].value;
@@ -124,6 +124,7 @@ const useAppStore = defineStore('app', {
     async getBaseInfo(isVersion2 = false) {
       if (isVersion2) {
         const result = await services.getDevicesInfoV2();
+        console.log('getBaseInfo result: ', result);
         this.baseInfo = (result && result[0]) || {};
         this.isThreeMode = result[0]?.subType === 1;
         return result;

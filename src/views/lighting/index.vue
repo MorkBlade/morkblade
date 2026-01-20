@@ -80,7 +80,7 @@ const debounce = (fn, delay) => {
 
 const clickItem = ref(0);
 const isVersion2 = ref(localStorage.getItem('keyboardVersion') === 'v2');
-const lightingItem = computed(() => 
+const lightingItem = computed(() =>
   [t('lighting.lightingMenu1'), t('lighting.lightingMenu2'), t('lighting.lightingMenu3'), t('lighting.lightingMenu4')]
 );
 let animationFrameId = null;

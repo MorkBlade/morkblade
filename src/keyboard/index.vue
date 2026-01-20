@@ -62,6 +62,32 @@
       </div>
     </template>
 
+    <!-- v2 66配列 -->
+    <template v-if="keyboardConfiguration === 66 && isVersion2">
+      <div class="keyboard-container v2">
+        <div class="keyboard" :style="{
+          width: `${containerDimensions.width}px`,
+            height: `${containerDimensions.height}px`,
+          }">
+          <template v-for="(row, rowIndex) in lightLayout">
+            <div class="row" :class="`row_${rowIndex + 1}`" :key="rowIndex" v-if="row[0].shapeScale?.w">
+              <template v-for="(col, colIndex) in row">
+                <key v-if="col.shapeScale.w != 0 && col && col.keyItem && col.keyItem.keyValue"
+                  :key="`key-${rowIndex}-${colIndex}`" :row="rowIndex" :column="colIndex" :keyItem="col.keyItem"
+                  :shapeScale="col.shapeScale" :location="col.location"
+                  :active="activeKeys.includes(`${rowIndex}-${colIndex}`)" @click="handleKeyClick(rowIndex, colIndex)"
+                  @emits="handleCancelSelect" />
+              </template>
+            </div>
+          </template>
+
+          <div class="logo-light-bar__left">
+            <span></span>
+          </div>
+        </div>
+      </div>
+    </template>
+
     <!-- v2 84配列 -->
     <template v-if="keyboardConfiguration === 84 && isVersion2">
       <div class="keyboard-container v2-three-mode">
@@ -225,13 +251,15 @@ const handleHighLevelKeyChange = ({ rowIndex, colIndex }) => {
 const keyboardConfiguration = ref(60);
 // 匹配布局，暂时用json文件来做
 const matchLayout = () => {
-  // console.log('isVersion2: ', isVersion2.value);
   if (!isVersion2.value) {
     return layouts.keyboardLayoutV1;
   }
   if (deviceStore.devices[0]?.productId === 5382 && deviceStore.devices[0]?.vendorId === 7334) {
     keyboardConfiguration.value = 84;
     return layouts.keyboardLayoutV2_threeMode;
+  } else if (deviceStore.devices[0]?.productId === 5384 && deviceStore.devices[0]?.vendorId === 7334) {
+    keyboardConfiguration.value = 66;
+    return layouts.mk66;
   } else {
     keyboardConfiguration.value = 60;
     return layouts.keyboardLayoutV2;
@@ -275,8 +303,8 @@ const processedLayout = computed(() => {
   // 获取原始布局数据
   const baseLayout = layout.value;
 
-  // 如果不是V2版本，直接返回原始布局
-  if (!isVersion2.value || keyboardConfiguration.value == 84) {
+  // 如果不是V2版本，或者84/66配列，直接返回原始布局
+  if (!isVersion2.value || keyboardConfiguration.value == 84 || keyboardConfiguration.value == 66) {
     return baseLayout;
   }
 
@@ -461,7 +489,7 @@ const containerDimensions = computed(() => {
       }
     }
 
-   
+
 
     .keyboard {
       border-radius: var(--spacing-15);

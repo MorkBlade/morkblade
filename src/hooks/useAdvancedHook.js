@@ -599,12 +599,14 @@ export const useAdvancedHook = () => {
               // console.log('getHighLevelKeysV2 result', result);
               const data = result;
               const advancedKeyMode = data.mode;
+              console.log('getHighLevelKeysV2 data', data);
               await processKey(keyValue, data, row, col, advancedKeyMode);
             } catch (error) {
               console.error(`Error processing key at row ${row}, col ${col}:`, error);
             }
           }
         }
+        console.log('getHighLevelKeysV2 keyboards', keyboards);
       } else {
         // console.log('start match advanced mode------------------------>');
         for (let row = 0; row < keyboards.length; row++) {

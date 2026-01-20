@@ -333,6 +333,7 @@ const usePerformanceStore = defineStore('performance', {
     async getRm6X21Travel(keyboards, isVersion2) {
       if (isVersion2) {
         let max = 0;
+          console.log('⛔--------', keyboards.length);
         for (let i = 0; i < keyboards.length; i++) {
           const route = await services.getRouteV2({ row: i });
           const curMax = Math.max(...route[0].data);
@@ -615,8 +616,8 @@ const usePerformanceStore = defineStore('performance', {
     async getAixsList(isVersion2) {
       this.axisList = [];
       if (isVersion2) {
-        // 判断轴的版本 
-        const list = await this.getAxisVersion(); 
+        // 判断轴的版本
+        const list = await this.getAxisVersion();
         if (this.isAxisStatus === 'v1') {
           // v1的轴去请求getAxisList
           const V1AxisList = await httpService.getAxisList();
@@ -656,7 +657,7 @@ const usePerformanceStore = defineStore('performance', {
 
         } else {
           const appStore = useAppStore();
-         
+
           const deviceStore = useDeviceStore();
           await appStore.getBaseInfo(true);
           // v2的轴去请求getAxisListV2
@@ -667,8 +668,8 @@ const usePerformanceStore = defineStore('performance', {
           this.allAxisListV2 = await httpService.getAxisListV2(params);;
           this.allAxisListV2.forEach((axisItem, itemIndex) => {
             this.axisList.push({ ...axisItem, axisIndex: itemIndex });
-          });   
-          
+          });
+
           // 处理轴体图标映射
 
           // 修复变量重复声明问题，避免重复声明 item
@@ -687,7 +688,7 @@ const usePerformanceStore = defineStore('performance', {
             }
           });
         }
-        
+
         return list;
       } else {
         const allAxisList = await httpService.getAxisList();
@@ -697,7 +698,7 @@ const usePerformanceStore = defineStore('performance', {
           const index = allAxisList.findIndex((axis) => axis.axis_id === item);
           if (index !== -1) {
             const item = allAxisList[index];
-            this.axisList.push(item); 
+            this.axisList.push(item);
             let factory_name = (item.factory_name === 'TTC' || item.factory_name === '佳达隆') ? item.factory_name : 'other';
             item.factory_name = factory_name;
           }

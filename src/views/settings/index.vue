@@ -299,7 +299,7 @@ const loadThreeModeData = async () => {
     const [sleepTime] = await Promise.all([
       appStore.getSleepTime(),
     ]);
-    
+
     if (sleepTime?.shallowSleepTime !== undefined) {
       selectedShallowSleepTimeIdx.value = sleepTimeList.value.findIndex(
         item => item === `${sleepTime.shallowSleepTime}min`
@@ -323,7 +323,7 @@ watch(() => appStore.isThreeMode, (newValue) => {
 onMounted(async () => {
   // 确保基础信息已初始化，包括 isThreeMode 状态
   await appStore.getBaseInfo(isVersion2.value);
-  
+
   const rate = await performanceStore.getRateOfReturn(isVersion2.value);
   selectedRateIdx.value = rate;
 

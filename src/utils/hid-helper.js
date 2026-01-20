@@ -22,6 +22,7 @@ export const DEVICE_FILTERS = [
   { vendorId: 0x1ca6, productId: 0x1506 }, // mk84
   { vendorId: 0x1c4f, productId: 0xee88 }, // v1 boot
   { vendorId: 7331, productId: 257 },      // v1
+  { vendorId: 7334, productId: 5384 }, // mk66
 ];
 
 /**
@@ -36,13 +37,13 @@ export async function requestHIDDevice(filters = DEVICE_FILTERS) {
 
   try {
     console.log('正在请求HID设备连接...');
-    
+
     // 这里会弹出浏览器的设备选择弹窗
     const devices = await navigator.hid.requestDevice({
       filters: filters
     });
     console.log('发现设备:', devices);
-    
+
     if (devices && devices.length > 0) {
       const selectedDevice = devices[0];
       console.log('用户选择了设备:', {
@@ -96,12 +97,12 @@ export async function connectToDevice(device) {
     if (!device.opened) {
       await device.open();
       console.log('设备连接成功:', device.productName);
-      
+
       // 监听设备数据
       device.addEventListener('inputreport', (event) => {
         console.log('收到设备数据:', event.data);
       });
-      
+
       return true;
     }
     return true;
@@ -145,7 +146,7 @@ export function setupDeviceListeners() {
 
 // 使用示例：
 // import { requestHIDDevice, connectToDevice } from '@/utils/hid-helper.js';
-// 
+//
 // async function handleConnectClick() {
 //   const device = await requestHIDDevice();
 //   if (device) {

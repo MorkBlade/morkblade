@@ -65,7 +65,9 @@ const useKeyboardStore = defineStore('keyboard', {
 
       try {
         // 使用 Promise.allSettled 替代 Promise.all 以防止一个失败影响所有
+        console.log('batches', batches);
         const results = await Promise.allSettled(batches.map((batch) => services.getLayoutKeyInfo(batch)));
+        console.log('results', results);
         // 处理结果
         const rowData = [];
         results.forEach((result, index) => {
@@ -355,7 +357,7 @@ const useKeyboardStore = defineStore('keyboard', {
         // 新增：恢复性能设置
         await this.restorePerformanceSettings(keyboardData, isVersion2);
 
-        // 
+        //
         return true;
       } catch (error) {
         console.error('Import keyboard config error:', error);
