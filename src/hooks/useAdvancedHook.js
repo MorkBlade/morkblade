@@ -126,6 +126,7 @@ export const useAdvancedHook = () => {
       getRS({ keyValue: dks[1], data: result2, row: row2, col: col2, mode: 9 });
       // getRS({ ...dksData, keyValue: dks[1] });
     } else {
+      console.log('⛔--------', 'setRS dks', dks);
       result = await services.setRS({ key: dks[0], dks: dks[1] });
       const keysArray = getRowCol(dks);
       const [[row, col], [row2, col2]] = keysArray.map((item) => item.split('-').map(Number));

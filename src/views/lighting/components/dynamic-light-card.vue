@@ -103,6 +103,12 @@ const dynamicLightStyleV2 = computed(()  =>  [
   t('dynamicLightCard.dynamicLightStyleV2.waterRipple'),
 ]);
 
+const decorativeLightStyleV2 = computed(() => [
+  t('dynamicLightCard.dynamicLightStyleV2.quietLight'),
+  t('dynamicLightCard.dynamicLightStyleV2.theTidesRiseAndFall'),
+  t('dynamicLightCard.dynamicLightStyleV2.ripplesGentlySpread'),
+  t('dynamicLightCard.dynamicLightStyleV2.rotatingStorm'),
+]);
 emitter.on('versionChange', (flag) => {
   if (flag) {
     setTimeout(() => {
@@ -117,6 +123,10 @@ const dynamicLightModeList = computed(() => {
       return dynamicLightStyleV2.value;
     }
     return dynamicLightStyleV1.value;
+  } else if (dynamicType === 'decorativeLight') {
+    if (isVersion2.value) {
+      return decorativeLightStyleV2.value;
+    }
   } else {
     return [t('dynamicLightCard.style1'), t('dynamicLightCard.style2'), t('dynamicLightCard.style3'), t('dynamicLightCard.style4')];
   }

@@ -20,32 +20,11 @@ export const useLightingHook = () => {
       lightSettingStore.updateLightingBaseData(lightingBase[0]);
       const lightSleepTime = await services.getLightingSleepTimeV2();
       lightSettingStore.updateSleepTime(lightSleepTime);
-      // const { open, mode, luminance, speed, direction, selectStaticColor } = lightingBase[0];
-      // // lightData.open = true;
-      // lightData.open = open === 'Open' || open === 'OpenUp' || open === 'OpenDown';
-      // lightData.mode = mode;
-      // lightData.luminance = luminance;
-      // lightData.speed = speed;
-      // lightData.direction = direction === 'Forward';
-      // lightData.selectStaticColor = selectStaticColor;
-      // // console.log('lightData.openlightData.open', lightData.open);
-      // if (open === 'Open') {
-      //   lightSettingStore.upOpen = true;
-      //   lightSettingStore.downOpen = true;
-      // } else if (open === 'OpenUp') {
-      //   lightSettingStore.upOpen = true;
-      // } else if (open === 'OpenDown') {
-      //   lightSettingStore.downOpen = true;
-      // } else {
-      //   lightSettingStore.upOpen = false;
-      //   lightSettingStore.downOpen = false;
-      // }
 
       const lightingPalette = await services.getLightingPaletteV2({ area: area, config: palette });
 
       const colors = paletteToHexArray(lightingPalette[0]?.staticColors).map((color, index) => ({ color, id: index }));
       lightData.staticColors = colors;
-      // console.log('custom lighting data: ', await services.getLightingCustomV2());
 
       modifyCustomLightingData();
     } else {
@@ -118,11 +97,7 @@ export const useLightingHook = () => {
   const modifyCustomLightingData = async () => {
     const customLighting = await services.getLightingCustomV2();
     const keyboardStore = useKeyboardStore();
-    // customLighting.forEach((row, rowIndex) => {
-    //   row.forEach((col, colIndex) => {
-    //     keyboardStore.keyboards[rowIndex][colIndex].customLight = col;
-    //   });
-    // });
+
     for (let row = 0; row < keyboardStore.keyboards.length; row++) {
       for (let col = 0; col < keyboardStore.keyboards[row].length; col++) {
         keyboardStore.keyboards[row][col].customLight = customLighting[row][col];
@@ -242,6 +217,41 @@ export const useLightingHook = () => {
     }
   }
 
+  // 初始化装饰灯光配置
+  const initDecorativeLighting = async () => {
+    const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
+    if (!isVersion2) return;
+
+    try {
+      // 获取装饰灯光区域的基础配置
+      const lightingBase = await services.getLightingBaseV2({
+        area: lightSettingStore.area,
+        config: lightSettingStore.base
+      }, 'SingleLighting');
+      console.log('⛔--------获取装饰灯光区域的基础配置', lightingBase);
+
+      if (lightingBase && lightingBase[0]) {
+        lightSettingStore.updateLightingBaseData(lightingBase[0]);
+      }
+
+
+      // 获取装饰灯光区域的调色板配置
+      const lightingPalette = await services.getLightingPaletteV2({
+        area: lightSettingStore.area,
+        config: lightSettingStore.palette
+      });
+
+      if (lightingPalette && lightingPalette[0]?.staticColors) {
+        const colors = paletteToHexArray(lightingPalette[0].staticColors).map((color, index) => ({ color, id: index }));
+        lightData.staticColors = colors;
+      }
+
+      console.log('装饰灯光初始化完成, area:', lightSettingStore.area);
+    } catch (error) {
+      console.error('初始化装饰灯光失败:', error);
+    }
+  };
+
   return {
     initLighting,
     setLighting,
@@ -252,7 +262,8 @@ export const useLightingHook = () => {
     getLightingSaturation,
     setLightingSaturation,
     setLightingSleepTime,
-    getLightingDataV2
+    getLightingDataV2,
+    initDecorativeLighting
   };
 };
 

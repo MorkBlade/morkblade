@@ -181,7 +181,7 @@ export default {
     cancelUpdate: '取消升级',
   },
   dropMenu: {
-    select: '请选择', 
+    select: '请选择',
   },
   dzTravel: {
     minValue: '最小值为0.005',
@@ -370,6 +370,7 @@ export default {
     lightingMenu2: 'LOGO灯效',
     lightingMenu3: '自定义灯效',
     lightingMenu4: '高级设置',
+    lightingMenu5: '装饰灯',
   },
   dynamicLightCard: {
     dynamicLight: '动态灯光',
@@ -619,7 +620,7 @@ export default {
     updateLog: '固件更新日志',
     returnRateSwitch: '回报率切换',
     factoryReset: '恢复出厂设置',
-    
+
     currentConnectionMode: '当前连接模式',
     deepSleepTime: '深度休眠时间',
     shallowSleepTime: '浅度休眠时间',

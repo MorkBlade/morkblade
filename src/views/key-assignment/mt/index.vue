@@ -91,6 +91,7 @@ const emits = defineEmits(['handleKeyTypeChange', 'handleDialoConfirm']);
 const keyText = computed(() => {
   // 根据键盘版本选择对应的键盘配置
   const keyboard = isVersion2 ? keyboardV2 : keyboardV1;
+  console.log('根据键盘版本选择对应的键盘配置', mtInfo.value);
   return [keyboard[mtInfo.value.dks[0]] || '', keyboard[mtInfo.value.dks[1]] || ''];
 });
 

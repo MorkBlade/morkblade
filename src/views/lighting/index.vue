@@ -26,9 +26,10 @@
       />
       <customLighting v-if="clickItem === 2" />
       <lightingAdvanced v-if="clickItem === 3" />
+    <decorativeLighting v-if="clickItem === 4" />
     </div>
     <lightLuminance
-      v-if="clickItem !== 3"
+      v-if="clickItem !== 3 && clickItem !== 4"
       @changeSleepDelay="changeSleepDelay"
       @changeLuminance="debouncedChangeLuminance"
       @changeSpeed="debouncedChangeSpeed"
@@ -37,7 +38,7 @@
   </div>
 </template>
 <script setup>
-import { useLightSettingStore, useKeyboardStore, useDeviceStore } from '@/stores';
+import { useLightSettingStore, useKeyboardStore, useDeviceStore, usePageStore } from '@/stores';
 import { useLightingHook } from '@/hooks';
 import emitter from '@/utils/app-emitter';
 
@@ -47,14 +48,15 @@ import logoLighting from './logo-lighting/index.vue';
 import lightingAdvanced from './lighting-advanced/index.vue';
 import customLighting from './custom-lighting/index.vue';
 import lightLuminance from './components/light-luminance.vue';
+import decorativeLighting from './decorative-lighting/index.vue';
 import { storeToRefs } from 'pinia';
 import { useI18n } from 'vue-i18n';
-
 const { t } = useI18n();
 
 const keyboardStore = useKeyboardStore();
 const deviceStore = useDeviceStore();
 const lightSettingStore = useLightSettingStore();
+const pageStore = usePageStore();
 const { upOpen, downOpen } = storeToRefs(lightSettingStore);
 const { isDoubleLighting } = storeToRefs(deviceStore);
 const {
@@ -81,7 +83,7 @@ const debounce = (fn, delay) => {
 const clickItem = ref(0);
 const isVersion2 = ref(localStorage.getItem('keyboardVersion') === 'v2');
 const lightingItem = computed(() =>
-  [t('lighting.lightingMenu1'), t('lighting.lightingMenu2'), t('lighting.lightingMenu3'), t('lighting.lightingMenu4')]
+  [t('lighting.lightingMenu1'), t('lighting.lightingMenu2'), t('lighting.lightingMenu3'), t('lighting.lightingMenu4'), t('lighting.lightingMenu5')]
 );
 let animationFrameId = null;
 let lastUpdateTime = 0;
@@ -106,6 +108,7 @@ services.on('lightingBase', async (data) => {
 const updateColors = async () => {
   try {
     const customLighting = await services.getLightingCustomV2();
+    // console.log('⛔--------更新颜色的函数', customLighting);
     const root = document.documentElement;
     const changedKeys = new Set();
 
@@ -151,10 +154,41 @@ const updateColors = async () => {
   }
 };
 
+// 更新装饰灯颜色的函数
+const updateDecorativeColors = async () => {
+  try {
+    const decorativeLighting = await services.getLightingCustomV2();
+    console.log('⛔--------更新装饰灯颜色的函数', decorativeLighting);
+    const root = document.documentElement;
+
+    // 装饰灯有22个键位，按索引设置CSS变量
+    if (Array.isArray(decorativeLighting)) {
+      decorativeLighting.forEach((color, index) => {
+        if (color) {
+          const { R, G, B } = color;
+          const currentColor = root.style.getPropertyValue(`--decorative-color-${index}`);
+          const newColor = `rgb(${R},${G},${B})`;
+
+          if (currentColor !== newColor) {
+            root.style.setProperty(`--decorative-color-${index}`, newColor);
+          }
+        }
+      });
+    }
+  } catch (error) {
+    console.error('Error updating decorative lighting colors:', error);
+  }
+};
+
 // 动画帧循环
 const animationLoop = async (timestamp) => {
   if (timestamp - lastUpdateTime >= UPDATE_INTERVAL) {
-    await updateColors();
+    // 根据当前模式调用对应的更新函数
+    if (pageStore.currentLightingMode === 'decorativeLighting') {
+      await updateDecorativeColors();
+    } else {
+      await updateColors();
+    }
     lastUpdateTime = timestamp;
   }
   animationFrameId = requestAnimationFrame(animationLoop);
@@ -180,6 +214,10 @@ onBeforeUnmount(() => {
     for (let col = 0; col <= 14; col++) {
       root.style.removeProperty(`--key-color-${row}-${col}`);
     }
+  }
+  // 清理装饰灯颜色变量
+  for (let i = 0; i < 22; i++) {
+    root.style.removeProperty(`--decorative-color-${i}`);
   }
 });
 
@@ -236,6 +274,7 @@ const changeMenu = (idx) => {
   // 先取消自定义灯光
   // isVersion2.value ? initCustomLighting(inCustomLighting) : '';
   isVersion2.value ? '' : changeKeyLight();
+
 };
 
 // 切换灯光

@@ -84,10 +84,9 @@ const useAppStore = defineStore('app', {
       if (isVersion2) {
         const result = await services.getConfigListV2();
         const result2 = await services.getConfigV2();
-
-        const curConfig = result2[0].key;
+        const curConfig = result2.key;
         // this.activeConfigIndex = result[0]?.list.findIndex((item) => item === curConfig);
-        this.activeConfigIndex = result2[0].value;
+        this.activeConfigIndex = result2.value;
         const configList = result[0]?.list
           .filter((item) => item !== undefined)
           .map((item, idx) => ({

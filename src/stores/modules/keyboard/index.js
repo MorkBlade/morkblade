@@ -30,6 +30,7 @@ const useKeyboardStore = defineStore('keyboard', {
       // 将v1 v2初始化逻辑移到hook
       const { initKeyboard } = useKeyboardHook();
       this.keyboards = await initKeyboard();
+      console.log('keyboards', this.keyboards);
     },
 
     // getLayoutKeyInfo  splitRowArray 只有v1需要调用

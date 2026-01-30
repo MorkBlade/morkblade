@@ -12,8 +12,8 @@ importers:
         specifier: ^5.5.2
         version: 5.5.2
       '@sparklinkplayjoy/morkblade-sdk-keyboard':
-        specifier: 1.0.5
-        version: 1.0.5
+        specifier: 1.0.6
+        version: 1.0.6
       axios:
         specifier: ^1.6.7
         version: 1.11.0
@@ -712,14 +712,14 @@ packages:
   '@sparklinkplayjoy/morkblade-hid@1.0.1':
     resolution: {integrity: sha512-kBDZ24St2C038okaQUh0fSQO9kQcMcQhCKkxy0CUPCgHJZKfahkGGMyVKx8ABJH2T1KCenQ5IWhThx70EtgFTw==}
 
-  '@sparklinkplayjoy/morkblade-protocol-keyboard-v2@1.0.4':
-    resolution: {integrity: sha512-n3EywBjEDHJ6+wxPiLfWpi0AlfmcrKlWa1u2LDQDzbMDjuEbTKgocWbAaKpsUKoXYLQlckHtj8MHNmh8BKsY5g==}
+  '@sparklinkplayjoy/morkblade-protocol-keyboard-v2@1.0.5':
+    resolution: {integrity: sha512-ex8a9Y7ylgQMEYS7XPe9Nfo+3/DOHgqpm70+SmNmUjUtrgQK9fMzqUXlWnqXFYKuWeWHIylumORew7lbfgbUJw==}
 
   '@sparklinkplayjoy/morkblade-protocol-keyboard@1.0.1':
     resolution: {integrity: sha512-xlG2HbwJNTCjGieqxH/bWm3DaOFljl3eseDGzjdCf513tE6TfPvCALjYIvjJdZa9OqJmGlfjv1TvZJr5R8ekcQ==}
 
-  '@sparklinkplayjoy/morkblade-sdk-keyboard@1.0.5':
-    resolution: {integrity: sha512-/zXjSgTw1azts2JcDyNU6Iz/HIzlRrxtUTU9x5B8T2bS+eS9lI/VCk1yk92brv7jCkudqd/wAUhedzBM1jRnnA==}
+  '@sparklinkplayjoy/morkblade-sdk-keyboard@1.0.6':
+    resolution: {integrity: sha512-Kwid0K8/cBWCW/jx9L+QRQ/E3m+/cNmxCMXieqp+sVP264DT/x53Wa5NISK5LSEPv51RezK5qUapDbwrLoFn4Q==}
 
   '@sxzz/popperjs-es@2.11.7':
     resolution: {integrity: sha512-Ccy0NlLkzr0Ex2FKvh2X+OyERHXJ88XJ1MXtsI9y9fGexlaXaVTPzBCRBwIxFkORuOb+uBqeu+RqnpgYTEZRUQ==}
@@ -879,7 +879,7 @@ packages:
     resolution: {integrity: sha512-VSWO/W6nNQdyP520F1mhf+Lc2f8pjGQOtoHHm7Ze8Go1kX7akpVIrtTa0fn+HB0QJEDVacl6aO08YE0PgXfdnQ==}
 
   boolbase@1.0.0:
-    resolution: {integrity: sha1-aN/1++YMUes3cl6p4+0xDcwed24=}
+    resolution: {integrity: sha512-JZOSA7Mo9sNGB8+UjSgzdLtokWAky1zbztM3WRLCbZ70/3cTANmQmOdR7y2g+J0e2WXywy1yS468tY+IruqEww==}
 
   brace-expansion@1.1.12:
     resolution: {integrity: sha512-9T9UjW3r0UW5c1Q7GTwllptXwhvYmEzFhzMfZ9H7FQWt+uZePjZPjBP/W1ZEyZ1twGWom5/56TF4lPcqjnDHcg==}
@@ -936,7 +936,7 @@ packages:
     engines: {node: '>= 0.8'}
 
   concat-map@0.0.1:
-    resolution: {integrity: sha1-2Klr13/Wjfd5OnMDajug1UBdR3s=}
+    resolution: {integrity: sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==}
 
   confbox@0.1.8:
     resolution: {integrity: sha512-RMtmw0iFkeR4YV+fUOSucriAQNb9g8zFR52MWCtl+cCZOFRNL6zeB395vPzFhEjjn4fMxXudmELnl/KF/WrK6w==}
@@ -997,7 +997,7 @@ packages:
     engines: {node: '>=12'}
 
   delayed-stream@1.0.0:
-    resolution: {integrity: sha1-3zrhmayt+31ECqrgsp4icrJOxhk=}
+    resolution: {integrity: sha512-ZySD7Nf91aLB0RxL4KGrKHBXl7Eds1DAmEdcoVawXnLD7SDhpNgtuII2aAkg7a7QS41jxPSZ17p4VdGnMHk3MQ==}
     engines: {node: '>=0.4.0'}
 
   detect-libc@1.0.3:
@@ -1053,7 +1053,7 @@ packages:
     engines: {node: '>=6'}
 
   escape-html@1.0.3:
-    resolution: {integrity: sha1-Aljq5NPQwJdN4cFpGI7wBR0dGYg=}
+    resolution: {integrity: sha512-NiSupZ4OeuGwr68lGIeym/ksIZMJodUGOSCZ/FSnTxcrekbvqrgdUxlJOMpijaKZVjAJrWrGs/6Jy8OMuyj9ow==}
 
   escape-string-regexp@4.0.0:
     resolution: {integrity: sha512-TtpcNJ3XAzx3Gq8sWRzJaVajRs0uVxA2YAkdb1jm2YkPz4G6egUFAyA3n5vtEIZefPk5Wa4UXbKuS5fKkJWdgA==}
@@ -1294,7 +1294,7 @@ packages:
     engines: {node: '>=6'}
 
   imurmurhash@0.1.4:
-    resolution: {integrity: sha1-khi5srkoojixPcT7a21XbyMUU+o=}
+    resolution: {integrity: sha512-JmXMZ6wuvDmLiHEml9ykzqO6lwFbof0GG4IkcGaENdCRDDmMVnny7s5HsIgHCbaq0w2MyPhDqkhTUgS2LU2PHA==}
     engines: {node: '>=0.8.19'}
 
   is-binary-path@2.1.0:
@@ -1922,6 +1922,7 @@ packages:
   vue-i18n@11.1.11:
     resolution: {integrity: sha512-LvyteQoXeQiuILbzqv13LbyBna/TEv2Ha+4ZWK2AwGHUzZ8+IBaZS0TJkCgn5izSPLcgZwXy9yyTrewCb2u/MA==}
     engines: {node: '>= 16'}
+    deprecated: This version is NOT deprecated. Previous deprecation was a mistake.
     peerDependencies:
       vue: ^3.0.0
 
@@ -2502,17 +2503,19 @@ snapshots:
     dependencies:
       uuid: 11.1.0
 
-  '@sparklinkplayjoy/morkblade-protocol-keyboard-v2@1.0.4': {}
+  '@sparklinkplayjoy/morkblade-protocol-keyboard-v2@1.0.5':
+    dependencies:
+      decimal.js: 10.6.0
 
   '@sparklinkplayjoy/morkblade-protocol-keyboard@1.0.1':
     dependencies:
       decimal.js: 10.6.0
 
-  '@sparklinkplayjoy/morkblade-sdk-keyboard@1.0.5':
+  '@sparklinkplayjoy/morkblade-sdk-keyboard@1.0.6':
     dependencies:
       '@sparklinkplayjoy/morkblade-hid': 1.0.1
       '@sparklinkplayjoy/morkblade-protocol-keyboard': 1.0.1
-      '@sparklinkplayjoy/morkblade-protocol-keyboard-v2': 1.0.4
+      '@sparklinkplayjoy/morkblade-protocol-keyboard-v2': 1.0.5
       '@types/crypto-js': 4.2.2
       crypto-js: 4.2.0
       decimal.js: 10.6.0

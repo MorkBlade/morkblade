@@ -711,7 +711,8 @@ const usePerformanceStore = defineStore('performance', {
 
     async getAxisVersion() {
       const result = await services.getAxisListV2();
-      const { list } = result[0];
+      console.log('⛔--------', 'getAxisVersion', result);
+      const { list } = result;
       // TODO：根据list 查询allAxisList 中是否存在 按顺序显示
       this.isAxisStatus = list.length === 0 ? 'v2' : 'v1';
       return this.isAxisStatus === 'v1' ? list : [];

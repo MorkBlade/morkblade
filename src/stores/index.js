@@ -8,8 +8,7 @@ import usePerformanceStore from './modules/performance/index.js';
 import useAppStore from './modules/app/index.js';
 import useMacroStore from './modules/macro/index.js';
 import useHighLevelKeyStore from './modules/high-level-key/index.js';
-
-import keyboardStore from './modules/keyboard/index.js';
+import usePageStore from './modules/page/index.js';
 
 const pinia = createPinia();
 
@@ -22,6 +21,8 @@ export {
   useAppStore,
   useMacroStore,
   useHighLevelKeyStore,
+  usePageStore,
+
 };
 
 // 默认导出 pinia 实例

@@ -187,7 +187,7 @@ export default {
     cancelUpdate: '更新を中止',
   },
   dropMenu: {
-    select: '選ぶ', 
+    select: '選ぶ',
   },
   dzTravel: {
     minValue: '最小0.005',
@@ -375,6 +375,7 @@ export default {
     lightingMenu2: 'ロゴライト効果',
     lightingMenu3: 'カスタムライト効果',
     lightingMenu4: '高度な設定',
+    lightingMenu5: '装飾灯',
   },
   dynamicLightCard: {
     dynamicLight: '動的ライト',

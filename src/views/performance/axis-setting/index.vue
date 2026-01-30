@@ -1,16 +1,11 @@
 <template>
   <div class="axis-container">
-    <!-- <template v-if="isVersion2"> -->
     <div
       class="axis-container__axis-brand"
       :style="{ marginTop: axisBrandList.length === 0 ? '0' : `${scaleValue(-360)}px` }"
     >
-      <!-- :style="{ transform: axisBrandList.length === 0 ? 'scale(1)' : 'scale(0)' }" -->
       <h4>{{ $t('axisSetting.axisBrand') }}</h4>
       <div class="brand-list">
-        <!-- <div class="brand" @click="handleMatchLZ">
-          <img src="@/assets/images/aula.png" alt="" />
-        </div> -->
         <div class="brand" @click="handleMatchJLD">
           <img src="@/assets/images/jld_logo.svg" alt="" />
         </div>
@@ -20,97 +15,47 @@
         <div class="brand" @click="handleMatchOther">
           <img src="@/assets/images/unknow.svg" alt="" />
         </div>
-        <!-- <div class="brand more-brand">
-            <p>更多品牌接入中...</p>
-          </div> -->
       </div>
     </div>
     <div
       class="axis-container__axis-list"
       :style="{ marginTop: axisBrandList.length === 0 ? `${scaleValue(360)}px` : '0' }"
     >
-      <!-- :style="{ transform: axisBrandList.length === 0 ? 'scale(0)' : 'scale(1)' }" -->
       <template v-if="axisBrandList.length > 0">
         <div class="axis-setting">
-          <mCarousel
-            showText
-            :carouselData="axisBrandList"
-            :btnText="$t('axisSetting.applyAxis')"
-            :offset="scaleValue(25)"
-            :width="scaleValue(920)"
-            :selected-id="axisID"
-            @handleChangeItem="changeAxisV2"
-          />
-        </div>
-        <div class="axis-info">
-          <div class="axis-name">
-            <span>{{ $t('axisSetting.axisName') }}:</span>
-            <span>{{ axisName }}</span>
+          <div class="axis_card_container" v-for="(item, index) in axisBrandList" :key="item.axis_id">
+            <div class="axis_card">
+              <div class="icon" :style="{ backgroundColor: item.axis_color }">
+                {{ getAxisIcon(item.factory_name) + index }}
+              </div>
+              <div class="name">
+                {{ item.axis_name }}
+              </div>
+              <div class="btn" @click="handleApplyAxis(item)">应用轴体</div>
+            </div>
           </div>
-          <div class="axis-travel">
-            <span>{{ $t('axisSetting.axisTravel') }}:</span>
-            <span>{{ travelRange }}</span>
-            <!-- {{ axisID }} -->
-          </div>
-          <saveConfigBtn :btnText="$t('axisSetting.applyAxis')" :verify="true" @saveConfig="handleSaveAxis" />
         </div>
       </template>
       <div class="clear-axis-btn" @click="handleClearAxis">
         <img src="@/assets/images/back.png" alt="" />
       </div>
     </div>
-    <!-- </template> -->
   </div>
 </template>
 
 <script setup>
-{
-  /* <template v-else>
-  <div class="axis-container__axis-list">
-    <div class="axis-setting">
-      <mCarousel
-        showText
-        :carouselData="axisList"
-        btnText="应用轴体"
-        :offset="scaleValue(25)"
-        :width="scaleValue(920)"
-        :selected-id="axisID"
-        @handleChangeItem="changeAxis"
-      />
-    </div>
-    <div class="axis-info">
-      <div class="axis-name">
-        <span>轴体名称:</span>
-        <span>{{ axisList[checkAixsId]?.axis_name }}</span>
-      </div>
-      <div class="axis-travel">
-        <span>轴体行程:</span>
-        <span>{{ travelRange }}</span>
-        <!-- {{ axisID }} -->
-      </div>
-      <saveConfigBtn btnText="应用轴体" :verify="true" @saveConfig="handleSaveAxis" />
-    </div>
-  </div>
-</template> */
-}
 import { storeToRefs } from 'pinia';
 import { scaleValue } from '@/utils/responsive.js';
 import { useKeyboardStore, usePerformanceStore } from '@/stores';
-import { KEY_SHAFT } from '@/configs/constant/zh_CN/index.js';
 import { showMessage } from '@/utils/message';
 import { usePerformanceHook } from '@/hooks';
 import { useI18n } from 'vue-i18n';
-import services from '@/services/index';
-import mCarousel from '@/components/carousel.vue';
-import saveConfigBtn from '@/components/save-config-btn.vue';
-import sureIcon from '@/assets/images/sure.svg';
 
 const { t } = useI18n();
 
 const keyboardStore = useKeyboardStore();
 const performanceStore = usePerformanceStore();
 const { keyboards } = storeToRefs(keyboardStore);
-const checkAixsId = ref(3);
 const axisBrandList = ref([]);
 const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
 
@@ -120,68 +65,17 @@ const activeKeys = computed(() => {
 
 const axisList = computed(() => performanceStore.axisList);
 
-const axisID = computed(() => {
-  if (activeKeys.value.length > 0) {
-    const lastcheckedKey = String(activeKeys.value[activeKeys.value.length - 1]);
-    const [key1, key2] = lastcheckedKey.split('-');
-    const rowIndex = Number(key1);
-    const colIndex = Number(key2);
-    // console.log(keyboards.value[rowIndex][colIndex].performance);
-    return keyboards.value[rowIndex][colIndex].performance.axisID;
-  }
-  return 0;
-});
-
-const travelRange = computed(() => {
-  if (checkAixsId.value === null) return '';
-  if (performanceStore.isAxisStatus === 'v2') {
-    const axis = axisList.value.find((item) => item.axis_id === checkAixsId.value);
-    return `${axis?.doctrine_range_right}-${axis?.doctrine_range_left}mm`;
-  }
-  return `${axisList.value[checkAixsId.value]?.doctrine_range_right}-${axisList.value[checkAixsId.value]?.doctrine_range_left}mm`;
-});
-
-const axisName = computed(() => {
-  if (checkAixsId.value === null) return '';
-  if (performanceStore.isAxisStatus === 'v2') {
-    return axisList.value.find((item) => item.axis_id === checkAixsId.value)?.axis_name || '';
-  } else {
-    return axisList.value[checkAixsId.value]?.axis_name;
-  }
-});
-
-const handleSaveAxis = async () => {
+const handleApplyAxis = (item) => {
   if (activeKeys.value.length !== 0) {
     const { setAxis } = usePerformanceHook();
-    //checkAixsId.value 这个是索引值
-    // if (performanceStore.isAxisStatus === 'v2') { 
-    //   checkAixsId.value = axisList.value[checkAixsId.value]?.axisID;
-    //   // console.log('🟢🟢🟢 checkAixsId.value', axisList.value, checkAixsId.value);
-    // }
-    const res = setAxis(keyboards.value, activeKeys.value, checkAixsId.value);
+    const res = setAxis(keyboards.value, activeKeys.value, item.axis_id);
     if (res) {
       showMessage(t('axisSetting.modifySuccess'));
     }
   }
 };
 
-const changeAxis = (axisID) => {
-  checkAixsId.value = axisList.value.findIndex((ite) => ite.axis_id === axisID);
-  // console.log('changeAxis log axisID: ', axisID, checkAixsId.value);
-};
-
-const changeAxisV2 = (axisID) => {
-  if (performanceStore.isAxisStatus === 'v2') {
-    checkAixsId.value = axisID
-  } else {
-    // console.log('🟢🟢🟢 axisID', axisList.value, axisID);
-    // 所有轴的索引值
-    checkAixsId.value = axisList.value.findIndex((ite) => ite.axis_id === axisID);
-    // console.log('🟢🟢🟢 checkAixsId.value', checkAixsId.value);
-  }
-};
-
-const handleMatchJLD = (e) => {
+const handleMatchJLD = () => {
   const jldAxis = axisList.value.filter((ite) => {
     if (isVersion2) {
       return ite.factory_name === 'GATERON';
@@ -189,32 +83,21 @@ const handleMatchJLD = (e) => {
       return ite.factory_name === '佳达隆';
     }
   });
-  console.log('jldAxis: ', jldAxis);
-
   axisBrandList.value = jldAxis;
 };
 
-const handleMatchLZ = (e) => {
-  const lzAxis = axisList.value.filter((ite) => {
-    return ite.factory_name === '索爱';
-  });
-  axisBrandList.value = lzAxis;
-};
-
-const handleMatchTTC = (e) => {
+const handleMatchTTC = () => {
   const ttcAxis = axisList.value.filter((ite) => {
     return ite.factory_name === 'TTC';
   });
-  console.log('ttcAxis: ', ttcAxis);
   if (ttcAxis.length === 0) showMessage(t('axisSetting.noAxis'), 'warning');
   axisBrandList.value = ttcAxis;
 };
 
-const handleMatchOther = (e) => {
+const handleMatchOther = () => {
   const otherAxis = axisList.value.filter((ite) => {
     return ite.factory_name === 'other';
   });
-  console.log('otherAxis: ', otherAxis);
   if (otherAxis.length === 0) showMessage(t('axisSetting.noMoreAxis'), 'warning');
   axisBrandList.value = otherAxis;
 };
@@ -223,55 +106,102 @@ const handleClearAxis = () => {
   axisBrandList.value = [];
 };
 
-// onMounted(async () => {
-//   const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
-//   await performanceStore.getAixsList(isVersion2);
-//   console.log('axisList', axisList.value);
-
-//   const res = await services.getPerformanceV2({ row: 1, col: 0 });
-//   console.log('res', res);
-// });
+// 获取轴体图标（品牌首字母）
+const getAxisIcon = (brand) => {
+  return brand.charAt(0).toUpperCase();
+};
 </script>
 
 <style scoped lang="scss">
 .axis-container {
   position: relative;
   &__axis-list {
-    display: flex;
+    // display: flex;
     transition: all 0.2s ease-in-out;
     position: absolute;
 
     & .axis-setting {
-      width: var(--axis-width);
+      display: flex;
+      justify-content: start;
+      flex-wrap: wrap;
+      width: calc(var(--axis-width) + var(--size-306));
+      padding-left: var(--size-100);
+      padding-top: var(--size-20);
       height: var(--size-290);
       background-image: url('@/assets/images/axis_bg.svg');
       background-size: cover;
       background-repeat: no-repeat;
-      overflow: hidden;
-    }
-    & .axis-info {
-      width: var(--size-300);
-      height: var(--size-290);
-      margin-left: var(--spacing-30);
-      padding-left: var(--spacing-20);
-      box-sizing: border-box;
-      background-image: url('@/assets/images/axis_info_bg.svg');
-      background-size: cover;
-      background-repeat: no-repeat;
-      overflow: hidden;
+      gap: var(--spacing-20);
+      overflow-y: auto;
+      // 靠左对其
 
-      .axis-name,
-      .axis-travel {
-        margin-top: var(--spacing-50);
-        color: #fff;
-        font-size: var(--font-size-15);
-        font-family: 'CN Heavy';
-        display: flex;
-        justify-content: center;
+      &::-webkit-scrollbar {
+        width: 0;
       }
+      & .axis_card_container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: var(--size-270);
+        height: var(--size-60);
+        border: 1px solid #333333;
+        border-radius: var(--spacing-8);
+        &:hover {
+          border: 1px solid #91bc00;
+          .axis_card {
+            border: 1px solid #91bc00;
+          }
+        }
+      }
+      & .axis_card {
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        padding: 0 var(--spacing-10);
+        width: 96%;
+        height: 86%;
+        border: 1px solid #333333;
+        border-radius: var(--spacing-6);
 
-      .axis-travel {
-        margin-bottom: var(--spacing-60);
+        & .icon {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: var(--size-36);
+          height: var(--size-36);
+          border-radius: var(--spacing-4);
+          font-size: var(--font-size-18);
+          font-family: 'CN Heavy';
+          color: #fff;
+          margin-right: var(--spacing-10);
+          text-shadow:
+            -1px -1px 0 #808080,
+            1px -1px 0 #808080,
+            -1px 1px 0 #808080,
+            1px 1px 0 #808080;
+        }
+        & .name {
+          font-size: var(--font-size-15);
+          font-family: 'CN Heavy';
+          color: #fff;
+          flex: 1;
+        }
+        & .btn {
+          width: var(--size-70);
+          height: var(--size-30);
+          border: 1px solid #fff;
+          border-radius: var(--spacing-4);
+          font-size: var(--font-size-12);
+          font-family: 'CN Heavy';
+          color: #fff;
+          line-height: var(--size-30);
+          text-align: center;
+          cursor: pointer;
+          &:hover {
+            background-color: #91bc00;
+            border: transparent;
+          }
+        }
       }
     }
 
@@ -350,22 +280,6 @@ const handleClearAxis = () => {
           width: var(--spacing-90);
           height: var(--spacing-90);
           object-fit: fill;
-        }
-
-        &.more-brand {
-          padding: 0 var(--spacing-25);
-          cursor: auto;
-          > p {
-            font-size: var(--font-size-18);
-            font-family: 'CN Heavy';
-            text-align: center;
-          }
-          &:hover {
-            border-color: #252525;
-            &::after {
-              border-color: #252525;
-            }
-          }
         }
       }
     }

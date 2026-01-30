@@ -376,6 +376,7 @@ export default {
     lightingMenu2: 'Logo Lighting',
     lightingMenu3: 'Customize',
     lightingMenu4: 'Advanced',
+    lightingMenu5: 'Decorative',
   },
   dynamicLightCard: {
     dynamicLight: 'Dynamic',

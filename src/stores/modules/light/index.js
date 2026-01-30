@@ -38,6 +38,17 @@ const state = {
     direction: false,
     dynamic: 0,
   },
+  decorative1: {
+    open: true,
+    mode: 'static', // 'static' | 'custom' | 'dynamic'
+    staticColors: ['#fff', '#fff', '#fff', '#fff', '#fff', '#fff'],
+    selectStaticColor: 0,
+    luminance: 1,
+    speed: 1,
+    sleepTime: -1,
+    direction: false,
+    dynamic: 0,
+  },
 
   // 项目特定state
   currentColor: { r: 189, g: 214, b: 0 },
@@ -106,6 +117,11 @@ export const useLightSettingStore = defineStore('lightSetting', {
       this.currentPreset = idx;
     },
 
+    // 设置灯光区域
+    setArea(area) {
+      this.area = area;
+    },
+
     // 设置灯效库的数据
     updateLightingBaseData(data) {
       // 单灯位使用的open的变量 双灯位使用的是upOpen、downOpen 全开是用open
@@ -133,6 +149,12 @@ export const useLightSettingStore = defineStore('lightSetting', {
         this.upOpen = false;
         this.downOpen = false;
       }
+    },
+
+    // 获取装饰灯光数据
+    async getDecorativeLightingData() {
+      const res = await services.getDecorate1Custom();
+      return res;
     },
   },
 });

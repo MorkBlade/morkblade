@@ -11,10 +11,6 @@
     <template v-else>
       <p class="top-key">{{ showKeyCode }}</p>
     </template>
-    <!-- <p>{{ keyItem.keyValue }}</p> -->
-
-    <!-- <p class="center-key" v-if="!singleTravel && !rtReleaseTravel && !rtPressTravel">{{ byteToKey[keyItem.keyValue] }}</p> -->
-    <!-- 'mechanicalMode', 'quickTrigger' -->
     <div class="show-val-box" v-if="route.path === '/performance'">
       <template v-if="isVersion2">
         <!-- TODO 性能预设要显示啥数据 -->
@@ -64,10 +60,10 @@
       </div>
     </template>
     <template v-if="route.path === '/lighting' && isVersion2">
-      <div class="color-key" :style="keyColorStyle" 
+      <div class="color-key" :style="keyColorStyle"
         @mousedown.stop="(e) => startMouseDown(e, keyItem.keyValue)"
-        @mouseenter="handleMouseOver(keyItem.keyValue)" 
-        @mouseleave="onMouseLeave" 
+        @mouseenter="handleMouseOver(keyItem.keyValue)"
+        @mouseleave="onMouseLeave"
         @mouseup.stop="startMouseUp"
         @contextmenu="(e) => handleContextmenu(e, keyItem.keyValue)">
         <p class="top-key">{{ showKeyCode }}</p>
@@ -86,7 +82,7 @@ import { KEY_SHAFT } from '@/configs/constant/zh_CN/index.js';
 
 import services from '@/services/index';
 import emitter from '@/utils/app-emitter';
-import { usePerformanceStore, useMacroStore, useKeyboardStore, useLightSettingStore } from '@/stores';
+import { usePerformanceStore, useMacroStore, useKeyboardStore, useLightSettingStore, usePageStore } from '@/stores';
 import { scaleValue } from '@/utils/responsive.js';
 import { useLightingHook, useMacroHook, useAdvancedHook } from '@/hooks';
 import { useI18n } from 'vue-i18n';
@@ -118,6 +114,7 @@ const macroStore = useMacroStore();
 const keyboardStore = useKeyboardStore();
 const performanceStore = usePerformanceStore();
 const lightSettingStore = useLightSettingStore();
+const pageStore = usePageStore();
 const { keyboards, layout } = storeToRefs(keyboardStore);
 const { setCustomLighting } = useLightingHook();
 const { setMacroV1 } = useMacroHook();
@@ -207,7 +204,14 @@ const dynamicKeyColor = computed(() => {
 
 const currentKey = computed(() => {
   // console.log('keyItem', keyItem);
+  // 防御性检查：如果 keyItem.row 不存在（如装饰灯按键），返回空对象
+  if (keyItem.row === undefined || keyItem.row === null) {
+    return {};
+  }
   const rowData = keyboards.value[keyItem.row];
+  if (!rowData) {
+    return {};
+  }
   let colData = {};
   for (let colIdx = 0; colIdx < rowData.length; colIdx++) {
     if (rowData[colIdx].row === keyItem.row && rowData[colIdx].col === keyItem.col) {
@@ -219,16 +223,25 @@ const currentKey = computed(() => {
 });
 
 const showKeyCode = computed(() => {
-  if (keyboards.value.length > 0) {
+  if (keyboards.value.length > 0 && currentKey.value?.customKeys) {
     const customKeysKeyName = `fn${layout.value}`;
     // console.log('currentKey.value', currentKey.value, customKeysKeyName);
-    const { bindKeyValue } = currentKey.value.customKeys[customKeysKeyName];
+    const customKey = currentKey.value.customKeys[customKeysKeyName];
+    if (!customKey) {
+      return keyItem.keyValue || '';
+    }
+    const { bindKeyValue } = customKey;
     // console.log('keyboardV2.value[bindKeyValue]', keyboardV2.value[bindKeyValue]);
     return !isVersion2.value
       ? keyboardV1[bindKeyValue]
       : bindKeyValue === 61696
         ? 'Fn'
         : keyboardV2[bindKeyValue];
+  }
+
+  // 如果没有 keyboards 数据，直接返回 keyItem.keyValue（用于装饰灯等特殊按键）
+  if (keyItem.keyValue) {
+    return keyItem.keyValue;
   }
 
   return isVersion2.value ? keyboardV2[0] : keyboardV1[0];
@@ -248,7 +261,7 @@ const ImageSrc = computed(() => {
 // 判断是否是图标键 - 检查当前键是否应该显示为图标
 const isIconKey = computed(() => {
   const keyName = (showKeyCode.value || '').trim();
-  
+
   // 如果键名为空，则不是图标键
   if (!keyName) {
     return false;
@@ -257,7 +270,7 @@ const isIconKey = computed(() => {
   const keyMapping = isVersion2.value ? NUM_KEY_V2 : NUM_KEY;
 
   // 检查键名是否存在于图标键映射表中（忽略大小写）
-  return Object.values(keyMapping).some(mappedValue => 
+  return Object.values(keyMapping).some(mappedValue =>
     mappedValue && mappedValue.toLowerCase() === keyName.toLowerCase()
   );
 });
@@ -370,7 +383,7 @@ const releaseDead = computed(() => {
   return null;
 });
 
-//TODO 
+//TODO
 const axisVal = computed(() => {
   if (currentModel.value === 'axis') {
     // V2轴在这里应该要获取axisID
@@ -383,7 +396,7 @@ const axisVal = computed(() => {
 
       return axisID;
     }
-    
+
   }
   return null;
 });
@@ -465,7 +478,13 @@ const Keydrop = async (e, rowIndex, colIndex, key) => {
 
 const keyColorStyle = computed(() => {
   if (route.path === '/lighting' && !lightSettingStore.enterCustom) {
-    // 使用 CSS 变量
+    // 装饰灯模式：使用装饰灯 CSS 变量
+    if (keyItem.decorativeIndex !== undefined) {
+      return {
+        backgroundColor: `var(--decorative-color-${keyItem.decorativeIndex}, rgba(0, 0, 0, 0))`,
+      };
+    }
+    // 普通按键：使用按键 CSS 变量
     return {
       backgroundColor: `var(--key-color-${keyItem.row}-${keyItem.col}, rgba(0, 0, 0,0))`,
     };

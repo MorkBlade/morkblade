@@ -23,6 +23,8 @@ export const DEVICE_FILTERS = [
   { vendorId: 0x1c4f, productId: 0xee88 }, // v1 boot
   { vendorId: 7331, productId: 257 },      // v1
   { vendorId: 7334, productId: 5384 }, // mk66
+  { vendorId: 0x1ca3, productId: 0x0101 }, // v1
+  { vendorId: 0x1ca9, productId: 0xe501 }, // v2
 ];
 
 /**
