@@ -82,17 +82,45 @@ const debounce = (fn, delay) => {
 
 const clickItem = ref(0);
 const isVersion2 = ref(localStorage.getItem('keyboardVersion') === 'v2');
-const lightingItem = computed(() =>
-  [t('lighting.lightingMenu1'), t('lighting.lightingMenu2'), t('lighting.lightingMenu3'), t('lighting.lightingMenu4'), t('lighting.lightingMenu5')]
-);
+// v2 版本且 getLightingAreaV2 返回的 total > 1 时才显示装饰灯菜单
+const showDecorativeLighting = ref(false);
+
+const lightingItem = computed(() => {
+  const baseMenus = [t('lighting.lightingMenu1'), t('lighting.lightingMenu2'), t('lighting.lightingMenu3'), t('lighting.lightingMenu4')];
+  if (isVersion2.value && showDecorativeLighting.value) {
+    return [...baseMenus, t('lighting.lightingMenu5')];
+  }
+  return baseMenus;
+});
+
+// 检查是否显示装饰灯菜单：v2 且 decorativeArea.total > 1
+const checkDecorativeLightingVisibility = async () => {
+  if (!isVersion2.value) {
+    showDecorativeLighting.value = false;
+    return;
+  }
+  try {
+    const decorativeArea = await services.getLightingAreaV2();
+    showDecorativeLighting.value = decorativeArea?.total > 1;
+    // 若隐藏装饰灯且当前在装饰灯菜单，切回按键灯效
+    if (!showDecorativeLighting.value && clickItem.value === 4) {
+      clickItem.value = 0;
+    }
+  } catch (error) {
+    console.error('获取装饰灯区域失败:', error);
+    showDecorativeLighting.value = false;
+    if (clickItem.value === 4) clickItem.value = 0;
+  }
+};
 let animationFrameId = null;
 let lastUpdateTime = 0;
 const UPDATE_INTERVAL = 100; // 100ms
 
 emitter.on('versionChange', (flag) => {
   if (flag) {
-    setTimeout(() => {
+    setTimeout(async () => {
       isVersion2.value = localStorage.getItem('keyboardVersion') === 'v2';
+      await checkDecorativeLightingVisibility();
     }, 240);
   }
 });
@@ -199,6 +227,7 @@ onMounted(async () => {
   const lampData = isDoubleLighting.value ? 'DoubleLighting' : 'SingleLighting';
   await initLighting(lampData);
   await getLightingSaturation();
+  await checkDecorativeLightingVisibility();
   console.log('staticLightColorList----',lightSettingStore.light);
   if (isVersion2.value) {
     animationFrameId = requestAnimationFrame(animationLoop);

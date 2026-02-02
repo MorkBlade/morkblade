@@ -58,9 +58,6 @@ const changeColorPicker = async (color, idx, isVersion2) => {
   emit('changeColorPicker', isVersion2);
 };
 
-onMounted(() => {
-  console.log('⛔--------keyLighting', keyLighting.value.staticColors);
-});
 </script>
 
 <style scoped lang="scss">
