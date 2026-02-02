@@ -17,13 +17,14 @@ export const useLightingHook = () => {
     if (isVersion2) {
       lightSettingStore.lamp = lightSettingStore.area === 'Keyboard' ? lampData : 'SingleLighting';
       const lightingBase = await services.getLightingBaseV2({ area: area, config: base }, lightSettingStore.lamp);
-      lightSettingStore.updateLightingBaseData(lightingBase[0]);
+      lightSettingStore.updateLightingBaseData(lightingBase);
       const lightSleepTime = await services.getLightingSleepTimeV2();
       lightSettingStore.updateSleepTime(lightSleepTime);
 
       const lightingPalette = await services.getLightingPaletteV2({ area: area, config: palette });
+      console.log('lightingPalette----',lightingPalette)
 
-      const colors = paletteToHexArray(lightingPalette[0]?.staticColors).map((color, index) => ({ color, id: index }));
+      const colors = paletteToHexArray(lightingPalette?.staticColors).map((color, index) => ({ color, id: index }));
       lightData.staticColors = colors;
 
       modifyCustomLightingData();
@@ -130,7 +131,8 @@ export const useLightingHook = () => {
   const getLightingSaturation = async () => {
     if (isVersion2) {
       const res = await services.getLightingColorCorrectionV2({ area, config: colorCorrection });
-      const { R, G, B } = res[0];
+      console.log(res)
+      const { R, G, B } = res;
       lightSettingStore.saturation = { R, G, B };
       return res;
     } else {

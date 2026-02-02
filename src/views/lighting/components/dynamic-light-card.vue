@@ -12,6 +12,7 @@
           @click="changelightingMode(idx)"
         >
           <img :src="getImagePath(idx, 'keyLight')" alt="" v-if="dynamicType === 'keyLight'" />
+          <img :src="getImagePath(idx, 'decorativeLight')" alt="" v-if="dynamicType === 'decorativeLight'" />
           <span>{{ ite }}</span>
         </div>
       </template>
@@ -25,7 +26,8 @@
           @click="checkDynamicLight(idx)"
         >
           <img :src="getImagePath(idx, 'keyLight')" alt="" v-if="dynamicType === 'keyLight'" />
-          <img :src="getImagePath(idx, 'logoLight')" alt="" v-if="dynamicType !== 'keyLight'" />
+          <img :src="getImagePath(idx, 'decorativeLight')" alt="" v-if="dynamicType === 'decorativeLight'" />
+          <img :src="getImagePath(idx, 'logoLight')" alt="" v-if="dynamicType !== 'keyLight' && dynamicType !== 'decorativeLight'" />
           <span>{{ ite }}</span>
         </div>
       </template>
@@ -154,7 +156,15 @@ const getImagePath = (idx, type) => {
   if (type === 'keyLight') {
     const key = Object.keys(keyLightImages).find((path) => path.includes(`dynamic${idx + 1}.svg`));
     return keyLightImages[key].default;
-  } else {
+  } else if (type === 'decorativeLight') {
+    // 装饰灯只返回前4个图片 (idx 0-3 对应 dynamic1-4.svg)
+    if (idx >= 0 && idx < 4) {
+      const key = Object.keys(keyLightImages).find((path) => path.includes(`dynamic${idx + 1}.svg`));
+      return key ? keyLightImages[key].default : null;
+    }
+    return null;
+  }
+  else {
     const key = Object.keys(logoLightImages).find((path) => path.includes(`logo_dynamic_${idx + 1}.svg`));
     return logoLightImages[key].default;
   }

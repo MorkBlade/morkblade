@@ -22,6 +22,7 @@ declare module 'vue' {
     Explain: typeof import('./src/components/explain.vue')['default']
     HorizontalSlider: typeof import('./src/components/horizontal-slider.vue')['default']
     Key: typeof import('./src/components/key.vue')['default']
+    Loading: typeof import('./src/components/loading.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SaveConfigBtn: typeof import('./src/components/save-config-btn.vue')['default']

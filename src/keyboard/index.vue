@@ -69,7 +69,7 @@
           width: `${containerDimensions.width}px`,
           height: `${containerDimensions.height}px`,
         }">
-          <template v-for="(row, rowIndex) in lightLayout">
+          <template v-if="pageStore.currentLightingMode !== 'decorativeLighting'" v-for="(row, rowIndex) in lightLayout">
             <div class="row" :class="`row_${rowIndex + 1}`" :key="rowIndex" v-if="row?.[0]?.shapeScale?.w">
               <template v-for="(col, colIndex) in row">
                 <key v-if="col && col.shapeScale?.w != 0 && col.keyItem"
@@ -79,6 +79,9 @@
                   @emits="handleCancelSelect" />
               </template>
             </div>
+          </template>
+          <template v-else>
+            <decorate />
           </template>
         </div>
       </div>
@@ -135,6 +138,7 @@ import { useAppStore, useKeyboardStore, useDeviceStore, usePerformanceStore, use
 import { useAdvancedHook } from '@/hooks';
 import key from './key.vue';
 import { computed } from 'vue';
+import decorate from './decorate.vue';
 
 const route = useRoute();
 const appStore = useAppStore();
@@ -370,60 +374,9 @@ const processedLayout = computed(() => {
 });
 
 // 装饰灯布局
-const decorativeLightLayout = computed(() => {
-  // 22个键位，每个键位都有 decorativeIndex 用于读取 CSS 变量
-  return [[
-    // 第1行：顶部 9 个灯（索引 0-8）
-    { "shapeScale": { "w": 1, "h": 1 }, "location": { "x": 2.35, "y": 0 }, "keyItem": { keyValue: '', decorativeIndex: 0 } },
-    { "shapeScale": { "w": 1, "h": 1 }, "location": { "x": 3.43, "y": 0 }, "keyItem": { keyValue: '', decorativeIndex: 1 } },
-    { "shapeScale": { "w": 1, "h": 1 }, "location": { "x": 4.52, "y": 0 }, "keyItem": { keyValue: '', decorativeIndex: 2 } },
-    { "shapeScale": { "w": 1, "h": 1 }, "location": { "x": 5.63, "y": 0 }, "keyItem": { keyValue: '', decorativeIndex: 3 } },
-    { "shapeScale": { "w": 1, "h": 1 }, "location": { "x": 6.73, "y": 0 }, "keyItem": { keyValue: '', decorativeIndex: 4 } },
-    { "shapeScale": { "w": 1, "h": 1 }, "location": { "x": 7.83, "y": 0 }, "keyItem": { keyValue: '', decorativeIndex: 5 } },
-    { "shapeScale": { "w": 1, "h": 1 }, "location": { "x": 8.93, "y": 0 }, "keyItem": { keyValue: '', decorativeIndex: 6 } },
-    { "shapeScale": { "w": 1, "h": 1 }, "location": { "x": 10.03, "y": 0 }, "keyItem": { keyValue: '', decorativeIndex: 7 } },
-    { "shapeScale": { "w": 1, "h": 1 }, "location": { "x": 11.13, "y": 0 }, "keyItem": { keyValue: '', decorativeIndex: 8 } },
-  ],[
-    // 第2行：左右两侧灯（索引 9, 10）
-    { "shapeScale": { "w": 1, "h": 1 }, "location": { "x": 1.25, "y": 1 }, "keyItem": { keyValue: '', decorativeIndex: 9 } },
-    { "shapeScale": { "w": 0, "h": 1 }, "location": { "x": 3.43, "y": 1 }, "keyItem": { keyValue: '' } },
-    { "shapeScale": { "w": 0, "h": 1 }, "location": { "x": 4.52, "y": 1 }, "keyItem": { keyValue: '' } },
-    { "shapeScale": { "w": 0, "h": 1 }, "location": { "x": 5.63, "y": 1 }, "keyItem": { keyValue: '' } },
-    { "shapeScale": { "w": 0, "h": 1 }, "location": { "x": 6.73, "y": 1 }, "keyItem": { keyValue: '' } },
-    { "shapeScale": { "w": 0, "h": 1 }, "location": { "x": 7.83, "y": 1 }, "keyItem": { keyValue: '' } },
-    { "shapeScale": { "w": 0, "h": 1 }, "location": { "x": 8.93, "y": 1 }, "keyItem": { keyValue: '' } },
-    { "shapeScale": { "w": 0, "h": 1 }, "location": { "x": 10.03, "y": 1 }, "keyItem": { keyValue: '' } },
-    { "shapeScale": { "w": 1, "h": 1 }, "location": { "x": 12.23, "y": 1 }, "keyItem": { keyValue: '', decorativeIndex: 10 } },
-  ],[
-    // 第3行：左右两侧灯（索引 11, 12）
-    { "shapeScale": { "w": 1, "h": 1 }, "location": { "x": 1.25, "y": 2 }, "keyItem": { keyValue: '', decorativeIndex: 11 } },
-    { "shapeScale": { "w": 0, "h": 1 }, "location": { "x": 3.43, "y": 2 }, "keyItem": { keyValue: '' } },
-    { "shapeScale": { "w": 0, "h": 1 }, "location": { "x": 4.52, "y": 2 }, "keyItem": { keyValue: '' } },
-    { "shapeScale": { "w": 0, "h": 1 }, "location": { "x": 5.63, "y": 2 }, "keyItem": { keyValue: '' } },
-    { "shapeScale": { "w": 0, "h": 1 }, "location": { "x": 6.73, "y": 2 }, "keyItem": { keyValue: '' } },
-    { "shapeScale": { "w": 0, "h": 1 }, "location": { "x": 7.83, "y": 2 }, "keyItem": { keyValue: '' } },
-    { "shapeScale": { "w": 0, "h": 1 }, "location": { "x": 8.93, "y": 2 }, "keyItem": { keyValue: '' } },
-    { "shapeScale": { "w": 0, "h": 1 }, "location": { "x": 10.03, "y": 2 }, "keyItem": { keyValue: '' } },
-    { "shapeScale": { "w": 1, "h": 1 }, "location": { "x": 12.23, "y": 2 }, "keyItem": { keyValue: '', decorativeIndex: 12 } },
-  ],[
-    // 第4行：底部 9 个灯（索引 13-21）
-    { "shapeScale": { "w": 1, "h": 1 }, "location": { "x": 2.35, "y": 3 }, "keyItem": { keyValue: '', decorativeIndex: 13 } },
-    { "shapeScale": { "w": 1, "h": 1 }, "location": { "x": 3.43, "y": 3 }, "keyItem": { keyValue: '', decorativeIndex: 14 } },
-    { "shapeScale": { "w": 1, "h": 1 }, "location": { "x": 4.52, "y": 3 }, "keyItem": { keyValue: '', decorativeIndex: 15 } },
-    { "shapeScale": { "w": 1, "h": 1 }, "location": { "x": 5.63, "y": 3 }, "keyItem": { keyValue: '', decorativeIndex: 16 } },
-    { "shapeScale": { "w": 1, "h": 1 }, "location": { "x": 6.73, "y": 3 }, "keyItem": { keyValue: '', decorativeIndex: 17 } },
-    { "shapeScale": { "w": 1, "h": 1 }, "location": { "x": 7.83, "y": 3 }, "keyItem": { keyValue: '', decorativeIndex: 18 } },
-    { "shapeScale": { "w": 1, "h": 1 }, "location": { "x": 8.93, "y": 3 }, "keyItem": { keyValue: '', decorativeIndex: 19 } },
-    { "shapeScale": { "w": 1, "h": 1 }, "location": { "x": 10.03, "y": 3 }, "keyItem": { keyValue: '', decorativeIndex: 20 } },
-    { "shapeScale": { "w": 1, "h": 1 }, "location": { "x": 11.13, "y": 3 }, "keyItem": { keyValue: '', decorativeIndex: 21 } },
-  ]]
-});
+
 
 const lightLayout = computed(() => {
-  // 装饰灯模式返回装饰灯布局
-  if (pageStore.currentLightingMode === 'decorativeLighting') {
-    return decorativeLightLayout.value;
-  }
   if (route.path === '/lighting') {
     return processedLayout.value;
   } else {
@@ -536,6 +489,7 @@ const containerDimensions = computed(() => {
         top: var(--keyboard-pseudo-element-top);
         left: var(--keyboard-pseudo-element-left);
         border: var(--spacing-3) solid rgb(37, 37, 37);
+        pointer-events: none;
       }
     }
 
@@ -558,9 +512,9 @@ const containerDimensions = computed(() => {
         position: absolute;
         border-radius: var(--spacing-10);
         border: var(--spacing-3) solid rgb(37, 37, 37);
-        position: absolute;
         top: var(--spacing-4);
         left: var(--spacing-4);
+        pointer-events: none;
       }
 
       .row {

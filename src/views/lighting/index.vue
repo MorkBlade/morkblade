@@ -26,7 +26,7 @@
       />
       <customLighting v-if="clickItem === 2" />
       <lightingAdvanced v-if="clickItem === 3" />
-    <decorativeLighting v-if="clickItem === 4" />
+      <decorativeLighting v-if="clickItem === 4" />
     </div>
     <lightLuminance
       v-if="clickItem !== 3 && clickItem !== 4"
@@ -158,7 +158,7 @@ const updateColors = async () => {
 const updateDecorativeColors = async () => {
   try {
     const decorativeLighting = await services.getLightingCustomV2();
-    console.log('⛔--------更新装饰灯颜色的函数', decorativeLighting);
+    // console.log('⛔--------更新装饰灯颜色的函数', decorativeLighting);
     const root = document.documentElement;
 
     // 装饰灯有22个键位，按索引设置CSS变量
@@ -185,7 +185,8 @@ const animationLoop = async (timestamp) => {
   if (timestamp - lastUpdateTime >= UPDATE_INTERVAL) {
     // 根据当前模式调用对应的更新函数
     if (pageStore.currentLightingMode === 'decorativeLighting') {
-      await updateDecorativeColors();
+      // await updateDecorativeColors();
+      await lightSettingStore.getDecorativeLightingData();
     } else {
       await updateColors();
     }
@@ -198,6 +199,7 @@ onMounted(async () => {
   const lampData = isDoubleLighting.value ? 'DoubleLighting' : 'SingleLighting';
   await initLighting(lampData);
   await getLightingSaturation();
+  console.log('staticLightColorList----',lightSettingStore.light);
   if (isVersion2.value) {
     animationFrameId = requestAnimationFrame(animationLoop);
   }

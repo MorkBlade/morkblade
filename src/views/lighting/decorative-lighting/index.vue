@@ -30,14 +30,8 @@
         <svg>
           <defs>
             <g id="handle">
-              <!-- 手柄的svg内容开始 -->
-              <!-- <rect x="0" y="0" width="6" height="6" r="2" fill="none" stroke-width="2" stroke="#fff"></rect> -->
-              <!-- <rect x="0" y="0" width="6" height="6" r="2" fill="none" stroke-width="2" stroke="#fff"></rect> -->
               <circle :cx="scaleValue(6)" :cy="scaleValue(6)" :r="scaleValue(6)" fill="none"
                 :stroke-width="scaleValue(1.5)" stroke="#fff"></circle>
-              <!-- <circle cx="6" cy="6" r="4" fill="none" stroke-width="2" stroke="#fff"></circle> -->
-              <!-- 手柄的svg内容结束 -->
-              <!-- <image href="@/assets/images/luminance_btn.svg" x="0" y="0" width="20" height="20" /> -->
             </g>
           </defs>
         </svg>
@@ -45,6 +39,7 @@
       <div class="color-blocks">
         <div v-for="color in colorList" :key="color" :style="{ backgroundColor: color }" @click="changeColor(color)">
         </div>
+          <button @click="resetDecorateCustom" class="reset-default-btn">恢复</button>
       </div>
     </div>
     <lightLuminance @changeSleepDelay="debouncedChangeSleepDelay"
@@ -78,9 +73,6 @@ let colorPicker = ref(null);
 onMounted(async () => {
   // 切换到装饰灯光区域
   lightSettingStore.setArea('Decorate1');
-
-  const res = await services.getLightingCustomV2()
-  console.log('⛔--------切换到装饰灯光区域', res);
 
   // 初始化装饰灯光配置
   await initDecorativeLightingData();
@@ -200,6 +192,10 @@ const blurUpdateColor = () => {
   }
 };
 
+const resetDecorateCustom = () => {
+  lightSettingStore.resetDecorateCustom();
+};
+
 // 组件卸载时销毁实例
 onBeforeUnmount(() => {
   if (colorPicker) {
@@ -230,8 +226,9 @@ const initDecorativeLightingData = async () => {
       config: 'Base'
     }, 'SingleLighting');
 
-    if (lightingBase && lightingBase[0]) {
-      const { open, mode, luminance, speed, direction, selectStaticColor } = lightingBase[0];
+
+    if (lightingBase) {
+      const { open, mode, luminance, speed, direction, selectStaticColor } = lightingBase;
       lightSettingStore.decorative1.open = open === 'Open';
       lightSettingStore.decorative1.mode = mode;
       lightSettingStore.decorative1.luminance = luminance;
@@ -239,8 +236,6 @@ const initDecorativeLightingData = async () => {
       lightSettingStore.decorative1.direction = direction === 'Forward';
       lightSettingStore.decorative1.selectStaticColor = selectStaticColor;
     }
-
-    console.log('装饰灯光初始化完成:', lightSettingStore.decorative1);
   } catch (error) {
     console.error('初始化装饰灯光失败:', error);
   }
@@ -252,45 +247,29 @@ const changeDynamicLight = (idx) => {
   setDecorativeLighting();
 };
 
+// TODO: 装饰灯效模式切换
 // v2 灯效模式切换
 const changelightingMode = (idx) => {
+  // 0，1，2，3
   lightSettingStore.decorative1.mode = idx;
-  setDecorativeLighting();
+  lightSettingStore.setDecorativeLighting();
 };
 
-// 设置装饰灯光
-const setDecorativeLighting = async () => {
-  try {
-    const { open, mode, luminance, speed, direction, selectStaticColor } = lightSettingStore.decorative1;
-    await services.setLightingBaseV2({
-      area: 'Decorate1',
-      config: 'Base',
-      data: {
-        open: open ? 'Open' : 'Close',
-        mode,
-        luminance,
-        speed,
-        direction: direction ? 'Forward' : 'Backward',
-        selectStaticColor,
-      },
-      lamp: 'SingleLighting',
-    });
-  } catch (error) {
-    console.error('设置装饰灯光失败:', error);
-  }
-};
+
 
 const debouncedChangeSleepDelay = async (delay) => {
   lightSettingStore.decorative1.sleepTime = delay;
-  await setDecorativeLighting();
+  await lightSettingStore.setDecorativeLighting();
 };
 
 const changeLuminance = async (luminance) => {
-
+  lightSettingStore.decorative1.luminance = luminance;
+  await lightSettingStore.setDecorativeLighting();
 };
 
 const changeSpeed = async (speed) => {
-
+  lightSettingStore.decorative1.speed = speed;
+  await lightSettingStore.setDecorativeLighting();
 };
 const debouncedChangeLuminance = debounce(changeLuminance, 200);
 const debouncedChangeSpeed = debounce(changeSpeed, 200);
@@ -494,5 +473,19 @@ const debouncedChangeSpeed = debounce(changeSpeed, 200);
   left: -0.0323rem;
   z-index: 5;
   transition: background-color 0.3s ease;
+}
+.reset-default-btn {
+  width: var(--size-120);
+  height: var(--size-36);
+  margin-top: var(--spacing-50);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-color: #91bc00;
+  border: none;
+  text-align: center;
+  font-family: 'CN Heavy';
+  outline: none;
+  border-radius: var(--spacing-6);
+  cursor: pointer;
 }
 </style>

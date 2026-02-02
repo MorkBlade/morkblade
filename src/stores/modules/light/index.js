@@ -1,3 +1,4 @@
+import services from '@/services/index';
 
 const state = {
   area: 'Keyboard',
@@ -11,7 +12,7 @@ const state = {
     staticColors: ['#fff', '#fff', '#fff', '#fff', '#fff', '#fff'],
     selectStaticColor: 0,
     luminance: 50,
-    speed: 1,
+    speed: 50,
     sleepTime: -1,
     direction: false,
     dynamic: 1, // 动态灯效index 用于匹配选中项
@@ -58,6 +59,9 @@ const state = {
   upOpen: false, // 上灯位状态
   downOpen: false, // 下灯位状态
   allLamp: false, // 双灯位
+
+  // 装饰灯
+  decorativeLighting: []
 };
 
 export const useLightSettingStore = defineStore('lightSetting', {
@@ -153,8 +157,70 @@ export const useLightSettingStore = defineStore('lightSetting', {
 
     // 获取装饰灯光数据
     async getDecorativeLightingData() {
-      const res = await services.getDecorate1Custom();
-      return res;
+      const res = await services.getDecorate1CustomV2({rows:1, cols:22, area:'Decorate1'});
+      this.decorativeLighting = res[0];
     },
-  },
+
+
+    // 设置装饰灯光
+    async setDecorativeLighting() {
+      try {
+        const { open, mode, luminance, speed, direction, selectStaticColor } = this.decorative1;
+        const res = await services.setLightingBaseV2({
+          area: 'Decorate1',
+          config: 'Base',
+          data: {
+            open: 'Open',
+            mode,
+            luminance,
+            speed,
+            direction: direction ? 'Forward' : 'Backward',
+            selectStaticColor,
+          },
+          lamp: 'SingleLighting',
+        });
+        // console.log('参数----',{
+        //   open: 'Open',
+        //   mode,
+        //   luminance,
+        //   speed,
+        //   direction: direction ? 'Forward' : 'Backward',
+        //   selectStaticColor,
+        // })
+      } catch (error) {
+        console.error('设置装饰灯光失败:', error);
+      }
+    },
+
+    // 点击按键设置自定义颜色
+    async setDecorateCustom(index) {
+      // 更新 lightingDecorate 数据
+      if (this.decorativeLighting && this.decorativeLighting[index]) {
+        this.decorativeLighting[index] = { R: this.currentColor.r, G: this.currentColor.g, B: this.currentColor.b, isCustom: true };
+      }
+      // 构造数据并调用 SDK
+      const customLightData = [this.decorativeLighting];
+      const res = await services.setDecorate1CustomV2({
+        area: 'Decorate1',
+        protocol: 'Custom',
+        data: customLightData,
+      });
+    },
+
+    // 清除装饰灯自定义灯效
+    async resetDecorateCustom() {
+      // 重置所有装饰灯颜色的 isCustom 标记
+      if (this.decorativeLighting) {
+        this.decorativeLighting.forEach((color) => {
+          color.isCustom = false;
+        });
+      }
+      const customLightData = [this.decorativeLighting];
+      await services.setDecorate1CustomV2({
+        area: 'Decorate1',
+        protocol: 'Custom',
+        data: customLightData,
+      });
+    }
+  }
 });
