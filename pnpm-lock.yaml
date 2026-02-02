@@ -12,8 +12,8 @@ importers:
         specifier: ^5.5.2
         version: 5.5.2
       '@sparklinkplayjoy/morkblade-sdk-keyboard':
-        specifier: 1.0.6
-        version: 1.0.6
+        specifier: ^1.0.7
+        version: 1.0.7
       axios:
         specifier: ^1.6.7
         version: 1.11.0
@@ -709,17 +709,17 @@ packages:
     resolution: {integrity: sha512-tlqY9xq5ukxTUZBmoOp+m61cqwQD5pHJtFY3Mn8CA8ps6yghLH/Hw8UPdqg4OLmFW3IFlcXnQNmo/dh8HzXYIQ==}
     engines: {node: '>=18'}
 
-  '@sparklinkplayjoy/morkblade-hid@1.0.1':
-    resolution: {integrity: sha512-kBDZ24St2C038okaQUh0fSQO9kQcMcQhCKkxy0CUPCgHJZKfahkGGMyVKx8ABJH2T1KCenQ5IWhThx70EtgFTw==}
+  '@sparklinkplayjoy/morkblade-hid@1.0.2':
+    resolution: {integrity: sha512-PvRfp7ce7RckzlPvbLpp4WmKuO6qYE4kxjBOffeIz7FiCirmlOx3srhHPUmuveUin9qRvVIa9vIFnpcVCadqJQ==}
 
-  '@sparklinkplayjoy/morkblade-protocol-keyboard-v2@1.0.5':
-    resolution: {integrity: sha512-ex8a9Y7ylgQMEYS7XPe9Nfo+3/DOHgqpm70+SmNmUjUtrgQK9fMzqUXlWnqXFYKuWeWHIylumORew7lbfgbUJw==}
+  '@sparklinkplayjoy/morkblade-protocol-keyboard-v2@1.0.6':
+    resolution: {integrity: sha512-b8wPY0y93evS88SzexdjnkLRkjPTpWW57nlyP7GB1esVOX8zZmJXpuCAxcfyvdVRXvTDEX9mft/s8mOedQOjyA==}
 
   '@sparklinkplayjoy/morkblade-protocol-keyboard@1.0.1':
     resolution: {integrity: sha512-xlG2HbwJNTCjGieqxH/bWm3DaOFljl3eseDGzjdCf513tE6TfPvCALjYIvjJdZa9OqJmGlfjv1TvZJr5R8ekcQ==}
 
-  '@sparklinkplayjoy/morkblade-sdk-keyboard@1.0.6':
-    resolution: {integrity: sha512-Kwid0K8/cBWCW/jx9L+QRQ/E3m+/cNmxCMXieqp+sVP264DT/x53Wa5NISK5LSEPv51RezK5qUapDbwrLoFn4Q==}
+  '@sparklinkplayjoy/morkblade-sdk-keyboard@1.0.7':
+    resolution: {integrity: sha512-z78y8tEPwoeJ4UsV6xhkdsHwRxPlgIxQbU6hbAcoHu5VgNUuMVq4t5xxY1CYk939RzqV9iE7aUl2BTQcFGI/Og==}
 
   '@sxzz/popperjs-es@2.11.7':
     resolution: {integrity: sha512-Ccy0NlLkzr0Ex2FKvh2X+OyERHXJ88XJ1MXtsI9y9fGexlaXaVTPzBCRBwIxFkORuOb+uBqeu+RqnpgYTEZRUQ==}
@@ -2499,11 +2499,11 @@ snapshots:
 
   '@sindresorhus/merge-streams@4.0.0': {}
 
-  '@sparklinkplayjoy/morkblade-hid@1.0.1':
+  '@sparklinkplayjoy/morkblade-hid@1.0.2':
     dependencies:
       uuid: 11.1.0
 
-  '@sparklinkplayjoy/morkblade-protocol-keyboard-v2@1.0.5':
+  '@sparklinkplayjoy/morkblade-protocol-keyboard-v2@1.0.6':
     dependencies:
       decimal.js: 10.6.0
 
@@ -2511,11 +2511,11 @@ snapshots:
     dependencies:
       decimal.js: 10.6.0
 
-  '@sparklinkplayjoy/morkblade-sdk-keyboard@1.0.6':
+  '@sparklinkplayjoy/morkblade-sdk-keyboard@1.0.7':
     dependencies:
-      '@sparklinkplayjoy/morkblade-hid': 1.0.1
+      '@sparklinkplayjoy/morkblade-hid': 1.0.2
       '@sparklinkplayjoy/morkblade-protocol-keyboard': 1.0.1
-      '@sparklinkplayjoy/morkblade-protocol-keyboard-v2': 1.0.5
+      '@sparklinkplayjoy/morkblade-protocol-keyboard-v2': 1.0.6
       '@types/crypto-js': 4.2.2
       crypto-js: 4.2.0
       decimal.js: 10.6.0

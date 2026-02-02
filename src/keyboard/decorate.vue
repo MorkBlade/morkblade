@@ -18,7 +18,7 @@
                 <!-- 中心内容 -->
                 <div class="special-light__content">
                     <div class="special-light__logo">
-                       <img class="logo-img" src="/src/assets/images/logo.png" alt="" />
+                       <img class="logo-img" src="/src/assets/images/logo.svg" alt="" />
                     </div>
                 </div>
 

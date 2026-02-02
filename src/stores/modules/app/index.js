@@ -83,11 +83,12 @@ const useAppStore = defineStore('app', {
     async getConfigID(isVersion2 = false) {
       if (isVersion2) {
         const result = await services.getConfigListV2();
+        console.log('查询当前的配置文件id result: ', result);
         const result2 = await services.getConfigV2();
         const curConfig = result2.key;
         // this.activeConfigIndex = result[0]?.list.findIndex((item) => item === curConfig);
         this.activeConfigIndex = result2.value;
-        const configList = result[0]?.list
+        const configList = result?.list
           .filter((item) => item !== undefined)
           .map((item, idx) => ({
             title: `我的配置${idx + 1}`,
