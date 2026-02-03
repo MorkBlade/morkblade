@@ -95,7 +95,7 @@
     { "shapeScale": { "w": 0, "h": 0 }, "location": { "x": 0, "y": 0 } },
     { "shapeScale": { "w": 1.65, "h": 1 }, "location": { "x": 6.8, "y": 4 } },
     { "shapeScale": { "w": 2.5, "h": 1 }, "location": { "x": 8.55, "y": 4 } },
-    { "shapeScale": { "w": 1.28, "h": 0 }, "location": { "x": 0, "y": 0 } },
+    { "shapeScale": { "w": 0, "h": 0 }, "location": { "x": 0, "y": 0 } },
     { "shapeScale": { "w": 1, "h": 1 }, "location": { "x": 11.13, "y": 4 } },
     { "shapeScale": { "w": 1, "h": 1 }, "location": { "x": 12.23, "y": 4 } },
     { "shapeScale": { "w": 1, "h": 1 }, "location": { "x": 13.33,"y": 4 } },

@@ -117,6 +117,7 @@ export const useLightingHook = () => {
           customLightData[rowIndex].push(col.customLight);
         });
       });
+      console.log('customLightData----',customLightData)
       await services.setLightingCustomV2({
         area: 'Keyboard',
         data: customLightData,
