@@ -404,7 +404,13 @@ const axisVal = computed(() => {
 const axisColor = computed(() => {
   const list = performanceStore.axisList;
   if (performanceStore.isAxisStatus === 'v2') {
-    const item = list.find((item) => item.axis_id === axisVal.value);
+    // 轴体列表
+    const list_item = list.flatMap((item) => {
+      return item.list.map((ite) => {
+        return ite;
+      });
+    });
+    const item = list_item.find((item) => item.aixsDetail[0].axis_id === axisVal.value);
     return item ? item.axis_color : 'transparent';
   } else {
     // v1 情况下，axisVal.value 是 axis_id，需要查找对应的项目

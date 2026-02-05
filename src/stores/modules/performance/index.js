@@ -665,28 +665,31 @@ const usePerformanceStore = defineStore('performance', {
           const vid = deviceStore.device?.vendorId.toString(16).padStart(4, '0');
           const pid = deviceStore.device?.productId.toString(16).padStart(4, '0');
           const params = { board_id: boardId, vid, pid, t: Date.now() };
-          this.allAxisListV2 = await httpService.getAxisListV2(params);;
-          this.allAxisListV2.forEach((axisItem, itemIndex) => {
-            this.axisList.push({ ...axisItem, axisIndex: itemIndex });
-          });
+          // this.allAxisListV2 = await httpService.getAxisListV2(params);
+          this.allAxisListV2 = await httpService.getAxisListV3(params);
+
+          // this.allAxisListV2.forEach((axisItem, itemIndex) => {
+          //   this.axisList.push({ ...axisItem, axisIndex: itemIndex });
+          // });
+
+          this.axisList = this.allAxisListV2;
 
           // 处理轴体图标映射
 
           // 修复变量重复声明问题，避免重复声明 item
-          this.axisList.forEach((axisItem) => {
-            const factory_name =
-            axisItem.brand !== 'TTC' && axisItem.brand !== 'GATERON' ? 'other' : axisItem.brand;
-            axisItem.factory_name = factory_name;
-            axisItem.brand = factory_name;
-            axisItem.doctrine_range_left = axisItem.aixsDetail[0].axis_range_max / 1000;
-            axisItem.doctrine_range_right = '0.2mm';
-            axisItem.axis_id = axisItem.aixsDetail[0].axis_id;
-            const icon_obj = ICON_MAP[factory_name];
-            if (icon_obj && icon_obj[axisItem.axis_id]) {
-              // console.log('change axis pic----------------->');
-              axisItem.image_url = icon_obj[axisItem.axis_id];
-            }
-          });
+          // this.axisList.forEach((axisItem) => {
+          //   const factory_name =
+          //   axisItem.brand !== 'TTC' && axisItem.brand !== 'GATERON' ? 'other' : axisItem.brand;
+          //   axisItem.factory_name = factory_name;
+          //   axisItem.brand = factory_name;
+          //   axisItem.doctrine_range_left = axisItem.aixsDetail[0].axis_range_max / 1000;
+          //   axisItem.doctrine_range_right = '0.2mm';
+          //   axisItem.axis_id = axisItem.aixsDetail[0].axis_id;
+          //   const icon_obj = ICON_MAP[factory_name];
+          //   if (icon_obj && icon_obj[axisItem.axis_id]) {
+          //     axisItem.image_url = icon_obj[axisItem.axis_id];
+          //   }
+          // });
         }
 
         return list;

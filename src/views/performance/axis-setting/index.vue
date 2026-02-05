@@ -26,7 +26,7 @@
           <div class="axis_card_container" v-for="(item, index) in axisBrandList" :key="item.axis_id">
             <div class="axis_card">
               <div class="icon" :style="{ backgroundColor: item.axis_color }">
-                {{ getAxisIcon(item.factory_name) + index }}
+                {{ getAxisIcon( isVersion2 ? item.type_name_en : item.factory_name) + index }}
               </div>
               <div class="name">
                 {{ item.axis_name }}
@@ -68,38 +68,55 @@ const axisList = computed(() => performanceStore.axisList);
 const handleApplyAxis = (item) => {
   if (activeKeys.value.length !== 0) {
     const { setAxis } = usePerformanceHook();
-    const res = setAxis(keyboards.value, activeKeys.value, item.axis_id);
+    let res = null;
+    if (isVersion2) {
+      res = setAxis(keyboards.value, activeKeys.value, item.aixsDetail[0].axis_id);
+
+    } else {
+      res = setAxis(keyboards.value, activeKeys.value, item.axis_id);
+
+    }
     if (res) {
       showMessage(t('axisSetting.modifySuccess'));
     }
+    return res;
   }
 };
 
 const handleMatchJLD = () => {
   const jldAxis = axisList.value.filter((ite) => {
     if (isVersion2) {
-      return ite.factory_name === 'GATERON';
+      return ite.type_name_en === 'GATERON';
     } else {
       return ite.factory_name === '佳达隆';
     }
   });
-  axisBrandList.value = jldAxis;
+  axisBrandList.value = isVersion2 ?  jldAxis[0].list : jldAxis;
 };
 
 const handleMatchTTC = () => {
   const ttcAxis = axisList.value.filter((ite) => {
-    return ite.factory_name === 'TTC';
+    if (isVersion2) {
+      return ite.type_name_en === 'TTC';
+    } else {
+      return ite.factory_name === 'TTC';
+    }
   });
   if (ttcAxis.length === 0) showMessage(t('axisSetting.noAxis'), 'warning');
-  axisBrandList.value = ttcAxis;
+  axisBrandList.value = isVersion2 ? ttcAxis[0].list : ttcAxis;
+  console.log('⛔--------axisBrandList', axisBrandList.value);
 };
 
 const handleMatchOther = () => {
   const otherAxis = axisList.value.filter((ite) => {
-    return ite.factory_name === 'other';
+    if (isVersion2) {
+      return ite.type_name_en === 'other';
+    } else {
+      return ite.factory_name === 'other';
+    }
   });
   if (otherAxis.length === 0) showMessage(t('axisSetting.noMoreAxis'), 'warning');
-  axisBrandList.value = otherAxis;
+  axisBrandList.value = isVersion2 ? otherAxis[0].list : otherAxis;
 };
 
 const handleClearAxis = () => {
