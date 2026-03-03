@@ -19,7 +19,7 @@ const state = {
   },
   logo: {
     open: true,
-    mode: 'static', // 'static' | 'custom' | 'dynamic'
+    mode: 0, // 'static' | 'custom' | 'dynamic'
     staticColors: ['#fff', '#fff', '#fff', '#fff', '#fff', '#fff'],
     selectStaticColor: 0,
     luminance: 1,
@@ -179,14 +179,14 @@ export const useLightSettingStore = defineStore('lightSetting', {
           },
           lamp: 'SingleLighting',
         });
-        // console.log('参数----',{
-        //   open: 'Open',
-        //   mode,
-        //   luminance,
-        //   speed,
-        //   direction: direction ? 'Forward' : 'Backward',
-        //   selectStaticColor,
-        // })
+        console.log('参数----',{
+          open: 'Open',
+          mode,
+          luminance,
+          speed,
+          direction: direction ? 'Forward' : 'Backward',
+          selectStaticColor,
+        })
       } catch (error) {
         console.error('设置装饰灯光失败:', error);
       }

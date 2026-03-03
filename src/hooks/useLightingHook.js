@@ -1,4 +1,4 @@
-
+﻿
 import services from '@/services/index';
 import { useLightSettingStore, useKeyboardStore } from '@/stores';
 import { storeToRefs } from 'pinia';
@@ -8,9 +8,10 @@ export const useLightingHook = () => {
   const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
   const keyboardStore = useKeyboardStore();
   const lightSettingStore = useLightSettingStore();
-  const { light } = storeToRefs(lightSettingStore);
+  const { light, decorative1 } = storeToRefs(lightSettingStore);
   const { area, base, palette, colorCorrection } = lightSettingStore;
   const lightData = light.value;
+  const logoData = decorative1.value
 
   const initLighting = async (lampData) => {
     const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
@@ -22,10 +23,10 @@ export const useLightingHook = () => {
       lightSettingStore.updateSleepTime(lightSleepTime);
 
       const lightingPalette = await services.getLightingPaletteV2({ area: area, config: palette });
-      console.log('lightingPalette----',lightingPalette)
 
       const colors = paletteToHexArray(lightingPalette?.staticColors).map((color, index) => ({ color, id: index }));
       lightData.staticColors = colors;
+      logoData.staticColors = colors;
 
       modifyCustomLightingData();
     } else {
@@ -71,6 +72,23 @@ export const useLightingHook = () => {
     }
   };
 
+  const setLogo = async () => {
+    const res = await services.setLightingBaseV2({
+      area: 'Decorate1',
+      config: 'Base',
+      data: {
+        open: 'Open',
+        mode: 1,
+        luminance: 20,
+        speed: logo.speed,
+        direction: logo.direction ? 'Forward' : 'Backward',
+        selectStaticColor:2,
+      },
+      lamp: logo.lamp,
+    });
+    console.log('⛔--------resres', res);
+  }
+
   // 设置灯光调色板颜色 v2特有
   const setLightingPalette = async () => {
     const colors = hexArrayToPalette(
@@ -84,6 +102,22 @@ export const useLightingHook = () => {
     });
     return res;
   };
+
+  // 设置灯光调色板颜色 v2特有
+  const setLogoLightingPalette = async () => {
+    const colors = hexArrayToPalette(
+      logoData.staticColors.map((item) => (typeof item === 'string' ? item : item.color)),
+    );
+
+    const res = await services.setLightingPaletteV2({
+      area: 'Decorate1',
+      config: palette,
+      data: { staticColors: colors },
+    });
+    return res;
+  };
+
+
 
   // v2自定义灯光初始化状态
   const initCustomLighting = async (inCustomLighting = false) => {
@@ -266,7 +300,9 @@ export const useLightingHook = () => {
     setLightingSaturation,
     setLightingSleepTime,
     getLightingDataV2,
-    initDecorativeLighting
+    initDecorativeLighting,
+    setLogo,
+    setLogoLightingPalette
   };
 };
 

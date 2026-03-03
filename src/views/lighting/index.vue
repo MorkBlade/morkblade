@@ -212,12 +212,17 @@ const updateDecorativeColors = async () => {
 const animationLoop = async (timestamp) => {
   if (timestamp - lastUpdateTime >= UPDATE_INTERVAL) {
     // 根据当前模式调用对应的更新函数
-    if (pageStore.currentLightingMode === 'decorativeLighting') {
-      // await updateDecorativeColors();
-      await lightSettingStore.getDecorativeLightingData();
-    } else {
+    // if (pageStore.currentLightingMode === 'decorativeLighting') {
+    //   // await updateDecorativeColors();
+    //   await lightSettingStore.getDecorativeLightingData();
+    // } else {
+      // 如果是TKL，使用vid，pid就行判断
+
+      // if (deviceStore.devices[0]?.productId === 5388 && deviceStore.devices[0]?.vendorId === 7334) {
+        await lightSettingStore.getDecorativeLightingData()
+      // };
       await updateColors();
-    }
+    // }
     lastUpdateTime = timestamp;
   }
   animationFrameId = requestAnimationFrame(animationLoop);
@@ -228,7 +233,6 @@ onMounted(async () => {
   await initLighting(lampData);
   await getLightingSaturation();
   await checkDecorativeLightingVisibility();
-  console.log('staticLightColorList----',lightSettingStore.light);
   if (isVersion2.value) {
     animationFrameId = requestAnimationFrame(animationLoop);
   }
@@ -326,7 +330,6 @@ const changeKeyLight = async () => {
     await setLighting();
   }
 };
-
 // 修改colorPicker触发修改灯光，v1没有
 const changeColorPicker = async (isVersion2) => {
   if (isVersion2) {

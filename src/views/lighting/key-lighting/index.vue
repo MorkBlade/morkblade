@@ -40,11 +40,11 @@ const changelightingMode = async (idx) => {
 
 // v1 v2静态灯效
 const checkStaticLight = async (color, idx) => {
-  // console.log(color, idx);
+  console.log(' v1 v2静态灯效', color, idx);
   keyLighting.value.selectStaticColor = Number(idx);
   keyLighting.value.staticColors[idx].color = color;
   keyLighting.value.type = 'static';
-
+  console.log('⛔⛔⛔--------', keyLighting.value);
   emit('changeKeyLight');
 };
 

@@ -1,9 +1,24 @@
-<template>
+﻿<template>
   <div class="custom-light">
-    <dynamicLightCard dynamicType="decorativeLight" :dynamicLightMode="lightSettingStore.decorative1.mode - 0"
-      @checkDynamicLight="changeDynamicLight" @changelightingMode="changelightingMode"
-      class="decorative-light-card"/>
-    <div class="color-picker-box">
+    <dynamicLightCard
+      dynamicType="decorativeLight"
+      :dynamicLightMode="lightSettingStore.decorative1.mode - 0"
+      @checkDynamicLight="changeDynamicLight"
+      @changelightingMode="changelightingMode"
+      class="decorative-light-card"
+    />
+
+    <!-- logo灯 -->
+    <staticLightCard
+      v-if="deviceStore.devices[0]?.productId === 5388 && deviceStore.devices[0]?.vendorId === 7334"
+      class="static-light"
+      staticType="logoLight"
+      :staticLightColorList="lightSettingStore.decorative1.staticColors"
+      @checkLogoStaticLight="checkLogoStaticLight"
+      @changeColorPicker="changeColorPicker"
+    />
+    <!-- 底灯 -->
+    <div v-else class="color-picker-box">
       <div class="color-info">
         <div class="rgb-values">
           <div class="rgb-input">
@@ -21,8 +36,15 @@
         </div>
         <div class="scale-values">
           <div class="color-preview" :style="{ backgroundColor: selectedColor }"></div>
-          <input type="text" v-model="selectedColor" @input="updateColor" @keypress="validateHexInput"
-            @blur="blurUpdateColor" maxlength="7" pattern="^#[0-9A-Fa-f]{6}$" />
+          <input
+            type="text"
+            v-model="selectedColor"
+            @input="updateColor"
+            @keypress="validateHexInput"
+            @blur="blurUpdateColor"
+            maxlength="7"
+            pattern="^#[0-9A-Fa-f]{6}$"
+          />
         </div>
       </div>
       <div class="color-wheel-container">
@@ -30,21 +52,35 @@
         <svg>
           <defs>
             <g id="handle">
-              <circle :cx="scaleValue(6)" :cy="scaleValue(6)" :r="scaleValue(6)" fill="none"
-                :stroke-width="scaleValue(1.5)" stroke="#fff"></circle>
+              <circle
+                :cx="scaleValue(6)"
+                :cy="scaleValue(6)"
+                :r="scaleValue(6)"
+                fill="none"
+                :stroke-width="scaleValue(1.5)"
+                stroke="#fff"
+              ></circle>
             </g>
           </defs>
         </svg>
       </div>
       <div class="color-blocks">
-        <div v-for="color in colorList" :key="color" :style="{ backgroundColor: color }" @click="changeColor(color)">
-        </div>
-          <button @click="resetDecorateCustom" class="reset-default-btn">恢复</button>
+        <div
+          v-for="color in colorList"
+          :key="color"
+          :style="{ backgroundColor: color }"
+          @click="changeColor(color)"
+        ></div>
+        <button @click="resetDecorateCustom" class="reset-default-btn">恢复</button>
       </div>
     </div>
-    <lightLuminance @changeSleepDelay="debouncedChangeSleepDelay"
-      @changeLuminance="debouncedChangeLuminance" @changeSpeed="debouncedChangeSpeed"
-      v-model="lightSettingStore.decorative1" />
+
+    <lightLuminance
+      @changeSleepDelay="debouncedChangeSleepDelay"
+      @changeLuminance="debouncedChangeLuminance"
+      @changeSpeed="debouncedChangeSpeed"
+      v-model="lightSettingStore.decorative1"
+    />
   </div>
 </template>
 
@@ -52,13 +88,18 @@
 import iro from '@jaames/iro';
 import services from '@/services/index';
 import { scaleValue } from '@/utils/responsive.js';
-import { useLightSettingStore, usePageStore } from '@/stores';
+import { useLightSettingStore, usePageStore, useDeviceStore } from '@/stores';
 import dynamicLightCard from '../components/dynamic-light-card.vue';
+import staticLightCard from '../components/static-light-card.vue';
 import lightLuminance from '../components/light-luminance.vue';
 import { debounce } from 'lodash';
+import { useLightingHook } from '@/hooks';
 
 const lightSettingStore = useLightSettingStore();
+const deviceStore = useDeviceStore();
 const pageStore = usePageStore();
+const keyLighting = defineModel();
+const { setLogoLightingPalette } = useLightingHook();
 
 // 颜色预设列表
 const colorList = ['#080cfe', '#ff0000', '#ffff00', '#fe00e9', '#00fe2f', '#fe3602', '#ffffff', '#1481fe', '#00ffd8'];
@@ -108,6 +149,20 @@ onMounted(async () => {
   }
   pageStore.switchLightingMode('decorativeLighting');
 });
+
+// 改变logo颜色
+const checkLogoStaticLight = async (color, idx) => {
+  lightSettingStore.decorative1.selectStaticColor = Number(idx);
+  lightSettingStore.decorative1.staticColors[idx].color = color;
+  lightSettingStore.decorative1.type = 'static';
+  lightSettingStore.setDecorativeLighting();
+};
+const changeColorPicker = async (color, idx) => {
+  lightSettingStore.decorative1.selectStaticColor = Number(idx);
+  lightSettingStore.decorative1.staticColors[idx].color = color;
+  lightSettingStore.decorative1.type = 'static';
+  setLogoLightingPalette();
+};
 
 // 从RGB输入更新色轮
 const updateFromRgb = () => {
@@ -221,10 +276,13 @@ const changeColor = (clickColor) => {
 // 初始化装饰灯光数据
 const initDecorativeLightingData = async () => {
   try {
-    const lightingBase = await services.getLightingBaseV2({
-      area: 'Decorate1',
-      config: 'Base'
-    }, 'SingleLighting');
+    const lightingBase = await services.getLightingBaseV2(
+      {
+        area: 'Decorate1',
+        config: 'Base',
+      },
+      'SingleLighting',
+    );
 
 
     if (lightingBase) {
@@ -236,6 +294,7 @@ const initDecorativeLightingData = async () => {
       lightSettingStore.decorative1.direction = direction === 'Forward';
       lightSettingStore.decorative1.selectStaticColor = selectStaticColor;
     }
+    console.log('⛔--------初始化装饰灯光数据', lightSettingStore.decorative1.staticColors);
   } catch (error) {
     console.error('初始化装饰灯光失败:', error);
   }
@@ -254,8 +313,6 @@ const changelightingMode = (idx) => {
   lightSettingStore.decorative1.mode = idx;
   lightSettingStore.setDecorativeLighting();
 };
-
-
 
 const debouncedChangeSleepDelay = async (delay) => {
   lightSettingStore.decorative1.sleepTime = delay;
@@ -277,7 +334,9 @@ const debouncedChangeSpeed = debounce(changeSpeed, 200);
 
 <style scoped lang="scss">
 .custom-light {
+  width: 100%;
   display: flex;
+  justify-content: space-around;
   height: var(--size-290);
 
   .preinstall-light {
@@ -459,9 +518,12 @@ const debouncedChangeSpeed = debounce(changeSpeed, 200);
     }
   }
 }
+
 .decorative-light-card {
   width: var(--size-200);
+  border-radius: var(--size-20);
 }
+
 .color-key {
   width: 100%;
   height: 100%;
@@ -474,6 +536,7 @@ const debouncedChangeSpeed = debounce(changeSpeed, 200);
   z-index: 5;
   transition: background-color 0.3s ease;
 }
+
 .reset-default-btn {
   width: var(--size-120);
   height: var(--size-36);
@@ -487,5 +550,9 @@ const debouncedChangeSpeed = debounce(changeSpeed, 200);
   outline: none;
   border-radius: var(--spacing-6);
   cursor: pointer;
+}
+
+.static-light {
+  margin: 0 20px;
 }
 </style>

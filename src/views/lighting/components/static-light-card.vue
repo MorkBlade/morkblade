@@ -99,23 +99,23 @@ const currentChecked = computed(() => {
   return (idx) => {
     if (staticType === 'keyLight') {
       checkedLight.value = lightSettingStore.light.selectStaticColor;
-      return !lightSettingStore.light.mode && lightSettingStore.light.selectStaticColor === idx;
+      return lightSettingStore.light.selectStaticColor === idx;
     } else {
-      checkedLight.value = lightSettingStore.logo.selectStaticColor;
-      return !lightSettingStore.logo.mode && lightSettingStore.logo.selectStaticColor === idx;
+      checkedLight.value = lightSettingStore.decorative1.selectStaticColor;
+      return  lightSettingStore.decorative1.selectStaticColor === idx;
     }
   };
 });
 
 // TODO 灯光初始化
 const onClick = (idx) => {
-  console.log('onClick-----------------------');
   checkedLight.value = idx;
   checkedColor.value = staticLightColorList[idx].color;
-  // console.log('checkedColor.value', checkedColor.value);
+  console.log('checkedColor.value', checkedColor.value);
   if (staticType === 'keyLight') {
     emits('checkStaticLight', checkedColor.value, idx);
   } else {
+    console.log('⛔--------logo灯', checkedColor.value, idx);
     emits('checkLogoStaticLight', checkedColor.value, idx);
   }
 };
@@ -125,6 +125,7 @@ const onChange = (color, context) => {
   if (staticType === 'keyLight') {
     emits('changeColorPicker', context.color.hex, checkedLight.value, isVersion2.value);
   } else {
+    emits('changeColorPicker', context.color.hex, checkedLight.value, isVersion2.value);
     // TODO v2暂无logo灯
     emits('changeLogoColorPicker', context.color.hex, checkedLight.value, isVersion2.value);
   }

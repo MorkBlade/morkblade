@@ -140,7 +140,7 @@ const currentChecked = computed(() => {
       if (dynamicType === 'keyLight') {
         return lightSettingStore.light.mode === idx;
       } else {
-        return lightSettingStore.logo.mode === idx;
+        return lightSettingStore.decorative1.mode === idx;
       }
     } else {
       if (dynamicType === 'keyLight') {

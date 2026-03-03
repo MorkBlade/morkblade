@@ -55,7 +55,11 @@
           </template>
         </div>
         <div class="logo-light-bar">
-          <span></span>
+          <span :style="getKeyStyle(0)"></span>
+          <span :style="getKeyStyle(1)"></span>
+          <span :style="getKeyStyle(2)"></span>
+          <span :style="getKeyStyle(3)"></span>
+          <span :style="getKeyStyle(4)"></span>
         </div>
       </div>
     </template>
@@ -158,7 +162,7 @@ import layouts from '@/configs/layout/index.js';
 import emitter from '@/utils/app-emitter';
 import { scaleValue } from '@/utils/responsive.js';
 import { useKeyboardPageHook } from './useKeyboardPageHook.js';
-import { useAppStore, useKeyboardStore, useDeviceStore, usePerformanceStore, usePageStore } from '@/stores';
+import { useAppStore, useKeyboardStore, useDeviceStore, usePerformanceStore, usePageStore, useLightSettingStore } from '@/stores';
 import { useAdvancedHook } from '@/hooks';
 import key from './key.vue';
 import { computed } from 'vue';
@@ -169,6 +173,8 @@ const appStore = useAppStore();
 const deviceStore = useDeviceStore();
 const keyboardStore = useKeyboardStore();
 const performanceStore = usePerformanceStore();
+const lightStore = useLightSettingStore();
+const { decorativeLighting } = storeToRefs(lightStore);
 const pageStore = usePageStore();
 const { initCustomLighting } = useLightingHook();
 const { keyboards } = storeToRefs(keyboardStore);
@@ -233,6 +239,7 @@ onMounted(async () => {
     // First initialize keyboard
     await performanceStore.getGlobalTouchTravel();
     await keyboardStore.initKeyboard();
+    await lightStore.getDecorativeLightingData();
     // // Then initialize lighting
     // // await initCustomLighting();
     if (isVersion2.value) await deviceStore.getDoubleLighting();
@@ -469,6 +476,15 @@ const containerDimensions = computed(() => {
     height: maxY + scaleValue(65),
   };
 });
+
+const getKeyStyle = computed(() => (index) => {
+  if (route.path !== '/lighting') return
+  const color = decorativeLighting.value[index];
+  if (color) {
+    return { backgroundColor: `rgb(${color.R}, ${color.G}, ${color.B})` };
+  }
+  return {};
+});
 </script>
 
 <style scoped lang="scss">
@@ -604,15 +620,29 @@ const containerDimensions = computed(() => {
       position: absolute;
       right: var(--spacing-24);
       top: var(--size-200);
+      display: flex;
+      align-items: center;
+      padding-left: calc(var(--spacing-80) + var(--spacing-5));
+
 
       & span {
-        width: calc(var(--spacing-70) - var(--spacing-1));
+        width: calc(var(--spacing-15) - var(--spacing-1));
         height: var(--spacing-4);
-        border-radius: var(--spacing-4);
-        // background-color: rgba(135, 206, 235, 0.3);
-        position: absolute;
+        // border-radius: var(--spacing-4);
+        // border: 1px solid #fff;
+        // background-color: red;
+        // position: absolute;
         top: var(--spacing-8);
         right: var(--spacing-5);
+      }
+      // 第一个和第五个单独设置圆角
+      & span:first-child {
+        border-top-left-radius: var(--spacing-4);
+        border-bottom-left-radius: var(--spacing-4);
+      }
+      & span:last-child {
+        border-top-right-radius: var(--spacing-4);
+        border-bottom-right-radius: var(--spacing-4);
       }
     }
 
@@ -629,10 +659,10 @@ const containerDimensions = computed(() => {
       transform: rotate(180deg);
 
       & span {
-        width: calc(var(--spacing-70) - var(--spacing-1));
+        width: calc(var(--spacing-20) - var(--spacing-1));
         height: var(--spacing-4);
         border-radius: var(--spacing-4);
-        // background-color: rgba(135, 206, 235, 0.3);
+        background-color: rgba(135, 206, 235, 0.3);
         position: absolute;
         top: var(--spacing-8);
         left: var(--spacing-5);
