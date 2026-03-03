@@ -12,6 +12,8 @@ const service = new XDKeyboard({
     { vendorId: 0x1ca6, productId: 0x1508, usagePage: 0xffb0, usage: 0x01 }, // mk66
     { vendorId: 0x1ca3, productId: 0x0101, usagePage: 0xffa0, usage: 0x01 },
     { vendorId: 0x1ca9, productId: 0xe501, usagePage: 0xffa0, usage: 0x01 },
+
+    { vendorId: 0x1ca6, productId: 0x150c, usagePage: 0xfff0, usage: 0x01 },
   ],
   // configs: [],
   usage: [0x01],

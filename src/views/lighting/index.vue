@@ -143,7 +143,7 @@ const updateColors = async () => {
     // 只更新发生变化的颜色
     for (let row = 0; row <= 5; row++) {
       if (customLighting[row]) {
-        for (let col = 0; col <= 15; col++) {
+        for (let col = 0; col <= 16; col++) {
           if (customLighting[row][col]) {
             const { R, G, B } = customLighting[row][col];
             const currentColor = root.style.getPropertyValue(`--key-color-${row}-${col}`);
@@ -242,7 +242,7 @@ onBeforeUnmount(() => {
   // 清理所有颜色变量
   const root = document.documentElement;
   for (let row = 1; row <= 6; row++) {
-    for (let col = 0; col <= 14; col++) {
+    for (let col = 0; col <= 16; col++) {
       root.style.removeProperty(`--key-color-${row}-${col}`);
     }
   }

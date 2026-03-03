@@ -36,6 +36,30 @@
       </div>
     </template>
 
+    <template v-if="keyboardConfiguration === 80 && isVersion2">
+      <div class="keyboard-container v1">
+        <div class="keyboard" :style="{
+          width: `${containerDimensions.width}px`,
+            height: `${containerDimensions.height}px`,
+          }">
+          <template v-for="(row, rowIndex) in layout">
+            <div class="row" :class="`row_${rowIndex + 1}`" :key="rowIndex" v-if="row?.[0]?.shapeScale?.w">
+              <template v-for="(col, colIndex) in row">
+                <key v-if="col && col.shapeScale?.w != 0 && col.keyItem?.keyValue"
+                  :key="`key-${rowIndex}-${colIndex}`" :row="rowIndex" :column="colIndex" :keyItem="col.keyItem"
+                  :shapeScale="col.shapeScale" :location="col.location"
+                  :active="activeKeys.includes(`${rowIndex}-${colIndex}`)" @click="handleKeyClick(rowIndex, colIndex)"
+                  @emits="handleCancelSelect" />
+              </template>
+            </div>
+          </template>
+        </div>
+        <div class="logo-light-bar">
+          <span></span>
+        </div>
+      </div>
+    </template>
+
     <!-- v2 60配列 -->
     <template v-if="keyboardConfiguration === 60 && isVersion2">
       <div class="keyboard-container v2">
@@ -254,12 +278,16 @@ const matchLayout = () => {
   if (!isVersion2.value) {
     return layouts.keyboardLayoutV1;
   }
+
   if (deviceStore.devices[0]?.productId === 5382 && deviceStore.devices[0]?.vendorId === 7334) {
     keyboardConfiguration.value = 84;
     return layouts.keyboardLayoutV2_threeMode;
   } else if (deviceStore.devices[0]?.productId === 5384 && deviceStore.devices[0]?.vendorId === 7334) {
     keyboardConfiguration.value = 66;
     return layouts.mk66;
+  } else if (deviceStore.devices[0]?.productId === 5388 && deviceStore.devices[0]?.vendorId === 7334) {
+    keyboardConfiguration.value = 80;
+    return layouts.keyboardLayoutV1;
   } else {
     keyboardConfiguration.value = 60;
     return layouts.keyboardLayoutV2;
