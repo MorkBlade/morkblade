@@ -671,8 +671,37 @@ const usePerformanceStore = defineStore('performance', {
           // this.allAxisListV2.forEach((axisItem, itemIndex) => {
           //   this.axisList.push({ ...axisItem, axisIndex: itemIndex });
           // });
+          if (deviceStore.devices[0]?.productId === 5388 && deviceStore.devices[0]?.vendorId === 7334) {
+            const brand_GATERON = [];
+            const brand_TTC = [];
+            const brand_Other = [];
+            this.allAxisListV2[0].list.forEach((item) => {
+              if (item.brand === 'GATERON') {
+                brand_GATERON.push(item)
+              } else if (item.brand === 'TTC'){
+                brand_TTC.push(item)
+              } else {
+                brand_Other.push(item)
+              }
+            })
+            this.axisList = [
+              {
+                type_name_en: 'GATERON',
+                list: brand_GATERON
+              },
+              {
+                type_name_en: 'TTC',
+                list: brand_TTC
+              },
+              {
+                type_name_en: 'other',
+                list: brand_Other
+              },
+            ]
+          } else {
+            this.axisList = this.allAxisListV2;
+          }
 
-          this.axisList = this.allAxisListV2;
 
           // 处理轴体图标映射
 

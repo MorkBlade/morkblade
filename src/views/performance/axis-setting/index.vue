@@ -84,6 +84,7 @@ const handleApplyAxis = (item) => {
 };
 
 const handleMatchJLD = () => {
+  console.log('⛔--------handleMatchJLD', axisList.value);
   const jldAxis = axisList.value.filter((ite) => {
     if (isVersion2) {
       return ite.type_name_en === 'GATERON';
@@ -104,7 +105,6 @@ const handleMatchTTC = () => {
   });
   if (ttcAxis.length === 0) showMessage(t('axisSetting.noAxis'), 'warning');
   axisBrandList.value = isVersion2 ? ttcAxis[0].list : ttcAxis;
-  console.log('⛔--------axisBrandList', axisBrandList.value);
 };
 
 const handleMatchOther = () => {
