@@ -30,9 +30,9 @@ const useDeviceStore = defineStore('device', {
 
   actions: {
 
-    async connectDevice() {
+    async connectDevice( clickSelectedDevice ) {
       try {
-        const devices = await services.getDevices();
+        let devices = await services.getDevices();
         services.on('GETDEVICEINFO', (requestDeviceStatus) => {
           this.requestDeviceStatus = requestDeviceStatus;
           console.log('requestDeviceStatus: ', requestDeviceStatus);
@@ -98,7 +98,7 @@ const useDeviceStore = defineStore('device', {
             console.log('检测到多个设备，开始设备优先级选择');
 
             // 分离2.4G设备和非2.4G设备
-            const non24GDevices = devices.filter(item => item.usagePage !== 65408);
+            let non24GDevices = devices.filter(item => item.usagePage !== 65408);
             const device24G = devices.filter(item => item.usagePage === 65408);
 
             console.log('非2.4G设备数量: ', non24GDevices.length);
@@ -106,6 +106,17 @@ const useDeviceStore = defineStore('device', {
 
             if (non24GDevices.length > 0) {
               // 优先选择非2.4G设备
+              // 找到vid,pid相同的设备,把它放到第一个
+              if (clickSelectedDevice) {
+                const clickIndex = non24GDevices.findIndex(
+                  item => item.vendorId === clickSelectedDevice.vendorId && item.productId === clickSelectedDevice.productId,
+                );
+                if (clickIndex > 0) {
+                  const [clickDevice] = non24GDevices.splice(clickIndex, 1);
+                  non24GDevices.unshift(clickDevice);
+                }
+              }
+              devices = [...non24GDevices, ...device24G];
               selectedDevice = non24GDevices[0];
               console.log('选择非2.4G设备: ', selectedDevice);
             } else {

@@ -134,7 +134,9 @@ watch(keyPressTestCount, async () => {
     let mmBuff = 0;
     if (isVersion2.value) {
       performanceStore.isTravelTest = true;
-      const { max } = await performanceStore.getRm6X21CalibrationV2(keyboardStore.keyboards);
+      let { max } = await performanceStore.getRm6X21CalibrationV2(keyboardStore.keyboards);
+      // 设置最大行程为3.3
+      if (max > 3.3) {max = 3.3;}
       mmBuff = max;
     } else {
       const { max } = await performanceStore.getRm6X21Calibration(keyboardStore.keyboards);
@@ -199,7 +201,7 @@ onUnmounted(() => {
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
-    gap: var(--spacing-20);
+    gap: var(--spacing-16);
     font-size: var(--font-size-15);
     color: #ffffff;
     font-family: 'CN Regular';

@@ -91,7 +91,7 @@ const step2Img = computed(() => {
 // 连接按钮点击事件
 const handleDeviceStoreClick = async () => {
   const device = await requestHIDDevice();
-  const result = await deviceStore.connectDevice();
+  const result = await deviceStore.connectDevice(device);
   console.log('连接结果: ', result);
   const version = deviceStore.devices[0]?.usagePage === 65440 ? 'v1' : 'v2';
   localStorage.setItem('keyboardVersion', version);
