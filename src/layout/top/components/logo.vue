@@ -30,6 +30,7 @@ const selectVersion = ref(isVersion2 ? 'v2' : 'v1');
 
 const isMK84 = deviceStore.devices[0]?.productId === 5382 && deviceStore.devices[0]?.vendorId === 7334;
 const isTKL = deviceStore.devices[0]?.productId === 5388 && deviceStore.devices[0]?.vendorId === 7334;
+const is987S = deviceStore.devices[0]?.productId === 5383 && deviceStore.devices[0]?.vendorId === 7334;
 const options = computed(() => {
   if (deviceStore.devices.length > 1) {
     return [
@@ -43,6 +44,8 @@ const options = computed(() => {
       return [{ value: 'v2', label: 'M K 8 4' }];
     } else if (isTKL) {
       return [{ value: 'v2', label: 'BOLD TKL' }];
+    } else if (is987S) {
+      return [{ value: 'v2', label: 'M K 9 8 7 S' }];
     } else {
       return [{ value: 'v2', label: 'M K 6 0' }];
     }
@@ -57,6 +60,8 @@ const title = computed(() => {
     return 'M K 8 4';
   } else if (isTKL) {
     return 'BOLD TKL';
+  } else if (is987S) {
+    return 'M K 9 8 7 S';
   } else {
     return 'M K 6 0';
   }

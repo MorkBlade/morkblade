@@ -42,7 +42,8 @@
           width: `${containerDimensions.width}px`,
             height: `${containerDimensions.height}px`,
           }">
-          <template v-for="(row, rowIndex) in layout">
+          <template v-for="(row, rowIndex) in deviceStore.devices[0]?.productId === 5383 ? lightLayout : layout">
+          <!-- <template v-for="(row, rowIndex) in layout"> -->
             <div class="row" :class="`row_${rowIndex + 1}`" :key="rowIndex" v-if="row?.[0]?.shapeScale?.w">
               <template v-for="(col, colIndex) in row">
                 <key v-if="col && col.shapeScale?.w != 0 && col.keyItem?.keyValue"
@@ -234,6 +235,7 @@ watch(
   },
 );
 
+
 onMounted(async () => {
   try {
     // First initialize keyboard
@@ -292,7 +294,7 @@ const matchLayout = () => {
   } else if (deviceStore.devices[0]?.productId === 5384 && deviceStore.devices[0]?.vendorId === 7334) {
     keyboardConfiguration.value = 66;
     return layouts.mk66;
-  } else if (deviceStore.devices[0]?.productId === 5388 && deviceStore.devices[0]?.vendorId === 7334) {
+  } else if ((deviceStore.devices[0]?.productId === 5388 || deviceStore.devices[0]?.productId === 5383) && deviceStore.devices[0]?.vendorId === 7334) {
     keyboardConfiguration.value = 80;
     return layouts.keyboardLayoutV1;
   } else {

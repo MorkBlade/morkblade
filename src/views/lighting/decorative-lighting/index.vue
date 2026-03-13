@@ -10,7 +10,7 @@
 
     <!-- logo灯 -->
     <staticLightCard
-      v-if="deviceStore.devices[0]?.productId === 5388 && deviceStore.devices[0]?.vendorId === 7334"
+      v-if="(deviceStore.devices[0]?.productId === 5388 || deviceStore.devices[0]?.productId === 5383) && deviceStore.devices[0]?.vendorId === 7334"
       class="static-light"
       staticType="logoLight"
       :staticLightColorList="lightSettingStore.decorative1.staticColors"
@@ -294,7 +294,6 @@ const initDecorativeLightingData = async () => {
       lightSettingStore.decorative1.direction = direction === 'Forward';
       lightSettingStore.decorative1.selectStaticColor = selectStaticColor;
     }
-    console.log('⛔--------初始化装饰灯光数据', lightSettingStore.decorative1.staticColors);
   } catch (error) {
     console.error('初始化装饰灯光失败:', error);
   }

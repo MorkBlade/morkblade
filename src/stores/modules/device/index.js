@@ -16,7 +16,7 @@ const state = {
   connectDeviceStatus: false,
   requestDeviceStatus: null,
   updateSuc: false,
-  isDeviceConnected: false, // 添加设备连接状态
+  isUpdate: false,
   reseted: false,
   isDoubleLighting: false,
 };
@@ -30,120 +30,96 @@ const useDeviceStore = defineStore('device', {
 
   actions: {
 
-    async connectDevice( clickSelectedDevice ) {
-      try {
-        let devices = await services.getDevices();
-        services.on('GETDEVICEINFO', (requestDeviceStatus) => {
-          this.requestDeviceStatus = requestDeviceStatus;
-          console.log('requestDeviceStatus: ', requestDeviceStatus);
-        });
-        emitter.on('isUpdate', (data) => {
-          // console.log('isupdate', data);
-          this.isUpdate = data;
-        });
-        services.on('usbChange', async (data) => {
-          // 设备拔插时 路由到连接页面
-          router.replace({ path: '/' });
-          const { device } = data;
-          if (data.updateFail) {
-            emitter.emit('toUpdate');
-            this.isUpdate = false;
-          }
+    // 设备优先级选择：非2.4G > 2.4G，支持用户指定设备
+    _selectDevice(devices, clickSelectedDevice) {
+      if (devices.length === 1) return { selected: devices[0], sorted: devices };
 
-          if (data.type === 'disconnect' || data.type === 'isUpgrading_disconnect') {
-            // 如果不是在升级页面的话 路由回到连接页面
-            if (!this.isUpdate) {
-              if (this.reseted) return;
-              emitter.emit('disconnect', this.isUpdate);
-              return;
-            }
-          }
+      const non24G = devices.filter(d => d.usagePage !== 65408);
+      const g24    = devices.filter(d => d.usagePage === 65408);
 
-          if (data.type === 'connect' || (data.type === 'isUpgrading_connect' && data.reconnect)) {
-            if (device?.collections?.length) {
-              try {
-                const targetCollection = device.collections.find(
-                  (collection) => collection.usage === 1 && [65440, 65456, 65408].includes(collection.usagePage),
-                );
-
-                if (targetCollection) {
-                  if (this.reseted) {
-                    emitter.emit('resetData', this.reseted);
-                    this.reseted = false;
-                  }
-
-                }
-              } catch (error) {
-                console.error('Reconnection failed:', error);
-                // 可以在这里添加重试逻辑或错误处理
-              }
-            } else {
-              console.warn('No collections available on the device');
-            }
-          }
-        });
-
-        // 监听设备拔插
-        if (devices.length > 0) {
-          let selectedDevice = null;
-
-          if (devices.length === 1) {
-            // 只有一个设备时直接使用
-            selectedDevice = devices[0];
-            if (selectedDevice.usagePage === 65408) {
-              console.log('2.4G连接设备: ', selectedDevice);
-            }
-          } else {
-            // 多个设备时，优先选择非2.4G设备
-            console.log('检测到多个设备，开始设备优先级选择');
-
-            // 分离2.4G设备和非2.4G设备
-            let non24GDevices = devices.filter(item => item.usagePage !== 65408);
-            const device24G = devices.filter(item => item.usagePage === 65408);
-
-            console.log('非2.4G设备数量: ', non24GDevices.length);
-            console.log('2.4G设备数量: ', device24G.length);
-
-            if (non24GDevices.length > 0) {
-              // 优先选择非2.4G设备
-              // 找到vid,pid相同的设备,把它放到第一个
-              if (clickSelectedDevice) {
-                const clickIndex = non24GDevices.findIndex(
-                  item => item.vendorId === clickSelectedDevice.vendorId && item.productId === clickSelectedDevice.productId,
-                );
-                if (clickIndex > 0) {
-                  const [clickDevice] = non24GDevices.splice(clickIndex, 1);
-                  non24GDevices.unshift(clickDevice);
-                }
-              }
-              devices = [...non24GDevices, ...device24G];
-              selectedDevice = non24GDevices[0];
-              console.log('选择非2.4G设备: ', selectedDevice);
-            } else {
-              // 如果只有2.4G设备，则选择第一个2.4G设备
-              selectedDevice = device24G[0];
-              console.log('只有2.4G设备可用，选择2.4G设备: ', selectedDevice);
-            }
-          }
-
-          this.devices = devices;
-          this.device = selectedDevice;
-          if (selectedDevice) {
-            const res = await services.init(selectedDevice.id);
-            console.log('init res: ', res);
-            // const appStore = useAppStore();
-            // const res2 = await appStore.getBaseInfo(true);
-            // console.log('getBaseInfo res2: ', res2);
-            this.connectDeviceStatus = true;
-            return true;
-          }
-          return false;
-        } else {
-          console.log('未检测到设备。');
+      if (non24G.length > 0) {
+        if (clickSelectedDevice) {
+          const idx = non24G.findIndex(
+            d => d.vendorId === clickSelectedDevice.vendorId && d.productId === clickSelectedDevice.productId,
+          );
+          if (idx > 0) non24G.unshift(non24G.splice(idx, 1)[0]);
         }
-        return false;
+        return { selected: non24G[0], sorted: [...non24G, ...g24] };
+      }
+      return { selected: g24[0], sorted: devices };
+    },
+
+    // 注册设备事件监听，先 off 防止重复绑定
+    _registerListeners() {
+      services.off('GETDEVICEINFO');
+      services.off('usbChange');
+      emitter.off('isUpdate');
+
+      services.on('GETDEVICEINFO', (status) => {
+        this.requestDeviceStatus = status;
+      });
+
+      emitter.on('isUpdate', (data) => {
+        this.isUpdate = data;
+      });
+
+      services.on('usbChange', async (data) => {
+        const { device } = data;
+
+        if (data.updateFail) {
+          emitter.emit('toUpdate');
+          this.isUpdate = false;
+          return;
+        }
+
+        if (data.type === 'disconnect' || data.type === 'isUpgrading_disconnect') {
+          if (!this.isUpdate) {
+            if (this.reseted) return;
+            router.replace({ path: '/' });
+            emitter.emit('disconnect', this.isUpdate);
+          }
+          return;
+        }
+
+        if (data.type === 'connect' || (data.type === 'isUpgrading_connect' && data.reconnect)) {
+          if (!device?.collections?.length) {
+            console.warn('No collections available on the device');
+            return;
+          }
+          const targetCollection = device.collections.find(
+            c => c.usage === 1 && [65440, 65456, 65408].includes(c.usagePage),
+          );
+          if (targetCollection && this.reseted) {
+            emitter.emit('resetData', this.reseted);
+            this.reseted = false;
+          }
+        }
+      });
+    },
+
+    async connectDevice(clickSelectedDevice) {
+      try {
+        this._registerListeners();
+
+        const rawDevices = await services.getDevices();
+        if (!rawDevices.length) {
+          console.log('未检测到设备。');
+          return false;
+        }
+
+        const { selected, sorted } = this._selectDevice(rawDevices, clickSelectedDevice);
+        this.devices = sorted;
+        this.device  = selected;
+
+        if (!selected) return false;
+
+        const res = await services.init(selected.id);
+        console.log('init res:', res);
+        this.connectDeviceStatus = true;
+        return true;
       } catch (error) {
-        console.log('error', error);
+        console.error('connectDevice error:', error);
+        return false;
       }
     },
 

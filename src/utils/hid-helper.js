@@ -25,7 +25,8 @@ export const DEVICE_FILTERS = [
   { vendorId: 7334, productId: 5384 }, // mk66
   { vendorId: 0x1ca3, productId: 0x0101 }, // v1
   { vendorId: 0x1ca9, productId: 0xe501 }, // v2
-  { vendorId: 0x1ca6, productId: 0x150c}, // v1升级v2协议，tkl
+  { vendorId: 0x1ca6, productId: 0x150c }, // v1升级v2协议，tkl
+  { vendorId: 7334, productId: 5383 }, // mk 987s
 ];
 
 /**

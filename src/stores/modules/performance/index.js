@@ -671,7 +671,7 @@ const usePerformanceStore = defineStore('performance', {
           // this.allAxisListV2.forEach((axisItem, itemIndex) => {
           //   this.axisList.push({ ...axisItem, axisIndex: itemIndex });
           // });
-          if (deviceStore.devices[0]?.productId === 5388 && deviceStore.devices[0]?.vendorId === 7334) {
+          if ((deviceStore.devices[0]?.productId === 5388 || deviceStore.devices[0]?.productId === 5383) && deviceStore.devices[0]?.vendorId === 7334) {
             const brand_GATERON = [];
             const brand_TTC = [];
             const brand_Other = [];
