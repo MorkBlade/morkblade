@@ -130,11 +130,13 @@
             @click.stop="handleSelectedVerInfo(item.version)">
             <div>
               <span>{{ t('settings.firmwareVersionNumber') }}:</span>
-              <span>{{ item.version }}</span>
+              <!-- <span>{{ item.version }}</span> -->
+              <span>{{ appVersion }}</span>
             </div>
             <div>
               <span>{{ t('settings.releaseDate') }}:</span>
-              <span>{{ item.date }}</span>
+              <!-- <span>{{ item.date }}</span> -->
+              <span>{{ appVersionTime }}</span>
             </div>
             <img src="@/assets/images/right_expand.svg" alt="" />
             <div class="update-changes" v-if="item.version === showVersion">

@@ -235,7 +235,6 @@ watch(
   },
 );
 
-
 onMounted(async () => {
   try {
     // First initialize keyboard

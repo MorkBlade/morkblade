@@ -83,7 +83,6 @@ const useAppStore = defineStore('app', {
     async getConfigID(isVersion2 = false) {
       if (isVersion2) {
         const result = await services.getConfigListV2();
-        console.log('查询当前的配置文件id result: ', result);
         const result2 = await services.getConfigV2();
         const curConfig = result2.key;
         // this.activeConfigIndex = result[0]?.list.findIndex((item) => item === curConfig);
@@ -124,7 +123,7 @@ const useAppStore = defineStore('app', {
     async getBaseInfo(isVersion2 = false) {
       if (isVersion2) {
         const result = await services.getDevicesInfoV2();
-        console.log('getBaseInfo result: ', result);
+        // console.log('getBaseInfo result: ', result);
         this.baseInfo = (result && result[0]) || {};
         this.isThreeMode = result[0]?.subType === 1;
         return result;

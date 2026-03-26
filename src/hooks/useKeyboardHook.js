@@ -58,7 +58,7 @@ export const useKeyboardHook = () => {
       appStore.getDeviceStatus();
       // TODO 判断是不是三模版本
       if (appStore.baseInfo?.subType === 1) {
-        
+
       }
       // v2 keyboard初始化
       const { row } = keyboardStore.keyLayoutConfig;
@@ -77,7 +77,7 @@ export const useKeyboardHook = () => {
 
       const layoutData = [];
       const keyboardsWithPerformance = [];
-      console.log('initKeyboard-------------------------------', keyboardLayout);
+      // console.log('initKeyboard-------------------------------', keyboardLayout);
 
       // 遍历每一行的键盘布局数据
       for (let rowIndex = 0; rowIndex < keyboardLayout.length; rowIndex++) {
@@ -169,7 +169,7 @@ export const useKeyboardHook = () => {
     // 获取所有层的键盘布局数据
     const { row } = keyboardStore.keyLayoutConfig;
     const allLayersData = [];
-    
+
     // 并行获取所有层的数据以提高性能
     const layerPromises = [];
     for (let layer = 0; layer < 4; layer++) {
@@ -183,10 +183,10 @@ export const useKeyboardHook = () => {
         );
       }
     }
-    
+
     // 等待所有请求完成
     const results = await Promise.all(layerPromises);
-    
+
     // 整理数据到 allLayersData 结构
     for (let layer = 0; layer < 4; layer++) {
       allLayersData[layer] = [];
@@ -225,7 +225,7 @@ export const useKeyboardHook = () => {
         };
       }
     }
-    
+
     return updatedKeyboards;
   }
 
