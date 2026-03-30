@@ -295,7 +295,7 @@ const matchLayout = () => {
     return layouts.mk66;
   } else if ((deviceStore.devices[0]?.productId === 5388 || deviceStore.devices[0]?.productId === 5383) && deviceStore.devices[0]?.vendorId === 7334) {
     keyboardConfiguration.value = 80;
-    return layouts.keyboardLayoutV1;
+    return layouts.keyboardLayoutV2_84;
   } else {
     keyboardConfiguration.value = 60;
     return layouts.keyboardLayoutV2;
