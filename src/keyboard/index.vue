@@ -240,7 +240,7 @@ onMounted(async () => {
     // First initialize keyboard
     await performanceStore.getGlobalTouchTravel();
     await keyboardStore.initKeyboard();
-    await lightStore.getDecorativeLightingData();
+    if (isVersion2.value) await lightStore.getDecorativeLightingData();
     // // Then initialize lighting
     // // await initCustomLighting();
     if (isVersion2.value) await deviceStore.getDoubleLighting();

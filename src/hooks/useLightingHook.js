@@ -32,7 +32,6 @@ export const useLightingHook = () => {
     } else {
       // v1初始化灯光数据
       const keyboardLighting = await services.getLighting();
-      // console.log('keyboardLighting', keyboardLighting);
       const logoLighting = await services.getLogoLighting();
       modifyLightingData(keyboardLighting, logoLighting);
     }
