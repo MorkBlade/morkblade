@@ -127,10 +127,24 @@ emitter.on('versionChange', (flag) => {
 
 services.on('lightingBase', async (data) => {
   const { area } = data;
-  if (lightSettingStore.area === area) {
+  if (lightSettingStore.area !== area) return;
+  if (area === 'Decorate1') {
+    lightSettingStore.updateDecorative1BaseData(data);
+  } else {
     lightSettingStore.updateLightingBaseData(data);
   }
 });
+
+const refreshKeyboardLightingBase = async () => {
+  try {
+    const lamp = isDoubleLighting.value ? 'DoubleLighting' : 'SingleLighting';
+    const res = await services.getLightingBaseV2({ area: 'Keyboard', config: 'Base' }, lamp);
+    const row = Array.isArray(res) ? res[0] : res;
+    if (row) lightSettingStore.updateLightingBaseData(row);
+  } catch (e) {
+    console.error('refreshKeyboardLightingBase', e);
+  }
+};
 
 // 更新颜色的函数
 const updateColors = async () => {
@@ -279,7 +293,11 @@ const setCustomLightingStatus = async (isCustom) => {
 };
 
 const changeMenu = (idx) => {
+  const prev = clickItem.value;
   clickItem.value = idx;
+  if (isVersion2.value && prev === 4 && idx === 0) {
+    void refreshKeyboardLightingBase();
+  }
   let inCustomLighting = false;
   switch (idx) {
     case 1:

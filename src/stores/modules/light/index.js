@@ -155,6 +155,17 @@ export const useLightSettingStore = defineStore('lightSetting', {
       }
     },
 
+    // 装饰灯区 Decorate1 基础配置（勿写入 light，否则会与按键灯串台）
+    updateDecorative1BaseData(data) {
+      const { open, mode, luminance, speed, direction, selectStaticColor } = data;
+      this.decorative1.open = open === 'Open';
+      this.decorative1.mode = mode;
+      this.decorative1.luminance = luminance;
+      this.decorative1.speed = speed;
+      this.decorative1.direction = direction === 'Forward';
+      this.decorative1.selectStaticColor = selectStaticColor;
+    },
+
     // 获取装饰灯光数据
     async getDecorativeLightingData() {
       const res = await services.getDecorate1CustomV2({rows:1, cols:22, area:'Decorate1'});

@@ -108,7 +108,14 @@ const colorList = ['#080cfe', '#ff0000', '#ffff00', '#fe00e9', '#00fe2f', '#fe36
 const colorWheelRef = ref(null);
 const selectedColor = ref('#bdd600');
 const rgb = ref({ r: 189, g: 214, b: 0 });
-let colorPicker = ref(null);
+/** @type {import('@jaames/iro').ColorPicker | null} */
+let iroColorPicker = null;
+
+const onIroColorChange = (color) => {
+  selectedColor.value = color.hexString;
+  rgb.value = color.rgb;
+  lightSettingStore.updateCurrentColor(rgb.value);
+};
 
 // 初始化色轮
 onMounted(async () => {
@@ -125,7 +132,7 @@ onMounted(async () => {
     );
     const optimalWidth = Math.min(containerWidth * 0.4, scaleValue(165));
 
-    colorPicker = new iro.ColorPicker(colorWheelRef.value, {
+    iroColorPicker = new iro.ColorPicker(colorWheelRef.value, {
       width: optimalWidth,
       color: selectedColor.value,
       handleRadius: 8, // 手柄大小
@@ -140,12 +147,8 @@ onMounted(async () => {
       ],
     });
 
-    // 监听颜色变化事件
-    colorPicker.on('color:change', (color) => {
-      selectedColor.value = color.hexString;
-      rgb.value = color.rgb;
-      lightSettingStore.updateCurrentColor(rgb.value);
-    });
+    // 监听颜色变化事件（卸载时需同一引用传给 off）
+    iroColorPicker.on('color:change', onIroColorChange);
   }
   pageStore.switchLightingMode('decorativeLighting');
 });
@@ -172,9 +175,9 @@ const updateFromRgb = () => {
   rgb.value.b = Math.min(255, Math.max(0, rgb.value.b));
 
   const newColor = `rgb(${rgb.value.r}, ${rgb.value.g}, ${rgb.value.b})`;
-  if (colorPicker) {
-    colorPicker.color.set(newColor);
-    selectedColor.value = colorPicker.color.hexString;
+  if (iroColorPicker) {
+    iroColorPicker.color.set(newColor);
+    selectedColor.value = iroColorPicker.color.hexString;
   }
 };
 
@@ -230,9 +233,9 @@ const updateColor = (event) => {
   selectedColor.value = inputColor;
 
   // 只有当输入是完整的颜色值时才更新色轮
-  if (inputColor.length === 7 && isValidColor(inputColor)) {
-    colorPicker.color.set(inputColor);
-    const color = colorPicker.color;
+  if (inputColor.length === 7 && isValidColor(inputColor) && iroColorPicker) {
+    iroColorPicker.color.set(inputColor);
+    const color = iroColorPicker.color;
     rgb.value = {
       r: Math.round(color.rgb.r),
       g: Math.round(color.rgb.g),
@@ -253,19 +256,20 @@ const resetDecorateCustom = () => {
 
 // 组件卸载时销毁实例
 onBeforeUnmount(() => {
-  if (colorPicker) {
-    colorPicker.off('color:change');
-    colorPicker = null;
+  if (iroColorPicker && typeof iroColorPicker.off === 'function') {
+    iroColorPicker.off('color:change', onIroColorChange);
   }
+  iroColorPicker = null;
   // 恢复到键盘灯光区域
   lightSettingStore.setArea('Keyboard');
   pageStore.switchLightingMode('single');
 });
 
 const changeColor = (clickColor) => {
+  if (!iroColorPicker) return;
   selectedColor.value = clickColor;
-  colorPicker.color.set(clickColor);
-  const color = colorPicker.color;
+  iroColorPicker.color.set(clickColor);
+  const color = iroColorPicker.color;
   rgb.value = {
     r: Math.round(color.rgb.r),
     g: Math.round(color.rgb.g),

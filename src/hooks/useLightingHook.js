@@ -267,9 +267,8 @@ export const useLightingHook = () => {
       console.log('⛔--------获取装饰灯光区域的基础配置', lightingBase);
 
       if (lightingBase && lightingBase[0]) {
-        lightSettingStore.updateLightingBaseData(lightingBase[0]);
+        lightSettingStore.updateDecorative1BaseData(lightingBase[0]);
       }
-
 
       // 获取装饰灯光区域的调色板配置
       const lightingPalette = await services.getLightingPaletteV2({
@@ -279,7 +278,7 @@ export const useLightingHook = () => {
 
       if (lightingPalette && lightingPalette[0]?.staticColors) {
         const colors = paletteToHexArray(lightingPalette[0].staticColors).map((color, index) => ({ color, id: index }));
-        lightData.staticColors = colors;
+        lightSettingStore.decorative1.staticColors = colors;
       }
 
       console.log('装饰灯光初始化完成, area:', lightSettingStore.area);
