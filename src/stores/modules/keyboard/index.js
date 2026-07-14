@@ -5,6 +5,9 @@ import services from '@/services/index';
 import { useMacroStore, usePerformanceStore } from '@/stores';
 import { useKeyboardHook } from '@/hooks';
 
+const isValidKeyItem = (keyItem) =>
+  Number.isInteger(keyItem?.keyValue) && keyItem.keyValue > 0;
+
 const state = {
   keyboards: [],
   layout: 0,
@@ -201,7 +204,7 @@ const useKeyboardStore = defineStore('keyboard', {
       const activeKeys = [];
       this.keyboards.forEach((row, rowIndex) => {
         row.forEach((col, colIndex) => {
-          if (col.keyValue !== 0) {
+          if (isValidKeyItem(col)) {
             // 排除无效按键
             // 只选中有效按键
             activeKeys.push(`${rowIndex}-${colIndex}`);
@@ -258,10 +261,12 @@ const useKeyboardStore = defineStore('keyboard', {
     // 反选按键
     reverseSelectKey() {
       const allKeys = [];
-      // 先获取所有可能的按键位置
+      // 先获取所有有效按键位置
       this.keyboards.forEach((row, rowIndex) => {
         row.forEach((col, colIndex) => {
-          allKeys.push(`${rowIndex}-${colIndex}`);
+          if (isValidKeyItem(col)) {
+            allKeys.push(`${rowIndex}-${colIndex}`);
+          }
         });
       });
 

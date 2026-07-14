@@ -3,6 +3,9 @@ import services from '@/services/index';
 import { showMessage } from '@/utils/message';
 import { usePerformanceStore } from '@/stores';
 
+const isValidKeyItem = (keyItem) =>
+  Number.isInteger(keyItem?.keyValue) && keyItem.keyValue > 0;
+
 export const usePerformanceHook = () => {
   const isVersion2 = localStorage.getItem('keyboardVersion') === 'v2';
   const performanceStore = usePerformanceStore();
@@ -190,10 +193,16 @@ const changeParams = (params) => {
 const processKeysV2 = async (keyboards, activeKeys, modifyPerformance = null) => {
   const performanceStore = usePerformanceStore();
   const promises = activeKeys.map(async (keyLocation) => {
-    const [key1, key2] = keyLocation.split('-');
-    const rowIndex = Number(key1);
-    const colIndex = Number(key2);
-    const { performance } = keyboards[rowIndex][colIndex];
+    const [rowValue, colValue] = keyLocation.split('-');
+    const rowIndex = Number(rowValue);
+    const colIndex = Number(colValue);
+    const keyItem = keyboards[rowIndex]?.[colIndex];
+
+    if (!isValidKeyItem(keyItem)) {
+      return null;
+    }
+
+    const { performance } = keyItem;
     // console.log('performance', performance);
 
     // 如果有需要修改performance的回调，执行它
@@ -212,7 +221,12 @@ const processKeysV2 = async (keyboards, activeKeys, modifyPerformance = null) =>
     }
 
     const params = changeParams(performance);
-    const res = await services.setPerformanceV2({ ...params, calibrate: 0 });
+    const res = await services.setPerformanceV2({
+      ...params,
+      row: rowIndex,
+      col: colIndex,
+      calibrate: 0,
+    });
     
     // 如果返回的数据中包含轴状态信息，更新它
     if (res && res.isAxisStatus) {
@@ -230,8 +244,7 @@ const processKeysV2 = async (keyboards, activeKeys, modifyPerformance = null) =>
     // 强制触发响应式更新 - 通过更新整个 performance 对象
     if (modifyPerformance || (res && res.axis)) {
       // 创建一个新的 performance 对象来触发响应式更新
-      const updatedPerformance = { ...performance };
-      keyboards[rowIndex][colIndex].performance = updatedPerformance;
+      keyItem.performance = { ...performance };
     }
 
 
@@ -240,7 +253,8 @@ const processKeysV2 = async (keyboards, activeKeys, modifyPerformance = null) =>
     return res;
   });
 
-  return await Promise.all(promises);
+  const results = await Promise.all(promises);
+  return results.filter((result) => result !== null);
 };
 
 // 辅助函数：获取按键的预设值
